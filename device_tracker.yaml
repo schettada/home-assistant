@@ -1,0 +1,4 @@
+  - platform: automatic
+    client_id: ae28f722581eef3797d0
+    secret: 479489cf9ba0e454a34ff480a5d0bf2a2695251e
+    current_location: true

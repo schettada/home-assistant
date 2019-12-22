@@ -1,0 +1,11 @@
+- platform: broadlink
+  host: 10.0.1.54
+  mac: 34:ea:34:d0:af:f6
+- platform: mqtt
+  name: Patio Lights
+  command_topic: "cmnd/patio/power"
+  state_topic: "stat/patio/POWER"
+  qos: 1
+  payload_on: "ON"
+  payload_off: "OFF"
+  retain: true

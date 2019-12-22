@@ -1,0 +1,45 @@
+esphome:
+  name: racktemp
+  platform: ESP8266
+  board: nodemcuv2
+
+wifi:
+  ssid: "HyperLoop"
+  password: "Musafir@85"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Racktemp Fallback Hotspot"
+    password: "gaoMZkbrnrMN"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+sensor:
+  - platform: dht
+    pin: D7
+    model: dht22
+    temperature:
+      name: "Server Rack Temperature"
+    humidity:
+      name: "Server Rack Humidity"
+    update_interval: 60s
+    
+binary_sensor:
+  - platform: status
+    name: "Server Rack Status"
+
+text_sensor:
+  - platform: version
+    name: "Server Rack Sensor Version"
+    icon: mdi:chip
+  - platform: wifi_info
+    ip_address:
+      name: "Server Rack Sensor IP Address"
