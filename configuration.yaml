@@ -56,7 +56,6 @@ system_health:
 mobile_app:
 person:
 #shelly:
-#wemo:
 tplink:
 
 logger:
