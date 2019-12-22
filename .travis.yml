@@ -1,13 +1,14 @@
 language: python
 cache: pip
-python:
-  - "3.5"
-install:
-  - "pip3 install homeassistant"
-script:
-  - "mv secrets.yaml.sample secrets.yaml"
+python: "3.6.4"
+
+before_install:
+  - "mv travis_secrets.yaml secrets.yaml"
   - "sudo mkdir -p /ssl/ && sudo touch /ssl/fullchain.pem"
   - "sudo mkdir -p /ssl/ && sudo touch /ssl/privkey.pem"
+install:
+  - pip3 install homeassistant
+  - pip3 install colorlog
+after_install:
   - "hass --version"
-  - "hass -c . --script check_config | tee check.output"
-  - '! less check.output | grep -q "Failed config"'
+  - hass -c config/ --script check_config --info all
