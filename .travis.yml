@@ -12,6 +12,7 @@ before_install:
   - "sudo mkdir -p /ssl/ && sudo touch /ssl/fullchain.pem"
   - "sudo mkdir -p /ssl/ && sudo touch /ssl/privkey.pem"
 install:
+  - pip3 install netdisco
   - pip3 install homeassistant
   - pip3 install colorlog
 script:
