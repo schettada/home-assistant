@@ -1,0 +1,320 @@
+- id: '1560486441509'
+  alias: SJ Enter Office
+  trigger:
+  - entity_id: device_tracker.sooraj
+    event: enter
+    platform: zone
+    zone: zone.office
+  condition:
+  - after: 07:00:00
+    before: '11:00:00'
+    condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - data:
+      message: Sooraj Has Reached Office
+      target:
+      - '+13035177090'
+      - '+13035179860'
+    service: notify.sms
+  - data:
+      entity_id: automation.sj_enter_office
+    service: automation.turn_off
+- id: '1560486572636'
+  alias: SJ Leave Office
+  trigger:
+  - entity_id: device_tracker.sooraj
+    event: leave
+    platform: zone
+    zone: zone.office
+  condition:
+  - after: '13:00:00'
+    before: '18:00:00'
+    condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - data:
+      message: Sooraj Has Left Office
+      target:
+      - '+13035177090'
+      - '+13035179860'
+    service: notify.sms
+  - data:
+      entity_id: automation.sj_leave_office
+    service: automation.turn_off
+- id: '1560486643605'
+  alias: ' SJ Enter Home'
+  trigger:
+  - entity_id: device_tracker.sooraj
+    event: enter
+    platform: zone
+    zone: zone.home
+  condition:
+  - after: '13:00:00'
+    before: '17:00:00'
+    condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - data:
+      message: Sooraj Has Reached Home
+      target:
+      - '+13035177090'
+      - '+13035179860'
+    service: notify.sms
+  - data:
+      entity_id: automation.sj_enter_home
+    service: automation.turn_off
+- id: '1560706564185'
+  alias: SJ Reset Presence Detection
+  trigger:
+  - at: 01:00:00
+    platform: time
+  condition: []
+  action:
+  - data:
+      entity_id:
+      - automation.sj_leave_office
+      - automation.sj_enter_home
+      - automation.sj_enter_office
+    service: automation.turn_on
+- id: '1560721960186'
+  alias: TV On
+  trigger:
+  - entity_id: input_boolean.tvpower
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data:
+      host: 10.0.1.54
+      packet:
+      - JgCMAJSUEjcSOBE4EhMRExITEhMSEhI4FDUUNhMRFBEUERQRExEUERQ1FBEUERQRFBAVEBQRFDUVEBQ1FTUUNRU0FTUUNRUABfyTlBI4ETgSNxITEhMSExETEhMSNxI4EjcSExITERMSExITERQROBITERMSExITERQRExI4ERMSOBE4EjcSOBI3EjgRAA0FAAAAAAAAAAAAAAAA
+    service: broadlink.send
+  initial_state: true
+- id: '1560722338415'
+  alias: TV Off
+  trigger:
+  - entity_id: input_boolean.tvpower
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - data:
+      host: 10.0.1.54
+      packet:
+      - JgCMAJOUEjgSNxI4ERQRExITEhMRExI4ETgSOBETEhMSExEUERMSExI3EhMSExETEhMSExITETgSExE4EjcSOBI3EjgROBIABf+TlBI4ETgSNxITEhMSExETEhMSNxI4EjcSExITERMSExITEhMROBITERMSExITEhMRExI4ERMSOBI3EjgROBI4ETgSAA0FAAAAAAAAAAAAAAAA
+    service: broadlink.send
+  initial_state: true
+- id: '1561950212865'
+  alias: Spotlights On
+  trigger:
+  - entity_id: input_boolean.spotpower
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - data:
+      host: 10.0.1.54
+      packet:
+      - JgBQAAABJZISExETEhITEhITEhITEhEUETgRNxM3EjcSNxI3EjcSNxMSEhMRExITERQRExISEhMSNxI3EjgRNxI3EzcSNxE4EgAFEgABJUkRAA0FAAAAAAAAAAA=
+    service: broadlink.send
+  initial_state: true
+- id: '1561950417809'
+  alias: Spotlights Off
+  trigger:
+  - entity_id: input_boolean.spotpower
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - data:
+      host: 10.0.1.54
+      packet:
+      - JgBQAAABJJMTERITEhITEhITERMSExEUEjYSNxQ2EjcROBI3EzYSNxI4ERMSExETEhITEhITEhITEhE4EjcTNhI3EzcSNxE4EgAFEgABJUkRAA0FAAAAAAAAAAA=
+    service: broadlink.send
+  initial_state: true
+- id: '1563920391061'
+  alias: Jeep Fuel Below 30
+  trigger:
+  - below: '30.0'
+    entity_id: sensor.jeep_fuel
+    platform: numeric_state
+  condition: []
+  action:
+  - data:
+      message: Fuel Level Is Below 30%!
+      target:
+      - '+13035177090'
+    service: notify.sms
+  - data:
+      entity_id: automation.jeep_fuel_below_30
+    service: automation.turn_off
+- id: '1564029167699'
+  alias: Jeep Fuel Above 70
+  trigger:
+  - above: '70.0'
+    entity_id: sensor.jeep_fuel
+    platform: numeric_state
+  condition: []
+  action:
+  - data:
+      entity_id:
+      - automation.jeep_fuel_below_30
+      - automation.jeep_fuel_below_15
+    service: automation.turn_on
+- id: '1565544588374'
+  alias: Front Door Open
+  trigger:
+  - entity_id: binary_sensor.wyze_frontdoor_sensor
+    from: 'off'
+    platform: state
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: alarm_control_panel.home_alarm
+    state: armed_home
+  action:
+  - data:
+      message: Front Door Is Open
+      target:
+      - '+13035177090'
+    service: notify.sms
+- id: '1565544743523'
+  alias: Front Door Closed
+  trigger:
+  - entity_id: binary_sensor.wyze_frontdoor_sensor
+    from: 'on'
+    platform: state
+    to: 'off'
+  condition:
+  - condition: state
+    entity_id: alarm_control_panel.home_alarm
+    state: armed_home
+  action:
+  - data:
+      message: Front Door Is Closed
+      target:
+      - '+13035177090'
+    service: notify.sms
+- id: '1565893219431'
+  alias: Patio Lights On
+  trigger:
+  - event: sunset
+    platform: sun
+  condition:
+  - condition: state
+    entity_id: switch.patio_lights
+    state: 'off'
+  action:
+  - data:
+      entity_id: switch.patio_lights
+    service: switch.turn_on
+- id: '1565893600335'
+  alias: Ceiling Lamp On
+  trigger:
+  - event: sunset
+    platform: sun
+  condition:
+  - condition: state
+    entity_id: light.ceiling_lamp
+    state: 'off'
+  action:
+  - data: {}
+    entity_id: light.ceiling_lamp
+    service: light.turn_on
+- id: '1566356608291'
+  alias: Patio Lights Off
+  trigger:
+  - at: '22:30:00'
+    platform: time
+  condition:
+  - condition: state
+    entity_id: switch.patio_lights
+    state: 'on'
+  action:
+  - data:
+      entity_id: switch.patio_lights
+    service: switch.turn_off
+- id: '1569720866890'
+  alias: Ceiling Lamp Off
+  trigger:
+  - at: '23:00:00'
+    platform: time
+  condition:
+  - condition: state
+    entity_id: light.ceiling_lamp
+    state: 'on'
+  action:
+  - data: {}
+    entity_id: light.ceiling_lamp
+    service: light.turn_off
+- id: '1571278422231'
+  alias: Jeep Fuel Below 15
+  description: ''
+  trigger:
+  - below: '15'
+    entity_id: sensor.jeep_fuel
+    platform: numeric_state
+  condition: []
+  action:
+  - data:
+      message: Fuel Level Is Below 15%!
+      target:
+      - '+13035177090'
+    service: notify.sms
+  - data:
+      entity_id: automation.jeep_fuel_below_15
+    service: automation.turn_off
+- id: '1571960345827'
+  alias: Bedroom Lamp Off
+  description: ''
+  trigger:
+  - at: 06:45:00
+    platform: time
+  condition:
+  - condition: state
+    entity_id: light.bedroom_lamp
+    state: 'on'
+  action:
+  - data:
+      entity_id: light.bedroom_lamp
+    service: light.turn_off
+- id: '1575695078004'
+  alias: Sync Tasmota
+  description: ''
+  trigger:
+  - event: start
+    platform: homeassistant
+  condition: []
+  action:
+  - data:
+      payload: ''
+      topic: cmnd/tasmotas/state
+    service: mqtt.publish
+- id: '1576394669002'
+  alias: Server Rack Temp
+  description: ''
+  trigger:
+  - above: '80'
+    entity_id: sensor.server_rack_temperature
+    platform: numeric_state
+  condition: []
+  action:
+  - data:
+      message: Server Rack Temp Is {{ states('sensor.server_rack_temperature') }}
+    service: notify.mobile_app_sj_office

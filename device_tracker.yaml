@@ -1,0 +1,4 @@
+  - platform: automatic
+    client_id: !secret autoid
+    secret: !secret autosec
+    current_location: true
