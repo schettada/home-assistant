@@ -17,7 +17,7 @@
   username: !secret fcuname
   password: !secret fcpw  
 - platform: combined
-  base_address: https://ha.schettada.net
+  base_address: !secret url
   entities:
     - camera.baby
     - camera.front_door
