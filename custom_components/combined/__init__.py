@@ -1,1 +1,0 @@
-"""camera.combined camera platfrom."""
