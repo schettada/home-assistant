@@ -57,6 +57,9 @@ mobile_app:
 person:
 #shelly:
 tplink:
+wemo:
+  static:
+    - 10.0.1.78
 
 logger:
   default: info
