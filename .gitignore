@@ -7,4 +7,5 @@ secrets.yaml
 OZW_Log.txt
 known_devices.yaml
 .cloud/
-.automatic/
+.automatic/*
+.automatic/*.json
