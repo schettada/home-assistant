@@ -45,7 +45,8 @@
   
   - platform: travisci
     api_key: !secret travis
-    repository: "home-assistant"
+    repository: 
+      - home-assistant
     monitored_conditions:
       - last_build_id
       - last_build_state
