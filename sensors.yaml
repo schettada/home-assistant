@@ -50,3 +50,5 @@
     monitored_conditions:
       - last_build_id
       - last_build_state
+
+  - platform: authenticated

@@ -318,3 +318,25 @@
   - data:
       message: Server Rack Temp Is {{ states('sensor.server_rack_temperature') }}
     service: notify.mobile_app_sj_office
+- id: '1577042979082'
+  alias: HA Stop
+  description: ''
+  trigger:
+  - event: shutdown
+    platform: homeassistant
+  condition: []
+  action:
+  - data:
+      message: Home-Assistant is going down!
+    service: notify.mobile_app_sj_office
+- id: '1577043173279'
+  alias: HA Start
+  description: ''
+  trigger:
+  - event: start
+    platform: homeassistant
+  condition: []
+  action:
+  - data:
+      message: Home Assistant is online!
+    service: notify.mobile_app_sj_office
