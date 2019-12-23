@@ -43,18 +43,18 @@
         friendly_name: Bedroom
         value_template: "{%if states.sensor.bedroom_multisensor_burglar.state == '8' %}Detected{% elif states.sensor.bedroom_multisensor_burglar.state == '3' %}Tamper{% elif states.sensor.bedroom_multisensor_burglar.state == '0' %}Clear{% endif %}"
   
-  - platform: travisci
-    api_key: !secret travis
-    repository: 
-      - home-assistant
-    monitored_conditions:
-      - last_build_id
-      - last_build_state
+#  - platform: travisci
+#    api_key: !secret travis
+#    repository: 
+#      - home-assistant
+#    monitored_conditions:
+#      - last_build_id
+#      - last_build_state
 
   - platform: authenticated
 
   - platform: rest
-    resource: https://travis-ci.com/schettada/home-assistant.svg?branch=master
+    resource: https://api.travis-ci.org/repos/schettada%2fhome-assistant/builds
     headers:
       Accept: application/vnd.travis-ci.2+json
     value_template: "{{ value_json.builds[0].state }}"
