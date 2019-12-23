@@ -8,3 +8,4 @@ OZW_Log.txt
 known_devices.yaml
 .cloud/
 .automatic/
+.ip_authenticated.yaml
