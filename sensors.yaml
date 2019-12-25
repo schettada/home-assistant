@@ -56,6 +56,12 @@
   - platform: rest
     resource: https://api.travis-ci.com/repos/schettada/home-assistant/builds
     headers:
-      Accept: application/vnd.travis-ci.2+json
+      Accept: application/atom+xml
     value_template: "{{ value_json.builds[0].state }}"
     name: "Travis Build Status"
+
+  - platform: scrape
+    resource: https://api.travis-ci.com/repos/schettada/home-assistant/builds
+    headers:
+      Accept: application/atom+xml
+    select: "State"
