@@ -1,0 +1,11 @@
+front_door:
+  name: Front Door Is Open
+  done_message: Front Door Is Closed
+  entity_id: binary_sensor.wyze_frontdoor_sensor
+  state: 'on'
+  repeat: 30
+  can_acknowledge: true
+  skip_first: true
+  notifiers:
+    - mobile_app_sj_office
+    - mobile_app_arleepta
