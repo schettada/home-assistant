@@ -43,25 +43,25 @@
         friendly_name: Bedroom
         value_template: "{%if states.sensor.bedroom_multisensor_burglar.state == '8' %}Detected{% elif states.sensor.bedroom_multisensor_burglar.state == '3' %}Tamper{% elif states.sensor.bedroom_multisensor_burglar.state == '0' %}Clear{% endif %}"
   
-#  - platform: travisci
-#    api_key: !secret travis
-#    repository: 
-#      - home-assistant
-#    monitored_conditions:
-#      - last_build_id
-#      - last_build_state
+  # - platform: travisci
+  #   api_key: !secret travis
+  #   repository: 
+  #     - home-assistant
+  #   monitored_conditions:
+  #     - last_build_id
+  #     - last_build_state
 
   - platform: authenticated
 
-  - platform: rest
-    resource: https://api.travis-ci.com/repos/schettada/home-assistant/builds
-    headers:
-      Accept: application/atom+xml
-    value_template: "{{ value_json.builds[0].state }}"
-    name: "Travis Build Status"
+  # - platform: rest
+  #   resource: https://api.travis-ci.com/repos/schettada/home-assistant/builds
+  #   headers:
+  #     Accept: application/atom+xml
+  #   value_template: "{{ value_json.builds[0].state }}"
+  #   name: "Travis Build Status"
 
-  - platform: scrape
-    resource: https://api.travis-ci.com/repos/schettada/home-assistant/builds
-    headers:
-      Accept: application/atom+xml
-    select: "State"
+  # - platform: scrape
+  #   resource: https://api.travis-ci.com/repos/schettada/home-assistant/builds
+  #   headers:
+  #     Accept: application/atom+xml
+  #   select: "State"
