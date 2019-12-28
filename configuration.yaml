@@ -31,7 +31,7 @@ zone 3:
   name: Library
   latitude: !secret liblat
   longitude: !secret liblong
-  radius: 200
+  radius: 100
   icon: mdi:library
   track_ios: true
 
