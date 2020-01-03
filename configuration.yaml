@@ -68,7 +68,7 @@ logger:
 #    wyzesense.gateway: debug  
 
 recorder:
-  db_url: mysql://hassio:QDNNj8ag1XwLwNwK@db.schettada.net/hassio?charset=utf8
+  db_url: mysql://hassio:QDNNj8ag1XwLwNwK@db.schettada.io/hassio?charset=utf8
   purge_keep_days: 3
   exclude:
     domains:
