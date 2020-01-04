@@ -8,8 +8,8 @@ homeassistant:
   customize: !include customize.yaml
   auth_providers:
     - type: homeassistant
-    - type: legacy_api_password
-      api_password: !secret httppw
+    # - type: legacy_api_password
+    #   api_password: !secret httppw
 
 zone:
   name: Home
@@ -117,12 +117,6 @@ alarm_control_panel:
 #    port: 443
 #    source:
 #      - entity_id: camera.front_door
-
-panel_iframe:
-  mdiindex:
-    title: MDI Icon Index
-    icon: mdi:vector-square
-    url: https://cdn.rawgit.com/james-fry/home-assistant-mdi/efd95d7a/home-assistant-mdi.html
 
 tts: !include tts.yaml
 binary_sensor: !include binary_sensors.yaml
