@@ -1,0 +1,11 @@
+travis_trigger:
+  url: https://api.travis-ci.com/repo/schettada%2Fhome-assistant/requests
+  method: POST
+  headers:
+    Content-Type: application/json
+    Accept: application/json
+    Travis-API-Version: 3
+    Authorization: !secret travis
+  payload: '{"request": {"message": "{{ message }}","branch":"{{ branch }}"}}'
+  content_type:  'application/json; charset=utf-8'
+  verify_ssl: true

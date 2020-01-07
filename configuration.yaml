@@ -130,3 +130,16 @@ switch: !include switches.yaml
 sensor: !include sensors.yaml
 input_boolean: !include input_boolean.yaml
 #alert: !include alerts.yaml
+rest_command: !include rest_api.yaml
+# rest_command:
+#   travis_trigger:
+#     url: https://api.travis-ci.com/repo/schettada%2Fhome-assistant/requests
+#     method: POST
+#     headers:
+#       Content-Type: application/json
+#       Accept: application/json
+#       Travis-API-Version: 3
+#       Authorization: token Aq2RaOpXghZHGtNrS6chHA
+#     payload: '{"request": {"message": "Auto Build","branch":"master"}}'
+#     content_type:  'application/json; charset=utf-8'
+#     verify_ssl: true
