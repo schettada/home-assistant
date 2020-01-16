@@ -18,3 +18,9 @@ install:
 script:
   - hass --version
   - hass -c . --script check_config --info all
+notifications:
+  email:
+    recipients:
+      - soorajchettada@outlook.com
+    on_success: always # default: change
+    on_failure: always # default: always

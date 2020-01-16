@@ -1,5 +1,5 @@
 esphome:
-  name: racktemp
+  name: esp1
   platform: ESP8266
   board: nodemcuv2
 
@@ -9,7 +9,7 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "Racktemp Fallback Hotspot"
+    ssid: "ESP Fallback Hotspot"
     password: "gaoMZkbrnrMN"
 
 captive_portal:
@@ -22,24 +22,14 @@ api:
 
 ota:
 
-sensor:
-  - platform: dht
-    pin: D7
-    model: dht22
-    temperature:
-      name: "Server Rack Temperature"
-    humidity:
-      name: "Server Rack Humidity"
-    update_interval: 60s
-    
 binary_sensor:
   - platform: status
-    name: "Server Rack Status"
+    name: "ESP1 Status"
 
 text_sensor:
   - platform: version
-    name: "Server Rack Sensor Version"
+    name: "ESP1 Version"
     icon: mdi:chip
   - platform: wifi_info
     ip_address:
-      name: "Server Rack Sensor IP Address"
+      name: "ESP1 IP Address"
