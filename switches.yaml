@@ -1,6 +1,6 @@
-- platform: broadlink
-  host: 10.0.1.54
-  mac: 34:ea:34:d0:af:f6
+# - platform: broadlink
+#   host: 10.0.1.54
+#   mac: 34:ea:34:d0:af:f6
 - platform: mqtt
   name: Patio Lights
   command_topic: "cmnd/patio/power"
