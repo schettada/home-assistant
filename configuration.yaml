@@ -17,7 +17,6 @@ zone:
   longitude: !secret hzlong
   radius: 300
   icon: mdi:home
-  track_ios: true
 
 zone 2:
   name: Office
@@ -25,7 +24,6 @@ zone 2:
   longitude: !secret ozlong
   radius: 200
   icon: mdi:domain
-  track_ios: true
 
 zone 3:
   name: Library
@@ -33,7 +31,6 @@ zone 3:
   longitude: !secret liblong
   radius: 100
   icon: mdi:library
-  track_ios: true
 
 http:
   base_url: !secret url
