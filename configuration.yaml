@@ -34,6 +34,8 @@ homeassistant:
 
 http:
   base_url: !secret url
+  ssl_certificate: /ssl/fullchain.pem
+  ssl_key: /ssl/privkey.pem
   ip_ban_enabled: False
   login_attempts_threshold: 3
   use_x_forwarded_for: true
