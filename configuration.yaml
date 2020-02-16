@@ -11,27 +11,6 @@ homeassistant:
     # - type: legacy_api_password
     #   api_password: !secret httppw
 
-# zone:
-#   name: Home
-#   latitude: !secret hzlat
-#   longitude: !secret hzlong
-#   radius: 300
-#   icon: mdi:home
-
-# zone 2:
-#   name: Office
-#   latitude: !secret ozlat
-#   longitude: !secret ozlong
-#   radius: 200
-#   icon: mdi:domain
-
-# zone 3:
-#   name: Library
-#   latitude: !secret liblat
-#   longitude: !secret liblong
-#   radius: 100
-#   icon: mdi:library
-
 http:
   base_url: !secret url
   ssl_certificate: /ssl/fullchain.pem
