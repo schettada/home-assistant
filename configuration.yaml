@@ -104,8 +104,8 @@ camera: !include cameras.yaml
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
-switch: !include switches.yaml
 sensor: !include sensors.yaml
 input_boolean: !include input_boolean.yaml
-#alert: !include alerts.yaml
 rest_command: !include rest_api.yaml
+#switch: !include switches.yaml
+#alert: !include alerts.yaml

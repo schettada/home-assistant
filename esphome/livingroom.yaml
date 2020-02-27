@@ -27,12 +27,12 @@ esp32_ble_tracker:
 binary_sensor:
   - platform: status
     name: "Livingroom BLE Tracker Status"
-  - platform: ble_presence
-    mac_address: 10:30:25:DD:57:EA
-    name: "Sooraj Office Phone"
-  - platform: ble_presence
-    mac_address: 8C:86:1E:A9:85:3E
-    name: "Sooraj Personal Phone"
+#  - platform: ble_presence
+#    mac_address: 10:30:25:DD:57:EA
+#    name: "Sooraj Office Phone"
+#  - platform: ble_presence
+#    mac_address: 8C:86:1E:A9:85:3E
+#    name: "Sooraj Personal Phone"
     
 text_sensor:
   - platform: version
