@@ -11,29 +11,10 @@ homeassistant:
     # - type: legacy_api_password
     #   api_password: !secret httppw
 
-zone:
-  name: Home
-  latitude: !secret hzlat
-  longitude: !secret hzlong
-  radius: 300
-  icon: mdi:home
-
-zone 2:
-  name: Office
-  latitude: !secret ozlat
-  longitude: !secret ozlong
-  radius: 200
-  icon: mdi:domain
-
-zone 3:
-  name: Library
-  latitude: !secret liblat
-  longitude: !secret liblong
-  radius: 100
-  icon: mdi:library
-
 http:
   base_url: !secret url
+  ssl_certificate: /ssl/fullchain.pem
+  ssl_key: /ssl/privkey.pem
   ip_ban_enabled: False
   login_attempts_threshold: 3
   use_x_forwarded_for: true
@@ -65,7 +46,7 @@ logger:
 #    wyzesense.gateway: debug  
 
 recorder:
-  db_url: mysql://hassio:QDNNj8ag1XwLwNwK@db.schettada.io/hassio?charset=utf8
+  db_url: !secret mysql
   purge_keep_days: 3
   exclude:
     domains:
@@ -123,8 +104,8 @@ camera: !include cameras.yaml
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
-switch: !include switches.yaml
 sensor: !include sensors.yaml
 input_boolean: !include input_boolean.yaml
-#alert: !include alerts.yaml
 rest_command: !include rest_api.yaml
+#switch: !include switches.yaml
+#alert: !include alerts.yaml
