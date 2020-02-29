@@ -1,5 +1,6 @@
 switch.wemo_switch:
   friendly_name: Lamp
+  icon: mdi:floor-lamp
 switch.sw1:
   friendly_name: Patio Lights
 sensor.living_room_thermostat_humidity:
@@ -60,3 +61,9 @@ device_tracker.sooraj:
   entity_picture: /local/sj1.png
 person.sooraj:
   entity_picture: /local/sj1.png
+switch.bedroom_fan:
+  icon: mdi:fan
+light.bedroom_lamp:
+  icon: mdi:floor-lamp
+light.ceiling_lamp:
+  icon: mdi:ceiling-light

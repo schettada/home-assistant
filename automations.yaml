@@ -218,12 +218,12 @@
     platform: sun
   condition:
   - condition: state
-    entity_id: switch.patio_lights
+    entity_id: light.patio_lights
     state: 'off'
   action:
-  - data:
-      entity_id: switch.patio_lights
-    service: switch.turn_on
+  - data: {}
+    entity_id: light.patio_lights
+    service: light.turn_on
 - id: '1565893600335'
   alias: Ceiling Lamp On
   trigger:
@@ -244,12 +244,11 @@
     platform: time
   condition:
   - condition: state
-    entity_id: switch.patio_lights
+    entity_id: light.patio_lights
     state: 'on'
   action:
-  - data:
-      entity_id: switch.patio_lights
-    service: switch.turn_off
+  - entity_id: light.patio_lights
+    service: light.turn_off
 - id: '1569720866890'
   alias: Ceiling Lamp Off
   trigger:
