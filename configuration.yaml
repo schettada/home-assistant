@@ -1,10 +1,4 @@
 homeassistant:
-  name: Home
-  latitude: !secret lat
-  longitude: !secret long
-  elevation: !secret elev
-  unit_system: imperial
-  time_zone: !secret tz
   customize: !include customize.yaml
   auth_providers:
     - type: homeassistant
