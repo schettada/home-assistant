@@ -42,7 +42,7 @@
       bedroom_motion:
         friendly_name: Bedroom
         value_template: "{%if states.sensor.bedroom_multisensor_burglar.state == '8' %}Detected{% elif states.sensor.bedroom_multisensor_burglar.state == '3' %}Tamper{% elif states.sensor.bedroom_multisensor_burglar.state == '0' %}Clear{% endif %}"
-  
+
   # - platform: travisci
   #   api_key: !secret travis
   #   repository: 

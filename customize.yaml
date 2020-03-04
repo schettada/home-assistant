@@ -67,3 +67,19 @@ light.bedroom_lamp:
   icon: mdi:floor-lamp
 light.ceiling_lamp:
   icon: mdi:ceiling-light
+sensor.worldwide_coronavirus_confirmed:
+  icon: mdi:emoticon-neutral-outline
+sensor.us_coronavirus_confirmed:
+  icon: mdi:emoticon-neutral-outline
+sensor.worldwide_coronavirus_current:
+  icon: mdi:emoticon-frown-outline
+sensor.us_coronavirus_current:
+  icon: mdi:emoticon-frown-outline
+sensor.worldwide_coronavirus_recovered:
+  icon: mdi:emoticon-happy-outline
+sensor.us_coronavirus_recovered:
+  icon: mdi:emoticon-happy-outline
+sensor.worldwide_coronavirus_deaths:
+  icon: mdi:emoticon-cry-outline
+sensor.us_coronavirus_deaths:
+  icon: mdi:emoticon-cry-outline
