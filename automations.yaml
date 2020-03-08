@@ -339,3 +339,35 @@
   - data:
       message: Home Assistant is online!
     service: notify.mobile_app_sj_office
+- id: '1583679033042'
+  alias: Storage Light On
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.wyze_storage_door_sensor
+    from: Closed
+    platform: state
+    to: Open
+  condition:
+  - condition: state
+    entity_id: light.storage_light
+    state: 'On'
+  action:
+  - data: {}
+    entity_id: light.storage_light
+    service: light.turn_on
+- id: '1583679147628'
+  alias: Storage Light Off
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.wyze_storage_door_sensor
+    from: Open
+    platform: state
+    to: Closed
+  condition:
+  - condition: state
+    entity_id: light.storage_light
+    state: 'On'
+  action:
+  - data: {}
+    entity_id: light.storage_light
+    service: light.turn_off
