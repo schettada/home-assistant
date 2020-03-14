@@ -344,13 +344,13 @@
   description: ''
   trigger:
   - entity_id: binary_sensor.wyze_storage_door_sensor
-    from: Closed
+    from: 'off'
     platform: state
-    to: Open
+    to: 'on'
   condition:
   - condition: state
     entity_id: light.storage_light
-    state: 'On'
+    state: 'off'
   action:
   - data: {}
     entity_id: light.storage_light
@@ -360,13 +360,13 @@
   description: ''
   trigger:
   - entity_id: binary_sensor.wyze_storage_door_sensor
-    from: Open
+    from: 'on'
     platform: state
-    to: Closed
+    to: 'off'
   condition:
   - condition: state
     entity_id: light.storage_light
-    state: 'On'
+    state: 'on'
   action:
   - data: {}
     entity_id: light.storage_light

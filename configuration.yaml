@@ -29,9 +29,9 @@ mobile_app:
 person:
 #shelly:
 tplink:
-wemo:
-  static:
-    - 10.0.1.110
+# wemo:
+#   static:
+#     - 10.0.1.110
 
 logger:
   default: info
