@@ -14,25 +14,9 @@ http:
   use_x_forwarded_for: true
   trusted_proxies: 10.0.1.4
 
+default_config:
 frontend:
   themes: !include_dir_merge_named themes
-config:
-updater:
-conversation:
-history:
-logbook:
-sun:
-map:
-cloud:
-system_health:
-mobile_app:
-person:
-#shelly:
-tplink:
-# wemo:
-#   static:
-#     - 10.0.1.110
-
 logger:
   default: info
 #  logs:
@@ -52,6 +36,12 @@ recorder:
       - sun.sun
       - sensor.home_eta
       - binary_sensor.remote_ui
+
+#shelly:
+tplink:
+# wemo:
+#   static:
+#     - 10.0.1.110
 
 weather:
   - platform: darksky
