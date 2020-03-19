@@ -1,10 +1,4 @@
 homeassistant:
-  name: Home
-  latitude: !secret lat
-  longitude: !secret long
-  elevation: !secret elev
-  unit_system: imperial
-  time_zone: !secret tz
   customize: !include customize.yaml
   auth_providers:
     - type: homeassistant
@@ -35,9 +29,9 @@ mobile_app:
 person:
 #shelly:
 tplink:
-wemo:
-  static:
-    - 10.0.1.78
+# wemo:
+#   static:
+#     - 10.0.1.110
 
 logger:
   default: info
