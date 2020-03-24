@@ -14,7 +14,18 @@ http:
   use_x_forwarded_for: true
   trusted_proxies: 10.0.1.4
 
-default_config:
+#default_config:
+config:
+updater:
+conversation:
+history:
+logbook:
+sun:
+map:
+cloud:
+system_health:
+mobile_app:
+person:
 frontend:
   themes: !include_dir_merge_named themes
 logger:
@@ -22,7 +33,6 @@ logger:
 #  logs:
 #    custom_components.wyzesense: debug
 #    wyzesense.gateway: debug  
-
 recorder:
   db_url: !secret mysql
   purge_keep_days: 3

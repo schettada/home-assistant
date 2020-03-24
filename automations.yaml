@@ -371,3 +371,29 @@
   - data: {}
     entity_id: light.storage_light
     service: light.turn_off
+- id: '1584945173832'
+  alias: Jeep Fuel Level
+  description: ''
+  trigger:
+  - below: '50'
+    entity_id: sensor.jeep_fuel
+    platform: numeric_state
+  condition:
+  - condition: or
+    conditions:
+    - above: '13'
+      below: '15'
+      condition: numeric_state
+      entity_id: sensor.jeep_fuel
+    - above: '28'
+      below: '30'
+      condition: numeric_state
+      entity_id: sensor.jeep_fuel
+    - above: '38'
+      below: '40'
+      condition: numeric_state
+      entity_id: sensor.jeep_fuel
+  action:
+  - data_template:
+      message: Jeep fuel is {{ trigger.to_state.state }}%
+    service: notify.mobile_app_sj_office
