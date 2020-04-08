@@ -14,8 +14,7 @@ http:
   use_x_forwarded_for: true
   trusted_proxies: 10.0.1.4
 
-frontend:
-  themes: !include_dir_merge_named themes
+#default_config:
 config:
 updater:
 conversation:
@@ -27,17 +26,13 @@ cloud:
 system_health:
 mobile_app:
 person:
-#shelly:
-tplink:
-# wemo:
-#   static:
-#     - 10.0.1.110
-
+frontend:
+  themes: !include_dir_merge_named themes
 logger:
   default: info
-#  logs:
-#    custom_components.wyzesense: debug
-#    wyzesense.gateway: debug  
+  # logs:
+  #   custom_components.wyzesense: debug
+  #   wyzesense.gateway: debug
 
 recorder:
   db_url: !secret mysql
@@ -52,6 +47,12 @@ recorder:
       - sun.sun
       - sensor.home_eta
       - binary_sensor.remote_ui
+
+#shelly:
+tplink:
+# wemo:
+#   static:
+#     - 10.0.1.110
 
 weather:
   - platform: darksky
@@ -82,6 +83,12 @@ zwave:
 alarm_control_panel:
   - platform: manual
     name: Home Alarm
+
+tuya:
+  username: !secret tuyauser
+  password: !secret tuyapw
+  country_code: 1
+  platform: tuya
 
 #image_processing:
 #  - platform: facebox

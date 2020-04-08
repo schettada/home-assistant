@@ -12,10 +12,10 @@
   password: !secret fcpw
 - platform: foscam
   name: Living Room
-  ip: 10.0.1.82
+  ip: 10.0.1.102
   port: 8380
   username: !secret fcuname
-  password: !secret fcpw  
+  password: !secret fcpw
 - platform: combined
   base_address: !secret url
   entities:

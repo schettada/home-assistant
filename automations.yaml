@@ -15,6 +15,9 @@
     - wed
     - thu
     - fri
+  - condition: state
+    entity_id: input_boolean.work_from_home
+    state: 'off'
   action:
   - data:
       message: Sooraj Has Reached Office
@@ -42,6 +45,9 @@
     - wed
     - thu
     - fri
+  - condition: state
+    entity_id: input_boolean.work_from_home
+    state: 'off'
   action:
   - data:
       message: Sooraj Has Left Office
@@ -69,6 +75,9 @@
     - wed
     - thu
     - fri
+  - condition: state
+    entity_id: input_boolean.work_from_home
+    state: 'off'
   action:
   - data:
       message: Sooraj Has Reached Home
@@ -227,8 +236,8 @@
 - id: '1565893600335'
   alias: Ceiling Lamp On
   trigger:
-  - event: sunset
-    platform: sun
+  - at: '19:30'
+    platform: time
   condition:
   - condition: state
     entity_id: light.ceiling_lamp
@@ -371,3 +380,29 @@
   - data: {}
     entity_id: light.storage_light
     service: light.turn_off
+- id: '1584945173832'
+  alias: Jeep Fuel Level
+  description: ''
+  trigger:
+  - below: '50'
+    entity_id: sensor.jeep_fuel
+    platform: numeric_state
+  condition:
+  - condition: or
+    conditions:
+    - above: '13'
+      below: '15'
+      condition: numeric_state
+      entity_id: sensor.jeep_fuel
+    - above: '28'
+      below: '30'
+      condition: numeric_state
+      entity_id: sensor.jeep_fuel
+    - above: '38'
+      below: '40'
+      condition: numeric_state
+      entity_id: sensor.jeep_fuel
+  action:
+  - data_template:
+      message: Jeep fuel is {{ trigger.to_state.state }}%
+    service: notify.mobile_app_sj_office
