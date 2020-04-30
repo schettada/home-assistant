@@ -223,8 +223,8 @@
 - id: '1565893219431'
   alias: Patio Lights On
   trigger:
-  - event: sunset
-    platform: sun
+  - at: '18:30'
+    platform: time
   condition:
   - condition: state
     entity_id: light.patio_lights
@@ -236,7 +236,7 @@
 - id: '1565893600335'
   alias: Ceiling Lamp On
   trigger:
-  - at: '19:30'
+  - at: '18:45'
     platform: time
   condition:
   - condition: state
