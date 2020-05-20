@@ -1,0 +1,6 @@
+  - platform: group
+    name: Deck Lights
+    entities:
+      - light.deck1
+      - light.deck2
+      - light.deck3
