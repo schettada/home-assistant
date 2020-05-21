@@ -85,3 +85,5 @@ sensor.us_coronavirus_deaths:
   icon: mdi:emoticon-cry-outline
 switch.living_lamp:
   icon: mdi:floor-lamp
+light.deck_lights:
+  icon: mdi:track-light
