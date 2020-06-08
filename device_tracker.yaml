@@ -1,7 +1,7 @@
-  - platform: automatic
-    client_id: !secret autoid
-    secret: !secret autosec
-    current_location: true
+  # - platform: automatic
+  #   client_id: !secret autoid
+  #   secret: !secret autosec
+  #   current_location: true
 
 #  - platform: snmp
 #    host: 10.0.1.2

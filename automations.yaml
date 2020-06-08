@@ -406,3 +406,18 @@
   - data_template:
       message: Jeep fuel is {{ trigger.to_state.state }}%
     service: notify.mobile_app_sj_office
+- id: '1590822055372'
+  alias: Turn Lights Off
+  description: ''
+  trigger:
+  - at: '22:30:00'
+    platform: time
+  condition: []
+  action:
+  - data: {}
+    service: light.turn_off
+    entity_id:
+      - light.patio_lights
+      - light.deck_lights
+      - light.ceiling_lamp
+
