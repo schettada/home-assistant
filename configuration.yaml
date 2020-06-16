@@ -6,7 +6,7 @@ homeassistant:
     #   api_password: !secret httppw
 
 http:
-  base_url: !secret url
+#  base_url: !secret url
   ssl_certificate: /ssl/fullchain.pem
   ssl_key: /ssl/privkey.pem
   ip_ban_enabled: False
@@ -84,12 +84,6 @@ alarm_control_panel:
   - platform: manual
     name: Home Alarm
 
-tuya:
-  username: !secret tuyauser
-  password: !secret tuyapw
-  country_code: 1
-  platform: tuya
-
 #image_processing:
 #  - platform: facebox
 #    ip_address: !secret mbox
@@ -100,7 +94,7 @@ tuya:
 tts: !include tts.yaml
 binary_sensor: !include binary_sensors.yaml
 notify: !include notify.yaml
-device_tracker: !include device_tracker.yaml
+#device_tracker: !include device_tracker.yaml
 camera: !include cameras.yaml
 group: !include groups.yaml
 automation: !include automations.yaml
