@@ -4,7 +4,7 @@ esphome:
   board: nodemcuv2
 
 wifi:
-  ssid: "Voyager"
+  ssid: "USS-NoT"
   password: !secret wifi
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails

@@ -189,37 +189,53 @@
 - id: '1565544588374'
   alias: Front Door Open
   trigger:
-  - entity_id: binary_sensor.wyze_frontdoor_sensor
+  - entity_id: binary_sensor.wyze_front_door_sensor
     from: 'off'
     platform: state
     to: 'on'
   condition:
-  - condition: state
-    entity_id: alarm_control_panel.home_alarm
-    state: armed_home
+  - after: '22:00:00'
+    before: 07:00:00
+    condition: time
   action:
   - data:
       message: Front Door Is Open
-      target:
-      - '+13035177090'
-    service: notify.sms
+    service: notify.mobile_app_sj_office
+  - data:
+      message: Front Door Is Open
+    service: notify.mobile_app_arleepta
+  - data:
+      data:
+        method: all
+        type: announce
+      message: Front Door Is Open
+      target: media_player.living_room_echo_show
+    service: notify.alexa_media
 - id: '1565544743523'
   alias: Front Door Closed
   trigger:
-  - entity_id: binary_sensor.wyze_frontdoor_sensor
+  - entity_id: binary_sensor.wyze_front_door_sensor
     from: 'on'
     platform: state
     to: 'off'
   condition:
-  - condition: state
-    entity_id: alarm_control_panel.home_alarm
-    state: armed_home
+  - after: '22:00:00'
+    before: 07:00:00
+    condition: time
   action:
   - data:
       message: Front Door Is Closed
-      target:
-      - '+13035177090'
-    service: notify.sms
+    service: notify.mobile_app_sj_office
+  - data:
+      message: Front Door Is Closed
+    service: notify.mobile_app_arleepta
+  - data:
+      data:
+        method: all
+        type: announce
+      message: Front Door Is Closed
+      target: media_player.living_room_echo_show
+    service: notify.alexa_media
 - id: '1565893219431'
   alias: Patio Lights On
   trigger:
@@ -417,7 +433,6 @@
   - data: {}
     service: light.turn_off
     entity_id:
-      - light.patio_lights
-      - light.deck_lights
-      - light.ceiling_lamp
-
+    - light.patio_lights
+    - light.deck_lights
+    - light.ceiling_lamp
