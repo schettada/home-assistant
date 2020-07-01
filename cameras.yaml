@@ -1,12 +1,12 @@
 - platform: foscam
   name: Baby
-  ip: 10.0.1.101
+  ip: 10.0.40.41
   port: 8180
   username: !secret fcuname
   password: !secret fcpw
 - platform: foscam
   name: Front Door
-  ip: 10.0.1.100
+  ip: 10.0.40.42
   port: 8280
   username: !secret fcuname
   password: !secret fcpw
