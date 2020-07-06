@@ -66,12 +66,12 @@ nest:
   client_id: !secret nest_cid
   client_secret: !secret nest_sec
 
-withings:
-  client_id: !secret withid
-  client_secret: !secret withsecret
-  profiles:
-    - sooraj
-    - arleepta
+# withings:
+#   client_id: !secret withid
+#   client_secret: !secret withsecret
+#   profiles:
+#     - sooraj
+#     - arleepta
 
 eufy:
   username: !secret eufyuname
