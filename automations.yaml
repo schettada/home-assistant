@@ -436,3 +436,14 @@
     - light.patio_lights
     - light.deck_lights
     - light.ceiling_lamp
+- id: '1594054377786'
+  alias: Set Theme
+  description: ''
+  trigger:
+  - event: start
+    platform: homeassistant
+  condition: []
+  action:
+  - data:
+      name: noctis
+    service: frontend.set_theme
