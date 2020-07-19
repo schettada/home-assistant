@@ -48,11 +48,9 @@ recorder:
       - sensor.home_eta
       - binary_sensor.remote_ui
 
-#shelly:
 tplink:
-# wemo:
-#   static:
-#     - 10.0.1.110
+  light:
+    - host: 10.0.40.18
 
 weather:
   - platform: darksky
