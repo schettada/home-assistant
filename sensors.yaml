@@ -28,6 +28,35 @@
       # jeep_location:
       #   value_template: "{{ state_attr('device_tracker.2017_jeep_grand_cherokee', 'latitude'), state_attr('device_tracker.2017_jeep_grand_cherokee', 'longitude') }}"
 
+#Fully Kiosk Browser
+  - platform: rest
+    name: Kitchen Tab
+    json_attributes:
+      - batteryLevel
+      - kioskMode
+      - screenBrightness
+      - motionDetectorState
+      - maintenanceMode
+      - appFreeMemory
+      - appUsedMemory
+      - totalFreeMemory
+      - totalUsedMemory
+      - hostname4
+      - ip4
+      - mac
+      - locationLatitude
+      - locationLongitude
+      - locationAltitude
+      - startUrl
+      - currentPage
+    resource: !secret kiosk
+    value_template: '{{ value_json.isScreenOn }}'
+
+#Fully Kiosk Browser
+  # - platform: mqtt
+  #   state_topic: "fully/deviceInfo/e938b161-357266d5"
+  #   name: "HA Tab"
+  #   value_template: '{{value_json.deviceInfo.batteryLevel}}'
   # - platform: travisci
   #   api_key: !secret travis
   #   repository: 

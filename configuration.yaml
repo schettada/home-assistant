@@ -48,11 +48,9 @@ recorder:
       - sensor.home_eta
       - binary_sensor.remote_ui
 
-#shelly:
 tplink:
-# wemo:
-#   static:
-#     - 10.0.1.110
+  light:
+    - host: 10.0.40.18
 
 weather:
   - platform: darksky
@@ -66,12 +64,12 @@ nest:
   client_id: !secret nest_cid
   client_secret: !secret nest_sec
 
-withings:
-  client_id: !secret withid
-  client_secret: !secret withsecret
-  profiles:
-    - sooraj
-    - arleepta
+# withings:
+#   client_id: !secret withid
+#   client_secret: !secret withsecret
+#   profiles:
+#     - sooraj
+#     - arleepta
 
 eufy:
   username: !secret eufyuname
