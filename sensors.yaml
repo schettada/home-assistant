@@ -17,17 +17,6 @@
 
   - platform: authenticated
 
-  - platform: template
-    sensors:
-      bedroom_motion:
-        friendly_name: Bedroom
-        value_template: "{%if states.sensor.bedroom_multisensor_burglar.state == '8' %}Detected{% elif states.sensor.bedroom_multisensor_burglar.state == '3' %}Tamper{% elif states.sensor.bedroom_multisensor_burglar.state == '0' %}Clear{% endif %}"
-      # jeep_fuel:
-      #   unit_of_measurement: '%'
-      #   value_template: "{{ state_attr('device_tracker.2017_jeep_grand_cherokee', 'fuel_level') }}"      
-      # jeep_location:
-      #   value_template: "{{ state_attr('device_tracker.2017_jeep_grand_cherokee', 'latitude'), state_attr('device_tracker.2017_jeep_grand_cherokee', 'longitude') }}"
-
 #Fully Kiosk Browser
   - platform: rest
     name: Kitchen Tab
@@ -51,6 +40,77 @@
       - currentPage
     resource: !secret kiosk
     value_template: '{{ value_json.isScreenOn }}'
+
+#https://home-assistant.io/components/sensor.systemmonitor/
+  - platform: systemmonitor
+    resources:
+      - type: disk_use_percent
+        arg: /
+      - type: memory_use_percent
+      - type: swap_use_percent
+      - type: processor_use
+      - type: throughput_network_in
+        arg: enp3s0f0
+      - type: throughput_network_out
+        arg: enp3s0f0
+      - type: last_boot
+      - type: ipv4_address
+
+#https://www.home-assistant.io/components/sensor.command_line/
+  - platform: command_line
+    name: CPU Temperature
+    command: "cat /sys/class/thermal/thermal_zone0/temp"
+    unit_of_measurement: "°C"
+    value_template: '{{ value | multiply(0.001) | round(1) }}'
+
+#https://www.home-assistant.io/integrations/uptime/
+  - platform: uptime
+    name: Time Online
+    unit_of_measurement: hours
+
+  - platform: unifigateway
+    host: 10.0.1.1
+    username: !secret ubiquiti_username
+    password: !secret ubiquiti_password
+    monitored_conditions:
+      - www
+      - lan
+      - wlan
+      - alerts
+      - wan
+      - firmware
+      
+#https://www.home-assistant.io/components/template/
+  - platform: template
+    sensors:
+      wired_clients:
+        value_template: "{{ (state_attr('sensor.unifi_gateway_lan','num_user')) }}"
+        entity_id: sensor.unifi_gateway_lan
+      wireless_clients:
+        value_template: "{{ (state_attr('sensor.unifi_gateway_wlan','num_user')) }}"
+        entity_id: sensor.unifi_gateway_wlan
+      guest_clients:
+        value_template: "{{ (state_attr('sensor.unifi_gateway_wlan','num_guest')) }}"
+        entity_id: sensor.unifi_gateway_wlan
+      unifi_gateway_wan_cpu:
+        friendly_name: 'CPU percentage'
+        value_template: "{{ states.sensor.unifi_gateway_wan.attributes['gw_system-stats']['cpu'] }}"
+        unit_of_measurement: '%'
+      unifi_gateway_wan_mem:
+        friendly_name: 'Memory percentage'
+        value_template: "{{ states.sensor.unifi_gateway_wan.attributes['gw_system-stats']['mem'] }}"
+        unit_of_measurement: '%'
+      unifi_gateway_wan_upload:
+        friendly_name: 'WAN Upload'
+        unit_of_measurement: Kbps
+        value_template: "{{ (states.sensor.unifi_gateway_wan.attributes['tx_bytes-r'] / 1024) | int }}"
+      unifi_gateway_wan_download:
+        friendly_name: 'WAN Download'
+        unit_of_measurement: Kbps
+        value_template: "{{ (states.sensor.unifi_gateway_wan.attributes['rx_bytes-r'] / 1024) | int }}"
+      bedroom_motion:
+        friendly_name: Bedroom
+        value_template: "{%if states.sensor.bedroom_multisensor_burglar.state == '8' %}Detected{% elif states.sensor.bedroom_multisensor_burglar.state == '3' %}Tamper{% elif states.sensor.bedroom_multisensor_burglar.state == '0' %}Clear{% endif %}"
 
 #Fully Kiosk Browser
   # - platform: mqtt
