@@ -157,35 +157,6 @@
       - JgBQAAABJJMTERITEhITEhITERMSExEUEjYSNxQ2EjcROBI3EzYSNxI4ERMSExETEhITEhITEhITEhE4EjcTNhI3EzcSNxE4EgAFEgABJUkRAA0FAAAAAAAAAAA=
     service: broadlink.send
   initial_state: true
-- id: '1563920391061'
-  alias: Jeep Fuel Below 30
-  trigger:
-  - below: '30.0'
-    entity_id: sensor.jeep_fuel
-    platform: numeric_state
-  condition: []
-  action:
-  - data:
-      message: Fuel Level Is Below 30%!
-      target:
-      - '+13035177090'
-    service: notify.sms
-  - data:
-      entity_id: automation.jeep_fuel_below_30
-    service: automation.turn_off
-- id: '1564029167699'
-  alias: Jeep Fuel Above 70
-  trigger:
-  - above: '70.0'
-    entity_id: sensor.jeep_fuel
-    platform: numeric_state
-  condition: []
-  action:
-  - data:
-      entity_id:
-      - automation.jeep_fuel_below_30
-      - automation.jeep_fuel_below_15
-    service: automation.turn_on
 - id: '1565544588374'
   alias: Front Door Open
   trigger:
@@ -287,23 +258,6 @@
   - data: {}
     entity_id: light.ceiling_lamp
     service: light.turn_off
-- id: '1571278422231'
-  alias: Jeep Fuel Below 15
-  description: ''
-  trigger:
-  - below: '15'
-    entity_id: sensor.jeep_fuel
-    platform: numeric_state
-  condition: []
-  action:
-  - data:
-      message: Fuel Level Is Below 15%!
-      target:
-      - '+13035177090'
-    service: notify.sms
-  - data:
-      entity_id: automation.jeep_fuel_below_15
-    service: automation.turn_off
 - id: '1571960345827'
   alias: Bedroom Lamp Off
   description: ''
@@ -396,32 +350,6 @@
   - data: {}
     entity_id: light.storage_light
     service: light.turn_off
-- id: '1584945173832'
-  alias: Jeep Fuel Level
-  description: ''
-  trigger:
-  - below: '50'
-    entity_id: sensor.jeep_fuel
-    platform: numeric_state
-  condition:
-  - condition: or
-    conditions:
-    - above: '13'
-      below: '15'
-      condition: numeric_state
-      entity_id: sensor.jeep_fuel
-    - above: '28'
-      below: '30'
-      condition: numeric_state
-      entity_id: sensor.jeep_fuel
-    - above: '38'
-      below: '40'
-      condition: numeric_state
-      entity_id: sensor.jeep_fuel
-  action:
-  - data_template:
-      message: Jeep fuel is {{ trigger.to_state.state }}%
-    service: notify.mobile_app_sj_office
 - id: '1590822055372'
   alias: Turn Lights Off
   description: ''
