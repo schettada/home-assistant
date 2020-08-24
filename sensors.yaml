@@ -1,19 +1,19 @@
-#Morning Commute Google Travel Time Sensor
-  - platform: google_travel_time
-    name: Morning Commute
-    api_key: !secret gmaps
-    origin: !secret haddr
-    destination: !secret oaddr
-    options:
-      mode: driving
-#Evening Commute Google Travel Time Sensor
-  - platform: google_travel_time
-    name: Evening Commute
-    api_key: !secret gmaps
-    origin: !secret oaddr
-    destination: !secret haddr
-    options:
-      mode: driving
+# #Morning Commute Google Travel Time Sensor
+#   - platform: google_travel_time
+#     name: Morning Commute
+#     api_key: !secret gmaps
+#     origin: !secret haddr
+#     destination: !secret oaddr
+#     options:
+#       mode: driving
+# #Evening Commute Google Travel Time Sensor
+#   - platform: google_travel_time
+#     name: Evening Commute
+#     api_key: !secret gmaps
+#     origin: !secret oaddr
+#     destination: !secret haddr
+#     options:
+#       mode: driving
 
   - platform: authenticated
 
@@ -68,46 +68,46 @@
     name: Time Online
     unit_of_measurement: hours
 
-  - platform: unifigateway
-    host: 10.0.1.1
-    username: !secret ubiquiti_username
-    password: !secret ubiquiti_password
-    monitored_conditions:
-      - www
-      - lan
-      - wlan
-      - alerts
-      - wan
-      - firmware
+  # - platform: unifigateway
+  #   host: 10.0.1.1
+  #   username: !secret ubiquiti_username
+  #   password: !secret ubiquiti_password
+  #   monitored_conditions:
+  #     - www
+  #     - lan
+  #     - wlan
+  #     - alerts
+  #     - wan
+  #     - firmware
       
 #https://www.home-assistant.io/components/template/
   - platform: template
     sensors:
-      wired_clients:
-        value_template: "{{ (state_attr('sensor.unifi_gateway_lan','num_user')) }}"
-        entity_id: sensor.unifi_gateway_lan
-      wireless_clients:
-        value_template: "{{ (state_attr('sensor.unifi_gateway_wlan','num_user')) }}"
-        entity_id: sensor.unifi_gateway_wlan
-      guest_clients:
-        value_template: "{{ (state_attr('sensor.unifi_gateway_wlan','num_guest')) }}"
-        entity_id: sensor.unifi_gateway_wlan
-      unifi_gateway_wan_cpu:
-        friendly_name: 'CPU percentage'
-        value_template: "{{ states.sensor.unifi_gateway_wan.attributes['gw_system-stats']['cpu'] }}"
-        unit_of_measurement: '%'
-      unifi_gateway_wan_mem:
-        friendly_name: 'Memory percentage'
-        value_template: "{{ states.sensor.unifi_gateway_wan.attributes['gw_system-stats']['mem'] }}"
-        unit_of_measurement: '%'
-      unifi_gateway_wan_upload:
-        friendly_name: 'WAN Upload'
-        unit_of_measurement: Kbps
-        value_template: "{{ (states.sensor.unifi_gateway_wan.attributes['tx_bytes-r'] / 1024) | int }}"
-      unifi_gateway_wan_download:
-        friendly_name: 'WAN Download'
-        unit_of_measurement: Kbps
-        value_template: "{{ (states.sensor.unifi_gateway_wan.attributes['rx_bytes-r'] / 1024) | int }}"
+      # wired_clients:
+      #   value_template: "{{ (state_attr('sensor.unifi_gateway_lan','num_user')) }}"
+      #   entity_id: sensor.unifi_gateway_lan
+      # wireless_clients:
+      #   value_template: "{{ (state_attr('sensor.unifi_gateway_wlan','num_user')) }}"
+      #   entity_id: sensor.unifi_gateway_wlan
+      # guest_clients:
+      #   value_template: "{{ (state_attr('sensor.unifi_gateway_wlan','num_guest')) }}"
+      #   entity_id: sensor.unifi_gateway_wlan
+      # unifi_gateway_wan_cpu:
+      #   friendly_name: 'CPU percentage'
+      #   value_template: "{{ states.sensor.unifi_gateway_wan.attributes['gw_system-stats']['cpu'] }}"
+      #   unit_of_measurement: '%'
+      # unifi_gateway_wan_mem:
+      #   friendly_name: 'Memory percentage'
+      #   value_template: "{{ states.sensor.unifi_gateway_wan.attributes['gw_system-stats']['mem'] }}"
+      #   unit_of_measurement: '%'
+      # unifi_gateway_wan_upload:
+      #   friendly_name: 'WAN Upload'
+      #   unit_of_measurement: Kbps
+      #   value_template: "{{ (states.sensor.unifi_gateway_wan.attributes['tx_bytes-r'] / 1024) | int }}"
+      # unifi_gateway_wan_download:
+      #   friendly_name: 'WAN Download'
+      #   unit_of_measurement: Kbps
+      #   value_template: "{{ (states.sensor.unifi_gateway_wan.attributes['rx_bytes-r'] / 1024) | int }}"
       bedroom_motion:
         friendly_name: Bedroom
         value_template: "{%if states.sensor.bedroom_multisensor_burglar.state == '8' %}Detected{% elif states.sensor.bedroom_multisensor_burglar.state == '3' %}Tamper{% elif states.sensor.bedroom_multisensor_burglar.state == '0' %}Clear{% endif %}"
