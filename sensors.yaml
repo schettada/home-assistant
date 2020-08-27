@@ -1,20 +1,3 @@
-# #Morning Commute Google Travel Time Sensor
-#   - platform: google_travel_time
-#     name: Morning Commute
-#     api_key: !secret gmaps
-#     origin: !secret haddr
-#     destination: !secret oaddr
-#     options:
-#       mode: driving
-# #Evening Commute Google Travel Time Sensor
-#   - platform: google_travel_time
-#     name: Evening Commute
-#     api_key: !secret gmaps
-#     origin: !secret oaddr
-#     destination: !secret haddr
-#     options:
-#       mode: driving
-
   - platform: authenticated
 
 #Fully Kiosk Browser
@@ -41,6 +24,17 @@
     resource: !secret kiosk
     value_template: '{{ value_json.isScreenOn }}'
 
+#https://www.home-assistant.io/components/sensor.rest/
+  - platform: rest
+    resource: https://s3.amazonaws.com/hassio-version/stable.json
+    name: HA Latest Version
+    value_template: "{{ value_json.homeassistant.default }}"
+    scan_interval: 3600
+
+#https://www.home-assistant.io/components/sensor.version/
+  - platform: version
+    name: HA Installed Version
+
 #https://home-assistant.io/components/sensor.systemmonitor/
   - platform: systemmonitor
     resources:
@@ -65,24 +59,15 @@
 
 #https://www.home-assistant.io/integrations/uptime/
   - platform: uptime
-    name: Time Online
+    name: HA Online Time
     unit_of_measurement: hours
 
-  # - platform: unifigateway
-  #   host: 10.0.1.1
-  #   username: !secret ubiquiti_username
-  #   password: !secret ubiquiti_password
-  #   monitored_conditions:
-  #     - www
-  #     - lan
-  #     - wlan
-  #     - alerts
-  #     - wan
-  #     - firmware
-      
 #https://www.home-assistant.io/components/template/
   - platform: template
     sensors:
+      bedroom_motion:
+        friendly_name: Bedroom
+        value_template: "{%if states.sensor.bedroom_multisensor_burglar.state == '8' %}Detected{% elif states.sensor.bedroom_multisensor_burglar.state == '3' %}Tamper{% elif states.sensor.bedroom_multisensor_burglar.state == '0' %}Clear{% endif %}"
       # wired_clients:
       #   value_template: "{{ (state_attr('sensor.unifi_gateway_lan','num_user')) }}"
       #   entity_id: sensor.unifi_gateway_lan
@@ -108,35 +93,18 @@
       #   friendly_name: 'WAN Download'
       #   unit_of_measurement: Kbps
       #   value_template: "{{ (states.sensor.unifi_gateway_wan.attributes['rx_bytes-r'] / 1024) | int }}"
-      bedroom_motion:
-        friendly_name: Bedroom
-        value_template: "{%if states.sensor.bedroom_multisensor_burglar.state == '8' %}Detected{% elif states.sensor.bedroom_multisensor_burglar.state == '3' %}Tamper{% elif states.sensor.bedroom_multisensor_burglar.state == '0' %}Clear{% endif %}"
 
-#Fully Kiosk Browser
-  # - platform: mqtt
-  #   state_topic: "fully/deviceInfo/e938b161-357266d5"
-  #   name: "HA Tab"
-  #   value_template: '{{value_json.deviceInfo.batteryLevel}}'
-  # - platform: travisci
-  #   api_key: !secret travis
-  #   repository: 
-  #     - home-assistant
+  # - platform: unifigateway
+  #   host: 10.0.1.1
+  #   username: !secret ubiquiti_username
+  #   password: !secret ubiquiti_password
   #   monitored_conditions:
-  #     - last_build_id
-  #     - last_build_state
-
-  # - platform: rest
-  #   resource: https://api.travis-ci.com/repos/schettada/home-assistant/builds
-  #   headers:
-  #     Accept: application/atom+xml
-  #   value_template: "{{ value_json.builds[0].state }}"
-  #   name: "Travis Build Status"
-
-  # - platform: scrape
-  #   resource: https://api.travis-ci.com/repos/schettada/home-assistant/builds
-  #   headers:
-  #     Accept: application/atom+xml
-  #   select: "State"
+  #     - www
+  #     - lan
+  #     - wlan
+  #     - alerts
+  #     - wan
+  #     - firmware
 
 #GeoCode Sensor
 #  - platform: google_geocode
@@ -153,3 +121,20 @@
 #      - type: processor_use
 #      - type: load_15m
 #      - type: ipv4_address
+
+# #Morning Commute Google Travel Time Sensor
+#   - platform: google_travel_time
+#     name: Morning Commute
+#     api_key: !secret gmaps
+#     origin: !secret haddr
+#     destination: !secret oaddr
+#     options:
+#       mode: driving
+# #Evening Commute Google Travel Time Sensor
+#   - platform: google_travel_time
+#     name: Evening Commute
+#     api_key: !secret gmaps
+#     origin: !secret oaddr
+#     destination: !secret haddr
+#     options:
+#       mode: driving
