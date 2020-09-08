@@ -6,6 +6,13 @@ esphome:
 wifi:
   ssid: "USS-NoT"
   password: !secret wifi
+  
+  manual_ip:
+    static_ip: 10.0.60.11
+    gateway: !secret gw
+    subnet: 255.255.255.0
+    dns1: !secret d1
+    dns2: !secret d2
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
@@ -30,7 +37,7 @@ sensor:
       name: "Server Rack Temperature"
     humidity:
       name: "Server Rack Humidity"
-    update_interval: 60s
+    update_interval: 120s
     
 binary_sensor:
   - platform: status

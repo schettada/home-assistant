@@ -27,13 +27,13 @@
 #https://www.home-assistant.io/components/sensor.rest/
   - platform: rest
     resource: https://s3.amazonaws.com/hassio-version/stable.json
-    name: HA Latest Version
+    name: Latest HA Version
     value_template: "{{ value_json.homeassistant.default }}"
     scan_interval: 3600
 
 #https://www.home-assistant.io/components/sensor.version/
   - platform: version
-    name: HA Installed Version
+    name: Current HA Version
 
 #https://home-assistant.io/components/sensor.systemmonitor/
   - platform: systemmonitor
@@ -44,11 +44,12 @@
       - type: swap_use_percent
       - type: processor_use
       - type: throughput_network_in
-        arg: enp3s0f0
+        arg: eno1
       - type: throughput_network_out
-        arg: enp3s0f0
+        arg: eno1
       - type: last_boot
       - type: ipv4_address
+        arg: eno1
 
 #https://www.home-assistant.io/components/sensor.command_line/
   - platform: command_line
@@ -68,43 +69,75 @@
       bedroom_motion:
         friendly_name: Bedroom
         value_template: "{%if states.sensor.bedroom_multisensor_burglar.state == '8' %}Detected{% elif states.sensor.bedroom_multisensor_burglar.state == '3' %}Tamper{% elif states.sensor.bedroom_multisensor_burglar.state == '0' %}Clear{% endif %}"
-      # wired_clients:
-      #   value_template: "{{ (state_attr('sensor.unifi_gateway_lan','num_user')) }}"
-      #   entity_id: sensor.unifi_gateway_lan
-      # wireless_clients:
-      #   value_template: "{{ (state_attr('sensor.unifi_gateway_wlan','num_user')) }}"
-      #   entity_id: sensor.unifi_gateway_wlan
-      # guest_clients:
-      #   value_template: "{{ (state_attr('sensor.unifi_gateway_wlan','num_guest')) }}"
-      #   entity_id: sensor.unifi_gateway_wlan
-      # unifi_gateway_wan_cpu:
-      #   friendly_name: 'CPU percentage'
-      #   value_template: "{{ states.sensor.unifi_gateway_wan.attributes['gw_system-stats']['cpu'] }}"
-      #   unit_of_measurement: '%'
-      # unifi_gateway_wan_mem:
-      #   friendly_name: 'Memory percentage'
-      #   value_template: "{{ states.sensor.unifi_gateway_wan.attributes['gw_system-stats']['mem'] }}"
-      #   unit_of_measurement: '%'
-      # unifi_gateway_wan_upload:
-      #   friendly_name: 'WAN Upload'
-      #   unit_of_measurement: Kbps
-      #   value_template: "{{ (states.sensor.unifi_gateway_wan.attributes['tx_bytes-r'] / 1024) | int }}"
-      # unifi_gateway_wan_download:
-      #   friendly_name: 'WAN Download'
-      #   unit_of_measurement: Kbps
-      #   value_template: "{{ (states.sensor.unifi_gateway_wan.attributes['rx_bytes-r'] / 1024) | int }}"
+      sensor_count:
+        entity_id: []
+        friendly_name: 'Number of Sensors'
+        value_template: '{{ states.sensor | count }}'
+      automation_count:
+        entity_id: []
+        friendly_name: 'Number of Automations'
+        value_template: '{{ states.automation | count }}'
+      script_count:
+        entity_id: []
+        friendly_name: 'Number of Scripts'
+        value_template: '{{ states.script | count }}'
+      switch_count:
+        entity_id: []
+        friendly_name: 'Number of Switches'
+        value_template: '{{ states.switch | count }}'
+      binary_sensor_count:
+        entity_id: []
+        friendly_name: 'Number of Binary Sensors'
+        value_template: '{{ states.binary_sensor | count }}'
+      lights_count:
+        entity_id: []
+        friendly_name: 'Number of Lights'
+        value_template: '{{ states.light | count }}'
+      tracker_count:
+        entity_id: []
+        friendly_name: 'Number of Network Devices'
+        value_template: '{{ states.device_tracker | count }}'
+      zwave_count:
+        entity_id: []
+        friendly_name: 'Number of Zwave Devices'
+        value_template: '{{ states.zwave | count }}'  
+      wired_clients:
+        value_template: "{{ (state_attr('sensor.unifi_gateway_lan','num_user')) }}"
+        entity_id: sensor.unifi_gateway_lan
+      wireless_clients:
+        value_template: "{{ (state_attr('sensor.unifi_gateway_wlan','num_user')) }}"
+        entity_id: sensor.unifi_gateway_wlan
+      guest_clients:
+        value_template: "{{ (state_attr('sensor.unifi_gateway_wlan','num_guest')) }}"
+        entity_id: sensor.unifi_gateway_wlan
+      unifi_gateway_wan_cpu:
+        friendly_name: 'CPU percentage'
+        value_template: "{{ states.sensor.unifi_gateway_wan.attributes['gw_system-stats']['cpu'] }}"
+        unit_of_measurement: '%'
+      unifi_gateway_wan_mem:
+        friendly_name: 'Memory percentage'
+        value_template: "{{ states.sensor.unifi_gateway_wan.attributes['gw_system-stats']['mem'] }}"
+        unit_of_measurement: '%'
+      unifi_gateway_wan_upload:
+        friendly_name: 'WAN Upload'
+        unit_of_measurement: Kbps
+        value_template: "{{ (states.sensor.unifi_gateway_wan.attributes['tx_bytes-r'] / 1024) | int }}"
+      unifi_gateway_wan_download:
+        friendly_name: 'WAN Download'
+        unit_of_measurement: Kbps
+        value_template: "{{ (states.sensor.unifi_gateway_wan.attributes['rx_bytes-r'] / 1024) | int }}"
 
-  # - platform: unifigateway
-  #   host: 10.0.1.1
-  #   username: !secret ubiquiti_username
-  #   password: !secret ubiquiti_password
-  #   monitored_conditions:
-  #     - www
-  #     - lan
-  #     - wlan
-  #     - alerts
-  #     - wan
-  #     - firmware
+  - platform: unifigateway
+    host: 10.0.1.1
+    username: !secret ubiquiti_username
+    password: !secret ubiquiti_password
+    monitored_conditions:
+      - www
+      - lan
+      - wlan
+      - alerts
+      - wan
+      - firmware
 
 #GeoCode Sensor
 #  - platform: google_geocode
