@@ -91,3 +91,7 @@ sensor.ipv4_address_eno1:
   friendly_name: IPv4 Address
 sensor.last_boot:
   friendly_name: Last Reboot
+person.jeep:
+  entity_picture: /local/jeep.png
+sensor.garage_door_status:
+  icon: mdi:garage-alert-variant

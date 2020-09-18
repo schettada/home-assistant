@@ -126,6 +126,9 @@
         friendly_name: 'WAN Download'
         unit_of_measurement: Kbps
         value_template: "{{ (states.sensor.unifi_gateway_wan.attributes['rx_bytes-r'] / 1024) | int }}"
+      garage_door_status:
+        friendly_name: 'Garage Door'
+        value_template: '{{states.cover.garage.state}}'
 
   - platform: unifigateway
     host: 10.0.1.1
