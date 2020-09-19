@@ -23,9 +23,9 @@ sensor.ipv4_address_eth0:
 sensor.processor_use:
   friendly_name: Processor
 sensor.disk_use_percent:
-  friendly_name: Disk
+  friendly_name: Disk Usage
 sensor.memory_use_percent:
-  friendly_name: Memory
+  friendly_name: RAM Usage
 sensor.jeep_fuel:
   friendly_name: Jeep Fuel
   icon: mdi:gas-station
@@ -87,3 +87,11 @@ switch.living_lamp:
   icon: mdi:floor-lamp
 light.deck_lights:
   icon: mdi:track-light
+sensor.ipv4_address_eno1:
+  friendly_name: IPv4 Address
+sensor.last_boot:
+  friendly_name: Last Reboot
+person.jeep:
+  entity_picture: /local/jeep.png
+sensor.garage_door_status:
+  icon: mdi:garage-alert-variant

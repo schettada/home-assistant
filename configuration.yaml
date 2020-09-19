@@ -2,8 +2,8 @@ homeassistant:
   customize: !include customize.yaml
   auth_providers:
     - type: homeassistant
-    # - type: legacy_api_password
-    #   api_password: !secret httppw
+    - type: legacy_api_password
+      api_password: !secret httppw
 
 http:
 #  base_url: !secret url
@@ -101,5 +101,6 @@ sensor: !include sensors.yaml
 input_boolean: !include input_boolean.yaml
 rest_command: !include rest_api.yaml
 light: !include lights.yaml
+cover: !include  cover.yaml
 #switch: !include switches.yaml
 #alert: !include alerts.yaml
