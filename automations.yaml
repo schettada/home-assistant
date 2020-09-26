@@ -380,3 +380,16 @@
   - data:
       name: noctis
     service: frontend.set_theme
+- id: '1600456936550'
+  alias: Update Available
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.updater
+    to: 'on'
+  condition: []
+  action:
+  - service: notify.mobile_app_sj_ise
+    data:
+      message: Hey! You have a new update available!
+  mode: single

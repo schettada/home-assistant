@@ -9,10 +9,12 @@ http:
 #  base_url: !secret url
   ssl_certificate: /ssl/fullchain.pem
   ssl_key: /ssl/privkey.pem
-  ip_ban_enabled: False
-  login_attempts_threshold: 3
+  ip_ban_enabled: true
+  login_attempts_threshold: 5
   use_x_forwarded_for: true
-  trusted_proxies: 10.0.1.4
+  trusted_proxies: 
+    - 10.0.1.4
+    - 10.0.1.3
 
 #default_config:
 config:
@@ -25,6 +27,10 @@ map:
 cloud:
 system_health:
 mobile_app:
+input_text:
+input_datetime:
+input_select:
+input_number:
 person:
 frontend:
   themes: !include_dir_merge_named themes
@@ -101,6 +107,6 @@ sensor: !include sensors.yaml
 input_boolean: !include input_boolean.yaml
 rest_command: !include rest_api.yaml
 light: !include lights.yaml
-cover: !include  cover.yaml
+#cover: !include  cover.yaml
 #switch: !include switches.yaml
 #alert: !include alerts.yaml
