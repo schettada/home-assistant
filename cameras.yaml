@@ -7,7 +7,7 @@
 - platform: foscam
   name: Front Door
   ip: 10.0.40.42
-  port: 8280
+  port: 8180
   username: !secret fcuname
   password: !secret fcpw
 # - platform: foscam
