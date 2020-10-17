@@ -391,7 +391,7 @@
   action:
   - service: notify.mobile_app_sj_ise
     data:
-      message: Hey! You have a new update available!
+      message: You have a new update available - {{ states('sensor.latest_ha_version') }}
   mode: single
 - id: '1601794890426'
   alias: Garage Closed
