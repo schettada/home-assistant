@@ -95,3 +95,7 @@ person.jeep:
   entity_picture: /local/jeep.png
 sensor.garage_door_status:
   icon: mdi:garage-alert-variant
+binary_sensor.wyze_motion_livingroom:
+  icon: mdi:motion-sensor
+binary_sensor.wyze_motion_patio:
+  icon: mdi:motion-sensor
