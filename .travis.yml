@@ -15,6 +15,7 @@ install:
   - pip3 install netdisco
   - pip3 install homeassistant
   - pip3 install colorlog
+  - pip3 install six==1.13.0
 script:
   - hass --version
   - hass -c . --script check_config --info all

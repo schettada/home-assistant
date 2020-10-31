@@ -380,3 +380,67 @@
   - data:
       name: noctis
     service: frontend.set_theme
+- id: '1600456936550'
+  alias: Update Available
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.updater
+    to: 'on'
+  condition: []
+  action:
+  - service: notify.mobile_app_sj_ise
+    data:
+      message: You have a new update available - {{ states('sensor.latest_ha_version') }}
+  mode: single
+- id: '1601794890426'
+  alias: Garage Closed
+  description: ''
+  trigger:
+  - entity_id: sensor.garage_door_status
+    from: open
+    platform: state
+    to: closed
+  condition: []
+  action:
+  - data:
+      message: Garage Is Closed
+    service: notify.mobile_app_sj_ise
+  - data:
+      message: Garage Is Closed
+    service: notify.mobile_app_arleepta
+  mode: single
+- id: '1601794966408'
+  alias: Garage Open
+  description: ''
+  trigger:
+  - entity_id: sensor.garage_door_status
+    from: closed
+    platform: state
+    to: open
+  condition: []
+  action:
+  - data:
+      message: Garage Is Open
+    service: notify.mobile_app_sj_ise
+  - data:
+      message: Garage Is Open
+    service: notify.mobile_app_arleepta
+  mode: single
+- id: '1601795094670'
+  alias: Garage Open For 30
+  description: ''
+  trigger:
+  - entity_id: sensor.garage_door_status
+    platform: state
+    to: open
+    for: 00:30:00
+  condition: []
+  action:
+  - data:
+      message: Garage Is Open For 30 Minutes
+    service: notify.mobile_app_sj_ise
+  - data:
+      message: Garage Is Open For 30 Minutes
+    service: notify.mobile_app_arleepta
+  mode: single

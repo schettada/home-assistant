@@ -68,7 +68,8 @@
     sensors:
       bedroom_motion:
         friendly_name: Bedroom
-        value_template: "{%if states.sensor.bedroom_multisensor_burglar.state == '8' %}Detected{% elif states.sensor.bedroom_multisensor_burglar.state == '3' %}Tamper{% elif states.sensor.bedroom_multisensor_burglar.state == '0' %}Clear{% endif %}"
+        #value_template: "{%if states.sensor.bedroom_multisensor_burglar.state == '8' %}Detected{% elif states.sensor.bedroom_multisensor_burglar.state == '3' %}Tamper{% elif states.sensor.bedroom_multisensor_burglar.state == '0' %}Clear{% endif %}"
+        value_template: "{%if is_state('sensor.bedroom_multisensor_burglar','8') %}Detected{% elif is_state('sensor.bedroom_multisensor_burglar','3') %}Tamper{% elif is_state('sensor.bedroom_multisensor_burglar','0') %}Clear{% endif %}"
       sensor_count:
         entity_id: []
         friendly_name: 'Number of Sensors'
@@ -128,7 +129,8 @@
         value_template: "{{ (states.sensor.unifi_gateway_wan.attributes['rx_bytes-r'] / 1024) | int }}"
       garage_door_status:
         friendly_name: 'Garage Door'
-        value_template: '{{states.cover.garage.state}}'
+        #value_template: '{{states.cover.garage.state}}'
+        value_template: "{{ states('cover.garage') }}"
 
   - platform: unifigateway
     host: 10.0.1.1
@@ -138,7 +140,6 @@
       - www
       - lan
       - wlan
-      - alerts
       - wan
       - firmware
 

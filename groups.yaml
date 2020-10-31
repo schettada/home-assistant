@@ -3,3 +3,4 @@ garage:
   entities:
    - cover.garage
    - sensor.garage_door_status
+   - binary_sensor.hub_myq_gateway
