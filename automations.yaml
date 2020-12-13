@@ -28,6 +28,7 @@
   - data:
       entity_id: automation.sj_enter_office
     service: automation.turn_off
+  mode: single
 - id: '1560486572636'
   alias: SJ Leave Office
   trigger:
@@ -171,43 +172,7 @@
   action:
   - data:
       message: Front Door Is Open
-    service: notify.mobile_app_sj_ise
-  - data:
-      message: Front Door Is Open
-    service: notify.mobile_app_arleepta
-  - data:
-      data:
-        method: all
-        type: announce
-      message: Front Door Is Open
-      target: media_player.living_room_echo_show
-    service: notify.alexa_media
-  mode: single
-- id: '1565544743523'
-  alias: Front Door Closed
-  trigger:
-  - entity_id: binary_sensor.wyze_front_door_sensor
-    from: 'on'
-    platform: state
-    to: 'off'
-  condition:
-  - after: '22:00:00'
-    before: 07:00:00
-    condition: time
-  action:
-  - data:
-      message: Front Door Is Closed
-    service: notify.mobile_app_sj_ise
-  - data:
-      message: Front Door Is Closed
-    service: notify.mobile_app_arleepta
-  - data:
-      data:
-        method: all
-        type: announce
-      message: Front Door Is Closed
-      target: media_player.living_room_echo_show
-    service: notify.alexa_media
+    service: script.notify_all
   mode: single
 - id: '1565893219431'
   alias: Patio Lights On
@@ -391,7 +356,8 @@
   action:
   - service: notify.mobile_app_sj_ise
     data:
-      message: You have a new update available - {{ states('sensor.latest_ha_version') }}
+      message: You have a new update available - {{ states('sensor.latest_ha_version')
+        }}
   mode: single
 - id: '1601794890426'
   alias: Garage Closed
@@ -409,6 +375,13 @@
   - data:
       message: Garage Is Closed
     service: notify.mobile_app_arleepta
+  - service: notify.alexa_media
+    data:
+      data:
+        method: all
+        type: announce
+      message: Garage Is Closing
+      target: media_player.eshow8
   mode: single
 - id: '1601794966408'
   alias: Garage Open
@@ -426,6 +399,13 @@
   - data:
       message: Garage Is Open
     service: notify.mobile_app_arleepta
+  - service: notify.alexa_media
+    data:
+      data:
+        method: all
+        type: announce
+      message: Garage Is Opening
+      target: media_player.eshow8
   mode: single
 - id: '1601795094670'
   alias: Garage Open For 30
@@ -437,10 +417,68 @@
     for: 00:30:00
   condition: []
   action:
+  - service: script.notify_all
+    data:
+      message: Garage is open for more than 30 minutes
+  mode: single
+- id: '1607841897699'
+  alias: Front Door Closed
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.wyze_front_door_sensor
+    from: 'on'
+    platform: state
+    to: 'off'
+  condition:
+  - after: '22:00:00'
+    before: 07:00:00
+    condition: time
+  action:
   - data:
-      message: Garage Is Open For 30 Minutes
+      message: Front Door Is Closed
+    service: script.notify_all
+  mode: single
+- id: '1607842337831'
+  alias: Front Door Status
+  description: ''
+  trigger:
+  - entity_id: binary_sensor.wyze_front_door_sensor
+    from: 'on'
+    platform: state
+    to: 'off'
+  - platform: state
+    entity_id: binary_sensor.wyze_front_door_sensor
+    from: 'off'
+    to: 'on'
+  condition:
+  - after: '22:00:00'
+    before: 07:00:00
+    condition: time
+  action:
+  - data:
+      message: "{% if is_state('binary_sensor.wyze_front_door_sensor', 'on') %}\n\
+        \  Front door is open\n{% else %}\n  Front door is closed\n{% endif %}"
+    service: script.notify_all
+  mode: single
+- id: '1607842673148'
+  alias: Garage Status
+  description: ''
+  trigger:
+  - entity_id: sensor.garage_door_status
+    from: open
+    platform: state
+    to: closed
+  - entity_id: sensor.garage_door_status
+    from: closed
+    platform: state
+    to: open
+  condition: []
+  action:
+  - data:
+      message: Garage Is Closed
     service: notify.mobile_app_sj_ise
-  - data:
-      message: Garage Is Open For 30 Minutes
-    service: notify.mobile_app_arleepta
+  - service: script.notify_all
+    data:
+      message: "{% if is_state('sensor.garage_door_status', 'open') %}\n  Garage is\
+        \ open\n{% else %}\n  Garage is closed\n{% endif %}"
   mode: single
