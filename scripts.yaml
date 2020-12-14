@@ -1,0 +1,23 @@
+notify_all:
+  alias: Notify All
+  sequence:
+  - service: notify.mobile_app_sj_ise
+    data:
+      message: '{{ message }}'
+  - service: notify.mobile_app_arleepta
+    data:
+      message: '{{ message }}'
+  - service: notify.alexa_media
+    data:
+      data:
+        method: all
+        type: announce
+      message: '{{ message }}'
+      target: media_player.eshow8
+  - service: notify.sms
+    data:
+      message: '{{ message }}'
+      target:
+      - '+17207555488'
+  mode: single
+  icon: mdi:bell-ring
