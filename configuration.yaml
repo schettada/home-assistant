@@ -108,6 +108,7 @@ sensor: !include sensors.yaml
 input_boolean: !include input_boolean.yaml
 rest_command: !include rest_api.yaml
 light: !include lights.yaml
+birthdays: !include birthdays.yaml
 #cover: !include  cover.yaml
 #switch: !include switches.yaml
 #alert: !include alerts.yaml
