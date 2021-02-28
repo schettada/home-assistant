@@ -100,7 +100,7 @@ tts: !include tts.yaml
 binary_sensor: !include binary_sensors.yaml
 notify: !include notify.yaml
 #device_tracker: !include device_tracker.yaml
-camera: !include cameras.yaml
+#camera: !include cameras.yaml
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
