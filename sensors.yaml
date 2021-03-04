@@ -61,7 +61,6 @@
 #https://www.home-assistant.io/integrations/uptime/
   - platform: uptime
     name: HA Online Time
-    unit_of_measurement: hours
 
 #https://www.home-assistant.io/components/template/
   - platform: template
