@@ -20,7 +20,7 @@
     state: 'off'
   action:
   - data:
-      message: Sooraj Has Reached Office
+      message: Sooraj Has Reached Office!
       target:
       - '+13035177090'
       - '+13035179860'
