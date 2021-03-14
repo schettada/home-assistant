@@ -1,22 +1,22 @@
 language: python
 cache: pip
-addons:
-  apt:
-    packages:
-      - libudev-dev
-      - libsnmp-dev
-python: "3.8"
+# addons:
+#   apt:
+#     packages:
+#       - libudev-dev
+#       - libsnmp-dev
+python: "3.8.7"
 
 before_install:
   - "mv travis_secrets.yaml secrets.yaml"
   - "sudo mkdir -p /ssl/ && sudo touch /ssl/fullchain.pem"
   - "sudo mkdir -p /ssl/ && sudo touch /ssl/privkey.pem"
 install:
-  - pip3 install netdisco
+  # - pip3 install netdisco
   - pip3 install homeassistant
   - pip3 install colorlog
-  - pip3 install six==1.13.0
-  - pip3 install multidict==4.5
+  # - pip3 install six==1.13.0
+  # - pip3 install multidict==4.5
 script:
   - hass --version
   - hass -c . --script check_config --info all
