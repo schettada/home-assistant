@@ -1,12 +1,22 @@
-notify_all:
-  alias: Notify All
+notify_sooraj:
+  alias: Notify Sooraj
   sequence:
   - service: notify.mobile_app_sj_ise
     data:
       message: '{{ message }}'
+  mode: single
+  icon: mdi:bell-ring
+notify_arleepta:
+  alias: Notify Arleepta
+  sequence:
   - service: notify.mobile_app_arleepta
     data:
       message: '{{ message }}'
+  mode: single
+  icon: mdi:bell-ring
+notify_alexa:
+  alias: Notify Alexa
+  sequence:
   - service: notify.alexa_media
     data:
       data:
@@ -14,6 +24,50 @@ notify_all:
         type: announce
       message: '{{ message }}'
       target: media_player.eshow8
+  mode: single
+  icon: mdi:bell-ring
+notify_all:
+  alias: Notify All
+  sequence:
+  - service: script.notify_sooraj
+    data:
+      message: '{{ message }}'
+  - service: script.notify_arleepta
+    data:
+      message: '{{ message }}'
+  - service: script.notify_alexa
+    data:
+      data:
+        method: all
+        type: announce
+      message: '{{ message }}'
+      target: media_player.eshow8
+  mode: single
+  icon: mdi:bell-ring
+notify_all_with_sms:
+  alias: Notify All With SMS
+  sequence:
+  - service: script.notify_sooraj
+    data:
+      message: '{{ message }}'
+  - service: script.notify_arleepta
+    data:
+      message: '{{ message }}'
+  - service: script.notify_alexa
+    data:
+      data:
+        method: all
+        type: announce
+      message: '{{ message }}'
+      target: media_player.eshow8
+  - service: script.notify_sms
+    data:
+      message: '{{ message }}'
+  mode: single
+  icon: mdi:bell-ring
+notify_sms:
+  alias: Notify SMS
+  sequence:
   - service: notify.sms
     data:
       message: '{{ message }}'

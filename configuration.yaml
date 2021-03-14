@@ -42,7 +42,8 @@ logger:
 
 recorder:
   db_url: !secret mysql
-#  purge_keep_days: 3
+  purge_keep_days: 20
+#  auto_purge: false
   exclude:
     domains:
       - automation
@@ -99,7 +100,7 @@ tts: !include tts.yaml
 binary_sensor: !include binary_sensors.yaml
 notify: !include notify.yaml
 #device_tracker: !include device_tracker.yaml
-camera: !include cameras.yaml
+#camera: !include cameras.yaml
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
@@ -107,6 +108,7 @@ sensor: !include sensors.yaml
 input_boolean: !include input_boolean.yaml
 rest_command: !include rest_api.yaml
 light: !include lights.yaml
+birthdays: !include birthdays.yaml
 #cover: !include  cover.yaml
 #switch: !include switches.yaml
 #alert: !include alerts.yaml

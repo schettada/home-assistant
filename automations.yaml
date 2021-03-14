@@ -130,6 +130,7 @@
       - JgCMAJOUEjgSNxI4ERQRExITEhMRExI4ETgSOBETEhMSExEUERMSExI3EhMSExETEhMSExITETgSExE4EjcSOBI3EjgROBIABf+TlBI4ETgSNxITEhMSExETEhMSNxI4EjcSExITERMSExITEhMROBITERMSExITEhMRExI4ERMSOBI3EjgROBI4ETgSAA0FAAAAAAAAAAAAAAAA
     service: broadlink.send
   initial_state: true
+  mode: single
 - id: '1561950212865'
   alias: Spotlights On
   trigger:
@@ -158,22 +159,6 @@
       - JgBQAAABJJMTERITEhITEhITERMSExEUEjYSNxQ2EjcROBI3EzYSNxI4ERMSExETEhITEhITEhITEhE4EjcTNhI3EzcSNxE4EgAFEgABJUkRAA0FAAAAAAAAAAA=
     service: broadlink.send
   initial_state: true
-- id: '1565544588374'
-  alias: Front Door Open
-  trigger:
-  - entity_id: binary_sensor.wyze_front_door_sensor
-    from: 'off'
-    platform: state
-    to: 'on'
-  condition:
-  - after: '22:00:00'
-    before: 07:00:00
-    condition: time
-  action:
-  - data:
-      message: Front Door Is Open
-    service: script.notify_all
-  mode: single
 - id: '1565893219431'
   alias: Patio Lights On
   trigger:
@@ -200,31 +185,6 @@
   - data: {}
     entity_id: light.ceiling_lamp
     service: light.turn_on
-- id: '1566356608291'
-  alias: Patio Lights Off
-  trigger:
-  - at: '22:30:00'
-    platform: time
-  condition:
-  - condition: state
-    entity_id: light.patio_lights
-    state: 'on'
-  action:
-  - entity_id: light.patio_lights
-    service: light.turn_off
-- id: '1569720866890'
-  alias: Ceiling Lamp Off
-  trigger:
-  - at: '22:30:00'
-    platform: time
-  condition:
-  - condition: state
-    entity_id: light.ceiling_lamp
-    state: 'on'
-  action:
-  - data: {}
-    entity_id: light.ceiling_lamp
-    service: light.turn_off
 - id: '1571960345827'
   alias: Bedroom Lamp Off
   description: ''
@@ -359,54 +319,6 @@
       message: You have a new update available - {{ states('sensor.latest_ha_version')
         }}
   mode: single
-- id: '1601794890426'
-  alias: Garage Closed
-  description: ''
-  trigger:
-  - entity_id: sensor.garage_door_status
-    from: open
-    platform: state
-    to: closed
-  condition: []
-  action:
-  - data:
-      message: Garage Is Closed
-    service: notify.mobile_app_sj_ise
-  - data:
-      message: Garage Is Closed
-    service: notify.mobile_app_arleepta
-  - service: notify.alexa_media
-    data:
-      data:
-        method: all
-        type: announce
-      message: Garage Is Closing
-      target: media_player.eshow8
-  mode: single
-- id: '1601794966408'
-  alias: Garage Open
-  description: ''
-  trigger:
-  - entity_id: sensor.garage_door_status
-    from: closed
-    platform: state
-    to: open
-  condition: []
-  action:
-  - data:
-      message: Garage Is Open
-    service: notify.mobile_app_sj_ise
-  - data:
-      message: Garage Is Open
-    service: notify.mobile_app_arleepta
-  - service: notify.alexa_media
-    data:
-      data:
-        method: all
-        type: announce
-      message: Garage Is Opening
-      target: media_player.eshow8
-  mode: single
 - id: '1601795094670'
   alias: Garage Open For 30
   description: ''
@@ -420,23 +332,6 @@
   - service: script.notify_all
     data:
       message: Garage is open for more than 30 minutes
-  mode: single
-- id: '1607841897699'
-  alias: Front Door Closed
-  description: ''
-  trigger:
-  - entity_id: binary_sensor.wyze_front_door_sensor
-    from: 'on'
-    platform: state
-    to: 'off'
-  condition:
-  - after: '22:00:00'
-    before: 07:00:00
-    condition: time
-  action:
-  - data:
-      message: Front Door Is Closed
-    service: script.notify_all
   mode: single
 - id: '1607842337831'
   alias: Front Door Status
@@ -474,9 +369,6 @@
     to: open
   condition: []
   action:
-  - data:
-      message: Garage Is Closed
-    service: notify.mobile_app_sj_ise
   - service: script.notify_all
     data:
       message: "{% if is_state('sensor.garage_door_status', 'open') %}\n  Garage is\
