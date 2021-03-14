@@ -18,8 +18,9 @@ install:
   - pip3 install six==1.13.0
   - pip3 install multidict==4.5
 script:
-  - hass --version
+  - ha core info
 #  - hass -c . --script check_config --info all
+  - ha core check --log-level info
 notifications:
   email:
     recipients:
