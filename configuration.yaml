@@ -27,7 +27,6 @@ map:
 cloud:
 system_health:
 mobile_app:
-input_text:
 input_datetime:
 input_select:
 input_number:
@@ -82,8 +81,8 @@ eufy:
   username: !secret eufyuname
   password: !secret eufypw
 
-zwave:
-  usb_path: /dev/ttyACM0
+# zwave:
+#   usb_path: /dev/ttyACM0
 
 alarm_control_panel:
   - platform: manual
@@ -109,6 +108,7 @@ input_boolean: !include input_boolean.yaml
 rest_command: !include rest_api.yaml
 light: !include lights.yaml
 birthdays: !include birthdays.yaml
+input_text: !include input_text.yaml
 #cover: !include  cover.yaml
 #switch: !include switches.yaml
 #alert: !include alerts.yaml

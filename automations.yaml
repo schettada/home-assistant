@@ -374,3 +374,15 @@
       message: "{% if is_state('sensor.garage_door_status', 'open') %}\n  Garage is\
         \ open\n{% else %}\n  Garage is closed\n{% endif %}"
   mode: single
+- id: '1615688518221'
+  alias: Send a camera snapshot when motion is detected
+  description: ''
+  use_blueprint:
+    path: vorion/send-camera-snapshot-notification-on-motion.yaml
+    input:
+      notification_message: '{{ motion_sensor_name }} detected movement!'
+      motion_sensor: binary_sensor.wyze_motion_patio
+      camera: camera.front_door
+      notify_device: 34c9f48f197b44059981d78691fbd276
+      is_ios: true
+      delay: 5
