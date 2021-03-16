@@ -81,8 +81,8 @@ eufy:
   username: !secret eufyuname
   password: !secret eufypw
 
-# zwave:
-#   usb_path: /dev/ttyACM0
+zwave:
+  usb_path: /dev/ttyACM0
 
 alarm_control_panel:
   - platform: manual
