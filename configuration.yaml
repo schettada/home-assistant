@@ -63,8 +63,8 @@ weather:
     api_key: !secret darksky
     mode: daily
 
-ifttt:
-  key: !secret ifkey
+# ifttt:
+#   key: !secret ifkey
 
 nest:
   client_id: !secret nest_cid
@@ -98,8 +98,6 @@ alarm_control_panel:
 tts: !include tts.yaml
 binary_sensor: !include binary_sensors.yaml
 notify: !include notify.yaml
-#device_tracker: !include device_tracker.yaml
-#camera: !include cameras.yaml
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
@@ -109,6 +107,9 @@ rest_command: !include rest_api.yaml
 light: !include lights.yaml
 birthdays: !include birthdays.yaml
 input_text: !include input_text.yaml
+media_player: !include media_players.yaml
 #cover: !include  cover.yaml
 #switch: !include switches.yaml
 #alert: !include alerts.yaml
+#device_tracker: !include device_tracker.yaml
+#camera: !include cameras.yaml

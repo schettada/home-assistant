@@ -1,0 +1,3 @@
+  - platform: androidtv
+    name: Fire TV
+    host: 10.0.40.12
