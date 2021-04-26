@@ -5,7 +5,7 @@ cache: pip
 #     packages:
 #       - libudev-dev
 #       - libsnmp-dev
-python: "3.7"
+#python: "3.7"
 
 before_install:
   - "mv travis_secrets.yaml secrets.yaml"
