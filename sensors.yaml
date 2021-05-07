@@ -70,35 +70,27 @@
         #value_template: "{%if states.sensor.bedroom_multisensor_burglar.state == '8' %}Detected{% elif states.sensor.bedroom_multisensor_burglar.state == '3' %}Tamper{% elif states.sensor.bedroom_multisensor_burglar.state == '0' %}Clear{% endif %}"
         value_template: "{%if is_state('sensor.bedroom_multisensor_burglar','8') %}Detected{% elif is_state('sensor.bedroom_multisensor_burglar','3') %}Tamper{% elif is_state('sensor.bedroom_multisensor_burglar','0') %}Clear{% endif %}"
       sensor_count:
-        entity_id: []
         friendly_name: 'Number of Sensors'
         value_template: '{{ states.sensor | count }}'
       automation_count:
-        entity_id: []
         friendly_name: 'Number of Automations'
         value_template: '{{ states.automation | count }}'
       script_count:
-        entity_id: []
         friendly_name: 'Number of Scripts'
         value_template: '{{ states.script | count }}'
       switch_count:
-        entity_id: []
         friendly_name: 'Number of Switches'
         value_template: '{{ states.switch | count }}'
       binary_sensor_count:
-        entity_id: []
         friendly_name: 'Number of Binary Sensors'
         value_template: '{{ states.binary_sensor | count }}'
       lights_count:
-        entity_id: []
         friendly_name: 'Number of Lights'
         value_template: '{{ states.light | count }}'
       tracker_count:
-        entity_id: []
         friendly_name: 'Number of Network Devices'
         value_template: '{{ states.device_tracker | count }}'
       zwave_count:
-        entity_id: []
         friendly_name: 'Number of Zwave Devices'
         value_template: '{{ states.zwave | count }}'  
       wired_clients:
