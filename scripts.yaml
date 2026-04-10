@@ -1,0 +1,110 @@
+notify_sooraj:
+  alias: Notify Sooraj
+  sequence:
+  - service: notify.mobile_app_sj
+    data:
+      message: '{{ message }}'
+      title: '{{ title }}'
+  mode: parallel
+  icon: mdi:bell-ring
+  max: 10
+notify_arleepta:
+  alias: Notify Arleepta
+  sequence:
+  - service: notify.mobile_app_arleepta
+    data:
+      message: '{{ message }}'
+      title: '{{ title }}'
+  mode: parallel
+  icon: mdi:bell-ring
+  max: 10
+notify_all:
+  alias: Notify All
+  sequence:
+  - if:
+    - condition: state
+      entity_id: input_boolean.guest_mode
+      state: 'off'
+    then:
+    - data:
+        message: '{{ message }}'
+        title: '{{ title }}'
+      action: script.notify_phones
+    else:
+    - data:
+        message: '{{ message }}'
+        title: '{{ title }}'
+      action: script.notify_phones
+  mode: queued
+  icon: mdi:bell-ring
+  max: 10
+critical_notification:
+  alias: Critical Notification
+  sequence:
+  - service: notify.sms
+    data:
+      message: '{{ message }}'
+      target:
+      - +1720-755-5488
+      - +1303-517-7090
+      - +1303-517-9860
+  mode: single
+  icon: mdi:bell-ring
+door_bell:
+  alias: door bell
+  sequence:
+  - data:
+      media_content_type: sound
+      media_content_id: amzn_sfx_doorbell_chime_01
+    action: media_player.play_media
+    target:
+      entity_id: media_player.all_alexa
+  mode: single
+  icon: mdi:bell-ring-outline
+door_alert:
+  alias: Door Alert
+  sequence:
+  - if:
+    - condition: state
+      entity_id: input_boolean.guest_mode
+      state: 'off'
+    then:
+    - data:
+        media_content_id: clock_01
+        media_content_type: sound
+      action: media_player.play_media
+      target:
+        entity_id: media_player.all_alexa
+  mode: single
+  icon: mdi:door-open
+notify_phones:
+  alias: Notify Phones
+  sequence:
+  - service: notify.mobile_app_sj
+    data:
+      message: '{{ message }}'
+      title: '{{ title }}'
+  - service: notify.mobile_app_arleepta
+    data:
+      message: '{{ message }}'
+      title: '{{ title }}'
+  mode: single
+  icon: mdi:cellphone-message
+alexa_announcement:
+  alias: Alexa Announcement
+  sequence:
+  - if:
+    - condition: state
+      entity_id: input_boolean.guest_mode
+      state: 'off'
+    then:
+    - data:
+        target:
+        - media_player.loft_echo_dot
+        - media_player.great_room_echo_show
+        - media_player.basement_echo_dot
+        - media_player.bedroom_echo_dot
+        message: '"{{ message }}"'
+      action: notify.alexa_media
+  mode: single
+  icon: mdi:bell-ring

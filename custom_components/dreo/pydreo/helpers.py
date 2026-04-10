@@ -1,0 +1,211 @@
+"""Helper functions for PyDreo library."""
+
+import hashlib
+import logging
+import time
+import json
+from typing import Optional, Union
+import re
+import requests
+
+_LOGGER = logging.getLogger(__name__)
+
+API_TIMEOUT = 30
+
+NUMERIC = Optional[Union[int, float, str]]
+
+
+class Helpers:
+    """Dreo Helper Functions."""
+
+    @staticmethod
+    def req_headers(pydreo_manager) -> dict:
+        """Build header for api requests."""
+        headers = {
+            "ua": "dreo/2.8.2",
+            "lang": "en",
+            "content-type": "application/json; charset=UTF-8",
+            "accept-encoding": "gzip",
+            "user-agent": "okhttp/4.9.1",
+        }
+        if pydreo_manager.token is not None:
+            headers["authorization"] = f"Bearer {pydreo_manager.token}"
+        return headers
+
+    @staticmethod
+    def req_body_base() -> dict:
+        """Return universal keys for body of api requests."""
+        return {"acceptLanguage": "en"}
+
+    @classmethod
+    def req_body(cls, pydreo_manager, type_) -> dict:
+        """Builder for body of api requests."""
+        body = {}
+
+        # These magic headers are needed to make the Dreo API do what we want it to do
+        if type_ == "login":
+            body = {**cls.req_body_base()}
+            body["client_id"] = "7de37c362ee54dcf9c4561812309347a"
+            body["client_secret"] = "32dfa0764f25451d99f94e1693498791"
+            body["email"] = pydreo_manager.username
+            body["encrypt"] = "ciphertext"
+            body["grant_type"] = "email-password"
+            body["himei"] = "faede31549d649f58864093158787ec9"
+            body["password"] = cls.hash_password(pydreo_manager.password)
+            body["scope"] = "all"
+
+        elif type_ == "devicelist":
+            body = {**cls.req_body_base()}
+            body["method"] = "devices"
+            body["pageNo"] = "1"
+            body["pageSize"] = "100"
+
+        return body
+
+    @staticmethod
+    def calculate_hex(hex_string) -> float:
+        """Credit for conversion to itsnotlupus/vesync_wsproxy."""
+        hex_conv = hex_string.split(":")
+        converted_hex = (int(hex_conv[0], 16) + int(hex_conv[1], 16)) / 8192
+
+        return converted_hex
+
+    @staticmethod
+    def hash_password(string) -> str:
+        """Encode password."""
+        return hashlib.md5(string.encode()).hexdigest()
+
+    shouldredact = False
+
+    @classmethod
+    def redactor(cls, stringvalue: str) -> str:
+        """Redact sensitive strings from debug output."""
+        if cls.shouldredact:
+            stringvalue = re.sub(
+                r"".join(
+                    (
+                        "(?i)",
+                        '((?<=token": ")|',
+                        '(?<=password": ")|',
+                        '(?<=email": ")|',
+                        '(?<=tk": ")|',
+                        '(?<=accountId": ")|',
+                        '(?<=authKey": ")|',
+                        '(?<=uuid": ")|',
+                        '(?<=cid": ")|',
+                        '(?<=authorization": ")|',
+                        '(?<=client_secret": ")|',
+                        '(?<=client_id": ")|',
+                        '(?<=himei": "))',
+                        '[^"]+',
+                    )
+                ),
+                "##_REDACTED_##",
+                stringvalue,
+            )
+        return stringvalue
+
+    @staticmethod
+    def call_api(
+        url: str,
+        api: str,
+        method: str,
+        json_object: Optional[dict] = None,
+        headers: Optional[dict] = None,
+    ) -> tuple:
+        """Make API calls by passing endpoint, header and body."""
+        response = None
+        status_code = None
+        r = None # Response object
+        try:
+            _LOGGER.debug("call_api: =======call_api=============================")
+            _LOGGER.debug("call_api: [%s] calling '%s' api", method, api)
+            _LOGGER.debug("call_api: API call URL: \n  %s%s", url, api)
+            _LOGGER.debug(
+                "call_api: API call headers: \n  %s", Helpers.redactor(
+                    json.dumps(headers))
+            )
+            _LOGGER.debug(
+                "call_api: API call json: \n  %s", Helpers.redactor(
+                    json.dumps(json_object))
+            )
+            if method.lower() == "get":
+                r = requests.get(
+                    url + api,
+                    headers=headers,
+                    params={**json_object, "timestamp": Helpers.api_timestamp()},
+                    timeout=API_TIMEOUT,
+                )
+            elif method.lower() == "post":
+                r = requests.post(
+                    url + api,
+                    json=json_object,
+                    headers=headers,
+                    params={"timestamp": Helpers.api_timestamp()},
+                    timeout=API_TIMEOUT,
+                )
+            elif method.lower() == "put":
+                r = requests.put(
+                    url + api, json=json_object, headers=headers, timeout=API_TIMEOUT
+                )
+        except requests.exceptions.RequestException as exception:
+            _LOGGER.error("call_api: Request failed - %s", exception)
+        else:
+            if r.status_code == 200:
+                status_code = 200
+                if r.content:
+                    response = r.json()
+                    _LOGGER.debug(
+                        "call_api: API response: \n\n  %s \n ",
+                        Helpers.redactor(json.dumps(response)),
+                    )
+            else:
+                status_code = r.status_code
+                _LOGGER.error("call_api: API request failed with status code %s for %s%s",
+                             r.status_code, url, api)
+        return response, status_code
+
+    @staticmethod
+    def code_check(response_dict: dict) -> bool:
+        """Test if code == 0 for successful API call."""
+        if response_dict is None:
+            _LOGGER.error("Helpers::code_check - response_dict is None")
+            return False
+        if isinstance(response_dict, dict) and response_dict.get("code") == 0:
+            return True
+        return False
+
+    @staticmethod
+    def api_timestamp() -> str:
+        """Timestamp in correct format for API calls"""
+        return str(int(time.time() * 1000))
+
+    @staticmethod
+    def name_from_value(name_value_list : list[tuple], value) -> str | None:
+        """Return name from list of tuples."""
+        if not name_value_list:
+            _LOGGER.error("Helpers::name_from_value - name_value_list is None")
+            return None
+        for name, val in name_value_list:
+            if val == value:
+                return name
+        return None
+
+    @staticmethod
+    def value_from_name(name_value_list : list[tuple], name) -> any:
+        """Return value from list of tuples."""
+        if not name_value_list:
+            _LOGGER.error("Helpers::value_from_name - name_value_list is None")
+            return None
+        for n, val in name_value_list:
+            if n == name:
+                return val
+        return None
+
+    @staticmethod
+    def get_name_list(name_value_list : list[tuple]) -> list[str]:
+        """Return list of names from list of tuples."""
+        if not name_value_list:
+            _LOGGER.error("Helpers::get_name_list - name_value_list is None")
+            return []
+        return [name for name, _ in name_value_list]

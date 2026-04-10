@@ -1,0 +1,49 @@
+---
+homeassistant:
+  auth_providers:
+    - type: homeassistant
+    - type: trusted_networks
+      trusted_networks:
+        - 10.2.1.22
+      trusted_users:
+        10.2.1.22: ea29ff3050994dcaa884df0df2b9dd10
+  auth_mfa_modules:
+    - type: totp
+
+default_config:
+
+http:
+  ssl_certificate: !secret ssl_crt
+  ssl_key: !secret ssl_key
+  ip_ban_enabled: true
+  login_attempts_threshold: 10
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 10.2.1.0/24
+
+frontend:
+  themes: !include_dir_merge_named themes
+
+logger:
+  default: warning
+
+recorder:
+  db_url: !secret mysql
+  purge_keep_days: 15
+  exclude:
+    domains:
+      - automation
+      - group
+      - climate
+      - camera
+      - remote
+      - sun
+      - weather
+      - update
+      - image
+      - image_processing
+
+automation: !include automations.yaml
+scene: !include scenes.yaml
+script: !include scripts.yaml
+# image_processing: !include image_processing.yaml
