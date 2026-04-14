@@ -338,6 +338,7 @@
       minutes: 5
       seconds: 0
     trigger: state
+    enabled: true
   conditions:
   - condition: and
     conditions:
@@ -367,9 +368,11 @@
   alias: Rack Light On/Off
   description: ''
   triggers:
-  - trigger: state
-    entity_id:
-    - event.rack_light_switch_button
+  - domain: mqtt
+    device_id: 3b8b80a17913ddb5ed8063e241f17e18
+    type: action
+    subtype: single
+    trigger: device
   conditions: []
   actions:
   - data: {}
@@ -634,6 +637,7 @@
     type: unlocked
     id: gd_unlock
     trigger: device
+    enabled: true
   - device_id: f6fb94ee1b2f598b481ded658a4af30b
     domain: lock
     entity_id: 191d58b23eef085ccf6f38511077e5cd
@@ -730,6 +734,7 @@
     zone: zone.home
     event: enter
     trigger: zone
+    enabled: true
   - entity_id: person.sooraj_chettada
     zone: zone.home
     event: enter
@@ -936,6 +941,7 @@
       minutes: 15
       seconds: 0
     id: noone
+    enabled: true
   conditions: []
   actions:
   - choose:
@@ -1185,6 +1191,7 @@
     domain: binary_sensor
     trigger: device
     id: turnon
+    enabled: true
   - type: not_occupied
     device_id: 8eb24ac06958179d41b9e54f44553268
     entity_id: f3b2a5ea13aad341b431767c21bad3ce
