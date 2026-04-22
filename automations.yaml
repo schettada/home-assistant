@@ -480,7 +480,7 @@
     - binary_sensor.basement_drain_water_leak
     - binary_sensor.master_bathroom_water_leak
     - binary_sensor.kitchen_sink_water_leak
-    - binary_sensor.neeva_bathroom_water_leak
+    - binary_sensor.guest_bathroom_water_leak
     to:
     - 'on'
     trigger: state
