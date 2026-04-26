@@ -126,7 +126,7 @@ SENSORS: tuple[DreoSensorEntityDescription, ...] = (
     ),
     DreoSensorEntityDescription(
         key="Ambient Light Humidifier",
-        translation_key="light_HM",
+        translation_key="light_hm",
         device_class=SensorDeviceClass.ENUM,
         options=[LIGHT_ON, LIGHT_OFF],
         value_fn=lambda device: device.rgblevel,
@@ -134,7 +134,7 @@ SENSORS: tuple[DreoSensorEntityDescription, ...] = (
     ),
     DreoSensorEntityDescription(
         key="Use since cleaning HM",
-        translation_key="use_hours_HM",
+        translation_key="use_hours_hm",
         device_class=SensorDeviceClass.DURATION,
         state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement_fn=lambda device: "h",

@@ -1221,3 +1221,29 @@
         entity_id: light.pooja_room
       data: {}
   mode: single
+- id: '1777007700138'
+  alias: 3D Printer Control
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - sensor.k1se_print_status
+    to:
+    - Completed
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+  conditions:
+  - condition: device
+    type: is_on
+    device_id: 635d9399236aa76600d1968fea2a317a
+    entity_id: 5c69f2d26963dd13547917794caa3321
+    domain: switch
+  actions:
+  - action: notify.mobile_app_sj
+    metadata: {}
+    data:
+      message: 3D Print Complete
+      title: Info Message
+  mode: single

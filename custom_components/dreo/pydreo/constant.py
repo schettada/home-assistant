@@ -47,12 +47,20 @@ HUMIDITY_KEY = "rh"
 WORKTIME_KEY = "worktime"
 TEMP_TARGET_REACHED_KEY = "reachtarget"
 TARGET_AUTO_HUMIDITY_KEY = "rhautolevel"
+TARGET_SLEEP_HUMIDITY_KEY = "rhsleeplevel"
+FOG_LEVEL_KEY = "foglevel"
 TARGET_HUMIDITY_KEY = "rhlevel"
+TARGET_SLEEP_HUMIDITY_KEY = "rhsleeplevel"
 ATMON_KEY = 'atmon'
 ATMCOLOR_KEY = 'atmcolor'
 ATMBRI_KEY = 'atmbri'
 ATMMODE_KEY = 'atmmode'
+FOGLEVEL_KEY = "foglevel"
+LEDKEPTON_KEY = "ledkepton"
+LEDLEVEL_KEY = "ledlevel"
 RGB_LEVEL = 'rgblevel'
+RGB_TH = 'rgbth'
+LED_LEVEL_KEY = "ledlevel"
 SCHEDULE_ENABLE = 'scheon'
 
 # Preferences Names
@@ -264,3 +272,4 @@ class DreoHeaterMode(StrEnum):
     HOTAIR = "hotair"
     ECO = "eco"
     OFF = "off"
+

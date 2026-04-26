@@ -300,7 +300,9 @@ class PyDreoAirCirculator(PyDreoFanBase):
     def vertical_osc_angle_top(self) -> int:
         """Get the current top vertical oscillation angle."""
         if self._cruise_conf is not None:
-            return int(self._cruise_conf.split(",")[0])
+            parts = self._cruise_conf.split(",")
+            if len(parts) >= 4:
+                return int(parts[0])
         return None
 
     @vertical_osc_angle_top.setter
@@ -308,11 +310,14 @@ class PyDreoAirCirculator(PyDreoFanBase):
         """Set the top vertical oscillation angle."""
         _LOGGER.debug("vertical_osc_angle_top.setter: Setting top angle")
         if self._cruise_conf is not None:
-            bottom_angle = int(self._cruise_conf.split(",")[2])
+            cruise_conf_values = self._cruise_conf.split(',')
+            if len(cruise_conf_values) < 4:
+                _LOGGER.warning("vertical_osc_angle_top: cruise_conf has unexpected format: %s", self._cruise_conf)
+                return
+            bottom_angle = int(cruise_conf_values[2])
             # 30 deg is the minimum top-bottom and left-right difference for the tested fan (DR-HAF003S)
             if value - bottom_angle < MIN_OSC_ANGLE_DIFFERENCE:
                 raise ValueError(f"Top angle must be at least {MIN_OSC_ANGLE_DIFFERENCE} greater than bottom angle")
-            cruise_conf_values = self._cruise_conf.split(',')
             # Note that HA seems to send this in as a float, so we need to convert to int just in case
             new_value = int(value)
             if int(cruise_conf_values[0]) == new_value:
@@ -325,7 +330,9 @@ class PyDreoAirCirculator(PyDreoFanBase):
     def vertical_osc_angle_bottom(self) -> int:
         """Get the current bottom vertical oscillation angle."""
         if self._cruise_conf is not None:
-            return int(self._cruise_conf.split(",")[2])
+            parts = self._cruise_conf.split(",")
+            if len(parts) >= 4:
+                return int(parts[2])
         return None
 
     @vertical_osc_angle_bottom.setter
@@ -333,11 +340,14 @@ class PyDreoAirCirculator(PyDreoFanBase):
         """Set the bottom vertical oscillation angle."""
         _LOGGER.debug("vertical_osc_angle_bottom: vertical_osc_angle_bottom.setter: Setting bottom angle")
         if self._cruise_conf is not None:
-            top_angle = int(self._cruise_conf.split(",")[0])
+            cruise_conf_values = self._cruise_conf.split(',')
+            if len(cruise_conf_values) < 4:
+                _LOGGER.warning("vertical_osc_angle_bottom: cruise_conf has unexpected format: %s", self._cruise_conf)
+                return
+            top_angle = int(cruise_conf_values[0])
             # 30 deg is the minimum top-bottom and left-right difference for the tested fan (DR-HAF003S)
             if top_angle - value < MIN_OSC_ANGLE_DIFFERENCE:
                 raise ValueError(f"Bottom angle must be at least {MIN_OSC_ANGLE_DIFFERENCE} less than top angle")
-            cruise_conf_values = self._cruise_conf.split(',')
             # Note that HA seems to send this in as a float, so we need to convert to int just in case
             new_value = int(value)
             if int(cruise_conf_values[2]) == new_value:
@@ -350,7 +360,9 @@ class PyDreoAirCirculator(PyDreoFanBase):
     def horizontal_osc_angle_right(self) -> int:
         """Get the current right horizontal oscillation angle."""
         if self._cruise_conf is not None:
-            return int(self._cruise_conf.split(",")[1])
+            parts = self._cruise_conf.split(",")
+            if len(parts) >= 4:
+                return int(parts[1])
         return None
 
     @horizontal_osc_angle_right.setter
@@ -358,11 +370,14 @@ class PyDreoAirCirculator(PyDreoFanBase):
         """Set the right horizontal oscillation angle."""
         _LOGGER.debug("horizontal_osc_angle_right: horizontal_osc_angle_right.setter: Setting right angle")
         if self._cruise_conf is not None:
-            left_angle = int(self._cruise_conf.split(",")[3])
+            cruise_conf_values = self._cruise_conf.split(',')
+            if len(cruise_conf_values) < 4:
+                _LOGGER.warning("horizontal_osc_angle_right: cruise_conf has unexpected format: %s", self._cruise_conf)
+                return
+            left_angle = int(cruise_conf_values[3])
             # 30 deg is the minimum top-bottom and left-right difference for the tested fan (DR-HAF003S)
             if value - left_angle < MIN_OSC_ANGLE_DIFFERENCE:
                 raise ValueError(f"Right angle must be at least {MIN_OSC_ANGLE_DIFFERENCE} greater than left angle")
-            cruise_conf_values = self._cruise_conf.split(',')
             # Note that HA seems to send this in as a float, so we need to convert to int just in case
             new_value = int(value)
             if int(cruise_conf_values[1]) == new_value:
@@ -375,7 +390,9 @@ class PyDreoAirCirculator(PyDreoFanBase):
     def horizontal_osc_angle_left(self) -> int:
         """Get the current left horizontal oscillation angle."""
         if self._cruise_conf is not None:
-            return int(self._cruise_conf.split(",")[3])
+            parts = self._cruise_conf.split(",")
+            if len(parts) >= 4:
+                return int(parts[3])
         return None
 
     @horizontal_osc_angle_left.setter
@@ -383,11 +400,14 @@ class PyDreoAirCirculator(PyDreoFanBase):
         """Set the left horizontal oscillation angle."""
         _LOGGER.debug("horizontal_osc_angle_left: horizontal_osc_angle_left.setter: Setting left angle")
         if self._cruise_conf is not None:
-            right_angle = int(self._cruise_conf.split(",")[1])
+            cruise_conf_values = self._cruise_conf.split(',')
+            if len(cruise_conf_values) < 4:
+                _LOGGER.warning("horizontal_osc_angle_left: cruise_conf has unexpected format: %s", self._cruise_conf)
+                return
+            right_angle = int(cruise_conf_values[1])
             # 30 deg is the minimum top-bottom and left-right difference for the tested fan (DR-HAF003S)
             if right_angle - value < MIN_OSC_ANGLE_DIFFERENCE:
                 raise ValueError(f"Left angle must be at least {MIN_OSC_ANGLE_DIFFERENCE} less than right angle")
-            cruise_conf_values = self._cruise_conf.split(',')
             # Note that HA seems to send this in as a float, so we need to convert to int just in case
             new_value = int(value)
             if int(cruise_conf_values[3]) == new_value:

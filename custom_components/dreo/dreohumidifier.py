@@ -72,6 +72,18 @@ class DreoHumidifierHA(DreoBaseDeviceHA, HumidifierEntity):
         return self.device.modes
 
     @property
+    def min_humidity(self) -> float:
+        """Return the minimum settable humidity."""
+        r = getattr(self.device, "target_humidity_range", None)
+        return float(r[0]) if r else 30.0
+
+    @property
+    def max_humidity(self) -> float:
+        """Return the maximum settable humidity."""
+        r = getattr(self.device, "target_humidity_range", None)
+        return float(r[1]) if r else 90.0
+
+    @property
     def current_humidity(self) -> float:
         """Return the current humidity."""
         return self.device.humidity

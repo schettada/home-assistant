@@ -17,6 +17,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
     "HomeAssistant EntryPoint"
     _LOGGER.debug("async_setup_entry: Starting setup")
 
+    _LOGGER.debug("async_setup_entry: Username: %s", config_entry.data.get(CONF_USERNAME))
     username = config_entry.data.get(CONF_USERNAME)
     password = config_entry.data.get(CONF_PASSWORD)
     auto_reconnect = config_entry.options.get(CONF_AUTO_RECONNECT)
@@ -75,7 +76,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         platforms.add(Platform.NUMBER)
 
     if (DreoDeviceType.CEILING_FAN in device_types or
-        DreoDeviceType.AIR_CIRCULATOR in device_types):
+            DreoDeviceType.AIR_CIRCULATOR in device_types):
         platforms.add(Platform.LIGHT)
 
     if (DreoDeviceType.HEATER in device_types or 
@@ -90,6 +91,8 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         platforms.add(Platform.SENSOR)
         platforms.add(Platform.SWITCH)
         platforms.add(Platform.NUMBER)
+        platforms.add(Platform.SELECT)
+        platforms.add(Platform.BINARY_SENSOR)
 
     if (DreoDeviceType.DEHUMIDIFIER in device_types):
         platforms.add(Platform.HUMIDIFIER)
@@ -108,6 +111,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         platforms.add(Platform.SENSOR)
         platforms.add(Platform.SWITCH)
         platforms.add(Platform.NUMBER)
+        platforms.add(Platform.BINARY_SENSOR)
 
     pydreo_manager.start_transport()
 

@@ -124,6 +124,9 @@ class DreoFanHA(DreoBaseDeviceHA, FanEntity):
             else:
                 self.device.set_preset_mode("High")
         else:
+            if self.device.speed_range is None:
+                _LOGGER.error("set_percentage: speed_range not available for %s", self.device.name)
+                return
             self.device.fan_speed = math.ceil(percentage_to_ranged_value(self.device.speed_range, percentage))
         
         self.schedule_update_ha_state()

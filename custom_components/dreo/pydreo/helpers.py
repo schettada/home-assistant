@@ -160,7 +160,6 @@ class Helpers:
                         Helpers.redactor(json.dumps(response)),
                     )
             else:
-                status_code = r.status_code
                 _LOGGER.error("call_api: API request failed with status code %s for %s%s",
                              r.status_code, url, api)
         return response, status_code

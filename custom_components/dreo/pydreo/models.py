@@ -202,6 +202,17 @@ SUPPORTED_DEVICES = {
         device_ranges={
             SPEED_RANGE: (1, 9)
         }),
+    "DR-HTF024S": DreoDeviceDetails(
+        device_type=DreoDeviceType.TOWER_FAN,
+        preset_modes=[
+            ("normal", 1),
+            ("natural", 2),
+            ("sleep", 3),
+            ("auto", 4),
+        ],
+        device_ranges={
+            SPEED_RANGE: (1, 9)
+        }),
 
     # Air Circulators
     "DR-HAF": DreoDeviceDetails(device_type=DreoDeviceType.AIR_CIRCULATOR),
@@ -252,6 +263,21 @@ SUPPORTED_DEVICES = {
         device_ranges={
             SPEED_RANGE: (1, 10),
             HORIZONTAL_ANGLE_RANGE: (-60, 60)
+        }),
+    "DR-HPF020S": DreoDeviceDetails(
+        device_type=DreoDeviceType.AIR_CIRCULATOR,
+        preset_modes=[
+            ("normal", 1),
+            ("auto", 2),
+            ("sleep", 3),
+            ("natural", 4),
+            ("turbo", 5),
+            ("custom", 6)
+        ],
+        device_ranges={
+            SPEED_RANGE: (1, 9),
+            HORIZONTAL_ANGLE_RANGE: (-60, 60),
+            VERTICAL_ANGLE_RANGE: (-30, 90)
         }),
     "DR-HPF025S": DreoDeviceDetails(                                                                                                                                                  
       device_type=DreoDeviceType.AIR_CIRCULATOR,                                                                                                                                  
@@ -386,6 +412,14 @@ SUPPORTED_DEVICES = {
     ),
 
     "DR-HHM": DreoDeviceDetails(device_type=DreoDeviceType.HUMIDIFIER),
+    "DR-HHM005S": DreoDeviceDetails(
+        device_type=DreoDeviceType.HUMIDIFIER,
+        preset_modes=[
+            ("auto", 1),
+            ("manual", 0),
+            ("sleep", 2),
+        ],
+    ),
 
     "DR-HHM006S": DreoDeviceDetails(
         device_type=DreoDeviceType.HUMIDIFIER,

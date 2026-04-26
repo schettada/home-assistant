@@ -65,19 +65,9 @@ class PyDreoHeater(PyDreoBaseDevice):
         self._ecolevel = None
         self._childlockon = None
         self._tempoffset = None
-        self._fixed_conf = None
 
         self._htalevel_range = None
 
-        # Check if the device has a speed range defined in the device definition
-        # If not, parse the speed range from the details
-        if device_definition.device_ranges is not None and HEAT_RANGE in device_definition.device_ranges:
-            self._htalevel_range = device_definition.device_ranges[HEAT_RANGE]
-
-
-        self._timeron = None
-
-        self._htalevel_range = None
         # Check if the device has a speed range defined in the device definition
         # If not, parse the speed range from the details
         if device_definition.device_ranges is not None and HEAT_RANGE in device_definition.device_ranges:

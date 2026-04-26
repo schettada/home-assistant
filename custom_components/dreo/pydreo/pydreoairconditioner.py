@@ -366,7 +366,9 @@ class PyDreoAC(PyDreoBaseDevice):
         self._timer_on = timeron["du"] if timeron is not None else None
         self._cooldown = self.get_state_update_value(state, COOLDOWN_KEY)
         self._ptc_on = self.get_state_update_value(state, PTCON_KEY)
-        self._display_auto_off = not self.get_state_update_value(state, LIGHTON_KEY)
+        lighton = self.get_state_update_value(state, LIGHTON_KEY)
+        if lighton is not None:
+            self._display_auto_off = not lighton
         self._ctlstatus = self.get_state_update_value(state, CTLSTATUS_KEY)
         timeroff = self.get_state_update_value(state, TIMEROFF_KEY)
         self._timer_off = timeroff["du"] if timeroff is not None else None
