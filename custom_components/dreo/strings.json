@@ -44,6 +44,7 @@
         "humidify":                 { "name": "Humidify" },
         "display_light":            { "name": "Display Light" },
         "ambient_light":            { "name": "Ambient Light" },
+        "rgb_indicator":            { "name": "Water Level Indicator" },
         "auto_mode":                { "name": "Auto Turn On" },
         "scheon":                   { "name": "Schedule" }
       },
@@ -69,6 +70,8 @@
         "horizontal_oscillation_angle": { "name": "Horizontal Oscillation Angle" },
         "vertical_oscillation_angle":   { "name": "Vertical Oscillation Angle" },
         "target_humidity":              { "name": "Target Humidity" },
+        "fog_level":                    { "name": "Fog Level" },
+        "sleep_target_humidity":        { "name": "Sleep Target Humidity" },
         "ambient_light_threshold_low":  { "name": "Ambient Light Threshold Low" },
         "ambient_light_threshold_high": { "name": "Ambient Light Threshold High" },
         "ambient_light_level":          { "name": "Ambient Light Level" }

@@ -17,7 +17,6 @@ from .pydreo.pydreobasedevice import PyDreoBaseDevice
 from .pydreo.constant import DreoDeviceType
 
 from .const import DOMAIN, PYDREO_MANAGER
-from .translation_helper import translated_name
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -40,11 +39,10 @@ SELECTS: tuple[DreoSelectEntityDescription, ...] = (
         options_list=["low", "medium", "high"],
         raw_values=[1, 2, 3],
     ),
-
 )
 
 
-def get_entries(pydreo_devices: list[PyDreoBaseDevice], lang: str = "en") -> list["DreoSelectHA"]:
+def get_entries(pydreo_devices: list[PyDreoBaseDevice]) -> list["DreoSelectHA"]:
     """Create Select entities for supported devices."""
     entities: list[DreoSelectHA] = []
 
@@ -54,7 +52,7 @@ def get_entries(pydreo_devices: list[PyDreoBaseDevice], lang: str = "en") -> lis
                 continue
             if not device.is_feature_supported(sel.attr_name):
                 continue
-            entities.append(DreoSelectHA(device, sel, lang))
+            entities.append(DreoSelectHA(device, sel))
 
     return entities
 
@@ -68,19 +66,20 @@ async def async_setup_entry(
     _LOGGER.info("Starting Dreo Select Platform")
 
     pydreo_manager: PyDreo = hass.data[DOMAIN][PYDREO_MANAGER]
-    lang = hass.config.language
-    async_add_entities(get_entries(pydreo_manager.devices, lang))
+    async_add_entities(get_entries(pydreo_manager.devices))
 
 
 class DreoSelectHA(DreoBaseDeviceHA, SelectEntity):
     """Representation of a Select describing a read-write property of a Dreo device."""
 
-    def __init__(self, device: PyDreoBaseDevice, description: DreoSelectEntityDescription, lang: str = "en") -> None:
+    def __init__(self, device: PyDreoBaseDevice, description: DreoSelectEntityDescription) -> None:
         super().__init__(device)
         self.device = device
         self.entity_description = description
 
-        self._attr_name = translated_name(lang, "select", description.translation_key, description.key)
+        self._attr_has_entity_name = True
+        del self._attr_name
+        self._attr_translation_key = description.translation_key
         self._attr_unique_id = f"{super().unique_id}-{description.key}"
         self._attr_options = description.options_list
 
