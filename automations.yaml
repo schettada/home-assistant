@@ -1228,12 +1228,12 @@
   - trigger: state
     entity_id:
     - sensor.k1se_print_status
-    to:
-    - Completed
     for:
       hours: 0
       minutes: 10
       seconds: 0
+    to:
+    - completed
   conditions:
   - condition: device
     type: is_on

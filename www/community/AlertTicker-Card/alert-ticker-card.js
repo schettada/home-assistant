@@ -1,7 +1,7 @@
-/**
- * AlertTicker Card v1.2.2
+﻿/**
+ * AlertTicker Card v1.3.1
  * A Home Assistant custom Lovelace card to display alerts based on entity states.
- * Supports 36 visual themes with per-alert theme assignment, priority ordering,
+ * Supports 42 visual themes with per-alert theme assignment, priority ordering,
  * fold animation cycling, snooze, numeric conditions, attribute triggers,
  * multi-entity AND/OR conditions, action buttons, and a full visual editor.
  *
@@ -13,7 +13,9 @@
 // LitElement bootstrap — resolves against the running HA instance
 // ---------------------------------------------------------------------------
 const LitElement = Object.getPrototypeOf(
-  customElements.get("ha-panel-lovelace") || customElements.get("hui-view")
+  customElements.get("ha-panel-lovelace") ||
+  customElements.get("hui-view") ||
+  customElements.get("ha-card")
 );
 const html = LitElement.prototype.html;
 const css = LitElement.prototype.css;
@@ -21,7 +23,7 @@ const css = LitElement.prototype.css;
 // ---------------------------------------------------------------------------
 // Card version — declared early so getConfigElement() can reference it
 // ---------------------------------------------------------------------------
-const CARD_VERSION = "1.2.3";
+const CARD_VERSION = "1.3.1";
 
 // ---------------------------------------------------------------------------
 // Theme metadata — drives default icons and category labels
@@ -58,6 +60,7 @@ const THEME_META = {
   cloud:        { icon: "☁️", category: "info",     color: "#82b1ff", bg: "linear-gradient(135deg,#001433,#002e66)" },
   satellite:    { icon: "📡", category: "info",     color: "#40c4ff", bg: "linear-gradient(135deg,#001433,#002e66)" },
   tips:         { icon: "💡", category: "info",     color: "#ffeb3b", bg: "linear-gradient(135deg,#1a1400,#2e2600)" },
+  light:        { icon: "🔆", category: "info",     color: "#ffd600", bg: "linear-gradient(135deg,#0d0b00,#1a1500)" },
   // --- OK / Success ---
   success:      { icon: "✅", category: "ok",       color: "#69f0ae", bg: "linear-gradient(135deg,#1b5e20,#2e7d32)" },
   check:        { icon: "🟢", category: "ok",       color: "#69f0ae", bg: "linear-gradient(135deg,#001a00,#003300)" },
@@ -83,6 +86,8 @@ const THEME_META = {
   hourglass:    { icon: "⏳", category: "timer",    color: "#18ffff", bg: "linear-gradient(135deg,#003333,#005555)" },
   timer_pulse:  { icon: "💥", category: "timer",    color: "#ff4444", bg: "linear-gradient(135deg,#1a0000,#2e0000)" },
   timer_ring:   { icon: "🔵", category: "timer",    color: "#18ffff", bg: "linear-gradient(135deg,#001a1a,#003333)" },
+  // --- Music ---
+  music:        { icon: "🎵", category: "info",     color: "#e040fb", bg: "linear-gradient(135deg,#1a001a,#2e0033)" },
 };
 
 // ---------------------------------------------------------------------------
@@ -161,6 +166,22 @@ const TTS_PREFIXES = {
     timer:    (name) => `Časovač: ${name}`,
     _default: (name) => `Varování: ${name}`,
   },
+  pt: {
+    critical: (name) => `Alerta crítico: ${name}`,
+    warning:  (name) => `Aviso: ${name}`,
+    info:     (name) => `Notificação: ${name}`,
+    ok:       (name) => `${name}: voltou ao normal`,
+    timer:    (name) => `Temporizador: ${name}`,
+    _default: (name) => `Alerta: ${name}`,
+  },
+  es: {
+    critical: (name) => `Alerta crítica: ${name}`,
+    warning:  (name) => `Atención: ${name}`,
+    info:     (name) => `Notificación: ${name}`,
+    ok:       (name) => `${name}: vuelto a la normalidad`,
+    timer:    (name) => `Temporizador: ${name}`,
+    _default: (name) => `Alerta: ${name}`,
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -185,7 +206,10 @@ const T = {
     snooze_4h: "4 ore",
     snooze_8h: "8 ore",
     snooze_24h: "24 ore",
+    snooze_1w: "1 settimana",
+    snooze_1m: "1 mese",
     snooze_reset: "Riattiva tutti",
+    dismiss: "Rimuovi",
     alerts_snoozed: "avvisi sospesi",
     history: "Cronologia",
     history_clear: "Svuota",
@@ -199,6 +223,7 @@ const T = {
     "weather.snowy": "Neve", "weather.hail": "Grandine", "weather.lightning": "Temporale", "weather.lightning-rainy": "Temporale con pioggia",
     "weather.exceptional": "Eccezionale",
     clear_weather_entity_label: "Seleziona entità meteo",
+    today: "Oggi",
   },
   en: {
     alerts: "Alerts",
@@ -218,7 +243,10 @@ const T = {
     snooze_4h: "4 hours",
     snooze_8h: "8 hours",
     snooze_24h: "24 hours",
+    snooze_1w: "1 week",
+    snooze_1m: "1 month",
     snooze_reset: "Resume all",
+    dismiss: "Dismiss",
     alerts_snoozed: "alerts snoozed",
     history: "History",
     history_clear: "Clear",
@@ -232,6 +260,7 @@ const T = {
     "weather.snowy": "Snowy", "weather.hail": "Hail", "weather.lightning": "Lightning", "weather.lightning-rainy": "Thunderstorm",
     "weather.exceptional": "Exceptional",
     clear_weather_entity_label: "Select weather entity",
+    today: "Today",
   },
   fr: {
     alerts: "Alertes",
@@ -251,7 +280,10 @@ const T = {
     snooze_4h: "4 heures",
     snooze_8h: "8 heures",
     snooze_24h: "24 heures",
+    snooze_1w: "1 semaine",
+    snooze_1m: "1 mois",
     snooze_reset: "Réactiver tout",
+    dismiss: "Effacer",
     alerts_snoozed: "alertes suspendues",
     history: "Historique",
     history_clear: "Effacer",
@@ -265,6 +297,7 @@ const T = {
     "weather.snowy": "Neigeux", "weather.hail": "Grêle", "weather.lightning": "Orage", "weather.lightning-rainy": "Orage pluvieux",
     "weather.exceptional": "Exceptionnel",
     clear_weather_entity_label: "Sélectionner une entité météo",
+    today: "Aujourd'hui",
   },
   de: {
     alerts: "Warnungen",
@@ -284,7 +317,10 @@ const T = {
     snooze_4h: "4 Stunden",
     snooze_8h: "8 Stunden",
     snooze_24h: "24 Stunden",
+    snooze_1w: "1 Woche",
+    snooze_1m: "1 Monat",
     snooze_reset: "Alle fortsetzen",
+    dismiss: "Verwerfen",
     alerts_snoozed: "Warnungen pausiert",
     history: "Verlauf",
     history_clear: "Leeren",
@@ -298,6 +334,7 @@ const T = {
     "weather.snowy": "Schnee", "weather.hail": "Hagel", "weather.lightning": "Gewitter", "weather.lightning-rainy": "Gewitterregen",
     "weather.exceptional": "Außergewöhnlich",
     clear_weather_entity_label: "Wetterentität auswählen",
+    today: "Heute",
   },
   nl: {
     alerts: "Meldingen",
@@ -317,7 +354,10 @@ const T = {
     snooze_4h: "4 uur",
     snooze_8h: "8 uur",
     snooze_24h: "24 uur",
+    snooze_1w: "1 week",
+    snooze_1m: "1 maand",
     snooze_reset: "Alles hervatten",
+    dismiss: "Verwijderen",
     alerts_snoozed: "meldingen gesluimerd",
     history: "Geschiedenis",
     history_clear: "Wissen",
@@ -331,6 +371,7 @@ const T = {
     "weather.snowy": "Sneeuw", "weather.hail": "Hagel", "weather.lightning": "Onweer", "weather.lightning-rainy": "Onweer met regen",
     "weather.exceptional": "Uitzonderlijk",
     clear_weather_entity_label: "Weerentiteit selecteren",
+    today: "Vandaag",
   },
   vi: {
     alerts: "Báo động",
@@ -350,7 +391,10 @@ const T = {
     snooze_4h: "4 giờ",
     snooze_8h: "8 giờ",
     snooze_24h: "24 giờ",
+    snooze_1w: "1 tuần",
+    snooze_1m: "1 tháng",
     snooze_reset: "Bỏ tạm hoãn tất cả",
+    dismiss: "Xóa bỏ",
     alerts_snoozed: "báo động đã tạm hoãn",
     history: "Lịch sử",
     history_clear: "Xóa",
@@ -364,6 +408,7 @@ const T = {
     "weather.snowy": "Tuyết", "weather.hail": "Mưa đá", "weather.lightning": "Sét", "weather.lightning-rainy": "Dông",
     "weather.exceptional": "Đặc biệt",
     clear_weather_entity_label: "Chọn thực thể thời tiết",
+    today: "Hôm nay",
   },
   ru: {
     alerts: "Оповещения",
@@ -383,7 +428,10 @@ const T = {
     snooze_4h: "4 часа",
     snooze_8h: "8 часов",
     snooze_24h: "24 часа",
+    snooze_1w: "1 неделя",
+    snooze_1m: "1 месяц",
     snooze_reset: "Восстановить все",
+    dismiss: "Сбросить",
     alerts_snoozed: "оповещений отложено",
     history: "История",
     history_clear: "Очистить",
@@ -397,6 +445,7 @@ const T = {
     "weather.snowy": "Снег", "weather.hail": "Град", "weather.lightning": "Гроза", "weather.lightning-rainy": "Гроза с дождём",
     "weather.exceptional": "Чрезвычайно",
     clear_weather_entity_label: "Выбрать объект погоды",
+    today: "Сегодня",
   },
   da: {
     alerts: "Alarmer",
@@ -416,7 +465,10 @@ const T = {
     snooze_4h: "4 timer",
     snooze_8h: "8 timer",
     snooze_24h: "24 timer",
+    snooze_1w: "1 uge",
+    snooze_1m: "1 måned",
     snooze_reset: "Genoptag alle",
+    dismiss: "Afvis",
     alerts_snoozed: "alarmer udsat",
     history: "Historik",
     history_clear: "Ryd",
@@ -430,6 +482,7 @@ const T = {
     "weather.snowy": "Snefald", "weather.hail": "Hagl", "weather.lightning": "Torden", "weather.lightning-rainy": "Tordenvejr",
     "weather.exceptional": "Usædvanligt",
     clear_weather_entity_label: "Vælg vejrentitet",
+    today: "I dag",
   },
   cs: {
     alerts: "Varování",
@@ -449,7 +502,10 @@ const T = {
     snooze_4h: "4 hodiny",
     snooze_8h: "8 hodin",
     snooze_24h: "24 hodin",
+    snooze_1w: "1 týden",
+    snooze_1m: "1 měsíc",
     snooze_reset: "Obnovit vše",
+    dismiss: "Zamítnout",
     alerts_snoozed: "varování odložena",
     history: "Historie",
     history_clear: "Nic",
@@ -463,6 +519,81 @@ const T = {
     "weather.snowy": "Sněží", "weather.hail": "Kroupy", "weather.lightning": "Bouřka", "weather.lightning-rainy": "Bouřka",
     "weather.exceptional": "Mimořádné",
     clear_weather_entity_label: "Vyberte entitu s počasím",
+    today: "Dnes",
+  },
+  pt: {
+    alerts: "Alertas",
+    critical: "Crítico",
+    warning_label: "Aviso",
+    info_label: "Informação",
+    success_label: "Resolvido",
+    no_alerts: "Nenhum alerta ativo",
+    all_clear: "Tudo limpo",
+    priority_short: "P",
+    alert_system: "SISTEMA DE ALERTAS",
+    cmd_prefix: "root@ha:~$",
+    cmd_read: "alert --read",
+    snooze: "Silenciar",
+    snoozed: "Silenciado",
+    snooze_1h: "1 hora",
+    snooze_4h: "4 horas",
+    snooze_8h: "8 horas",
+    snooze_24h: "24 horas",
+    snooze_1w: "1 semana",
+    snooze_1m: "1 mês",
+    snooze_reset: "Retomar todos",
+    dismiss: "Descartar",
+    alerts_snoozed: "alertas silenciados",
+    history: "Histórico",
+    history_clear: "Limpar",
+    history_empty: "Nenhum evento registrado ainda",
+    timer_active: "Em execução",
+    timer_done: "Expirado",
+    test_mode_active: "MODO TESTE ATIVO — desative antes de salvar",
+    "weather.sunny": "Ensolarado", "weather.clear-night": "Noite clara", "weather.partlycloudy": "Parcialmente nublado",
+    "weather.cloudy": "Nublado", "weather.fog": "Nebuloso", "weather.windy": "Ventoso", "weather.windy-variant": "Muito ventoso",
+    "weather.rainy": "Chuvoso", "weather.snowy-rainy": "Aguaneve", "weather.pouring": "Chuva forte",
+    "weather.snowy": "Neve", "weather.hail": "Granizo", "weather.lightning": "Relâmpagos", "weather.lightning-rainy": "Trovoada",
+    "weather.exceptional": "Excepcional",
+    clear_weather_entity_label: "Selecione a entidade de clima",
+    today: "Hoje",
+  },
+  es: {
+    alerts: "Alertas",
+    critical: "Crítico",
+    warning_label: "Atención",
+    info_label: "Información",
+    success_label: "Resuelto",
+    no_alerts: "Sin alertas activas",
+    all_clear: "Todo bien",
+    priority_short: "P",
+    alert_system: "SISTEMA DE ALERTAS",
+    cmd_prefix: "root@ha:~$",
+    cmd_read: "alerta --leer",
+    snooze: "Posponer",
+    snoozed: "Pospuesto",
+    snooze_1h: "1 hora",
+    snooze_4h: "4 horas",
+    snooze_8h: "8 horas",
+    snooze_24h: "24 horas",
+    snooze_1w: "1 semana",
+    snooze_1m: "1 mes",
+    snooze_reset: "Reanudar todo",
+    dismiss: "Descartar",
+    alerts_snoozed: "alertas pospuestas",
+    history: "Historial",
+    history_clear: "Borrar",
+    history_empty: "No hay eventos registrados aún",
+    timer_active: "En curso",
+    timer_done: "Expirado",
+    test_mode_active: "MODO PRUEBA ACTIVO — desactívalo antes de guardar",
+    "weather.sunny": "Soleado", "weather.clear-night": "Noche despejada", "weather.partlycloudy": "Parcialmente nublado",
+    "weather.cloudy": "Nublado", "weather.fog": "Niebla", "weather.windy": "Ventoso", "weather.windy-variant": "Muy ventoso",
+    "weather.rainy": "Lluvioso", "weather.snowy-rainy": "Aguanieve", "weather.pouring": "Lluvia intensa",
+    "weather.snowy": "Nevado", "weather.hail": "Granizo", "weather.lightning": "Tormenta", "weather.lightning-rainy": "Tormenta con lluvia",
+    "weather.exceptional": "Excepcional",
+    clear_weather_entity_label: "Seleccionar entidad del tiempo",
+    today: "Hoy",
   },
 };
 
@@ -672,7 +803,7 @@ const _ATC_OVERLAY = (() => {
     _root.className = `atc-ov-${pos === "bottom" ? "bottom" : pos === "center" ? "center" : "top"}`;
   }
 
-  function _paint(icon, cat, badge, msg, cfg, theme, secondary, cameraUrl) {
+  function _paint(icon, cat, badge, msg, cfg, theme, secondary, cameraUrl, cameraLive, camHass, camState) {
     _ensureStyle();
     _ensureRoot(cfg.overlay_position);
     clearTimeout(_autoTimer);
@@ -696,8 +827,8 @@ const _ATC_OVERLAY = (() => {
       `<button class="atc-ov-close" title="Dismiss">✕</button>` +
       (duration > 0 ? `<div class="atc-ov-bar" style="animation-duration:${duration}s${themeColor ? ";background:" + themeColor : ""}"></div>` : "");
     toast.querySelector(".atc-ov-close").addEventListener("click", e => { e.stopPropagation(); _hide(); });
-    // Camera snapshot — restructure toast to column layout (image added after scale)
-    if (cameraUrl) {
+    // Camera snapshot or live stream — restructure toast to column layout (image added after scale)
+    if (cameraUrl || (cameraLive && camHass && camState)) {
       toast.style.flexDirection = "column";
       toast.style.alignItems    = "stretch";
       const header = document.createElement("div");
@@ -723,8 +854,28 @@ const _ATC_OVERLAY = (() => {
       const closeEl = toast.querySelector('.atc-ov-close');
       if (closeEl) closeEl.style.fontSize = (18 * scale) + 'px';
     }
-    // Add camera image AFTER scale so max-height is proportional
-    if (cameraUrl) {
+    // Add camera (snapshot or live stream) AFTER scale so dimensions are proportional
+    if (cameraLive && camHass && camState) {
+      const bar = toast.querySelector(".atc-ov-bar");
+      const streamCssText = `width:100%;max-height:${180 * scale}px;border-radius:${8 * scale}px;margin-top:${6 * scale}px;display:block;flex-shrink:0;overflow:hidden;`;
+      if (customElements.get("ha-camera-stream")) {
+        const stream = document.createElement("ha-camera-stream");
+        stream.hass = camHass;
+        stream.stateObj = camState;
+        stream.style.cssText = streamCssText;
+        toast.insertBefore(stream, bar || null);
+      } else {
+        // ha-camera-stream not yet loaded — fall back to snapshot img
+        const snapUrl = camState.attributes?.entity_picture;
+        if (snapUrl) {
+          const img = document.createElement("img");
+          img.src = snapUrl;
+          img.style.cssText = `width:100%;max-height:${180 * scale}px;object-fit:cover;border-radius:${8 * scale}px;margin-top:${6 * scale}px;display:block;flex-shrink:0;`;
+          img.onerror = () => img.remove();
+          toast.insertBefore(img, bar || null);
+        }
+      }
+    } else if (cameraUrl) {
       const bar = toast.querySelector(".atc-ov-bar");
       const img = document.createElement("img");
       img.src = cameraUrl;
@@ -755,10 +906,14 @@ const _ATC_OVERLAY = (() => {
   // regs:  cardId → { alerts: [], config: {}, lang: "" }
   // bases: cardId → Set<number>   (active alert indices on last tick)
   // prevS: cardId → Map<string, string> (entity+attr → state on last tick)
-  let _regs        = new Map();
-  let _bases       = new Map();
-  let _prevS       = new Map();
+  let _regs          = new Map();
+  let _bases         = new Map();
+  let _prevS         = new Map();
+  let _filterNotified = new Map(); // cardId → Map<alertIndex, Set<entityId>> — per-entity dedup for filter alerts
   let _watchInterval = null;
+  // trigger_delay tracking for overlay (mirrors card-side logic for when card is not mounted)
+  const _ovDelayTimers = new Map(); // "cardId:i" → setTimeout ID
+  const _ovDelayActive = new Set(); // "cardId:i" keys whose delay has elapsed
 
   function _getHass() {
     try { return document.querySelector("home-assistant")?.hass ?? null; } catch (_) { return null; }
@@ -793,17 +948,31 @@ const _ATC_OVERLAY = (() => {
     }
   }
 
-  // Returns [entityId, entityState] for the first entity_filter / device_class match, or null.
+  // Returns [entityId, entityState] for the first entity_filter / device_class / label / area match, or null.
   function _findFilterMatch(hass, a) {
     const f = (a.entity_filter || "").toLowerCase();
     const hasWild = f.includes("*");
     const re = hasWild ? new RegExp("^" + f.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*") + "$") : null;
     const matchFn = f ? ((t) => hasWild ? re.test(t.toLowerCase()) : t.toLowerCase().includes(f)) : null;
     const excluded = new Set(a.entity_filter_exclude || []);
+    const labelFilter = a.label_filter ? (Array.isArray(a.label_filter) ? a.label_filter : [a.label_filter]) : null;
+    const areaFilter  = a.area_filter  ? (Array.isArray(a.area_filter)  ? a.area_filter  : [a.area_filter])  : null;
     for (const [eid, es] of Object.entries(hass.states)) {
       if (excluded.has(eid)) continue;
       if (a.device_class && es.attributes?.device_class !== a.device_class) continue;
       if (matchFn && !matchFn(eid) && !matchFn(es.attributes?.friendly_name || "")) continue;
+      // Label filter — match against HA entity registry labels
+      if (labelFilter) {
+        const entityLabels = hass.entities?.[eid]?.labels || [];
+        if (!labelFilter.some(l => entityLabels.includes(l))) continue;
+      }
+      // Area filter — entity area first, then device area as fallback
+      if (areaFilter) {
+        const meta = hass.entities?.[eid];
+        const entityArea = meta?.area_id;
+        const deviceArea = meta?.device_id ? hass.devices?.[meta.device_id]?.area_id : null;
+        if (!areaFilter.some(ar => ar === entityArea || ar === deviceArea)) continue;
+      }
       let actual = es.state;
       if (a.attribute) {
         let v = es.attributes; for (const p of String(a.attribute).split(".")) v = v?.[p];
@@ -816,9 +985,41 @@ const _ATC_OVERLAY = (() => {
 
   function _evalFilterAlert(hass, a) { return _findFilterMatch(hass, a) !== null; }
 
+  // Returns ALL [entityId, entityState] pairs that match a filter alert — used to fire one
+  // overlay per entity rather than only for the first match.
+  function _findAllFilterMatches(hass, a) {
+    const f = (a.entity_filter || "").toLowerCase();
+    const hasWild = f.includes("*");
+    const re = hasWild ? new RegExp("^" + f.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*") + "$") : null;
+    const matchFn = f ? ((t) => hasWild ? re.test(t.toLowerCase()) : t.toLowerCase().includes(f)) : null;
+    const excluded = new Set(a.entity_filter_exclude || []);
+    const labelFilter = a.label_filter ? (Array.isArray(a.label_filter) ? a.label_filter : [a.label_filter]) : null;
+    const areaFilter  = a.area_filter  ? (Array.isArray(a.area_filter)  ? a.area_filter  : [a.area_filter])  : null;
+    const result = [];
+    for (const [eid, es] of Object.entries(hass.states)) {
+      if (excluded.has(eid)) continue;
+      if (a.device_class && es.attributes?.device_class !== a.device_class) continue;
+      if (matchFn && !matchFn(eid) && !matchFn(es.attributes?.friendly_name || "")) continue;
+      if (labelFilter) {
+        const entityLabels = hass.entities?.[eid]?.labels || [];
+        if (!labelFilter.some(l => entityLabels.includes(l))) continue;
+      }
+      if (areaFilter) {
+        const meta = hass.entities?.[eid];
+        const entityArea = meta?.area_id;
+        const deviceArea = meta?.device_id ? hass.devices?.[meta.device_id]?.area_id : null;
+        if (!areaFilter.some(ar => ar === entityArea || ar === deviceArea)) continue;
+      }
+      let actual = es.state;
+      if (a.attribute) { let v = es.attributes; for (const p of String(a.attribute).split(".")) v = v?.[p]; actual = v != null ? String(v) : es.state; }
+      if (_matchOp(actual, a.operator || "=", a.state ?? "on")) result.push([eid, es]);
+    }
+    return result;
+  }
+
   function _evalAlert(hass, a, prevMap) {
     if (!_evalVisibleTo(hass, a)) return false;
-    if ((a.entity_filter || a.device_class) && !a.entity) return _evalFilterAlert(hass, a);
+    if ((a.entity_filter || a.device_class || a.label_filter || a.area_filter) && !a.entity) return _evalFilterAlert(hass, a);
     if (!a.entity) return false;
     if (a.on_change) {
       const key = a.entity + (a.attribute || "");
@@ -827,11 +1028,12 @@ const _ATC_OVERLAY = (() => {
       return cur != null && prev !== undefined && cur !== prev;
     }
     const actual = _getVal(hass, a.entity, a.attribute);
-    if (!_matchOp(actual, a.operator || "=", a.state ?? "on")) return false;
+    const primaryOk = _matchOp(actual, a.operator || "=", a.state ?? "on");
     if (a.conditions?.length) {
+      const logic = a.conditions_logic || "and";
       const res = a.conditions.map(c => _matchOp(_getVal(hass, c.entity, c.attribute), c.operator || "=", c.state ?? "on"));
-      if ((a.conditions_logic || "and") === "and" ? !res.every(Boolean) : !res.some(Boolean)) return false;
-    }
+      if (logic === "or" ? !(primaryOk || res.some(Boolean)) : !(primaryOk && res.every(Boolean))) return false;
+    } else if (!primaryOk) return false;
     return true;
   }
 
@@ -905,7 +1107,7 @@ const _ATC_OVERLAY = (() => {
   function _resolveMsgAsync(hass, a) {
     const fallback = _resolveMsg(hass, a);
     const raw = a.message || "";
-    if (!raw.includes("{{")) return Promise.resolve(fallback);
+    if (!raw.includes("{{") && !raw.includes("{%")) return Promise.resolve(fallback);
     // Substitute {placeholders} before sending to HA so {entity} becomes the real ID
     const tpl = _resolvePlaceholders(hass, a, raw);
     // Fast synchronous path for simple supported patterns
@@ -949,7 +1151,45 @@ const _ATC_OVERLAY = (() => {
         _prevS.set(id, newMap);
 
         const curActive = new Set();
-        reg.alerts.forEach((a, i) => { try { if (_evalAlert(hass, a, prevMap)) curActive.add(i); } catch (_) {} });
+        reg.alerts.forEach((a, i) => {
+          try {
+            if (!_evalAlert(hass, a, prevMap)) {
+              // Condition false — cancel any pending trigger_delay
+              const dk = id + ":" + i;
+              if (_ovDelayTimers.has(dk)) { clearTimeout(_ovDelayTimers.get(dk)); _ovDelayTimers.delete(dk); }
+              _ovDelayActive.delete(dk);
+              return;
+            }
+            if (a.trigger_delay) {
+              const dk = id + ":" + i;
+              if (_ovDelayActive.has(dk)) {
+                curActive.add(i); // delay already elapsed
+              } else if (!_ovDelayTimers.has(dk)) {
+                // Use max last_changed across primary + condition entities (#107)
+                const primEs = a.entity ? hass.states[a.entity] : null;
+                let latestLc = primEs?.last_changed ? new Date(primEs.last_changed).getTime() : 0;
+                if (Array.isArray(a.conditions)) {
+                  for (const cond of a.conditions) {
+                    const ces = cond.entity ? hass.states[cond.entity] : null;
+                    if (ces?.last_changed) {
+                      const t = new Date(ces.last_changed).getTime();
+                      if (t > latestLc) latestLc = t;
+                    }
+                  }
+                }
+                const elapsed = latestLc ? (Date.now() - latestLc) / 1000 : 0;
+                const remaining = Math.max(0, a.trigger_delay - elapsed);
+                _ovDelayTimers.set(dk, setTimeout(() => {
+                  _ovDelayActive.add(dk);
+                  _ovDelayTimers.delete(dk);
+                }, remaining * 1000));
+              }
+              // still waiting — don't add to curActive yet
+            } else {
+              curActive.add(i);
+            }
+          } catch (_) {}
+        });
 
         const prevActive = _bases.get(id) || new Set();
         // newBases = (prevActive ∩ curActive): keeps already-notified active alerts,
@@ -960,17 +1200,118 @@ const _ATC_OVERLAY = (() => {
         _bases.set(id, newBases);
 
         // First tick = baseline: record current state, don't fire.
-        // Prevents banners for alerts already active at page load.
-        if (isFirst) continue;
+        // If the card is already mounted at baseline, stamp all currently-active alerts
+        // immediately so the second tick doesn't re-fire them (prevents overlay on page load
+        // when condition was already active and card is on screen).
+        const el = reg.element;
+        if (isFirst) {
+          if (el && el._mounted) {
+            const cfnFirst = _filterNotified.get(id) || new Map();
+            for (const i of curActive) {
+              newBases.add(i);
+              const a = reg.alerts[i];
+              if (!a.entity && (a.entity_filter || a.device_class || a.label_filter || a.area_filter)) {
+                const notifiedEids = cfnFirst.get(i) || new Set();
+                for (const [eid] of _findAllFilterMatches(hass, a)) notifiedEids.add(eid);
+                cfnFirst.set(i, notifiedEids);
+              }
+            }
+            _filterNotified.set(id, cfnFirst);
+            _bases.set(id, newBases);
+          }
+          continue;
+        }
 
         // Card is visible on the current view — watcher must not fire.
-        const el = reg.element;
-        if (el && el._mounted) continue;
+        // Also stamp all currently-active alerts into bases so a brief unmount
+        // (e.g. config save in editor) doesn't re-fire already-visible alerts.
+        if (el && el._mounted) {
+          const cardFN = _filterNotified.get(id) || new Map();
+          for (const i of curActive) {
+            newBases.add(i);
+            const a = reg.alerts[i];
+            if (!a.entity && (a.entity_filter || a.device_class || a.label_filter || a.area_filter)) {
+              const notifiedEids = cardFN.get(i) || new Set();
+              for (const [eid] of _findAllFilterMatches(hass, a)) notifiedEids.add(eid);
+              cardFN.set(i, notifiedEids);
+            }
+          }
+          _filterNotified.set(id, cardFN);
+          _bases.set(id, newBases);
+          continue;
+        }
+
+        // For filter-mode alerts: remove entities from _filterNotified that no longer match
+        // so they can re-fire the overlay if they become active again.
+        {
+          const cardFN = _filterNotified.get(id);
+          if (cardFN) {
+            for (const [fi, notifiedEids] of cardFN) {
+              if (!curActive.has(fi)) { cardFN.delete(fi); continue; } // whole alert inactive — clear
+              const a = reg.alerts[fi];
+              if (!a || a.entity) continue;
+              const currentEids = new Set(_findAllFilterMatches(hass, a).map(([eid]) => eid));
+              for (const eid of [...notifiedEids]) { if (!currentEids.has(eid)) notifiedEids.delete(eid); }
+            }
+          }
+        }
 
         for (const i of curActive) {
+          const a = reg.alerts[i];
+          const isFilterMode = !a.entity && (a.entity_filter || a.device_class || a.label_filter || a.area_filter);
+
+          // ── Filter-mode alerts: fire one overlay per matching entity ──────────
+          if (isFilterMode) {
+            const allMatches = _findAllFilterMatches(hass, a);
+            const cardFN = _filterNotified.get(id) || new Map();
+            const notifiedEids = cardFN.get(i) || new Set();
+            let firedFilter = false;
+            for (const [eid, fes] of allMatches) {
+              if (notifiedEids.has(eid)) continue;
+              const key = id + ":" + eid + ":" + i;
+              if (_isDupe(key)) { notifiedEids.add(eid); continue; }
+              if (firedFilter) break; // one overlay per tick; remaining entities fire on next ticks
+              const fname  = fes.attributes?.friendly_name || eid;
+              const fstate = _ovFmtState(hass, fes, a.attribute || null);
+              const rawFilter = (a.message || "")
+                .replace(/\{state\}/g, fstate).replace(/\{name\}/g, fname)
+                .replace(/\{entity\}/g, eid).replace(/\{device\}/g, "").replace(/\{timer\}/g, "");
+              const needsWS = rawFilter.includes("{{") || rawFilter.includes("{%");
+              const quickFilter = needsWS ? _evalTemplate(hass, rawFilter) : null;
+              const filterMsgPromise = needsWS
+                ? (quickFilter !== null
+                    ? Promise.resolve(quickFilter.replace(/\s+/g, " ").trim() || fname)
+                    : _resolveMsgAsync(hass, { ...a, entity: eid, message: rawFilter }))
+                : Promise.resolve(rawFilter.replace(/\s+/g, " ").trim() || fname);
+              let filterSecondary = "";
+              if (a.show_filter_name !== false) filterSecondary = a.show_filter_state ? `${fname}: ${fstate}` : fname;
+              const cat     = (THEME_META[a.theme] || {}).category || "info";
+              const rawIcon = a.icon || (THEME_META[a.theme] || {}).icon || "🔔";
+              const icon    = (rawIcon && /^[\w-]+:/.test(rawIcon))
+                ? `<ha-icon icon="${rawIcon}"${a.icon_color ? ` style="color:${a.icon_color}"` : ""}></ha-icon>` : rawIcon;
+              const tLang  = T[reg.lang] || T.en;
+              const badge  = a.show_badge === false ? "" : (a.badge_label || ({ critical: tLang.critical, warning: tLang.warning_label, ok: tLang.success_label }[cat] ?? tLang.info_label));
+              const cameraLive = !!a.camera_live;
+              const camState   = (a.camera_entity && cameraLive) ? (hass.states[a.camera_entity] || null) : null;
+              const camUrl     = (a.camera_entity && !cameraLive) ? (hass.states[a.camera_entity]?.attributes?.entity_picture || null) : null;
+              const paintCfg = reg.config, paintTheme = a.theme;
+              notifiedEids.add(eid);
+              firedFilter = true;
+              filterMsgPromise.then(resolvedMsg => {
+                const parts = filterSecondary ? [filterSecondary] : [];
+                try { _paint(icon, cat, badge, resolvedMsg || fname, paintCfg, paintTheme, parts.join("\n"), camUrl, cameraLive, hass, camState); } catch (_) {}
+              });
+            }
+            cardFN.set(i, notifiedEids);
+            _filterNotified.set(id, cardFN);
+            newBases.add(i);
+            if (firedFilter) break; // one overlay per tick total
+            continue;
+          }
+
+          // ── Single-entity alerts ──────────────────────────────────────────────
           if (newBases.has(i)) continue; // already notified or was already active
-          const a   = reg.alerts[i];
-          const key = id + ":" + (a.entity || "") + ":" + i;
+          const key = "e:" + (a.entity || a.entity_filter || a.device_class || "") + ":" + i;
           if (_isDupe(key)) continue;
           const cat     = (THEME_META[a.theme] || {}).category || "info";
           const rawIcon = a.icon || (THEME_META[a.theme] || {}).icon || "🔔";
@@ -979,31 +1320,7 @@ const _ATC_OVERLAY = (() => {
             : rawIcon;
           const tLang  = T[reg.lang] || T.en;
           const badge  = a.show_badge === false ? "" : (a.badge_label || ({ critical: tLang.critical, warning: tLang.warning_label, ok: tLang.success_label }[cat] ?? tLang.info_label));
-
-          // For entity_filter / device_class alerts: find the triggering entity and resolve msg/secondary
-          let msgPromise, filterSecondary = "";
-          if ((a.entity_filter || a.device_class) && !a.entity) {
-            const match = _findFilterMatch(hass, a);
-            if (match) {
-              const [eid, fes] = match;
-              const fname = fes.attributes?.friendly_name || eid;
-              const fstate = _ovFmtState(hass, fes, a.attribute || null);
-              const rawFilter = (a.message || "")
-                .replace(/\{state\}/g, fstate).replace(/\{name\}/g, fname)
-                .replace(/\{entity\}/g, eid).replace(/\{device\}/g, "").replace(/\{timer\}/g, "");
-              const quickFilter = _evalTemplate(hass, rawFilter);
-              const filterMsg = quickFilter !== null
-                ? quickFilter.replace(/\s+/g, " ").trim() || fname
-                : rawFilter.replace(/\{%-?\s*[\s\S]*?-?%\}/g, "").replace(/\{\{[\s\S]*?\}\}/g, "…").replace(/\s+/g, " ").trim() || fname;
-              msgPromise = Promise.resolve(filterMsg);
-              if (a.show_filter_name !== false) {
-                filterSecondary = a.show_filter_state ? `${fname}: ${fstate}` : fname;
-              }
-            } else { msgPromise = Promise.resolve(a.message || ""); }
-          } else {
-            msgPromise = _resolveMsgAsync(hass, a);
-          }
-
+          const msgPromise = _resolveMsgAsync(hass, a);
           const entityPart = (() => {
             if (!a.secondary_entity) return "";
             const es = hass.states[a.secondary_entity];
@@ -1011,26 +1328,29 @@ const _ATC_OVERLAY = (() => {
             const st = _ovFmtState(hass, es, a.secondary_attribute || null);
             return a.show_secondary_name ? `${es.attributes?.friendly_name || a.secondary_entity} ${st}` : st;
           })();
-          // Resolve secondary_text: evaluate common HA template patterns inline
-          let secondaryText = "";
+          let secondaryTextPromise;
           if (a.secondary_text) {
-            if (/\{\{/.test(a.secondary_text)) {
-              const rendered = _evalTemplate(hass, a.secondary_text);
-              secondaryText = rendered !== null ? rendered :
-                a.secondary_text.replace(/\{%-?\s*[\s\S]*?-?%\}/g, "").replace(/\{\{[\s\S]*?\}\}/g, "…").replace(/\s+/g, " ").trim();
+            if (/\{\{/.test(a.secondary_text) || /\{%/.test(a.secondary_text)) {
+              const quick = _evalTemplate(hass, a.secondary_text);
+              secondaryTextPromise = quick !== null
+                ? Promise.resolve(quick.replace(/\s+/g, " ").trim())
+                : _resolveMsgAsync(hass, { ...a, message: a.secondary_text });
             } else {
-              secondaryText = a.secondary_text.replace(/\{%-?\s*[\s\S]*?-?%\}/g, "").replace(/\s+/g, " ").trim();
+              secondaryTextPromise = Promise.resolve(a.secondary_text.replace(/\s+/g, " ").trim());
             }
+          } else {
+            secondaryTextPromise = Promise.resolve("");
           }
-          const parts = [];
-          if (secondaryText)   parts.push(secondaryText);
-          if (filterSecondary) parts.push(filterSecondary);
-          if (entityPart)      parts.push(entityPart);
-          const camUrl = a.camera_entity ? (hass.states[a.camera_entity]?.attributes?.entity_picture || null) : null;
-          const paintCfg = reg.config, paintTheme = a.theme, paintParts = parts.join("\n");
+          const cameraLive = !!a.camera_live;
+          const camState   = (a.camera_entity && cameraLive) ? (hass.states[a.camera_entity] || null) : null;
+          const camUrl     = (a.camera_entity && !cameraLive) ? (hass.states[a.camera_entity]?.attributes?.entity_picture || null) : null;
+          const paintCfg = reg.config, paintTheme = a.theme;
           newBases.add(i); // mark as notified synchronously — prevents re-firing on next tick
-          msgPromise.then(resolvedMsg => {
-            try { _paint(icon, cat, badge, resolvedMsg, paintCfg, paintTheme, paintParts, camUrl); } catch (_) {}
+          Promise.all([msgPromise, secondaryTextPromise]).then(([resolvedMsg, resolvedSecondary]) => {
+            const resolvedParts = [];
+            if (resolvedSecondary) resolvedParts.push(resolvedSecondary);
+            if (entityPart)        resolvedParts.push(entityPart);
+            try { _paint(icon, cat, badge, resolvedMsg, paintCfg, paintTheme, resolvedParts.join("\n"), camUrl, cameraLive, hass, camState); } catch (_) {}
           });
           break; // one overlay per tick
         }
@@ -1041,8 +1361,8 @@ const _ATC_OVERLAY = (() => {
   // ── Public API ─────────────────────────────────────────────────────────────
   return {
     // Called by the card when it detects a new alert itself (same-view, immediate)
-    showDirect(icon, cat, badge, msg, cfg, dedupeKey, theme, secondary, cameraUrl) {
-      try { if (!_isDupe(dedupeKey)) _paint(icon, cat, badge, msg, cfg, theme, secondary, cameraUrl); } catch (_) {}
+    showDirect(icon, cat, badge, msg, cfg, dedupeKey, theme, secondary, cameraUrl, cameraLive, camHass, camState) {
+      try { if (!_isDupe(dedupeKey)) _paint(icon, cat, badge, msg, cfg, theme, secondary, cameraUrl, cameraLive, camHass, camState); } catch (_) {}
     },
     // Card is visible — suppress watcher for this alert without showing the banner
     suppress(dedupeKey) {
@@ -1066,8 +1386,16 @@ const _ATC_OVERLAY = (() => {
           const isOrphan   = !oreg.disconnected;       // never called detach() — leftover
           const isSameSlot = oreg.disconnected && ofp === fp; // same card remounting
           if (isOrphan || isSameSlot) {
-            _regs.delete(oid); _prevS.delete(oid); _bases.delete(oid);
+            _regs.delete(oid); _prevS.delete(oid); _bases.delete(oid); _filterNotified.delete(oid);
           }
+        }
+        // If the alerts array changed (entity set or order), reset state so stale
+        // indices don't cause already-notified alerts to re-fire after an edit.
+        const existing = _regs.get(id);
+        if (existing) {
+          const oldSig = (existing.alerts || []).map((a, i) => i + ":" + (a.entity || a.entity_filter || "")).join("|");
+          const newSig = (alerts || []).map((a, i) => i + ":" + (a.entity || a.entity_filter || "")).join("|");
+          if (oldSig !== newSig) { _bases.delete(id); _prevS.delete(id); _filterNotified.delete(id); }
         }
         _regs.set(id, { alerts: alerts || [], config, lang, element, disconnected: false });
         if (!_watchInterval) _watchInterval = setInterval(_tick, 2000);
@@ -1078,6 +1406,13 @@ const _ATC_OVERLAY = (() => {
         const reg = _regs.get(id);
         if (reg) reg.disconnected = true;
         _lastKey = ""; _lastAt = 0;
+        // Clean up overlay trigger_delay timers for this card
+        for (const [dk, t] of _ovDelayTimers) {
+          if (dk.startsWith(id + ":")) { clearTimeout(t); _ovDelayTimers.delete(dk); }
+        }
+        for (const dk of _ovDelayActive) {
+          if (dk.startsWith(id + ":")) _ovDelayActive.delete(dk);
+        }
       } catch (_) {}
     },
     updateConfig(id, config) {
@@ -1111,6 +1446,8 @@ class AlertTickerCard extends LitElement {
       _weatherTemp: { type: String },
       _weatherWind: { type: String },
       _weatherHumidity: { type: String },
+      _forecastData: { type: Array },
+      _wfShowForecast: { type: Boolean },
       _clockTime: { type: String },
       _clockDate: { type: String },
     };
@@ -1132,6 +1469,8 @@ class AlertTickerCard extends LitElement {
     this._snoozeMenuOpen = null;
     this._snoozedCount = 0;
     this._snoozed = new Map(); // snoozeKey → expiry timestamp
+    this._persistentLatched = new Set(); // snoozeKey → latched persistent alert
+    this._expandedGroups = new Set(); // groupKey → expanded (shows individual slides)
     this._historyOpen = false;
     this._history = []; // { ts, message, theme, icon, entity }
     this._touchButtonsActive = false;
@@ -1140,8 +1479,16 @@ class AlertTickerCard extends LitElement {
     this._weatherTemp = null;
     this._weatherWind = null;
     this._weatherHumidity = null;
+    this._forecastData = [];
+    this._forecastEntity = null;
+    this._forecastUnsub = null;
+    this._wfShowForecast = false;
+    this._wfForecastShown = false;
+    this._wfFlipTimer = null;
     this._clockTime = "";
     this._clockDate = "";
+    // Per-entity total duration cache for device_class:timestamp timers (entityId → totalSec)
+    this._tsTimerTotals = new Map();
     // HA template rendering via WebSocket render_template subscription
     this._tmplCache = new Map();   // template string → rendered string
     this._tmplUnsubs = new Map();  // template string → unsubscribe fn
@@ -1150,10 +1497,15 @@ class AlertTickerCard extends LitElement {
     this._swipeStartY = 0;
     // Double-tap detection
     this._doubleTapTimer = null;
+    // URL deferred from hold timer so window.open fires in a direct pointerup gesture context
+    this._pendingHoldUrl = null;
     // on_change / auto_dismiss_after tracking
     this._changeTriggers   = {};       // "configIdx:entityId" → trigger timestamp (on_change)
     this._autoDismissTimers = {};      // "configIdx:entityId" → setTimeout ID
     this._autoDismissedKeys = new Set(); // keys whose auto_dismiss timer has fired
+    // trigger_delay: show alert only after condition has been true for N seconds
+    this._triggerDelayTimers = {};     // key → setTimeout ID (pending)
+    this._triggerDelayActive  = new Set(); // keys whose trigger_delay has elapsed
     // Unique ID for overlay manager registration
     this._cardId = "atc-" + Date.now() + "-" + Math.random().toString(36).slice(2);
   }
@@ -1210,7 +1562,8 @@ class AlertTickerCard extends LitElement {
     } else if (this._hass && !this._cycleTimer) {
       this._startCycleTimer();
     }
-    // Re-compute alerts if hass is already set
+    // Force full recompute so grouping/config changes take effect immediately
+    this._lastSignature = "";
     if (this._hass) {
       this._computeActiveAlerts();
     }
@@ -1220,6 +1573,11 @@ class AlertTickerCard extends LitElement {
     // Otherwise connectedCallback() will register once isConnected is true.
     if (this._mounted) {
       _ATC_OVERLAY.register(this._cardId, this._config.alerts || [], this._config, this._lang, this);
+    }
+    // Restart the weather_forecast flip timer when the interval changes
+    if (this._config.clear_display_mode === 'weather_forecast' && this._wfFlipTimer) {
+      this._stopWfFlipTimer();
+      this._startWfFlipTimer();
     }
     // Play a one-shot animation preview when the editor changes cycle_animation
     // Delay so requestUpdate from _computeActiveAlerts settles first
@@ -1302,15 +1660,27 @@ class AlertTickerCard extends LitElement {
     const expandedAlerts = [];
     for (let idx = 0; idx < this._config.alerts.length; idx++) {
       const alert = this._config.alerts[idx];
-      if ((alert.entity_filter || alert.device_class) && !alert.entity) {
+      if ((alert.entity_filter || alert.device_class || alert.label_filter || alert.area_filter) && !alert.entity) {
         const matchFn = alert.entity_filter ? this._buildFilterMatcher(alert.entity_filter) : null;
         const excluded = new Set(alert.entity_filter_exclude || []);
+        const labelFilter = alert.label_filter ? (Array.isArray(alert.label_filter) ? alert.label_filter : [alert.label_filter]) : null;
+        const areaFilter  = alert.area_filter  ? (Array.isArray(alert.area_filter)  ? alert.area_filter  : [alert.area_filter])  : null;
         const matched = Object.entries(this._hass.states).filter(([entityId, state]) => {
           if (excluded.has(entityId)) return false;
           if (alert.device_class && state.attributes.device_class !== alert.device_class) return false;
           if (matchFn) {
             const friendlyName = state.attributes.friendly_name || "";
-            return matchFn(entityId) || matchFn(friendlyName);
+            if (!matchFn(entityId) && !matchFn(friendlyName)) return false;
+          }
+          if (labelFilter) {
+            const entityLabels = this._hass.entities?.[entityId]?.labels || [];
+            if (!labelFilter.some(l => entityLabels.includes(l))) return false;
+          }
+          if (areaFilter) {
+            const meta = this._hass.entities?.[entityId];
+            const entityArea = meta?.area_id;
+            const deviceArea = meta?.device_id ? this._hass.devices?.[meta.device_id]?.area_id : null;
+            if (!areaFilter.some(ar => ar === entityArea || ar === deviceArea)) return false;
           }
           return true;
         });
@@ -1334,7 +1704,7 @@ class AlertTickerCard extends LitElement {
 
     let snoozedCount = 0;
     const testMode = !!this._config.test_mode;
-    const active = expandedAlerts.filter((alert) => {
+    let active = expandedAlerts.filter((alert) => {
       const entityState = this._hass.states[alert.entity];
       if (!entityState) return false;
       if (!testMode) {
@@ -1364,16 +1734,7 @@ class AlertTickerCard extends LitElement {
           const stateValue = (alert.attribute != null && alert.attribute !== "")
             ? String(this._resolveAttrPath(entityState.attributes, alert.attribute) ?? "")
             : entityState.state;
-          if (!this._matchesState(stateValue, alert)) {
-            // Condition went false — reset auto_dismiss so next activation starts fresh
-            if (alert.auto_dismiss_after) {
-              this._autoDismissedKeys.delete(key);
-              clearTimeout(this._autoDismissTimers[key]);
-              delete this._autoDismissTimers[key];
-            }
-            return false;
-          }
-          // Extra AND/OR conditions
+          const primaryOk = this._matchesState(stateValue, alert);
           if (Array.isArray(alert.conditions) && alert.conditions.length > 0) {
             const logic = alert.conditions_logic || "and";
             const results = alert.conditions.map((cond) => {
@@ -1385,8 +1746,72 @@ class AlertTickerCard extends LitElement {
                 : es.state;
               return this._matchesState(val, cond);
             });
-            const passes = logic === "or" ? results.some(Boolean) : results.every(Boolean);
-            if (!passes) return false;
+            const passes = logic === "or"
+              ? primaryOk || results.some(Boolean)
+              : primaryOk && results.every(Boolean);
+            if (!passes) {
+              // persistent: keep showing even though condition cleared
+              if (alert.persistent && this._persistentLatched.has(this._snoozeKey(alert))) return true;
+              // Condition went false — reset timers so next activation starts fresh
+              if (alert.auto_dismiss_after) {
+                this._autoDismissedKeys.delete(key);
+                clearTimeout(this._autoDismissTimers[key]);
+                delete this._autoDismissTimers[key];
+              }
+              if (alert.trigger_delay) {
+                clearTimeout(this._triggerDelayTimers[key]);
+                delete this._triggerDelayTimers[key];
+                this._triggerDelayActive.delete(key);
+              }
+              return false;
+            }
+          } else if (!primaryOk) {
+            // persistent: keep showing even though condition cleared
+            if (alert.persistent && this._persistentLatched.has(this._snoozeKey(alert))) return true;
+            if (alert.auto_dismiss_after) {
+              this._autoDismissedKeys.delete(key);
+              clearTimeout(this._autoDismissTimers[key]);
+              delete this._autoDismissTimers[key];
+            }
+            if (alert.trigger_delay) {
+              clearTimeout(this._triggerDelayTimers[key]);
+              delete this._triggerDelayTimers[key];
+              this._triggerDelayActive.delete(key);
+            }
+            return false;
+          }
+          // trigger_delay: condition must stay true for N seconds before alert becomes visible.
+          // Use max last_changed across primary + all condition entities so the delay counts
+          // from when ALL conditions first became simultaneously true, not just the primary
+          // entity (#107). Also subtracts elapsed time on page load.
+          if (alert.trigger_delay) {
+            if (!this._triggerDelayActive.has(key)) {
+              if (!this._triggerDelayTimers[key]) {
+                let latestLc = entityState?.last_changed
+                  ? new Date(entityState.last_changed).getTime() : 0;
+                if (Array.isArray(alert.conditions)) {
+                  for (const cond of alert.conditions) {
+                    const ces = cond.entity ? this._hass.states[cond.entity] : null;
+                    if (ces?.last_changed) {
+                      const t = new Date(ces.last_changed).getTime();
+                      if (t > latestLc) latestLc = t;
+                    }
+                  }
+                }
+                const elapsed = latestLc ? (Date.now() - latestLc) / 1000 : 0;
+                const remaining = Math.max(0, alert.trigger_delay - elapsed);
+                if (remaining === 0) {
+                  this._triggerDelayActive.add(key);
+                } else {
+                  this._triggerDelayTimers[key] = setTimeout(() => {
+                    this._triggerDelayActive.add(key);
+                    delete this._triggerDelayTimers[key];
+                    this._computeActiveAlerts();
+                  }, remaining * 1000);
+                }
+              }
+              if (!this._triggerDelayActive.has(key)) return false;
+            }
           }
           // auto_dismiss_after for normal condition alerts
           if (alert.auto_dismiss_after) {
@@ -1395,9 +1820,17 @@ class AlertTickerCard extends LitElement {
               this._autoDismissTimers[key] = setTimeout(() => {
                 this._autoDismissedKeys.add(key);
                 delete this._autoDismissTimers[key];
-                this.requestUpdate();
+                this._computeActiveAlerts();
               }, alert.auto_dismiss_after * 1000);
             }
+          }
+        }
+        // persistent: latch on first true so it stays visible after sensor clears
+        if (alert.persistent) {
+          const pKey = this._snoozeKey(alert);
+          if (!this._persistentLatched.has(pKey)) {
+            this._persistentLatched.add(pKey);
+            this._savePersistent();
           }
         }
         if (this._isSnoozed(alert)) { snoozedCount++; return false; }
@@ -1452,13 +1885,13 @@ class AlertTickerCard extends LitElement {
             this._recordHistory(alert);
             this._playAlertSound(alert);
             this._speakAlert(alert);
+            this._pushNotifyAlert(alert);
             // Overlay: the watcher handles all display. The card-path only
             // calls suppress() to prevent the watcher from double-firing when
             // the card is mounted and visible. No showDirect() here — avoids
             // the race condition where set hass() fires before connectedCallback.
-            if (this._config?.overlay_mode && !_overlayShown && this._mounted) {
-              _overlayShown = true;
-              const dedupeKey = this._cardId + ":" + (alert.entity || "") + ":" + (alert._configIdx ?? 0);
+            if (this._config?.overlay_mode && this._mounted) {
+              const dedupeKey = "e:" + (alert.entity || alert.entity_filter || alert.device_class || "") + ":" + (alert._configIdx ?? 0);
               _ATC_OVERLAY.suppress(dedupeKey);
             }
           }
@@ -1466,6 +1899,103 @@ class AlertTickerCard extends LitElement {
       });
     }
     this._initialLoadDone = true;
+
+    // --- Grouping pass: collapse filter alerts with group:true into summary slides ---
+    const _groupBuckets = new Map(); // configIdx → members[]
+    const _ungrouped = [];
+    for (const alert of active) {
+      const src = alert._sourceAlert;
+      if (src && src.group) {
+        const k = alert._configIdx;
+        if (!_groupBuckets.has(k)) _groupBuckets.set(k, []);
+        _groupBuckets.get(k).push(alert);
+      } else {
+        _ungrouped.push(alert);
+      }
+    }
+    for (const [key, members] of _groupBuckets) {
+      const src = members[0]._sourceAlert;
+      const minCount = src.group_min || 3;
+      const groupKey = `grp_${key}`;
+      if (this._expandedGroups.has(groupKey)) {
+        // Group is expanded — show individual member slides, optionally overriding message
+        _ungrouped.push(...members.map(m => ({
+          ...m,
+          _expandedMember: true,
+          _expandedGroupKey: groupKey,
+          ...(src.group_expanded_message ? { message: src.group_expanded_message } : {}),
+        })));
+      } else if (members.length >= minCount) {
+        const names = members.map(a => {
+          const s = this._hass?.states[a.entity];
+          return s?.attributes?.friendly_name || a.entity || "";
+        });
+        const rawMsg = src.group_message || `{count} alert`;
+        // Apply {count}/{names} substitutions
+        let msg = rawMsg
+          .replace(/\{count\}/g, members.length)
+          .replace(/\{names\}/g, names.join(", "));
+        // Jinja2/WS template support: resolve {{ ... }} / {% %} in group_message
+        if (rawMsg.includes("{{") || rawMsg.includes("{%")) {
+          const cached = this._tmplCache.get(rawMsg);
+          if (cached !== undefined) {
+            msg = cached
+              .replace(/\{count\}/g, members.length)
+              .replace(/\{names\}/g, names.join(", "));
+          } else {
+            this._subscribeTemplate(rawMsg);
+            msg = msg.replace(/\{\{\s*([\s\S]*?)\s*\}\}/g, (_, expr) => {
+              const v = this._evalJinjaExpr(expr.trim());
+              return v !== null ? v : "";
+            });
+          }
+        }
+        let grpSecondary = null;
+        if (src.group_secondary_text) {
+          const rawSec = src.group_secondary_text;
+          grpSecondary = rawSec
+            .replace(/\{count\}/g, members.length)
+            .replace(/\{names\}/g, names.join(", "));
+          if (rawSec.includes("{{") || rawSec.includes("{%")) {
+            const cachedSec = this._tmplCache.get(rawSec);
+            if (cachedSec !== undefined) {
+              grpSecondary = cachedSec
+                .replace(/\{count\}/g, members.length)
+                .replace(/\{names\}/g, names.join(", "));
+            } else {
+              this._subscribeTemplate(rawSec);
+              grpSecondary = grpSecondary.replace(/\{\{\s*([\s\S]*?)\s*\}\}/g, (_, expr) => {
+                const v = this._evalJinjaExpr(expr.trim());
+                return v !== null ? v : "";
+              });
+            }
+          }
+        }
+        _ungrouped.push({
+          _isGroup: true,
+          _groupKey: groupKey,
+          _members: members,
+          _memberNames: names,
+          _configIdx: key,
+          theme: src.theme || "warning",
+          icon: src.icon,
+          priority: src.priority || 3,
+          message: msg,
+          secondary_text: grpSecondary,
+          entity: undefined,
+          group_tap_action:        src.group_tap_action        || null,
+          group_hold_action:       src.group_hold_action       || null,
+          group_double_tap_action: src.group_double_tap_action || null,
+        });
+      } else {
+        _ungrouped.push(...members);
+      }
+    }
+    if (_groupBuckets.size > 0) {
+      _ungrouped.sort((a, b) => (a.priority || 3) - (b.priority || 3));
+      active = _ungrouped;
+    }
+    // --- end grouping pass ---
 
     this._lastSignature = signature;
     this._activeAlerts = active;
@@ -1497,12 +2027,23 @@ class AlertTickerCard extends LitElement {
       const _hasWSlide = !!(this._config?.show_widget_in_cycle && this._config?.clear_display_mode && this._config.clear_display_mode !== 'message');
       const _totalSlides = (this._activeAlerts?.length || 0) + (_hasWSlide ? 1 : 0);
       if (!this._activeAlerts || _totalSlides <= 1 || this._historyOpen || (this._config && this._config.test_mode)) return;
+      // If currently on the weather_forecast widget slide, wait until the forecast panel
+      // has been shown at least once before advancing to the next alert
+      const _onWidgetSlide = _hasWSlide && this._currentIndex === _totalSlides - 1;
+      if (_onWidgetSlide && this._config?.clear_display_mode === "weather_forecast" && !this._wfForecastShown) return;
       // 1. Fold out
       this._animPhase = "fold-out";
       this.requestUpdate();
       // 2. Mid-fold: swap content
       setTimeout(() => {
-        this._currentIndex = (this._currentIndex + 1) % _totalSlides;
+        const nextIndex = (this._currentIndex + 1) % _totalSlides;
+        this._currentIndex = nextIndex;
+        // Entering the widget slide: reset forecast flip so weather always shows first
+        if (_hasWSlide && nextIndex === _totalSlides - 1 && this._config?.clear_display_mode === "weather_forecast") {
+          this._wfForecastShown = false;
+          this._stopWfFlipTimer();
+          this._startWfFlipTimer();
+        }
         this._animPhase = "fold-in";
         this.requestUpdate();
         // 3. Done: clear phase
@@ -1554,20 +2095,40 @@ class AlertTickerCard extends LitElement {
 
   // ---- Timer tick (1s) — keeps countdown display live -----------------------
 
+  _tickClock() {
+    const clearMode = this._config?.clear_display_mode;
+    if ((this._config?.show_when_clear || this._config?.show_widget_in_cycle) &&
+        (clearMode === "clock" || clearMode === "weather_clock" || clearMode === "weather_forecast")) {
+      const n = new Date();
+      if (this._config?.clear_clock_12h) {
+        const h = n.getHours();
+        const h12 = h % 12 || 12;
+        const ampm = h < 12 ? "AM" : "PM";
+        this._clockTime = `${h12}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')} ${ampm}`;
+      } else {
+        this._clockTime = `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;
+      }
+      const lang = this._hass?.language || 'en';
+      this._clockDate = n.toLocaleDateString(lang, { weekday: 'long', day: 'numeric', month: 'long' });
+    }
+  }
+
   _startTimerTick() {
     if (this._timerInterval) return;
+    // Populate clock immediately so it shows on first render without waiting 1 s
+    this._tickClock();
     this._timerInterval = setInterval(() => {
+      const _timerThemes = new Set(["countdown", "hourglass", "timer_pulse", "timer_ring"]);
       const hasTimer = this._activeAlerts &&
-        this._activeAlerts.some((a) => a.entity && a.entity.startsWith("timer."));
+        this._activeAlerts.some((a) => {
+          if (!a.entity) return false;
+          if (a.entity.startsWith("timer.")) return true;
+          return _timerThemes.has(a.theme) &&
+            this._hass?.states[a.entity]?.attributes?.device_class === "timestamp";
+        });
       if (hasTimer) this.requestUpdate();
-      // Update clock when clear widget is clock or weather_clock
-      const clearMode = this._config?.clear_display_mode;
-      if (this._config?.show_when_clear && (clearMode === "clock" || clearMode === "weather_clock")) {
-        const n = new Date();
-        this._clockTime = `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;
-        const lang = this._hass?.language || 'en';
-        this._clockDate = n.toLocaleDateString(lang, { weekday: 'long', day: 'numeric', month: 'long' });
-      }
+      // Update clock every second
+      this._tickClock();
       // Re-evaluate once per minute for time_range conditions
       const now = new Date();
       if (now.getSeconds() === 0) {
@@ -1591,28 +2152,81 @@ class AlertTickerCard extends LitElement {
   _updateWeather(hass) {
     const entity = this._config?.clear_weather_entity;
     const mode = this._config?.clear_display_mode;
-    if (!entity || (mode !== "weather" && mode !== "weather_clock")) {
+    const needsForecast = mode === "forecast" || mode === "weather_forecast";
+    const needsWeather  = mode === "weather" || mode === "weather_clock" || mode === "weather_forecast";
+    if (!entity || (!needsForecast && !needsWeather)) {
       this._weatherState = null;
       this._weatherTemp = null;
       this._weatherWind = null;
       this._weatherHumidity = null;
+      if (this._forecastUnsub) { try { this._forecastUnsub(); } catch (_) {} this._forecastUnsub = null; this._forecastEntity = null; }
+      this._stopWfFlipTimer();
       return;
     }
     const ws = hass.states[entity];
     if (!ws) return;
-    const newState = ws.state;
-    const temp = ws.attributes?.temperature;
-    const unit = ws.attributes?.temperature_unit || "°";
-    const newTemp = temp != null ? `${Math.round(temp)}${unit}` : null;
-    const windSpeed = ws.attributes?.wind_speed;
-    const windUnit = ws.attributes?.wind_speed_unit || "km/h";
-    const newWind = windSpeed != null ? `${Math.round(windSpeed)} ${windUnit}` : null;
-    const humidity = ws.attributes?.humidity;
-    const newHumidity = humidity != null ? `${Math.round(humidity)}%` : null;
-    this._weatherState = newState;
-    this._weatherTemp = newTemp;
-    this._weatherWind = newWind;
-    this._weatherHumidity = newHumidity;
+    // Fetch current weather data when needed
+    if (needsWeather) {
+      const temp = ws.attributes?.temperature;
+      const unit = ws.attributes?.temperature_unit || "°";
+      this._weatherState    = ws.state;
+      this._weatherTemp     = temp != null ? `${Math.round(temp)}${unit}` : null;
+      const windSpeed       = ws.attributes?.wind_speed;
+      const windUnit        = ws.attributes?.wind_speed_unit || "km/h";
+      this._weatherWind     = windSpeed != null ? `${Math.round(windSpeed)} ${windUnit}` : null;
+      const humidity        = ws.attributes?.humidity;
+      this._weatherHumidity = humidity != null ? `${Math.round(humidity)}%` : null;
+    }
+    // Subscribe to forecast data when needed
+    if (needsForecast && entity !== this._forecastEntity) {
+      this._forecastEntity = entity;
+      this._subscribeForecast(entity, hass);
+    }
+    // Manage the flip timer for weather_forecast mode
+    if (mode === "weather_forecast") {
+      this._startWfFlipTimer();
+    } else {
+      this._stopWfFlipTimer();
+    }
+  }
+
+  _startWfFlipTimer() {
+    if (this._wfFlipTimer) return;
+    const ms = ((this._config?.weather_forecast_interval) || 5) * 1000;
+    this._wfFlipTimer = setInterval(() => {
+      this._wfShowForecast = !this._wfShowForecast;
+      if (this._wfShowForecast) this._wfForecastShown = true;
+    }, ms);
+  }
+
+  _stopWfFlipTimer() {
+    if (this._wfFlipTimer) { clearInterval(this._wfFlipTimer); this._wfFlipTimer = null; }
+    this._wfShowForecast = false;
+    this._wfForecastShown = false;
+  }
+
+  _subscribeForecast(entity, hass) {
+    const h = hass || this._hass;
+    // Unsubscribe previous entity if any
+    if (this._forecastUnsub) {
+      try { this._forecastUnsub(); } catch (_) {}
+      this._forecastUnsub = null;
+    }
+    if (!h?.connection || !entity) return;
+    const unit = h.states[entity]?.attributes?.temperature_unit || "°C";
+    // weather/subscribe_forecast is the correct API since HA 2023.9
+    // Returns an unsubscribe function; callback receives { type, forecast: [...] }
+    try {
+      this._forecastUnsub = h.connection.subscribeMessage(
+        (event) => {
+          const list = event?.forecast || [];
+          this._forecastData = list.map((d) => ({ ...d, _unit: unit }));
+        },
+        { type: "weather/subscribe_forecast", forecast_type: "daily", entity_id: entity }
+      );
+    } catch (_) {
+      this._forecastData = [];
+    }
   }
 
   _rng(seed) {
@@ -1745,9 +2359,99 @@ class AlertTickerCard extends LitElement {
     return html`<div style="position:absolute;inset:0;pointer-events:none;overflow:hidden"><div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(255,100,20,.08) 0%,transparent 60%)"></div>${particles}${windLines}</div>`;
   }
 
+  _renderForecastWidget() {
+    const days = (this._forecastData || []).slice(0, 7);
+    if (!days.length) {
+      return html`
+        <div class="atc-clear-widget atc-clear-forecast atc-clear-forecast--empty">
+          <ha-icon icon="mdi:calendar-week" style="--mdc-icon-size:28px;opacity:0.3;margin-right:8px"></ha-icon>
+          <span style="opacity:0.45;font-size:0.85rem">${this._t("clear_weather_entity_label")}</span>
+        </div>`;
+    }
+    const haLang = this._hass?.language || "en";
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Pick accent color from today's condition
+    const todayCondition = days[0]?.condition || "";
+    const COND_COLOR = {
+      sunny: "#ffb300", "clear-night": "#7c83c8", partlycloudy: "#78a0c8",
+      cloudy: "#8096a8", fog: "#a0aeb6", windy: "#38b8a0", "windy-variant": "#38b8a0",
+      rainy: "#5080d8", "snowy-rainy": "#78a0d8", pouring: "#3060c8",
+      snowy: "#90b8e0", hail: "#607080", lightning: "#9060e8", "lightning-rainy": "#7050d0",
+      exceptional: "#e05028",
+    };
+    const accentColor = COND_COLOR[todayCondition] || "#5090d8";
+
+    const WEATHER_EMOJI = {
+      sunny: "☀️", "clear-night": "🌙", partlycloudy: "⛅", cloudy: "☁️",
+      fog: "🌫️", windy: "💨", "windy-variant": "🌬️", rainy: "🌧️",
+      "snowy-rainy": "🌨️", pouring: "⛈️", snowy: "❄️", hail: "🌩️",
+      lightning: "⚡", "lightning-rainy": "🌩️", exceptional: "🌪️",
+    };
+
+    const tempColor = (t) => {
+      if (t == null) return "rgba(255,255,255,0.75)";
+      if (t >= 35) return "#ff6d00";
+      if (t >= 28) return "#ffab40";
+      if (t >= 20) return "#ffd54f";
+      if (t >= 10) return "#ffffff";
+      if (t >= 0)  return "#80d8ff";
+      return "#ea80fc";
+    };
+
+    const todayLabel = this._t("today") || "Today";
+    const fmtDay = (dateStr, idx) => {
+      if (idx === 0) return todayLabel.toUpperCase();
+      try {
+        const d = new Date(dateStr);
+        return new Intl.DateTimeFormat(haLang, { weekday: "short" }).format(d).toUpperCase();
+      } catch (_) {
+        return dateStr?.slice(0, 3).toUpperCase() || "---";
+      }
+    };
+
+    const cols = days.map((day, idx) => {
+      const isToday = idx === 0;
+      const emoji = WEATHER_EMOJI[day.condition] || "🌡️";
+      const hi = day.temperature != null ? Math.round(day.temperature) : null;
+      const lo = day.templow != null ? Math.round(day.templow) : null;
+      const precip = day.precipitation_probability != null ? Math.round(day.precipitation_probability) : null;
+      const dayLabel = fmtDay(day.datetime, idx);
+      let dateLabel = "";
+      try {
+        const d = new Date(day.datetime);
+        dateLabel = new Intl.DateTimeFormat(haLang, { day: "numeric", month: "short" }).format(d);
+      } catch (_) {}
+
+      return html`
+        <div class="atc-fw-day${isToday ? " atc-fw-day--today" : ""}">
+          <div class="atc-fw-dayname">${dayLabel}</div>
+          <div class="atc-fw-emoji${isToday ? " atc-fw-emoji--today" : ""}">${emoji}</div>
+          <div class="atc-fw-temps">
+            ${hi != null ? html`<span class="atc-fw-hi" style="color:${tempColor(hi)}">${hi}°</span>` : ""}
+            ${lo != null ? html`<span class="atc-fw-lo" style="color:${tempColor(lo)}">${lo}°</span>` : ""}
+          </div>
+          ${dateLabel ? html`<div class="atc-fw-date">${dateLabel}</div>` : ""}
+          ${precip != null && precip >= 20 ? html`
+          <div class="atc-fw-precip">
+            <div class="atc-fw-precip-bar"><div class="atc-fw-precip-fill" style="height:${precip}%"></div></div>
+            <span class="atc-fw-precip-pct">${precip}%</span>
+          </div>` : ""}
+        </div>`;
+    });
+
+    return html`
+      <div class="atc-clear-widget atc-clear-forecast" style="--fw-accent:${accentColor}">
+        <div class="atc-fw-bg-pulse"></div>
+        <div class="atc-fw-grid">${cols}</div>
+      </div>`;
+  }
+
   _renderClearWidget() {
     const mode     = this._config.clear_display_mode || "message";
     if (mode === "message") return null;
+    if (mode === "forecast") return this._renderForecastWidget();
     const showDate = this._config.clear_clock_show_date !== false;
     const datePos  = this._config.clear_clock_date_position || "below";
     const ICON_MAP = {
@@ -1771,7 +2475,7 @@ class AlertTickerCard extends LitElement {
           </div>
         </div>`;
     }
-    if (mode === "weather" || mode === "weather_clock") {
+    if (mode === "weather" || mode === "weather_clock" || mode === "weather_forecast") {
       if (!this._weatherState) {
         return html`
           <div class="atc-clear-widget atc-clear-clock">
@@ -1781,7 +2485,7 @@ class AlertTickerCard extends LitElement {
       }
       const icon = ICON_MAP[this._weatherState] || 'mdi:weather-cloudy';
       const conditionLabel = this._t(`weather.${this._weatherState}`) || this._weatherState || "";
-      return html`
+      const weatherPanel = html`
         <div class="atc-clear-widget atc-clear-weather atc-cw-style--${weatherStyle}">
           ${this._renderWeatherBg()}
           <div class="atc-cw-corners">
@@ -1799,7 +2503,7 @@ class AlertTickerCard extends LitElement {
                 <span class="atc-cw-condition">${conditionLabel}</span>
               </div>
             </div>
-            ${mode === "weather_clock" ? html`
+            ${(mode === "weather_clock" || mode === "weather_forecast") ? html`
             <div class="atc-cw-badge atc-cw-badge--clock">
               ${showDate && (this._config.clear_clock_date_position === "above") && this._clockDate ? html`<span class="atc-cw-clock-date">${this._clockDate}</span>` : ""}
               <span class="atc-cw-clock">${this._clockTime || "00:00:00"}</span>
@@ -1807,6 +2511,15 @@ class AlertTickerCard extends LitElement {
             </div>` : ""}
           </div>
         </div>`;
+      if (mode === "weather_forecast") {
+        const sf = this._wfShowForecast;
+        return html`
+          <div class="atc-wf-wrap">
+            <div class="atc-wf-slot ${sf ? "atc-wf-slot--out" : "atc-wf-slot--in"}">${weatherPanel}</div>
+            <div class="atc-wf-slot ${sf ? "atc-wf-slot--in" : "atc-wf-slot--out"}">${this._renderForecastWidget()}</div>
+          </div>`;
+      }
+      return weatherPanel;
     }
     return null;
   }
@@ -1816,8 +2529,35 @@ class AlertTickerCard extends LitElement {
   _getTimerData(alert) {
     const es = this._hass && this._hass.states[alert.entity];
     if (!es) return { progress: 1, remainingStr: "--:--", isActive: false };
+
+    // device_class: timestamp — state IS the expiry datetime (e.g. Alexa Media Player timers).
+    // Total duration is unknown, so we record the first observed remainingSec as the total.
+    if (es.attributes.device_class === "timestamp") {
+      const raw = es.state;
+      if (!raw || ["unavailable", "unknown", "none", ""].includes(raw)) {
+        this._tsTimerTotals.delete(alert.entity);
+        return { progress: -1, remainingStr: "--:--", isActive: false };
+      }
+      const remainingMs = new Date(raw).getTime() - Date.now();
+      const remainingSec = Math.max(0, Math.floor(remainingMs / 1000));
+      if (remainingSec === 0) {
+        this._tsTimerTotals.delete(alert.entity);
+        return { progress: -1, remainingStr: "00:00", isActive: false };
+      }
+      // Update total if this is a new/longer timer
+      const stored = this._tsTimerTotals.get(alert.entity);
+      if (!stored || remainingSec > stored) this._tsTimerTotals.set(alert.entity, remainingSec);
+      const total = this._tsTimerTotals.get(alert.entity);
+      const progress = Math.min(1, remainingSec / total);
+      const h = Math.floor(remainingSec / 3600);
+      const m = Math.floor((remainingSec % 3600) / 60).toString().padStart(2, "0");
+      const s = (remainingSec % 60).toString().padStart(2, "0");
+      const remainingStr = h > 0 ? `${h}:${m}:${s}` : `${m}:${s}`;
+      return { progress, remainingStr, isActive: true, remainingSec };
+    }
+
     const isActive = es.state === "active";
-    if (!isActive) return { progress: isActive ? 1 : 0, remainingStr: "00:00", isActive: false };
+    if (!isActive) return { progress: 0, remainingStr: "00:00", isActive: false };
     const finishesAt = es.attributes.finishes_at;
     const duration = es.attributes.duration;
     if (!finishesAt || !duration) return { progress: 1, remainingStr: "--:--", isActive };
@@ -1895,8 +2635,19 @@ class AlertTickerCard extends LitElement {
   _syncTemplates() {
     const needed = new Set();
     for (const alert of this._config?.alerts || []) {
-      if ((alert.message || "").includes("{{")) needed.add(alert.message);
-      if ((alert.secondary_text || "").includes("{{")) needed.add(alert.secondary_text);
+      if ((alert.message || "").includes("{{") || (alert.message || "").includes("{%")) needed.add(alert.message);
+      if ((alert.secondary_text || "").includes("{{") || (alert.secondary_text || "").includes("{%")) needed.add(alert.secondary_text);
+      if ((alert.group_message || "").includes("{{") || (alert.group_message || "").includes("{%")) needed.add(alert.group_message);
+      if ((alert.group_expanded_message || "").includes("{{") || (alert.group_expanded_message || "").includes("{%")) needed.add(alert.group_expanded_message);
+      if ((alert.group_secondary_text || "").includes("{{") || (alert.group_secondary_text || "").includes("{%")) needed.add(alert.group_secondary_text);
+    }
+    // Preserve pre-substituted subscriptions created by _resolveMessage (#113):
+    // their cache keys differ from raw alert.message (e.g. {name} → friendly name),
+    // so they don't appear in `needed` and would be wrongly cancelled on every hass
+    // update, causing a flash-of-raw-template → resolved-value flicker cycle.
+    // Keep any subscription that has already returned a WS result (has a cache entry).
+    for (const tmpl of this._tmplUnsubs.keys()) {
+      if (this._tmplCache.has(tmpl)) needed.add(tmpl);
     }
     // Unsubscribe stale
     for (const [tmpl, unsub] of this._tmplUnsubs) {
@@ -1976,7 +2727,7 @@ class AlertTickerCard extends LitElement {
 
     // Pre-substitute {entity}/{state}/{name}/{device} BEFORE passing to HA's template engine,
     // so that patterns like {{ area_name('{entity}') }} receive the real entity ID.
-    if (msg.includes("{{") && alert.entity && this._hass) {
+    if ((msg.includes("{{") || msg.includes("{%")) && alert.entity && this._hass) {
       const es = this._hass.states[alert.entity];
       if (es) {
         const translatedState = this._formatStateValue(es, alert.attribute);
@@ -1995,8 +2746,8 @@ class AlertTickerCard extends LitElement {
       }
     }
 
-    // {{ ... }} Full HA template rendering via WebSocket render_template
-    if (msg.includes("{{")) {
+    // {{ ... }} / {% %} Full HA template rendering via WebSocket render_template
+    if (msg.includes("{{") || msg.includes("{%")) {
       const cached = this._tmplCache.get(msg);
       if (cached !== undefined) {
         // WS result available — use it (already fully rendered by HA)
@@ -2039,6 +2790,7 @@ class AlertTickerCard extends LitElement {
   }
 
   _timerColor(progress) {
+    if (progress < 0) return "var(--info-color, #039be5)"; // unknown total (timestamp sensor)
     if (progress > 0.5) return "var(--success-color, #43a047)";
     if (progress > 0.2) return "#f57c00";
     return "var(--error-color, #e53935)";
@@ -2090,7 +2842,7 @@ class AlertTickerCard extends LitElement {
     }
 
     // Resolve {{ }} Jinja2 templates in the state value (e.g. states('input_number.threshold'))
-    if (typeof trigger === "string" && trigger.includes("{{")) {
+    if (typeof trigger === "string" && (trigger.includes("{{") || trigger.includes("{%"))) {
       const cached = this._tmplCache.get(trigger);
       if (cached !== undefined) {
         trigger = cached;
@@ -2169,12 +2921,50 @@ class AlertTickerCard extends LitElement {
     } catch (_) {}
   }
 
+  // ---- Persistent alarm helpers ---------------------------------------------
+
+  _loadPersistent() {
+    try {
+      const raw = localStorage.getItem("atc-persistent");
+      if (!raw) return;
+      this._persistentLatched = new Set(JSON.parse(raw));
+    } catch (_) {
+      this._persistentLatched = new Set();
+    }
+  }
+
+  _savePersistent() {
+    try {
+      localStorage.setItem("atc-persistent", JSON.stringify([...this._persistentLatched]));
+    } catch (_) {}
+  }
+
+  _dismissPersistent(alert) {
+    this._persistentLatched.delete(this._snoozeKey(alert));
+    this._savePersistent();
+    this._snoozeMenuOpen = null;
+    // Use a sentinel that won't match "" (empty active list) so _computeActiveAlerts
+    // doesn't early-return when the dismissed alert was the only one active.
+    this._lastSignature = "__dismiss__";
+    this._computeActiveAlerts();
+  }
+
   // ---- History helpers ------------------------------------------------------
+
+  /** Unique localStorage key per card instance, scoped to its entity IDs */
+  get _historyKey() {
+    const ids = (this._config?.alerts || [])
+      .map(a => a.entity || "")
+      .filter(Boolean)
+      .sort()
+      .join("|");
+    return "atc-history" + (ids ? "-" + ids : "");
+  }
 
   /** Load history from localStorage */
   _loadHistory() {
     try {
-      const raw = localStorage.getItem("atc-history");
+      const raw = localStorage.getItem(this._historyKey);
       if (raw) this._history = JSON.parse(raw);
     } catch (_) { this._history = []; }
   }
@@ -2182,20 +2972,17 @@ class AlertTickerCard extends LitElement {
   /** Persist history to localStorage */
   _saveHistory() {
     try {
-      localStorage.setItem("atc-history", JSON.stringify(this._history));
+      localStorage.setItem(this._historyKey, JSON.stringify(this._history));
     } catch (_) {}
   }
 
   /** Record a new alert event into history */
   _recordHistory(alert) {
     const max = this._config.history_max_events || 50;
-    // Resolve entity friendly name and state
     const es = this._hass && alert.entity ? this._hass.states[alert.entity] : null;
-    const entityName = es ? (es.attributes.friendly_name || alert.entity) : (alert.entity || "");
+    const entityName  = es ? (es.attributes.friendly_name || alert.entity) : (alert.entity || "");
     const entityState = es ? this._formatStateValue(es, alert.attribute || null) : null;
-    // Resolve secondary entity
-    let secondaryName = null;
-    let secondaryState = null;
+    let secondaryName = null, secondaryState = null;
     if (alert.secondary_entity) {
       const ses = this._hass && this._hass.states[alert.secondary_entity];
       if (ses) {
@@ -2203,19 +2990,56 @@ class AlertTickerCard extends LitElement {
         secondaryState = this._formatStateValue(ses, alert.secondary_attribute || null);
       }
     }
-    this._history.unshift({
+    // history_message: optional per-alert override for what gets recorded in history.
+    // Useful when the main message is a complex template that produces unhelpful log entries.
+    const historyAlert = alert.history_message
+      ? { ...alert, message: alert.history_message }
+      : alert;
+    const entry = {
       ts: Date.now(),
-      message: this._resolveMessage(alert) || "",
+      message: this._resolveMessage(historyAlert) || "",
       theme: alert.theme || "emergency",
       icon: (THEME_META[alert.theme] || {}).icon || "🔔",
       entity: alert.entity || "",
       entityName: entityName || null,
       entityState: entityState || null,
-      secondaryName: secondaryName,
-      secondaryState: secondaryState,
-    });
+      secondaryName,
+      secondaryState,
+    };
+    this._history.unshift(entry);
     if (this._history.length > max) this._history.length = max;
     this._saveHistory();
+
+    // If message contains {{ }}, the WS result may not be cached yet.
+    // Resolve async and patch the entry once HA responds.
+    const raw = historyAlert.message || "";
+    if ((!raw.includes("{{") && !raw.includes("{%")) || !this._hass?.connection) return;
+    const cached = this._tmplCache?.get(raw);
+    if (cached !== undefined) { entry.message = cached || entry.message; this._saveHistory(); return; }
+    // Substitute {placeholders} before sending to HA engine
+    let tpl = raw;
+    if (es) {
+      tpl = tpl
+        .replace(/\{state\}/g,  this._formatStateValue(es, alert.attribute))
+        .replace(/\{name\}/g,   es.attributes.friendly_name || alert.entity)
+        .replace(/\{entity\}/g, alert.entity);
+    }
+    try {
+      let unsubFn;
+      const timer = setTimeout(() => { try { unsubFn?.(); } catch (_) {} }, 3000);
+      this._hass.connection.subscribeMessage(
+        (result) => {
+          clearTimeout(timer);
+          try { unsubFn?.(); } catch (_) {}
+          const resolved = (result.result || "").replace(/\s+/g, " ").trim();
+          if (resolved) { entry.message = resolved; this._saveHistory(); this.requestUpdate(); }
+        },
+        { type: "render_template", template: tpl, variables: {}, strict: false }
+      ).then(u => {
+        unsubFn = u;
+        setTimeout(() => { try { u(); } catch (_) {} }, 500);
+      }).catch(() => {});
+    } catch (_) {}
   }
 
   /** Play an audio notification when an alert newly becomes active */
@@ -2242,10 +3066,11 @@ class AlertTickerCard extends LitElement {
     // Notify path (Alexa, mobile, etc.) — takes priority when set
     const notifyService = alert.tts_notify_service || this._config?.tts_notify_service;
     if (notifyService) {
+      const notifyType = alert.tts_notify_type || this._config?.tts_notify_type || "tts";
       try {
         this._hass.callService("notify", notifyService, {
           message,
-          data: { type: "tts" },
+          data: { type: notifyType },
         });
       } catch (_) {}
       return;
@@ -2262,6 +3087,27 @@ class AlertTickerCard extends LitElement {
         media_player_entity_id: mediaPlayer,
         message,
         ...(this._config?.tts_language ? { language: this._config.tts_language } : {}),
+      });
+    } catch (_) {}
+  }
+
+  _pushNotifyAlert(alert) {
+    if (!alert.push_notify) return;
+    if (this._config?.push_notify_enabled === false) return;
+    if (!this._hass) return;
+    const notifyService = alert.push_notify_service;
+    if (!notifyService) return;
+    const title = alert.push_notify_title
+      ? this._resolveMessage({ ...alert, message: alert.push_notify_title })
+      : (alert.badge_label || alert.name || undefined);
+    const message = alert.push_notify_message
+      ? this._resolveMessage({ ...alert, message: alert.push_notify_message })
+      : this._resolveMessage(alert);
+    if (!message) return;
+    try {
+      this._hass.callService("notify", notifyService, {
+        ...(title ? { title } : {}),
+        message,
       });
     } catch (_) {}
   }
@@ -2397,8 +3243,100 @@ class AlertTickerCard extends LitElement {
    *  If snooze_default_duration is set (number): single tap → immediate snooze with that duration.
    *  Otherwise (default): tap opens duration menu on card.
    *  If snooze_action is configured (per-alert), it is also executed on tap. */
+  _renderGroupCard(group) {
+    try {
+      const themeMeta = THEME_META[group.theme] || {};
+      const icon = group.icon
+        ? (/^[\w-]+:/.test(group.icon) ? html`<ha-icon icon="${group.icon}" class="atc-ha-icon"></ha-icon>` : group.icon)
+        : (themeMeta.icon || "🔔");
+      const names = group._memberNames || [];
+      const preview = names.join(" · ");
+      return html`
+        <div class="at-${group.theme || "warning"}">
+          <div class="atc-group-inner">
+            <div class="atc-icon-wrap">${icon}</div>
+            <div class="atc-group-body">
+              <div class="atc-group-message">${group.message || ""}</div>
+              <div class="atc-group-names">${group.secondary_text ?? preview}</div>
+            </div>
+            <div class="atc-group-count">
+              <span class="atc-group-count-num">${(group._members || []).length}</span>
+              <span class="atc-group-expand-arrow">▼</span>
+            </div>
+          </div>
+        </div>`;
+    } catch (_) {
+      return html`<div class="at-warning"><div class="atc-group-inner">⚠️ group</div></div>`;
+    }
+  }
+
+  _snoozeGroup(group, durationH) {
+    group._members.forEach(m => this._snoozeAlert(m, durationH));
+  }
+
+  _expandGroup(group) {
+    this._expandedGroups.add(group._groupKey);
+    this._lastSignature = "";
+    this._computeActiveAlerts();
+    const firstIdx = this._activeAlerts.findIndex(a => a._expandedGroupKey === group._groupKey);
+    if (firstIdx >= 0) this._currentIndex = firstIdx;
+    this.requestUpdate();
+  }
+
+  _collapseGroup(groupKey) {
+    this._expandedGroups.delete(groupKey);
+    this._lastSignature = "";
+    this._computeActiveAlerts();
+    const groupIdx = this._activeAlerts.findIndex(a => a._groupKey === groupKey);
+    if (groupIdx >= 0) this._currentIndex = groupIdx;
+    this.requestUpdate();
+  }
+
   _renderSnoozeButton(alert) {
-    if (!alert || !alert.entity) return html``;
+    if (!alert || (!alert.entity && !alert._isGroup)) return html``;
+    if (this._config?.show_snooze_button === false) return html``;
+    // Persistent alarm: snooze becomes a permanent Dismiss button
+    if (alert.persistent) {
+      return html`
+        <div class="atc-snooze-wrap atc-dismiss-wrap">
+          <button
+            class="atc-snooze-btn atc-dismiss-btn"
+            title="${this._t("dismiss")}"
+            @click="${(e) => { e.stopPropagation(); this._dismissPersistent(alert); }}"
+          >✕</button>
+        </div>
+      `;
+    }
+    // Group slide: snooze all members with duration picker
+    if (alert._isGroup) {
+      const menuOpen = this._snoozeMenuOpen === alert._groupKey;
+      return html`
+        <div class="atc-snooze-wrap">
+          <button
+            class="atc-snooze-btn"
+            title="${this._t("snooze")}"
+            @click="${(e) => {
+              e.stopPropagation();
+              this._snoozeMenuOpen = this._snoozeMenuOpen === alert._groupKey ? null : alert._groupKey;
+              if (this._snoozeMenuOpen) this._bindSnoozeOutsideClick();
+              this.requestUpdate();
+            }}"
+          >💤</button>
+          ${menuOpen ? html`
+            <div class="atc-snooze-menu">
+              <div class="atc-snooze-label">${this._t("snooze")}</div>
+              ${[[1, "snooze_1h"], [4, "snooze_4h"], [8, "snooze_8h"], [24, "snooze_24h"], [168, "snooze_1w"], [720, "snooze_1m"]].map(
+                ([h, key]) => html`
+                  <button class="atc-snooze-option" @click="${() => this._snoozeGroup(alert, h)}">
+                    ${this._t(key)}
+                  </button>
+                `
+              )}
+            </div>
+          ` : ""}
+        </div>
+      `;
+    }
     const fixedDuration = alert.snooze_duration !== undefined
       ? alert.snooze_duration
       : this._config.snooze_default_duration;
@@ -2422,7 +3360,7 @@ class AlertTickerCard extends LitElement {
           ${menuOpen ? html`
             <div class="atc-snooze-menu">
               <div class="atc-snooze-label">${this._t("snooze")}</div>
-              ${[[1, "snooze_1h"], [4, "snooze_4h"], [8, "snooze_8h"], [24, "snooze_24h"]].map(
+              ${[[1, "snooze_1h"], [4, "snooze_4h"], [8, "snooze_8h"], [24, "snooze_24h"], [168, "snooze_1w"], [720, "snooze_1m"]].map(
                 ([h, key]) => html`
                   <button class="atc-snooze-option" @click="${() => this._snoozeAlert(alert, h)}">
                     ${this._t(key)}
@@ -2451,9 +3389,10 @@ class AlertTickerCard extends LitElement {
     `;
   }
 
-  /** Render the history toggle button (📋) — hidden when history is open */
+  /** Render the history toggle button (📋) — hidden when history is open or show_history_button: false */
   _renderHistoryButton() {
     if (this._historyOpen) return html``;
+    if (this._config?.show_history_button === false) return html``;
     return html`
       <button
         class="atc-history-btn"
@@ -2471,7 +3410,7 @@ class AlertTickerCard extends LitElement {
         + " " + d.toLocaleTimeString(this._lang, { hour: "2-digit", minute: "2-digit" });
     };
     return html`
-      <ha-card class="atc-history-card">
+      <div class="atc-history-card">
         <div class="atc-history-header">
           <span class="atc-history-title">${this._t("history")}</span>
           <div class="atc-history-actions">
@@ -2504,13 +3443,14 @@ class AlertTickerCard extends LitElement {
             </div>
           `)}
         </div>
-      </ha-card>
+      </div>
     `;
   }
 
   /** Execute a tap_action / hold_action config object */
   _handleAction(cfg) {
     if (!cfg || !cfg.action || cfg.action === "none") return;
+    if (cfg.action === "_expand_group") { this._expandGroup(this._current); return; }
     switch (cfg.action) {
       case "call-service": {
         if (!cfg.service || !this._hass) return;
@@ -2569,9 +3509,26 @@ class AlertTickerCard extends LitElement {
     // fires on the same element, not on the shadow host which would miss our handler.
     try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) {}
     if (holdCfg && holdCfg.action && holdCfg.action !== "none") {
+      // On touch, prevent the browser scroll-detection from firing pointercancel
+      // before our 500 ms hold threshold — without this the gesture is silently
+      // hijacked on mobile and the hold never fires.
+      if (e.pointerType === 'touch') e.preventDefault();
+      const _isTouch = e.pointerType === 'touch';
       this._holdTimer = setTimeout(() => {
         this._holdFired = true;
-        this._handleAction(holdCfg);
+        if (holdCfg.action === "url" && holdCfg.url_path) {
+          // URL hold on touch: open via location.href immediately (window.open from setTimeout is
+          // popup-blocked; pointercancel on iOS means pointerup never fires so we can't defer).
+          // URL hold on desktop: defer to pointerup which carries real user-activation so
+          // window.open won't be blocked — store URL and open it there.
+          if (_isTouch) {
+            window.location.href = holdCfg.url_path;
+          } else {
+            this._pendingHoldUrl = holdCfg.url_path;
+          }
+        } else {
+          this._handleAction(holdCfg);
+        }
         // After hold-navigate, block pointer events briefly so the upcoming pointerup
         // doesn't land on a new-view element at the same screen coordinates
         this._blockPointerEvents(350);
@@ -2588,6 +3545,16 @@ class AlertTickerCard extends LitElement {
   /** Fire tap / double-tap action on pointer up (if hold didn't fire) */
   _onPointerUp(e) {
     this._cancelHold();
+    // Desktop hold_action: url — open the deferred URL now; pointerup carries user-activation
+    // so window.open won't be blocked by the browser's popup blocker.
+    if (this._holdFired && this._pendingHoldUrl) {
+      const url = this._pendingHoldUrl;
+      this._pendingHoldUrl = null;
+      this._holdFired = false;
+      const w = window.open(url, "_blank");
+      if (!w) window.location.assign(url);
+      return;
+    }
     if (!this._holdFired) {
       // preventDefault stops the browser from generating a synthetic click event
       // from this pointer sequence, preventing tap bleed-through on navigate actions
@@ -2622,6 +3589,7 @@ class AlertTickerCard extends LitElement {
 
   _cancelHold() {
     if (this._holdTimer) { clearTimeout(this._holdTimer); this._holdTimer = null; }
+    this._pendingHoldUrl = null;
   }
 
   /** Swipe-to-snooze: record touch start position */
@@ -2644,7 +3612,17 @@ class AlertTickerCard extends LitElement {
       // Swipe left → snooze (if enabled) OR navigate next
       if (this._config.swipe_to_snooze) {
         const alert = this._current;
-        if (!alert || !alert.entity) return;
+        if (!alert) return;
+        if (alert._isGroup) {
+          const dur = this._config.snooze_default_duration ?? 1;
+          this._snoozeGroup(alert, dur === null ? 1 : dur);
+          return;
+        }
+        if (!alert.entity) return;
+        if (alert.persistent) {
+          this._dismissPersistent(alert);
+          return;
+        }
         const dur = alert.snooze_duration !== undefined
           ? alert.snooze_duration
           : (this._config.snooze_default_duration ?? 1);
@@ -2703,7 +3681,7 @@ class AlertTickerCard extends LitElement {
   /** Minimal bar shown when all matching alerts are snoozed */
   _renderSnoozedIndicator() {
     return html`
-      <ha-card class="at-card atc-snoozed-bar">
+      <div class="at-card atc-snoozed-bar">
         <div class="atc-snoozed-inner">
           <span class="atc-snoozed-icon">💤</span>
           <span class="atc-snoozed-text">${this._snoozedCount} ${this._t("alerts_snoozed")}</span>
@@ -2711,7 +3689,7 @@ class AlertTickerCard extends LitElement {
             ↩ ${this._t("snooze_reset")}
           </button>
         </div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -2726,6 +3704,7 @@ class AlertTickerCard extends LitElement {
       _ATC_OVERLAY.register(this._cardId, this._config.alerts || [], this._config, this._lang, this);
     }
     this._loadSnooze();
+    this._loadPersistent();
     this._loadHistory();
     this._startCycleTimer();
     this._startTimerTick();
@@ -2745,10 +3724,16 @@ class AlertTickerCard extends LitElement {
     for (const unsub of this._tmplUnsubs.values()) { try { unsub(); } catch (_) {} }
     this._tmplUnsubs.clear();
     this._tmplCache.clear();
-    // Cancel all auto_dismiss / on_change timers
+    // Unsubscribe weather forecast subscription and flip timer
+    if (this._forecastUnsub) { try { this._forecastUnsub(); } catch (_) {} this._forecastUnsub = null; }
+    this._stopWfFlipTimer();
+    // Cancel all auto_dismiss / on_change / trigger_delay timers
     Object.values(this._autoDismissTimers).forEach(t => clearTimeout(t));
     this._autoDismissTimers = {};
     this._changeTriggers = {};
+    Object.values(this._triggerDelayTimers).forEach(t => clearTimeout(t));
+    this._triggerDelayTimers = {};
+    this._triggerDelayActive.clear();
     // Remove from overlay watcher — prevents stale registrations when HA re-mounts
     // the card on navigation (new instance = new _cardId, old entry would still fire)
     _ATC_OVERLAY.detach(this._cardId);
@@ -2947,7 +3932,7 @@ class AlertTickerCard extends LitElement {
     );
 
     return html`
-      <ha-card class="at-card at-ticker">
+      <div class="at-card at-ticker">
         <div class="tk-label">${this._t("alerts")}</div>
         <div class="tk-track">
           <div class="tk-scroll" style="--tk-duration: ${duration}s">
@@ -2955,7 +3940,7 @@ class AlertTickerCard extends LitElement {
             ${items}<span class="tk-gap"></span>
           </div>
         </div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -2967,14 +3952,14 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-emergency">
+      <div class="at-emergency">
         <div class="em-icon">${icon}</div>
         <div class="em-content">
           <div class="em-badge">${label}</div>
           <div class="em-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="em-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -2986,7 +3971,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-warning">
+      <div class="at-warning">
         <div class="wn-icon">${icon}</div>
         <div class="wn-content">
           <div class="wn-badge">${label}</div>
@@ -2996,7 +3981,7 @@ class AlertTickerCard extends LitElement {
           <div class="wn-dot"></div>
           ${this._renderCounter()}
         </div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3008,14 +3993,14 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-info">
+      <div class="at-info">
         <div class="in-icon-wrap">${icon}</div>
         <div class="in-content">
           <div class="in-badge">${label}</div>
           <div class="in-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="in-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3027,14 +4012,14 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-success">
+      <div class="at-success">
         <div class="su-icon-wrap">${icon}</div>
         <div class="su-content">
           <div class="su-badge">${label}</div>
           <div class="su-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="su-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3046,7 +4031,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-neon">
+      <div class="at-neon">
         <div class="ne-scan"></div>
         <div class="ne-icon">${icon}</div>
         <div class="ne-content">
@@ -3054,7 +4039,7 @@ class AlertTickerCard extends LitElement {
           <div class="ne-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="ne-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3066,14 +4051,14 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-glass">
+      <div class="at-glass">
         <div class="gl-icon-wrap">${icon}</div>
         <div class="gl-content">
           <div class="gl-badge">${label}</div>
           <div class="gl-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="gl-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3086,7 +4071,7 @@ class AlertTickerCard extends LitElement {
     const timeStr = new Date().toTimeString().slice(0, 8);
 
     return html`
-      <ha-card class="at-matrix">
+      <div class="at-matrix">
         <div class="mx-icon">${icon}</div>
         <div class="mx-content">
           <div class="mx-header">${this._t("alert_system")} &nbsp;|&nbsp; ${timeStr}</div>
@@ -3100,7 +4085,7 @@ class AlertTickerCard extends LitElement {
         <div class="mx-right">
           ${this._renderCounter()}
         </div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3113,14 +4098,14 @@ class AlertTickerCard extends LitElement {
     const label = this._getCategoryLabel(alert);
     const accent = this._getAccentColor(alert.theme);
     return html`
-      <ha-card class="at-minimal" style="--minimal-accent: ${accent}">
+      <div class="at-minimal" style="--minimal-accent: ${accent}">
         <div class="mn-icon">${icon}</div>
         <div class="mn-content">
           <div class="mn-badge">${label}</div>
           <div class="mn-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="mn-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3132,14 +4117,14 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-fire">
+      <div class="at-fire">
         <div class="fi-icon">${icon}</div>
         <div class="fi-content">
           <div class="fi-badge">${label}</div>
           <div class="fi-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="fi-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3149,7 +4134,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-alarm">
+      <div class="at-alarm">
         <div class="al-strobe"></div>
         <div class="al-icon">${icon}</div>
         <div class="al-content">
@@ -3157,7 +4142,7 @@ class AlertTickerCard extends LitElement {
           <div class="al-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="al-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3167,7 +4152,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-lightning">
+      <div class="at-lightning">
         <div class="lt-bg"></div>
         <div class="lt-bolt">⚡</div>
         <div class="lt-icon">${icon}</div>
@@ -3176,7 +4161,7 @@ class AlertTickerCard extends LitElement {
           <div class="lt-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="lt-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3186,7 +4171,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-caution">
+      <div class="at-caution">
         <div class="ca-icon">${icon}</div>
         <div class="ca-content">
           <div class="ca-badge">${label}</div>
@@ -3196,7 +4181,7 @@ class AlertTickerCard extends LitElement {
           <div class="ca-dot"></div>
           ${this._renderCounter()}
         </div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3206,7 +4191,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-notification">
+      <div class="at-notification">
         <div class="no-icon-wrap">
           ${icon}
           <div class="no-dot"></div>
@@ -3216,7 +4201,7 @@ class AlertTickerCard extends LitElement {
           <div class="no-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="no-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3226,7 +4211,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-aurora">
+      <div class="at-aurora">
         <div class="au-bg"></div>
         <div class="au-icon-wrap">${icon}</div>
         <div class="au-content">
@@ -3234,7 +4219,7 @@ class AlertTickerCard extends LitElement {
           <div class="au-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="au-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3244,14 +4229,14 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-check">
+      <div class="at-check">
         <div class="ck-icon-wrap">${icon}</div>
         <div class="ck-content">
           <div class="ck-badge">${label}</div>
           <div class="ck-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="ck-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3261,7 +4246,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-confetti">
+      <div class="at-confetti">
         <div class="cf-particles">
           <div class="cf-p cf-p1"></div><div class="cf-p cf-p2"></div>
           <div class="cf-p cf-p3"></div><div class="cf-p cf-p4"></div>
@@ -3274,7 +4259,7 @@ class AlertTickerCard extends LitElement {
           <div class="cf-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="cf-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3284,7 +4269,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-nuclear">
+      <div class="at-nuclear">
         <div class="nc-bg"></div>
         <div class="nc-icon">${icon}</div>
         <div class="nc-content">
@@ -3292,7 +4277,7 @@ class AlertTickerCard extends LitElement {
           <div class="nc-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="nc-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3302,7 +4287,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-radar">
+      <div class="at-radar">
         <div class="rd-display">
           <div class="rd-r rd-r1"></div>
           <div class="rd-r rd-r2"></div>
@@ -3316,7 +4301,7 @@ class AlertTickerCard extends LitElement {
           <div class="rd-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="rd-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3326,7 +4311,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-hologram">
+      <div class="at-hologram">
         <div class="hg-grid"></div>
         <div class="hg-scan"></div>
         <div class="hg-icon-wrap">${icon}</div>
@@ -3335,7 +4320,7 @@ class AlertTickerCard extends LitElement {
           <div class="hg-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="hg-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3345,7 +4330,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-heartbeat">
+      <div class="at-heartbeat">
         <div class="hb-ecg">
           <svg viewBox="0 0 400 30" preserveAspectRatio="none">
             <polyline class="hb-line"
@@ -3359,7 +4344,7 @@ class AlertTickerCard extends LitElement {
           <div class="hb-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="hb-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3369,7 +4354,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-retro">
+      <div class="at-retro">
         <div class="rt-scanlines"></div>
         <div class="rt-icon">${icon}</div>
         <div class="rt-content">
@@ -3377,7 +4362,7 @@ class AlertTickerCard extends LitElement {
           <div class="rt-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="rt-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3387,7 +4372,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-flood">
+      <div class="at-flood">
         <div class="fl-waves"></div>
         <div class="fl-icon">${icon}</div>
         <div class="fl-content">
@@ -3395,7 +4380,7 @@ class AlertTickerCard extends LitElement {
           <div class="fl-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="fl-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3405,7 +4390,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-motion">
+      <div class="at-motion">
         <div class="mo-scan"></div>
         <div class="mo-icon">${icon}</div>
         <div class="mo-content">
@@ -3413,7 +4398,7 @@ class AlertTickerCard extends LitElement {
           <div class="mo-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="mo-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3423,7 +4408,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-intruder">
+      <div class="at-intruder">
         <div class="it-stripes"></div>
         <div class="it-icon">${icon}</div>
         <div class="it-content">
@@ -3431,7 +4416,7 @@ class AlertTickerCard extends LitElement {
           <div class="it-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="it-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3441,7 +4426,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-toxic">
+      <div class="at-toxic">
         <div class="tx-bubble tx-b1"></div>
         <div class="tx-bubble tx-b2"></div>
         <div class="tx-bubble tx-b3"></div>
@@ -3452,7 +4437,7 @@ class AlertTickerCard extends LitElement {
           <div class="tx-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="tx-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3462,7 +4447,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-temperature">
+      <div class="at-temperature">
         <div class="tp-fill"></div>
         <div class="tp-icon">${icon}</div>
         <div class="tp-content">
@@ -3470,7 +4455,7 @@ class AlertTickerCard extends LitElement {
           <div class="tp-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="tp-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3480,7 +4465,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-battery">
+      <div class="at-battery">
         <div class="bt-drain"></div>
         <div class="bt-icon">${icon}</div>
         <div class="bt-content">
@@ -3488,7 +4473,7 @@ class AlertTickerCard extends LitElement {
           <div class="bt-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="bt-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3498,7 +4483,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-door">
+      <div class="at-door">
         <div class="dr-ray"></div>
         <div class="dr-icon">${icon}</div>
         <div class="dr-content">
@@ -3506,7 +4491,7 @@ class AlertTickerCard extends LitElement {
           <div class="dr-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="dr-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3516,7 +4501,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-window">
+      <div class="at-window">
         <div class="win-shimmer"></div>
         <div class="win-icon">${icon}</div>
         <div class="win-content">
@@ -3524,7 +4509,7 @@ class AlertTickerCard extends LitElement {
           <div class="win-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="win-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3534,7 +4519,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-presence">
+      <div class="at-presence">
         <div class="pr-ping">
           <div class="pr-ring"></div>
           <div class="pr-ring"></div>
@@ -3546,7 +4531,7 @@ class AlertTickerCard extends LitElement {
           <div class="pr-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="pr-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3556,7 +4541,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-update">
+      <div class="at-update">
         <div class="up-ring"></div>
         <div class="up-icon">${icon}</div>
         <div class="up-content">
@@ -3564,7 +4549,7 @@ class AlertTickerCard extends LitElement {
           <div class="up-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="up-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3574,7 +4559,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-shield">
+      <div class="at-shield">
         <div class="sh-scan"></div>
         <div class="sh-icon">${icon}</div>
         <div class="sh-content">
@@ -3582,7 +4567,7 @@ class AlertTickerCard extends LitElement {
           <div class="sh-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="sh-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3592,7 +4577,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-power">
+      <div class="at-power">
         <div class="pw-lines"></div>
         <div class="pw-icon">${icon}</div>
         <div class="pw-content">
@@ -3600,7 +4585,7 @@ class AlertTickerCard extends LitElement {
           <div class="pw-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="pw-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3610,7 +4595,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-cyberpunk">
+      <div class="at-cyberpunk">
         <div class="cp-lines"></div>
         <div class="cp-glitch"></div>
         <div class="cp-icon">${icon}</div>
@@ -3619,7 +4604,7 @@ class AlertTickerCard extends LitElement {
           <div class="cp-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="cp-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3629,7 +4614,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-vapor">
+      <div class="at-vapor">
         <div class="vp-grid"></div>
         <div class="vp-overlay"></div>
         <div class="vp-icon">${icon}</div>
@@ -3638,7 +4623,7 @@ class AlertTickerCard extends LitElement {
           <div class="vp-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="vp-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3648,7 +4633,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-lava">
+      <div class="at-lava">
         <div class="lv-blob lv-b1"></div>
         <div class="lv-blob lv-b2"></div>
         <div class="lv-blob lv-b3"></div>
@@ -3658,7 +4643,7 @@ class AlertTickerCard extends LitElement {
           <div class="lv-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="lv-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3668,7 +4653,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-smoke">
+      <div class="at-smoke">
         <div class="sm-drift"><div class="sm-p1"></div><div class="sm-p2"></div><div class="sm-p3"></div></div>
         <div class="sm-icon">${icon}</div>
         <div class="sm-content">
@@ -3676,7 +4661,7 @@ class AlertTickerCard extends LitElement {
           <div class="sm-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="sm-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3686,7 +4671,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-wind">
+      <div class="at-wind">
         <div class="wd-lines"></div>
         <div class="wd-icon">${icon}</div>
         <div class="wd-content">
@@ -3694,7 +4679,7 @@ class AlertTickerCard extends LitElement {
           <div class="wd-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="wd-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3704,7 +4689,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-leak">
+      <div class="at-leak">
         <div class="lk-drip"><div class="lk-drop lk-d1"></div><div class="lk-drop lk-d2"></div><div class="lk-drop lk-d3"></div></div>
         <div class="lk-icon">${icon}</div>
         <div class="lk-content">
@@ -3712,7 +4697,7 @@ class AlertTickerCard extends LitElement {
           <div class="lk-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="lk-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3722,7 +4707,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-cloud">
+      <div class="at-cloud">
         <div class="cw-float"></div>
         <div class="cw-icon">${icon}</div>
         <div class="cw-content">
@@ -3730,7 +4715,7 @@ class AlertTickerCard extends LitElement {
           <div class="cw-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="cw-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3740,7 +4725,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-satellite">
+      <div class="at-satellite">
         <div class="sl-waves"><div class="sl-w sl-w1"></div><div class="sl-w sl-w2"></div><div class="sl-w sl-w3"></div></div>
         <div class="sl-icon">${icon}</div>
         <div class="sl-content">
@@ -3748,7 +4733,7 @@ class AlertTickerCard extends LitElement {
           <div class="sl-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="sl-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3758,7 +4743,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-tips">
+      <div class="at-tips">
         <div class="ts-glow"></div>
         <div class="ts-icon">${icon}</div>
         <div class="ts-content">
@@ -3766,7 +4751,7 @@ class AlertTickerCard extends LitElement {
           <div class="ts-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="ts-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3776,7 +4761,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-sunrise">
+      <div class="at-sunrise">
         <div class="sn-ray"></div>
         <div class="sn-icon">${icon}</div>
         <div class="sn-content">
@@ -3784,7 +4769,7 @@ class AlertTickerCard extends LitElement {
           <div class="sn-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="sn-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3794,7 +4779,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-plant">
+      <div class="at-plant">
         <div class="pn-grow"></div>
         <div class="pn-icon">${icon}</div>
         <div class="pn-content">
@@ -3802,7 +4787,7 @@ class AlertTickerCard extends LitElement {
           <div class="pn-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="pn-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3812,7 +4797,7 @@ class AlertTickerCard extends LitElement {
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
     return html`
-      <ha-card class="at-lock">
+      <div class="at-lock">
         <div class="lo-scan"></div>
         <div class="lo-icon">${icon}</div>
         <div class="lo-content">
@@ -3820,7 +4805,125 @@ class AlertTickerCard extends LitElement {
           <div class="lo-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
         </div>
         <div class="lo-right">${this._renderCounter()}</div>
-      </ha-card>
+      </div>
+    `;
+  }
+
+  /** LIGHT — warm incandescent bulb glow, info */
+  _renderLight(alert) {
+    if (!alert) return html``;
+    const icon = this._getIcon(alert);
+    const label = this._getCategoryLabel(alert);
+    return html`
+      <div class="at-light">
+        <div class="li-beam"></div>
+        <div class="li-icon">${icon}</div>
+        <div class="li-content">
+          <div class="li-badge">${label}</div>
+          <div class="li-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
+        </div>
+        <div class="li-right">${this._renderCounter()}</div>
+      </div>
+    `;
+  }
+
+  /** MUSIC — floating notes, purple/magenta pulsing rhythm, info */
+  _renderMusic(alert) {
+    if (!alert) return html``;
+    if (alert.show_player_controls && alert.entity && alert.entity.startsWith("media_player.")) {
+      const es = this._hass && this._hass.states[alert.entity];
+      if (es) return this._renderMusicPlayer(alert, es);
+    }
+    const icon = this._getIcon(alert);
+    const label = this._getCategoryLabel(alert);
+    return html`
+      <div class="at-music">
+        <div class="mu-notes">
+          <span class="mu-note">♪</span>
+          <span class="mu-note">♫</span>
+          <span class="mu-note">♩</span>
+          <span class="mu-note">♬</span>
+        </div>
+        <div class="mu-icon">${icon}</div>
+        <div class="mu-content">
+          <div class="mu-badge">${label}</div>
+          <div class="mu-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
+        </div>
+        <div class="mu-right">${this._renderCounter()}</div>
+      </div>
+    `;
+  }
+
+  /** MUSIC PLAYER — album art background with playback controls */
+  _renderMusicPlayer(alert, es) {
+    const art = es.attributes.entity_picture_local || es.attributes.entity_picture || "";
+    const title = es.attributes.media_title || this._resolveMessage(alert);
+    const artist = es.attributes.media_artist || "";
+    const isPlaying = es.state === "playing";
+    const isMuted = !!es.attributes.is_volume_muted;
+    const vol = Math.round((es.attributes.volume_level || 0) * 100);
+    const volBg = `linear-gradient(to right, var(--mu-accent, #e040fb) ${vol}%, rgba(255,255,255,0.15) ${vol}%)`;
+    const artUrl = art
+      ? (art.startsWith("http") ? art : (this._hass.hassUrl ? this._hass.hassUrl(art) : art))
+      : "";
+    const accent = alert.music_player_color || '#e040fb';
+    const call = (svc, extra = {}) =>
+      this._hass.callService("media_player", svc, { entity_id: alert.entity, ...extra });
+    return html`
+      <div class="at-music at-music--player" style="--mu-accent:${accent}">
+        ${artUrl ? html`<div class="mu-art-bg" style="background-image:url('${artUrl}')"></div>` : ""}
+        <div class="mu-art-overlay"></div>
+        <div class="mu-player-body">
+          <div class="mu-now-playing">
+            ${isPlaying ? html`
+              <div class="mu-eq">
+                <span class="mu-eq-bar"></span>
+                <span class="mu-eq-bar"></span>
+                <span class="mu-eq-bar"></span>
+              </div>` : html`<span class="mu-pause-dot">◼</span>`}
+            <span class="mu-np-label">${alert.badge_label || "NOW PLAYING"}</span>
+          </div>
+          <div class="mu-player-info">
+            <div class="mu-player-title">${title}</div>
+            ${artist ? html`<div class="mu-player-artist">${artist}</div>` : ""}
+            ${(alert.entity_filter || alert.device_class) && alert.show_filter_name !== false
+              ? html`<div class="mu-player-artist" style="opacity:0.6">${es.attributes.friendly_name || alert.entity}</div>`
+              : ""}
+          </div>
+          <div class="mu-player-controls">
+            <button class="mu-ctrl-btn"
+              @pointerdown="${(e) => e.stopPropagation()}" @pointerup="${(e) => e.stopPropagation()}"
+              @click="${() => call('media_previous_track')}">
+              <ha-icon icon="mdi:skip-previous" style="--mdc-icon-size:18px"></ha-icon>
+            </button>
+            <button class="mu-ctrl-btn mu-ctrl-btn--play"
+              @pointerdown="${(e) => e.stopPropagation()}" @pointerup="${(e) => e.stopPropagation()}"
+              @click="${() => call('media_play_pause')}">
+              <ha-icon icon="${isPlaying ? 'mdi:pause' : 'mdi:play'}" style="--mdc-icon-size:22px"></ha-icon>
+            </button>
+            <button class="mu-ctrl-btn"
+              @pointerdown="${(e) => e.stopPropagation()}" @pointerup="${(e) => e.stopPropagation()}"
+              @click="${() => call('media_next_track')}">
+              <ha-icon icon="mdi:skip-next" style="--mdc-icon-size:18px"></ha-icon>
+            </button>
+            <button class="mu-ctrl-btn ${isMuted ? 'mu-ctrl-btn--active' : ''}"
+              @pointerdown="${(e) => e.stopPropagation()}" @pointerup="${(e) => e.stopPropagation()}"
+              @click="${() => call('volume_mute', { is_volume_muted: !isMuted })}">
+              <ha-icon icon="${isMuted ? 'mdi:volume-off' : 'mdi:volume-high'}" style="--mdc-icon-size:18px"></ha-icon>
+            </button>
+            <input type="range" class="mu-vol-slider ${isMuted ? 'mu-vol-slider--muted' : ''}"
+              min="0" max="100" step="1" .value="${vol}"
+              style="background:${volBg}"
+              @pointerdown="${(e) => e.stopPropagation()}" @pointerup="${(e) => e.stopPropagation()}"
+              @input="${(e) => { e.target.style.background = `linear-gradient(to right, var(--mu-accent, #e040fb) ${e.target.value}%, rgba(255,255,255,0.15) ${e.target.value}%)`; }}"
+              @change="${(e) => call('volume_set', { volume_level: parseFloat(e.target.value) / 100 })}"
+            />
+          </div>
+        </div>
+        ${artUrl ? html`<img class="mu-art-thumb ${isPlaying ? 'mu-art-thumb--playing' : ''}" src="${artUrl}" alt="">` : ""}
+        <div class="mu-player-right">${this._renderCounter()}</div>
+        <div class="mu-accent-line"></div>
+      </div>
     `;
   }
 
@@ -3835,9 +4938,10 @@ class AlertTickerCard extends LitElement {
     const message = this._resolveMessage(alert);
     const icon = this._getIcon(alert);
     const color = this._timerColor(progress);
-    const urgent = progress < 0.2;
+    const urgent = progress >= 0 && progress < 0.2;
+    const barW = progress >= 0 ? progress * 100 : 0;
     return html`
-      <ha-card class="at-countdown ${urgent ? "cd-urgent" : ""}">
+      <div class="at-countdown ${urgent ? "cd-urgent" : ""}">
         <div class="cd-icon">${icon}</div>
         <div class="cd-content">
           <div class="cd-badge">${isActive ? this._t("timer_active") : this._t("timer_done")}</div>
@@ -3849,9 +4953,9 @@ class AlertTickerCard extends LitElement {
           ${this._renderCounter()}
         </div>
         <div class="cd-bar-track">
-          <div class="cd-bar-fill" style="width:${progress * 100}%;background:${color}"></div>
+          <div class="cd-bar-fill" style="width:${barW}%;background:${color}"></div>
         </div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3861,10 +4965,11 @@ class AlertTickerCard extends LitElement {
     const message = this._resolveMessage(alert);
     const icon = this._getIcon(alert);
     const color = this._timerColor(progress);
-    const urgent = progress < 0.2;
+    const urgent = progress >= 0 && progress < 0.2;
+    const fillH = progress >= 0 ? progress * 100 : 0;
     return html`
-      <ha-card class="at-hourglass ${urgent ? "hg2-urgent" : ""}">
-        <div class="hg2-fill" style="height:${progress * 100}%;background:${color}20"></div>
+      <div class="at-hourglass ${urgent ? "hg2-urgent" : ""}">
+        <div class="hg2-fill" style="height:${fillH}%;background:${color}20"></div>
         <div class="hg2-icon">${icon}</div>
         <div class="hg2-content">
           <div class="hg2-badge">${isActive ? this._t("timer_active") : this._t("timer_done")}</div>
@@ -3875,7 +4980,7 @@ class AlertTickerCard extends LitElement {
           <div class="hg2-time" style="color:${color}">${remainingStr}</div>
           ${this._renderCounter()}
         </div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3885,9 +4990,9 @@ class AlertTickerCard extends LitElement {
     const message = this._resolveMessage(alert);
     const icon = this._getIcon(alert);
     const color = this._timerColor(progress);
-    const speed = Math.max(0.4, progress * 2.5).toFixed(2);
+    const speed = Math.max(0.4, (progress >= 0 ? progress : 0.8) * 2.5).toFixed(2);
     return html`
-      <ha-card class="at-timer-pulse" style="--tp-color:${color};--tp-speed:${speed}s">
+      <div class="at-timer-pulse" style="--tp-color:${color};--tp-speed:${speed}s">
         <div class="tp-icon">${icon}</div>
         <div class="tp-content">
           <div class="tp-badge">${isActive ? this._t("timer_active") : this._t("timer_done")}</div>
@@ -3898,7 +5003,7 @@ class AlertTickerCard extends LitElement {
           <div class="tp-time">${remainingStr}</div>
           ${this._renderCounter()}
         </div>
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3910,9 +5015,9 @@ class AlertTickerCard extends LitElement {
     const color = this._timerColor(progress);
     const R = 22;
     const circ = +(2 * Math.PI * R).toFixed(2);
-    const dash = +(circ * progress).toFixed(2);
+    const dash = +(circ * Math.max(0, progress)).toFixed(2);
     return html`
-      <ha-card class="at-timer-ring">
+      <div class="at-timer-ring">
         <div class="tr2-icon">${icon}</div>
         <div class="tr2-content">
           <div class="tr2-badge">${isActive ? this._t("timer_active") : this._t("timer_done")}</div>
@@ -3932,7 +5037,7 @@ class AlertTickerCard extends LitElement {
           <div class="tr2-time" style="color:${color}">${remainingStr}</div>
         </div>
         ${this._renderCounter()}
-      </ha-card>
+      </div>
     `;
   }
 
@@ -3981,6 +5086,8 @@ class AlertTickerCard extends LitElement {
       case "cloud":        return this._renderCloud(alert);
       case "satellite":    return this._renderSatellite(alert);
       case "tips":         return this._renderTips(alert);
+      case "light":        return this._renderLight(alert);
+      case "music":        return this._renderMusic(alert);
       case "sunrise":      return this._renderSunrise(alert);
       case "plant":        return this._renderPlant(alert);
       case "lock":         return this._renderLock(alert);
@@ -3997,11 +5104,12 @@ class AlertTickerCard extends LitElement {
   /** Class string for the snooze-host wrapper — shared by all render paths */
   get _hostClass() {
     return "atc-snooze-host"
-      + (this._config.large_buttons    ? " atc-large-buttons"    : "")
-      + (this._config.ha_theme         ? " atc-ha-theme"         : "")
-      + (this._config.vertical         ? " atc-vertical"         : "")
-      + (this._animPhase               ? " atc-animating"        : "")
-      + (this._touchButtonsActive      ? " atc-touch-active"     : "");
+      + (this._config.large_buttons          ? " atc-large-buttons"    : "")
+      + (this._config.ha_theme               ? " atc-ha-theme"         : "")
+      + (this._config.vertical               ? " atc-vertical"         : "")
+      + (this._animPhase                     ? " atc-animating"        : "")
+      + (this._touchButtonsActive            ? " atc-touch-active"     : "")
+      + ((this._activeAlerts[this._currentIndex]?.secondary_value_align || this._config.secondary_value_align) === "right" ? " atc-sv-right" : "");
   }
 
   render() {
@@ -4010,16 +5118,35 @@ class AlertTickerCard extends LitElement {
     // No active alerts
     if (this._activeAlerts.length === 0) {
       // Some alerts match but are snoozed — show a minimal indicator with reset button
-      if (this._snoozedCount > 0 && this._config.show_snooze_bar !== false) {
+      // Exception: if show_when_clear is set, fall through to the clear widget instead
+      // (the snooze pill is already overlaid in the normal render path)
+      if (this._snoozedCount > 0 && this._config.show_snooze_bar !== false && !this._config.show_when_clear) {
         return html`
           <div class="atc-card-root">
             <div class="${this._hostClass}">${this._renderSnoozedIndicator()}</div>
           </div>`;
       }
+      const clearSnoozedPill = (this._snoozedCount > 0 && this._config.show_snooze_bar !== false) ? html`
+        <button class="atc-snoozed-pill" title="${this._t("snooze_reset")}" @click="${() => this._resetSnooze()}">
+          💤 ${this._snoozedCount}
+        </button>` : "";
       if (this._config.show_when_clear) {
         const widget = this._renderClearWidget();
         if (widget) {
-          return html`<div class="atc-card-root"><div class="${this._hostClass}"><div class="atc-inner-clip">${widget}</div></div></div>`;
+          const wTapCfg    = this._config.clear_tap_action        || null;
+          const wHoldCfg   = this._config.clear_hold_action       || null;
+          const wDblTapCfg = this._config.clear_double_tap_action || null;
+          const wHasAction = (wTapCfg    && wTapCfg.action    && wTapCfg.action    !== "none") ||
+                             (wHoldCfg   && wHoldCfg.action   && wHoldCfg.action   !== "none") ||
+                             (wDblTapCfg && wDblTapCfg.action && wDblTapCfg.action !== "none");
+          const wPd = wHasAction ? (e) => this._onPointerDown(e, wTapCfg, wHoldCfg, wDblTapCfg) : null;
+          const wPu = wHasAction ? (e) => this._onPointerUp(e)  : null;
+          const wPl = wHasAction ? ()  => this._cancelHold()    : null;
+          return html`<div class="atc-card-root"><div class="${this._hostClass}"><div class="atc-inner-clip">
+            <div class="${wHasAction ? "atc-clickable" : ""}"
+              @pointerdown="${wPd}" @pointerup="${wPu}"
+              @pointerleave="${wPl}" @pointercancel="${wPl}">${widget}</div>
+          </div>${clearSnoozedPill}</div></div>`;
         }
         // Build a virtual "all clear" alert and render it with the chosen clear theme
         const clearAlert = {
@@ -4047,6 +5174,7 @@ class AlertTickerCard extends LitElement {
                 @pointerleave="${clearPl}" @pointercancel="${clearPl}">
                 ${this._renderForTheme(clearAlert.theme, clearAlert)}
               </div>
+              ${clearSnoozedPill}
             </div>
           </div>`;
       }
@@ -4070,6 +5198,9 @@ class AlertTickerCard extends LitElement {
     const current = this._current;
     const snoozeBtn = this._renderSnoozeButton(current);
     const historyBtn = this._renderHistoryButton();
+    const groupBackBtn = (!isWidgetSlide && current && current._expandedMember)
+      ? html`<button class="atc-group-back-btn" title="Torna al gruppo" @click="${(e) => { e.stopPropagation(); this._collapseGroup(current._expandedGroupKey); }}">◀</button>`
+      : "";
 
     // Small pill shown at bottom-right when ≥1 alert is snoozed but others are still active
     const snoozedPill = (this._snoozedCount > 0 && this._config.show_snooze_bar !== false) ? html`
@@ -4097,14 +5228,34 @@ class AlertTickerCard extends LitElement {
       `;
     }
 
-    const inner = isWidgetSlide
+    const rawInner = isWidgetSlide
       ? this._renderClearWidget()
-      : this._renderForTheme(current.theme || "emergency", current);
+      : (current && current._isGroup)
+        ? this._renderGroupCard(current)
+        : this._renderForTheme((current?.theme || "emergency"), current);
+
+    const inner = (!isWidgetSlide && current && current.camera_entity && current.camera_in_card)
+      ? (() => {
+          const camState = this._hass?.states[current.camera_entity] || null;
+          const camUrl   = camState?.attributes?.entity_picture || null;
+          const bgLayer  = camUrl
+            ? html`<div class="atc-cam-bg-img" style="background-image:url('${camUrl}')"></div>`
+            : "";
+          return html`
+            <div class="atc-cam-bg-wrap">
+              ${bgLayer}
+              <div class="atc-cam-bg-content">${rawInner}</div>
+            </div>`;
+        })()
+      : rawInner;
 
     // tap_action / double_tap_action / hold_action — backwards-compat: old "action" key maps to tap call-service
-    const tapCfg    = isWidgetSlide ? null : (current.tap_action || (current.action ? { action: "call-service", ...current.action } : null));
-    const holdCfg   = isWidgetSlide ? null : (current.hold_action       || null);
-    const dblTapCfg = isWidgetSlide ? null : (current.double_tap_action || null);
+    // Group slides use internal _expand_group tap so the whole card is tappable
+    const tapCfg    = isWidgetSlide ? (this._config.clear_tap_action        || null)
+                    : (current && current._isGroup) ? (current.group_tap_action        || { action: "_expand_group" })
+                    : (current.tap_action || (current.action ? { action: "call-service", ...current.action } : null));
+    const holdCfg   = isWidgetSlide ? (this._config.clear_hold_action       || null) : (current && current._isGroup ? (current.group_hold_action       || null) : (current.hold_action       || null));
+    const dblTapCfg = isWidgetSlide ? (this._config.clear_double_tap_action || null) : (current && current._isGroup ? (current.group_double_tap_action || null) : (current.double_tap_action || null));
     const hasInteraction = (tapCfg    && tapCfg.action    && tapCfg.action    !== "none") ||
                            (holdCfg   && holdCfg.action   && holdCfg.action   !== "none") ||
                            (dblTapCfg && dblTapCfg.action && dblTapCfg.action !== "none");
@@ -4132,7 +5283,7 @@ class AlertTickerCard extends LitElement {
                 @pointerleave="${plHandler}" @pointercancel="${plHandler}"
                 @touchstart="${swipeStart}" @touchend="${swipeEnd}">${inner}</div>
             </div>
-            ${snoozeBtn}${historyBtn}${snoozedPill}${counterOverlay}${navButtons}${touchHandle}
+            ${snoozeBtn}${groupBackBtn}${historyBtn}${snoozedPill}${counterOverlay}${navButtons}${touchHandle}
           </div>
           ${testModeBanner}
         </div>`;
@@ -4147,7 +5298,7 @@ class AlertTickerCard extends LitElement {
               @pointerleave="${plHandler}" @pointercancel="${plHandler}"
               @touchstart="${swipeStart}" @touchend="${swipeEnd}">${inner}</div>
           </div>
-          ${snoozeBtn}${historyBtn}${snoozedPill}${counterOverlay}${navButtons}${touchHandle}
+          ${snoozeBtn}${groupBackBtn}${historyBtn}${snoozedPill}${counterOverlay}${navButtons}${touchHandle}
         </div>
         ${testModeBanner}
       </div>
@@ -4161,11 +5312,14 @@ class AlertTickerCard extends LitElement {
       /* -----------------------------------------------------------------------
        * BASE
        * --------------------------------------------------------------------- */
-      ha-card.at-card {
+      :host {
+        display: block;
+        border-radius: var(--ha-card-border-radius, 12px);
+      }
+      .at-card {
         padding: 0;
         overflow: hidden;
         position: relative;
-        --ha-card-border-radius: 10px;
       }
 
       /* -----------------------------------------------------------------------
@@ -4235,6 +5389,35 @@ class AlertTickerCard extends LitElement {
         font-weight: 400;
         color: rgba(255, 255, 255, 0.85);
       }
+
+      /* secondary_value_align: right — badge stays on its own row, title and
+       * secondary value share the row below it. */
+      .atc-sv-right [class$="-content"] {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 2px 8px;
+      }
+      .atc-sv-right [class$="-badge"] {
+        flex: 0 0 100%;
+      }
+      .atc-sv-right [class$="-title"] {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .atc-sv-right .atc-secondary-value {
+        flex-shrink: 0;
+        margin-top: 0;
+        font-size: 0.9rem;
+        opacity: 0.85;
+      }
+      .atc-sv-right [class$="-right"] {
+        display: none;
+      }
       .atc-filter-label {
         font-size: 0.92rem;
         opacity: 0.9;
@@ -4300,7 +5483,6 @@ class AlertTickerCard extends LitElement {
         height: 46px;
         background: #111;
         border: 1px solid #333;
-        border-radius: 8px;
       }
 
       .tk-label {
@@ -4370,7 +5552,6 @@ class AlertTickerCard extends LitElement {
         padding: 16px 18px;
         background: linear-gradient(135deg, #1a0000, #3d0000);
         border: 2px solid #e53935;
-        border-radius: 12px;
         box-shadow:
           0 0 20px rgba(229, 57, 53, 0.4),
           inset 0 0 30px rgba(229, 57, 53, 0.05);
@@ -4446,7 +5627,6 @@ class AlertTickerCard extends LitElement {
         border-top: 1px solid rgba(255, 152, 0, 0.2);
         border-right: 1px solid rgba(255, 152, 0, 0.2);
         border-bottom: 1px solid rgba(255, 152, 0, 0.2);
-        border-radius: 12px;
       }
 
       .wn-icon {
@@ -4510,7 +5690,6 @@ class AlertTickerCard extends LitElement {
         border-top: 1px solid rgba(41, 182, 246, 0.15);
         border-right: 1px solid rgba(41, 182, 246, 0.15);
         border-bottom: 1px solid rgba(41, 182, 246, 0.15);
-        border-radius: 12px;
       }
 
       .in-icon-wrap {
@@ -4565,7 +5744,6 @@ class AlertTickerCard extends LitElement {
         border-top: 1px solid rgba(76, 175, 80, 0.15);
         border-right: 1px solid rgba(76, 175, 80, 0.15);
         border-bottom: 1px solid rgba(76, 175, 80, 0.15);
-        border-radius: 12px;
       }
 
       .su-icon-wrap {
@@ -4616,7 +5794,6 @@ class AlertTickerCard extends LitElement {
         padding: 16px 18px;
         background: #0a0a0f;
         border: 1px solid rgba(0, 255, 255, 0.25);
-        border-radius: 10px;
         overflow: hidden;
         box-shadow:
           0 0 12px rgba(0, 255, 255, 0.1),
@@ -4711,7 +5888,6 @@ class AlertTickerCard extends LitElement {
           rgba(246, 79, 89, 0.35) 100%
         );
         border: 1px solid rgba(255, 255, 255, 0.22);
-        border-radius: 14px;
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
       }
@@ -4778,7 +5954,6 @@ class AlertTickerCard extends LitElement {
         padding: 16px 18px;
         background: #000;
         border: 1px solid #00ff41;
-        border-radius: 8px;
         box-shadow:
           0 0 15px rgba(0, 255, 65, 0.15),
           inset 0 0 30px rgba(0, 255, 65, 0.03);
@@ -4854,7 +6029,6 @@ class AlertTickerCard extends LitElement {
         border-top: 1px solid rgba(0, 0, 0, 0.06);
         border-right: 1px solid rgba(0, 0, 0, 0.06);
         border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-        border-radius: 10px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
       }
 
@@ -4886,6 +6060,10 @@ class AlertTickerCard extends LitElement {
       .at-fold-wrapper {
         transform-origin: top center;
         overflow: hidden;
+        border-radius: var(--ha-card-border-radius, 12px);
+      }
+      .at-fold-wrapper > *:not(.atc-history-card) {
+        border-radius: var(--ha-card-border-radius, 12px) !important;
       }
       .at-fold-wrapper.atc-fold-history {
         overflow: visible;
@@ -5107,7 +6285,7 @@ class AlertTickerCard extends LitElement {
       .at-fire {
         display: flex; align-items: center; gap: 14px; padding: 16px 18px;
         background: linear-gradient(135deg, #1a0500, #2d0a00);
-        border: 2px solid #ff6d00; border-radius: 12px;
+        border: 2px solid #ff6d00;
         box-shadow: 0 0 22px rgba(255,109,0,0.35);
         animation: firePulse 0.9s ease-in-out infinite;
       }
@@ -5133,7 +6311,7 @@ class AlertTickerCard extends LitElement {
        * --------------------------------------------------------------------- */
       .at-alarm {
         display: flex; align-items: center; gap: 14px; padding: 16px 18px;
-        background: #0d0000; border: 2px solid #ff1744; border-radius: 12px;
+        background: #0d0000; border: 2px solid #ff1744;
         position: relative; overflow: hidden;
       }
       .al-strobe {
@@ -5153,7 +6331,7 @@ class AlertTickerCard extends LitElement {
        * --------------------------------------------------------------------- */
       .at-lightning {
         display: flex; align-items: center; gap: 14px; padding: 16px 18px;
-        background: #050510; border: 2px solid #7c4dff; border-radius: 12px;
+        background: #050510; border: 2px solid #7c4dff;
         position: relative; overflow: hidden;
         box-shadow: 0 0 20px rgba(124,77,255,0.3);
       }
@@ -6387,6 +7565,207 @@ class AlertTickerCard extends LitElement {
       .lo-title { font-weight: 600; color: #e3f2fd; }
 
       /* -----------------------------------------------------------------------
+       * LIGHT — warm incandescent bulb glow, info
+       * --------------------------------------------------------------------- */
+      .at-light {
+        display: flex; align-items: center; gap: 14px; padding: 16px 18px;
+        background: linear-gradient(135deg, #0d0b00, #1a1500);
+        border: 1px solid rgba(255,214,0,0.4); border-radius: 12px;
+        position: relative; overflow: hidden;
+        animation: liGlow 2.8s ease-in-out infinite;
+      }
+      @keyframes liGlow {
+        0%,100% { box-shadow: 0 0 20px rgba(255,214,0,0.10); }
+        50%      { box-shadow: 0 0 48px rgba(255,214,0,0.30); }
+      }
+      .li-beam {
+        position: absolute; top: 0; bottom: 0; left: -10px;
+        width: 55%; clip-path: polygon(0 50%, 100% 0%, 100% 100%);
+        background: linear-gradient(90deg, rgba(255,214,0,0.20) 0%, transparent 100%);
+        animation: liBeam 2.8s ease-in-out infinite; pointer-events: none;
+      }
+      @keyframes liBeam { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+      .li-icon {
+        font-size: 2.2rem; flex-shrink: 0; position: relative;
+        animation: liFlare 2.8s ease-in-out infinite;
+      }
+      @keyframes liFlare {
+        0%,100% { filter: drop-shadow(0 0 8px  rgba(255,214,0,0.6));  transform: scale(1);    }
+        50%      { filter: drop-shadow(0 0 26px rgba(255,228,100,1.0)); transform: scale(1.09); }
+      }
+      .li-content { flex: 1; min-width: 0; position: relative; }
+      .li-right   { flex-shrink: 0; position: relative; }
+      .li-badge { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #ffd600; margin-bottom: 3px; }
+      .li-title { font-weight: 600; color: #fffde7; }
+
+      /* -----------------------------------------------------------------------
+       * MUSIC — floating notes, purple/magenta pulsing, info
+       * --------------------------------------------------------------------- */
+      .at-music {
+        display: flex; align-items: center; gap: 14px; padding: 16px 18px;
+        background: linear-gradient(135deg, #1a001a, #2e0033);
+        border: 1px solid color-mix(in srgb, var(--mu-accent, #e040fb) 40%, transparent); border-radius: 12px;
+        position: relative; overflow: hidden;
+        animation: muGlow 2.4s ease-in-out infinite;
+      }
+      @keyframes muGlow {
+        0%,100% { box-shadow: 0 0 20px color-mix(in srgb, var(--mu-accent, #e040fb) 10%, transparent); }
+        50%      { box-shadow: 0 0 50px color-mix(in srgb, var(--mu-accent, #e040fb) 35%, transparent); }
+      }
+      .mu-notes {
+        position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+      }
+      .mu-note {
+        position: absolute; bottom: -20px; font-size: 1rem; opacity: 0;
+        animation: muFloat 3s ease-in infinite;
+      }
+      .mu-note:nth-child(1) { left: 12%; animation-delay: 0s;    animation-duration: 3.2s; }
+      .mu-note:nth-child(2) { left: 32%; animation-delay: 0.9s;  animation-duration: 2.7s; }
+      .mu-note:nth-child(3) { left: 58%; animation-delay: 1.7s;  animation-duration: 3.5s; }
+      .mu-note:nth-child(4) { left: 78%; animation-delay: 0.4s;  animation-duration: 2.5s; }
+      @keyframes muFloat {
+        0%   { transform: translateY(0)   rotate(-10deg); opacity: 0;   }
+        20%  { opacity: 0.85; }
+        80%  { opacity: 0.4;  }
+        100% { transform: translateY(-75px) rotate(18deg); opacity: 0;  }
+      }
+      .mu-icon {
+        font-size: 2.2rem; flex-shrink: 0; position: relative;
+        animation: muPulse 1.2s ease-in-out infinite;
+      }
+      @keyframes muPulse {
+        0%,100% { filter: drop-shadow(0 0 8px  color-mix(in srgb, var(--mu-accent, #e040fb) 60%, transparent));  transform: scale(1);    }
+        50%      { filter: drop-shadow(0 0 26px var(--mu-accent, #e040fb));  transform: scale(1.12); }
+      }
+      .mu-content { flex: 1; min-width: 0; position: relative; }
+      .mu-right   { flex-shrink: 0; position: relative; }
+      .mu-badge { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--mu-accent, #e040fb); margin-bottom: 3px; }
+      .mu-title { font-weight: 600; color: #f3e5f5; }
+
+      /* --- Music player mode ------------------------------------------------ */
+      .at-music--player { padding: 0; min-height: 90px; align-items: stretch; }
+      .mu-art-bg {
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        background-size: cover; background-position: center;
+        -webkit-filter: blur(14px) brightness(0.55) saturate(1.5);
+        filter: blur(14px) brightness(0.55) saturate(1.5);
+        transform: scale(1.1); will-change: transform;
+      }
+      .mu-art-overlay {
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(90deg, rgba(12,0,22,0.93) 0%, rgba(12,0,22,0.62) 52%, rgba(12,0,22,0.12) 100%);
+      }
+      .mu-player-body {
+        position: relative; flex: 1; display: flex;
+        flex-direction: column; justify-content: center;
+        padding: 12px 16px; gap: 5px; min-width: 0;
+      }
+      .mu-now-playing { display: flex; align-items: center; gap: 6px; margin-bottom: 1px; }
+      .mu-np-label {
+        font-size: 0.52rem; font-weight: 800; letter-spacing: 2.5px;
+        text-transform: uppercase; color: var(--mu-accent, #e040fb);
+      }
+      .mu-eq { display: flex; align-items: flex-end; gap: 2px; height: 13px; }
+      .mu-eq-bar {
+        display: inline-block; width: 3px; background: var(--mu-accent, #e040fb); border-radius: 2px;
+        animation: muEq 0.7s ease-in-out infinite alternate;
+      }
+      .mu-eq-bar:nth-child(1) { animation-duration: 0.55s; animation-delay: 0s; }
+      .mu-eq-bar:nth-child(2) { animation-duration: 0.8s;  animation-delay: 0.12s; }
+      .mu-eq-bar:nth-child(3) { animation-duration: 0.5s;  animation-delay: 0.27s; }
+      @keyframes muEq { from { height: 3px; } to { height: 13px; } }
+      .mu-pause-dot { font-size: 0.45rem; color: color-mix(in srgb, var(--mu-accent, #e040fb) 55%, transparent); }
+      .mu-player-info { min-width: 0; }
+      .mu-player-title {
+        font-weight: 800; font-size: 1.05rem; color: #ffffff; letter-spacing: -0.2px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .mu-player-artist {
+        font-size: 0.78rem; color: rgba(255,255,255,0.52); margin-top: 1px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .mu-player-controls { display: flex; align-items: center; gap: 8px; margin-top: 7px; }
+      .mu-ctrl-btn {
+        background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
+        border-radius: 50%; width: 34px; height: 34px; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        color: rgba(255,255,255,0.82); transition: all 0.15s ease; padding: 0;
+      }
+      .mu-ctrl-btn ha-icon { display: block; color: inherit; }
+      .mu-ctrl-btn:hover {
+        background: color-mix(in srgb, var(--mu-accent, #e040fb) 28%, transparent);
+        border-color: color-mix(in srgb, var(--mu-accent, #e040fb) 55%, transparent);
+        color: #fff; transform: scale(1.1);
+      }
+      .mu-ctrl-btn--play {
+        width: 44px; height: 44px; font-size: 1.1rem;
+        background: color-mix(in srgb, var(--mu-accent, #e040fb) 35%, transparent);
+        border-color: color-mix(in srgb, var(--mu-accent, #e040fb) 70%, transparent);
+        color: #fff; box-shadow: 0 0 18px color-mix(in srgb, var(--mu-accent, #e040fb) 45%, transparent);
+      }
+      .mu-ctrl-btn--play:hover {
+        background: color-mix(in srgb, var(--mu-accent, #e040fb) 55%, transparent);
+        box-shadow: 0 0 28px color-mix(in srgb, var(--mu-accent, #e040fb) 65%, transparent);
+      }
+      .mu-ctrl-btn--active {
+        background: color-mix(in srgb, var(--mu-accent, #e040fb) 38%, transparent);
+        border-color: var(--mu-accent, #e040fb); color: var(--mu-accent, #e040fb);
+      }
+      .mu-vol-slider {
+        flex: 1; min-width: 40px; height: 4px;
+        -webkit-appearance: none; appearance: none;
+        border-radius: 2px; outline: none; cursor: pointer;
+        transition: opacity 0.2s; border: none; padding: 0;
+      }
+      .mu-vol-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 14px; height: 14px; border-radius: 50%;
+        background: var(--mu-accent, #e040fb);
+        box-shadow: 0 0 8px color-mix(in srgb, var(--mu-accent, #e040fb) 60%, transparent);
+        cursor: pointer;
+      }
+      .mu-vol-slider::-moz-range-thumb {
+        width: 14px; height: 14px; border-radius: 50%; border: none;
+        background: var(--mu-accent, #e040fb);
+        box-shadow: 0 0 8px color-mix(in srgb, var(--mu-accent, #e040fb) 60%, transparent);
+        cursor: pointer;
+      }
+      .mu-vol-slider--muted { opacity: 0.35; }
+      .mu-art-thumb {
+        position: relative; flex-shrink: 0;
+        width: 82px; height: 82px; object-fit: cover; border-radius: 50%;
+        margin: auto 14px auto 0;
+        border: 2px solid color-mix(in srgb, var(--mu-accent, #e040fb) 45%, transparent);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--mu-accent, #e040fb) 12%, transparent), 0 4px 22px rgba(0,0,0,0.55);
+        will-change: transform;
+      }
+      .mu-art-thumb--playing {
+        animation: muSpin 10s linear infinite;
+        border-color: var(--mu-accent, #e040fb);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--mu-accent, #e040fb) 20%, transparent),
+                    0 0 32px color-mix(in srgb, var(--mu-accent, #e040fb) 55%, transparent),
+                    0 4px 22px rgba(0,0,0,0.55);
+      }
+      @keyframes muSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      .mu-accent-line {
+        position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+        background: linear-gradient(90deg, transparent 0%,
+          color-mix(in srgb, var(--mu-accent, #e040fb) 60%, black) 25%,
+          var(--mu-accent, #e040fb) 50%,
+          color-mix(in srgb, var(--mu-accent, #e040fb) 60%, black) 75%,
+          transparent 100%);
+        animation: muLineShift 4s ease-in-out infinite;
+      }
+      @keyframes muLineShift {
+        0%,100% { opacity: 0.45; }
+        50%      { opacity: 1; }
+      }
+      .mu-player-right {
+        position: relative; flex-shrink: 0;
+        display: flex; align-items: center; padding: 14px 16px 14px 0;
+      }
+
+      /* -----------------------------------------------------------------------
        * SNOOZE HOST + BUTTON + MENU
        * --------------------------------------------------------------------- */
       .atc-snooze-host {
@@ -6428,6 +7807,38 @@ class AlertTickerCard extends LitElement {
       .atc-snooze-btn:hover {
         opacity: 1 !important;
         background: rgba(0, 0, 0, 0.65);
+      }
+      /* Dismiss wrap: always clickable; base position matches snooze/history defaults */
+      .atc-dismiss-wrap {
+        pointer-events: auto !important;
+        top: 6px !important;
+        right: 7px !important;
+      }
+      .atc-large-buttons .atc-dismiss-wrap {
+        top: 50% !important;
+        right: 14px !important;
+        transform: translateY(-50%) !important;
+      }
+      .atc-vertical.atc-large-buttons .atc-dismiss-wrap {
+        top: 20px !important;
+        right: 16px !important;
+        transform: none !important;
+      }
+      .atc-dismiss-btn {
+        opacity: 1 !important;
+        background: rgba(0, 0, 0, 0.42) !important;
+        border: 1px solid rgba(255, 80, 80, 0.38) !important;
+        color: rgba(255, 150, 150, 0.88);
+        font-weight: 700;
+        font-size: 0.68rem;
+      }
+      .atc-dismiss-btn:hover {
+        background: rgba(160, 20, 20, 0.58) !important;
+        border-color: rgba(255, 100, 100, 0.65) !important;
+        color: #fff;
+      }
+      .atc-large-buttons .atc-dismiss-btn {
+        font-size: 0.9rem !important;
       }
       .atc-snooze-menu {
         position: absolute;
@@ -6511,6 +7922,39 @@ class AlertTickerCard extends LitElement {
         background: rgba(255, 200, 80, 0.20);
         border-color: rgba(255, 200, 80, 0.45);
         color: #ffd060;
+      }
+
+      /* -----------------------------------------------------------------------
+       * CAMERA BACKGROUND — blurred camera snapshot or live stream behind
+       * the alert slide content when camera_in_card is enabled
+       * --------------------------------------------------------------------- */
+      .atc-cam-bg-wrap {
+        position: relative;
+        width: 100%; height: 100%;
+        overflow: hidden;
+        border-radius: inherit;
+      }
+      .atc-cam-bg-img {
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        background-size: cover; background-position: center;
+      }
+      .atc-cam-bg-stream {
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        width: 100%; height: 100%;
+        will-change: transform;
+        overflow: hidden;
+      }
+      .atc-cam-bg-content {
+        position: relative;
+        z-index: 1;
+        width: 100%; height: 100%;
+      }
+      /* Theme card background semi-transparent so the camera shows through the full card */
+      .atc-cam-bg-content > * {
+        background: rgba(0, 0, 0, 0.55) !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        border-radius: var(--ha-card-border-radius, 12px) !important;
       }
 
       /* -----------------------------------------------------------------------
@@ -6682,7 +8126,7 @@ class AlertTickerCard extends LitElement {
         display: none;
       }
       /* All theme cards: add padding-right so content never sits under the circular buttons */
-      .atc-large-buttons ha-card:not(.atc-history-card) {
+      .atc-large-buttons .at-fold-wrapper > div:not(.atc-history-card) {
         padding-right: 88px !important;
       }
       /* Overlay counter — top-right corner, always inside the card */
@@ -6731,12 +8175,12 @@ class AlertTickerCard extends LitElement {
         justify-content: center;
         outline: var(--atc-card-outline, none);
         outline-offset: -1px;
-        border-radius: inherit;
+        border-radius: var(--ha-card-border-radius, 12px);
       }
       .atc-inner-clip {
         overflow: hidden;
         height: var(--atc-card-height, auto);
-        border-radius: inherit;
+        border-radius: var(--ha-card-border-radius, 12px);
         position: relative;
         z-index: 1;
       }
@@ -6760,6 +8204,7 @@ class AlertTickerCard extends LitElement {
         background: var(--card-background-color, #1c1c1e);
         padding: 0;
         overflow: hidden;
+        border-radius: var(--ha-card-border-radius, 12px);
       }
       .atc-history-header {
         display: flex;
@@ -6954,6 +8399,15 @@ class AlertTickerCard extends LitElement {
         font-size: 0.65rem; font-weight: 800; font-variant-numeric: tabular-nums;
       }
 
+      /* Timer themes use --card-background-color which adapts to HA light/dark themes.
+       * All other themes use fixed dark gradients so rgba(255,255,255,.85) is safe.
+       * Override secondary text to use --primary-text-color so it stays readable on
+       * light backgrounds (#117). */
+      .at-timer-pulse .atc-secondary-value,
+      .at-timer-ring .atc-secondary-value {
+        color: var(--primary-text-color, rgba(255, 255, 255, 0.85));
+      }
+
       /* -----------------------------------------------------------------------
        * HA THEME ADAPTATION — ha_theme: true
        * Overrides hardcoded dark palettes with HA CSS custom properties.
@@ -6961,12 +8415,12 @@ class AlertTickerCard extends LitElement {
        * --------------------------------------------------------------------- */
 
       /* Card background */
-      .atc-ha-theme ha-card {
+      .atc-ha-theme .at-fold-wrapper > div:not(.atc-history-card) {
         background: var(--card-background-color, #1c1c2e) !important;
       }
       /* Disable decorative gradient overlays / pulsing backgrounds */
-      .atc-ha-theme ha-card::before,
-      .atc-ha-theme ha-card::after {
+      .atc-ha-theme .at-fold-wrapper > div:not(.atc-history-card)::before,
+      .atc-ha-theme .at-fold-wrapper > div:not(.atc-history-card)::after {
         display: none !important;
       }
       /* All titles / messages → primary text color */
@@ -7052,6 +8506,8 @@ class AlertTickerCard extends LitElement {
       .atc-ha-theme .at-cloud,
       .atc-ha-theme .at-satellite,
       .atc-ha-theme .at-tips,
+      .atc-ha-theme .at-light,
+      .atc-ha-theme .at-music,
       .atc-ha-theme .at-cyberpunk,
       .atc-ha-theme .at-vapor,
       .atc-ha-theme .at-ticker {
@@ -7072,6 +8528,8 @@ class AlertTickerCard extends LitElement {
       .atc-ha-theme .at-cloud        [class$="-badge"],
       .atc-ha-theme .at-satellite    [class$="-badge"],
       .atc-ha-theme .at-tips         [class$="-badge"],
+      .atc-ha-theme .at-light        [class$="-badge"],
+      .atc-ha-theme .at-music        [class$="-badge"],
       .atc-ha-theme .at-cyberpunk    [class$="-badge"],
       .atc-ha-theme .at-vapor        [class$="-badge"],
       .atc-ha-theme .at-ticker       [class$="-badge"] {
@@ -7191,13 +8649,13 @@ class AlertTickerCard extends LitElement {
       .atc-vertical .at-fold-wrapper {
         height: 100%;
       }
-      .atc-vertical ha-card:not(.at-ticker):not(.atc-snoozed-bar):not(.atc-history-card) {
+      .atc-vertical .at-fold-wrapper > div:not(.at-ticker):not(.atc-snoozed-bar):not(.atc-history-card):not(.at-music--player) {
         height: 100% !important;
         min-height: unset !important;
       }
 
-      /* Core: flip ha-card to vertical stacking */
-      .atc-vertical ha-card:not(.at-ticker):not(.atc-snoozed-bar):not(.atc-history-card) {
+      /* Core: flip theme card to vertical stacking */
+      .atc-vertical .at-fold-wrapper > div:not(.at-ticker):not(.atc-snoozed-bar):not(.atc-history-card):not(.at-music--player) {
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
@@ -7207,8 +8665,8 @@ class AlertTickerCard extends LitElement {
       }
 
       /* Icon: was flex-shrink on left edge, now centered at top */
-      .atc-vertical ha-card:not(.at-ticker) > [class$="-icon"],
-      .atc-vertical ha-card:not(.at-ticker) > [class$="-icon-wrap"] {
+      .atc-vertical .at-fold-wrapper > div:not(.at-ticker):not(.at-music--player) > [class$="-icon"],
+      .atc-vertical .at-fold-wrapper > div:not(.at-ticker):not(.at-music--player) > [class$="-icon-wrap"] {
         flex-shrink: 0;
         font-size: 2.2rem !important;
         width: auto !important;
@@ -7217,7 +8675,7 @@ class AlertTickerCard extends LitElement {
       }
 
       /* Content area: full width, centered text */
-      .atc-vertical ha-card:not(.at-ticker) > [class$="-content"] {
+      .atc-vertical .at-fold-wrapper > div:not(.at-ticker):not(.at-music--player) > [class$="-content"] {
         flex: unset !important;
         width: 100% !important;
         min-width: unset !important;
@@ -7225,7 +8683,7 @@ class AlertTickerCard extends LitElement {
       }
 
       /* Right column: reset horizontal flex, center counter below content */
-      .atc-vertical ha-card:not(.at-ticker) > [class$="-right"] {
+      .atc-vertical .at-fold-wrapper > div:not(.at-ticker):not(.at-music--player) > [class$="-right"] {
         flex-shrink: 0;
         align-self: center !important;
         flex-direction: row !important;
@@ -7271,16 +8729,17 @@ class AlertTickerCard extends LitElement {
       /* Snooze/history buttons: keep top-right corner positioning (unchanged) */
       /* large_buttons + vertical: cancel the padding-right (content is centered),
          move buttons to top-right corner instead of vertically centered */
-      .atc-vertical.atc-large-buttons ha-card:not(.at-ticker) {
+      .atc-vertical.atc-large-buttons .at-fold-wrapper > div:not(.at-ticker) {
         padding-right: 18px !important;
       }
       .atc-vertical.atc-large-buttons .atc-snooze-wrap {
-        top: 8px !important;
+        top: 20px !important;
+        right: 16px !important;
         bottom: auto !important;
         transform: none !important;
       }
       .atc-vertical.atc-large-buttons .atc-history-btn {
-        top: 8px !important;
+        top: 20px !important;
         bottom: auto !important;
         transform: none !important;
       }
@@ -7314,7 +8773,7 @@ class AlertTickerCard extends LitElement {
       .atc-clickable {
         cursor: pointer;
       }
-      .atc-clickable:active ha-card {
+      .atc-clickable:active > div {
         opacity: 0.85;
         transition: opacity 0.1s;
       }
@@ -7619,7 +9078,6 @@ class AlertTickerCard extends LitElement {
         background: none;
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
-        border-right: 1px solid rgba(255,255,255,0.20);
         align-items: center;
       }
       .atc-cw-style--split .atc-cw-badge--clock {
@@ -7925,6 +9383,289 @@ class AlertTickerCard extends LitElement {
       /* Exceptional */
       .w-exceptional-particle{position:absolute;border-radius:50%;pointer-events:none}
       @keyframes dustSwirl{0%{transform:rotate(0deg) translateX(var(--dr,40px)) rotate(0deg);opacity:0}10%{opacity:1}90%{opacity:.6}100%{transform:rotate(360deg) translateX(var(--dr,40px)) rotate(-360deg);opacity:0}}
+
+      /* ── FORECAST WIDGET ─────────────────────────────────────────────────── */
+      .atc-clear-forecast {
+        position: relative;
+        width: 100%;
+        min-height: 0;
+        background: linear-gradient(145deg, #060b18 0%, #0c1830 50%, #081022 100%);
+        border-radius: inherit;
+        overflow: hidden;
+        display: flex;
+        align-items: stretch;
+      }
+      .atc-clear-forecast--empty {
+        align-items: center;
+        justify-content: center;
+        min-height: 68px;
+      }
+      /* Animated background pulse */
+      .atc-fw-bg-pulse {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse at 50% 120%, var(--fw-accent, #5090d8) 0%, transparent 65%);
+        opacity: 0.18;
+        animation: atcFwBgPulse 5s ease-in-out infinite;
+        pointer-events: none;
+        z-index: 0;
+      }
+      @keyframes atcFwBgPulse {
+        0%, 100% { opacity: 0.12; transform: scale(1); }
+        50%       { opacity: 0.25; transform: scale(1.08); }
+      }
+      /* 7-column grid */
+      .atc-fw-grid {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        align-items: stretch;
+      }
+      /* Each day column */
+      .atc-fw-day {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 7px 2px 7px;
+        border-right: 1px solid rgba(255,255,255,0.05);
+        gap: 3px;
+        min-width: 0;
+      }
+      /* Push date to bottom of column */
+      .atc-fw-date { margin-top: auto !important; }
+      .atc-fw-day:last-child { border-right: none; }
+      /* Today's column: elevated glass card */
+      .atc-fw-day--today {
+        background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border-right-color: rgba(255,255,255,0.10);
+        position: relative;
+      }
+      .atc-fw-day--today::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 2px;
+        background: linear-gradient(90deg, transparent 0%, var(--fw-accent, #5090d8) 50%, transparent 100%);
+        animation: atcFwTodayLine 3s ease-in-out infinite;
+      }
+      @keyframes atcFwTodayLine {
+        0%, 100% { opacity: 0.7; }
+        50%       { opacity: 1.0; }
+      }
+      /* Day name label */
+      .atc-fw-dayname {
+        font-size: 0.58rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        color: rgba(255,255,255,0.50);
+        text-transform: uppercase;
+        line-height: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+      }
+      .atc-fw-day--today .atc-fw-dayname {
+        color: var(--fw-accent, #5090d8);
+        opacity: 0.95;
+      }
+      /* Emoji */
+      .atc-fw-emoji {
+        font-size: 2.0rem;
+        line-height: 1;
+        filter: drop-shadow(0 1px 3px rgba(0,0,0,0.6));
+        margin-bottom: 4px;
+      }
+      .atc-fw-emoji--today {
+        font-size: 2.4rem;
+        animation: atcFwFloat 4s ease-in-out infinite;
+      }
+      @keyframes atcFwFloat {
+        0%, 100% { transform: translateY(0px);   }
+        50%       { transform: translateY(-3px);  }
+      }
+      /* Hi / Lo temperatures */
+      .atc-fw-temps {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        line-height: 1;
+        margin-top: 10px;
+      }
+      .atc-fw-hi {
+        font-size: 1.2rem;
+        font-weight: 700;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+        white-space: nowrap;
+      }
+      .atc-fw-lo {
+        font-size: 0.95rem;
+        font-weight: 500;
+        opacity: 0.7;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+        white-space: nowrap;
+      }
+      .atc-fw-day--today .atc-fw-hi { font-size: 1.4rem; }
+      .atc-fw-day--today .atc-fw-lo { font-size: 1.05rem; }
+      /* Date label under temps */
+      .atc-fw-date {
+        font-size: 0.65rem;
+        font-weight: 500;
+        color: rgba(255,255,255,0.50);
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        text-align: center;
+        margin-top: 5px;
+      }
+      .atc-fw-day--today .atc-fw-date {
+        font-size: 0.72rem;
+        color: rgba(255,255,255,0.75);
+        margin-top: 6px;
+      }
+      /* Precipitation bar + percentage */
+      .atc-fw-precip {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 2px;
+        height: 22px;
+        min-width: 0;
+      }
+      .atc-fw-precip--empty { height: 22px; }
+      .atc-fw-precip-bar {
+        width: 3px;
+        height: 18px;
+        background: rgba(255,255,255,0.10);
+        border-radius: 2px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+      .atc-fw-precip-fill {
+        width: 100%;
+        background: linear-gradient(to top, #40c4ff, #82b1ff);
+        border-radius: 2px;
+        animation: atcFwFillIn 1.2s ease-out both;
+      }
+      @keyframes atcFwFillIn {
+        from { height: 0 !important; }
+      }
+      .atc-fw-precip-pct {
+        font-size: 0.42rem;
+        font-weight: 600;
+        color: #82b1ff;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      /* ── WEATHER + FORECAST ALTERNATING WIDGET ───────────────────────────── */
+      .atc-wf-wrap {
+        display: grid;
+        width: 100%;
+      }
+      /* Both slots sit in the same grid cell — only one visible at a time */
+      .atc-wf-slot {
+        grid-area: 1 / 1;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: opacity 0.55s ease, transform 0.55s ease;
+      }
+      /* Weather widget inside the slot must stretch to fill the full slot height
+         so the animated weather background covers the same area as the forecast panel */
+      .atc-wf-slot > .atc-clear-weather {
+        flex: 1;
+      }
+      .atc-wf-slot--in {
+        opacity: 1;
+        transform: translateY(0px);
+        pointer-events: auto;
+      }
+      .atc-wf-slot--out {
+        opacity: 0;
+        transform: translateY(10px);
+        pointer-events: none;
+      }
+
+      /* -----------------------------------------------------------------------
+       * GROUP CARD — collapsed summary slide for filter-grouped alerts
+       * --------------------------------------------------------------------- */
+      .atc-group-inner {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        min-height: 52px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .atc-group-body {
+        flex: 1;
+        min-width: 0;
+      }
+      .atc-group-message {
+        font-size: 0.95rem;
+        font-weight: 600;
+        line-height: 1.3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .atc-group-names {
+        font-size: 0.72rem;
+        opacity: 0.72;
+        margin-top: 2px;
+        white-space: normal;
+        line-height: 1.5;
+      }
+      .atc-group-count {
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-left: 8px;
+        gap: 1px;
+      }
+      .atc-group-count-num {
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1;
+        opacity: 0.85;
+      }
+      .atc-group-expand-arrow {
+        font-size: 0.6rem;
+        opacity: 0.55;
+        line-height: 1;
+      }
+      .atc-group-back-btn {
+        position: absolute;
+        bottom: 6px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.45);
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 12px;
+        color: #fff;
+        font-size: 0.7rem;
+        padding: 2px 10px;
+        cursor: pointer;
+        z-index: 10;
+        opacity: 0.85;
+        white-space: nowrap;
+      }
+      .atc-group-back-btn:hover { opacity: 1; }
     `;
   }
 }

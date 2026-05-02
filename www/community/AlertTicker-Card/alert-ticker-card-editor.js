@@ -1,5 +1,5 @@
 /**
- * AlertTicker Card Editor v1.2.2
+ * AlertTicker Card Editor v1.3.1
  * Visual editor for the AlertTicker Card custom Lovelace component.
  */
 
@@ -10,7 +10,7 @@ const html = LitElement.prototype.html;
 const css = LitElement.prototype.css;
 
 // Must match the version in alert-ticker-card.js
-const CARD_VERSION = "1.2.2";
+const CARD_VERSION = "1.3.1";
 
 // ---------------------------------------------------------------------------
 // Theme metadata — mirrors alert-ticker-card.js
@@ -59,6 +59,8 @@ const THEME_META = {
   cloud:        { icon: "☁️", category: "info"     },
   satellite:    { icon: "📡", category: "info"     },
   tips:         { icon: "💡", category: "info"     },
+  light:        { icon: "🔆", category: "info"     },
+  music:        { icon: "🎵", category: "info"     },
   sunrise:      { icon: "🌅", category: "ok"       },
   plant:        { icon: "🌱", category: "ok"       },
   lock:         { icon: "🔒", category: "ok"       },
@@ -117,6 +119,8 @@ const DEFAULT_MSG = {
     cloud:        "Condizioni meteo",
     satellite:    "Segnale in arrivo",
     tips:         "Suggerimento disponibile",
+    light:        "Luce accesa",
+    music:        "Musica in riproduzione",
     sunrise:      "Tutto a posto",
     plant:        "Stato ottimale",
     lock:         "Sistema protetto",
@@ -165,6 +169,8 @@ const DEFAULT_MSG = {
     cloud:        "Weather conditions",
     satellite:    "Signal incoming",
     tips:         "Tip available",
+    light:        "Light on",
+    music:        "Music playing",
     sunrise:      "All good",
     plant:        "Optimal state",
     lock:         "System secured",
@@ -213,6 +219,8 @@ const DEFAULT_MSG = {
     cloud:        "Conditions météo",
     satellite:    "Signal entrant",
     tips:         "Conseil disponible",
+    light:        "Lumière allumée",
+    music:        "Musique en cours",
     sunrise:      "Tout va bien",
     plant:        "État optimal",
     lock:         "Système sécurisé",
@@ -261,6 +269,8 @@ const DEFAULT_MSG = {
     cloud:        "Wetterbedingungen",
     satellite:    "Signal eingehend",
     tips:         "Tipp verfügbar",
+    light:        "Licht eingeschaltet",
+    music:        "Musik läuft",
     sunrise:      "Alles in Ordnung",
     plant:        "Optimaler Zustand",
     lock:         "System gesichert",
@@ -309,6 +319,8 @@ const DEFAULT_MSG = {
     cloud:        "Weersomstandigheden",
     satellite:    "Signaal inkomend",
     tips:         "Tip beschikbaar",
+    light:        "Licht aan",
+    music:        "Muziek speelt",
     sunrise:      "Alles in orde",
     plant:        "Optimale staat",
     lock:         "Systeem beveiligd",
@@ -357,6 +369,8 @@ const DEFAULT_MSG = {
     cloud:        "Điều kiện thời tiết",
     satellite:    "Tín hiệu đến",
     tips:         "Mẹo có sẵn",
+    light:        "Đèn sáng",
+    music:        "Đang phát nhạc",
     sunrise:      "Mọi thứ ổn",
     plant:        "Trạng thái tối ưu",
     lock:         "Hệ thống an toàn",
@@ -405,6 +419,8 @@ const DEFAULT_MSG = {
     cloud:        "Погодные условия",
     satellite:    "Входящий сигнал",
     tips:         "Совет доступен",
+    light:        "Свет включён",
+    music:        "Воспроизводится музыка",
     sunrise:      "Всё в порядке",
     plant:        "Оптимальное состояние",
     lock:         "Система в безопасности",
@@ -453,6 +469,8 @@ const DEFAULT_MSG = {
     cloud:        "Vejrforhold",
     satellite:    "Signal modtages",
     tips:         "Tip tilgængelig",
+    light:        "Lys tændt",
+    music:        "Musik afspilles",
     sunrise:      "Alt OK",
     plant:        "Optimal tilstand",
     lock:         "System sikret",
@@ -501,9 +519,111 @@ const DEFAULT_MSG = {
     cloud:        "Počasí",
     satellite:    "Příchozí zpráva",
     tips:         "Doporučení",
+    light:        "Světlo zapnuto",
+    music:        "Hudba se přehrává",
     sunrise:      "Vše OK",
     plant:        "Optimální stav",
     lock:         "Zabezpečeno",
+  },
+  pt: {
+    emergency:    "Emergência ativa",
+    fire:         "Alarme de incêndio",
+    alarm:        "Alarme disparado",
+    lightning:    "Queda de energia",
+    warning:      "Aviso importante",
+    caution:      "Atenção necessária",
+    info:         "Informação disponível",
+    notification: "Nova notificação",
+    aurora:       "Notificação do sistema",
+    success:      "Estado normal",
+    check:        "Verificação concluída",
+    confetti:     "Operação bem-sucedida",
+    ticker:       "Atualização em andamento",
+    neon:         "Alerta neon",
+    glass:        "Alerta glass",
+    matrix:       "Mensagem do terminal",
+    minimal:      "Alerta",
+    nuclear:      "Alerta de radiação",
+    flood:        "Inundação detectada",
+    motion:       "Movimento detectado",
+    intruder:     "Invasão em andamento",
+    toxic:        "Substância tóxica",
+    radar:        "Detecção em andamento",
+    temperature:  "Temperatura crítica",
+    battery:      "Bateria fraca",
+    door:         "Porta aberta",
+    window:       "Janela aberta",
+    hologram:     "Projeção do sistema",
+    presence:     "Presença detectada",
+    update:       "Atualização em andamento",
+    heartbeat:    "Sistema operacional",
+    shield:       "Sistema protegido",
+    power:        "Energia restaurada",
+    retro:        "Alerta retrô",
+    cyberpunk:    "Acesso ao sistema",
+    vapor:        "Notificação vaporwave",
+    lava:         "Alerta de lava",
+    smoke:        "Fumaça detectada",
+    wind:         "Vento forte",
+    leak:         "Vazamento de água",
+    cloud:        "Condições climáticas",
+    satellite:    "Sinal chegando",
+    tips:         "Dica disponível",
+    light:        "Luz acesa",
+    music:        "Música a tocar",
+    sunrise:      "Tudo bem",
+    plant:        "Estado ótimo",
+    lock:         "Sistema seguro",
+  },
+  es: {
+    emergency:    "Emergencia activa",
+    fire:         "Alarma de incendio",
+    alarm:        "Alarma activada",
+    lightning:    "Corte de luz",
+    warning:      "Aviso importante",
+    caution:      "Precaución necesaria",
+    info:         "Información disponible",
+    notification: "Nueva notificación",
+    aurora:       "Notificación del sistema",
+    success:      "Estado normal",
+    check:        "Verificación completada",
+    confetti:     "Operación exitosa",
+    ticker:       "Actualización en curso",
+    neon:         "Alerta neón",
+    glass:        "Alerta glass",
+    matrix:       "Mensaje terminal",
+    minimal:      "Alerta",
+    nuclear:      "Alerta de radiación",
+    flood:        "Inundación detectada",
+    motion:       "Movimiento detectado",
+    intruder:     "Intrusión en curso",
+    toxic:        "Sustancia tóxica",
+    radar:        "Detección en curso",
+    temperature:  "Temperatura crítica",
+    battery:      "Batería baja",
+    door:         "Puerta abierta",
+    window:       "Ventana abierta",
+    hologram:     "Proyección del sistema",
+    presence:     "Presencia detectada",
+    update:       "Actualización en curso",
+    heartbeat:    "Sistema operativo",
+    shield:       "Sistema protegido",
+    power:        "Alimentación restaurada",
+    retro:        "Alerta retro",
+    cyberpunk:    "Acceso al sistema",
+    vapor:        "Notificación vaporwave",
+    lava:         "Alerta de lava",
+    smoke:        "Humo detectado",
+    wind:         "Viento fuerte",
+    leak:         "Fuga de agua",
+    cloud:        "Condiciones meteorológicas",
+    satellite:    "Señal entrante",
+    tips:         "Consejo disponible",
+    light:        "Luz encendida",
+    music:        "Música en reproducción",
+    sunrise:      "Todo bien",
+    plant:        "Estado óptimo",
+    lock:         "Sistema seguro",
   },
 };
 
@@ -532,8 +652,13 @@ const ET = {
     clear_mode_clock: "🕐 Orologio",
     clear_mode_weather: "🌤 Meteo",
     clear_mode_weather_clock: "🌤🕐 Meteo + Orologio",
+    clear_mode_forecast: "📅 Previsioni settimana",
+    clear_mode_weather_forecast: "🌤📅 Meteo + Previsioni (alternati)",
+    weather_forecast_interval: "Intervallo alternanza (secondi)",
+    weather_forecast_interval_help: "Secondi tra meteo corrente e previsioni settimanali. Default: 5",
     clear_weather_entity_label: "Entità meteo (weather.*)",
     clear_clock_show_date: "Mostra data",
+    clear_clock_12h: "Formato 12 ore (AM/PM)",
     clear_clock_date_label: "Posizione data",
     clear_clock_style_label: "Stile orologio",
     clear_weather_style_label: "Stile badge meteo",
@@ -568,6 +693,11 @@ const ET = {
     card_border: "Mostra bordo e nome card",
     card_border_help: "Aggiunge il bordo standard di Home Assistant attorno alla card. Quando non ci sono avvisi attivi, mostra un segnaposto con il nome della card invece di nasconderla completamente.",
     show_snooze_bar: "Mostra barra di riattivazione snooze 💤",
+    show_snooze_button: "Mostra pulsante snooze 💤",
+    show_history_button: "Mostra pulsante cronologia 📋",
+    secondary_value_align: "Posizione valore secondario",
+    secondary_value_align_below: "Sotto il titolo (predefinito)",
+    secondary_value_align_right: "A destra del titolo",
     snooze_default_duration: "Comportamento snooze 💤",
     snooze_default_duration_help: "Menu durata: tap su 💤 apre il menu per scegliere quanto silenziare. Durata fissa: tap su 💤 silenzia subito senza menu.",
     snooze_option_menu: "Mostra menu durata (come prima)",
@@ -597,15 +727,33 @@ const ET = {
     tts_engine_global_help: "Entità TTS da usare (es. tts.piper, tts.home_assistant_cloud). Se non impostato, viene rilevato automaticamente.",
     tts_notify_service: "Servizio notify alternativo (Alexa / mobile)",
     tts_notify_service_help: "Nome del servizio notify da usare al posto di tts.speak (es. alexa_media_echo_cucina). Quando impostato, i campi speaker e motore TTS vengono ignorati.",
+    tts_notify_type: "Tipo notifica Alexa",
+    tts_notify_type_tts: "tts (singolo dispositivo)",
+    tts_notify_type_announce: "announce (gruppo / multiroom)",
     alert_tts: "Annuncio vocale TTS",
     alert_tts_help: "Quando l'avviso si attiva, il testo viene letto ad alta voce tramite il media player o il servizio notify configurato.",
     alert_tts_entity: "Speaker TTS (sovrascrive il globale)",
     alert_tts_engine: "Motore TTS (sovrascrive il globale)",
     alert_tts_notify_service: "Servizio notify (sovrascrive il globale)",
+    alert_tts_notify_type: "Tipo notifica (sovrascrive il globale)",
     alert_tts_message: "Testo TTS personalizzato",
     alert_tts_message_help: "Testo alternativo da leggere. Se vuoto, usa il messaggio dell'avviso.",
-    alert_camera_entity: "Camera per snapshot nell'overlay",
-    alert_camera_entity_help: "Quando l'avviso scatta, mostra uno snapshot di questa camera nel banner overlay. Visibile solo nell'overlay, non nella card.",
+    section_push_notify: "📱 Notifiche push",
+    push_notify_master_toggle: "Abilita notifiche push mobile",
+    push_notify_master_toggle_help: "Interruttore master. Se disattivato, nessun avviso invia una notifica push, anche se abilitato sul singolo avviso.",
+    alert_push_notify: "Invia notifica push mobile",
+    alert_push_notify_help: "Quando l'avviso si attiva, invia una notifica push tramite il servizio notify selezionato.",
+    alert_push_notify_title: "Titolo notifica (Jinja2)",
+    alert_push_notify_title_help: "Titolo inviato nella notifica push. Se vuoto, usa l'etichetta badge dell'avviso.",
+    alert_push_notify_message: "Messaggio notifica (Jinja2)",
+    alert_push_notify_message_help: "Messaggio inviato nella notifica push. Se vuoto, usa il messaggio dell'avviso.",
+    alert_push_notify_service: "Servizio notify",
+    alert_camera_entity: "Camera nell'overlay",
+    alert_camera_entity_help: "Quando l'avviso scatta, mostra questa camera nel banner overlay. Visibile solo nell'overlay, non nella card.",
+    alert_camera_live: "📹 Live stream (al posto dello snapshot)",
+    alert_camera_live_help: "Mostra il live stream della camera invece di un fotogramma statico. Richiede una camera con supporto streaming.",
+    alert_camera_in_card: "Mostra come sfondo nell'avviso",
+    alert_camera_in_card_help: "La camera appare come sfondo sfocato direttamente nello slide dell'avviso, visibile ad ogni rotazione — non solo nell'overlay.",
     test_mode: "Modalità test",
     test_mode_desc: "Mostra tutti gli avvisi come attivi, ignorando le condizioni. L'animazione di scorrimento è sospesa — apri un avviso nell'editor per vederlo subito sulla card.",
     test_mode_warning: "Ricordati di disattivare la modalità test prima di salvare!",
@@ -637,8 +785,10 @@ const ET = {
     use_ha_icon: "Usa icona Home Assistant (mdi:)",
     icon_color: "Colore icona",
     icon_color_help: "Colore CSS: es. #ff0000, red, var(--error-color). Lascia vuoto per il colore del tema.",
-    on_change: "Attiva ad OGNI cambio di stato (ignora le condizioni)",
-    on_change_help: "L'alert appare ogni volta che lo stato cambia (qualunque valore). Usa questa opzione per eventi: contatori, timestamp, sensori senza stati fissi.",
+    on_change: "Attiva ad OGNI cambio di stato",
+    on_change_help: "L'alert appare ogni volta che lo stato cambia (qualunque valore). Le condizioni aggiuntive AND/OR vengono comunque valutate. Usa questa opzione per eventi: contatori, timestamp, sensori senza stati fissi.",
+    trigger_delay: "⏳ Ritardo attivazione (secondi)",
+    trigger_delay_help: "L'alert compare solo se la condizione rimane vera per almeno N secondi (come il campo 'for:' nelle automazioni HA). Lascia vuoto per attivare immediatamente.",
     auto_dismiss_section: "Visibilità automatica",
     auto_dismiss_after: "Nascondi automaticamente dopo (secondi)",
     auto_dismiss_after_help: "L'alert scompare automaticamente dopo N secondi. Lascia vuoto per tenerlo sempre visibile.",
@@ -678,6 +828,11 @@ const ET = {
     anim_split:   "✂️ Split — divisione verticale",
     anim_roll:    "🎲 Roll — rotolamento",
     anim_curtain: "🎭 Curtain — sipario",
+    mode_entity: "🏷️ Singola entità",
+    mode_filter: "🔎 Filtro multi-entità",
+    mode_entity_help: "Monitora una singola entità specifica.",
+    mode_filter_help: "Genera un avviso separato per ogni entità che corrisponde ai filtri impostati.",
+    filter_section: "Filtri entità",
     entity_filter: "Filtro entità (testo)",
     entity_filter_help: "Cerca tutte le entità il cui ID o nome contiene questo testo. Supporta wildcard * (es. sensor.battery_*_level). Clicca sul conteggio per vedere la lista e usare 'Inverti selezione'. Usa {name}, {entity}, {state}, {device} nel messaggio.",
     entity_filter_count: "entità corrispondono",
@@ -685,8 +840,13 @@ const ET = {
     entity_filter_zero: "Nessuna entità corrisponde",
     entity_filter_exclude_tip: "Clicca su un'entità per escluderla — clicca di nuovo per includerla",
     entity_filter_invert: "Inverti selezione",
+    entity_filter_exclude_label: "Escludi queste entità",
     device_class: "Classe dispositivo (opzionale)",
     device_class_help: "es. smoke, battery, motion — crea un alert per ogni entità con questa device_class. Alternativo al filtro testo.",
+    label_filter: "Filtro etichetta HA (opzionale)",
+    label_filter_help: "Mostra alert solo per entità che hanno questa etichetta HA. Combinabile con filtro testo, device_class e area (logica AND).",
+    area_filter: "Filtro area HA (opzionale)",
+    area_filter_help: "Mostra alert solo per entità nell'area selezionata. Controlla prima l'area dell'entità, poi quella del dispositivo.",
     alert_attribute: "Attributo (opzionale)",
     alert_attribute_help: "es. battery_level — lascia vuoto per usare lo stato entità. Supporta percorsi annidati: es. activity.0.forecast",
     secondary_entity: "Entità valore secondario (opzionale)",
@@ -711,6 +871,20 @@ const ET = {
     clear_double_tap_action_section: "Doppio tap sulla card 'tutto ok'",
     clear_hold_action_section: "Hold sulla card 'tutto ok' — azione lunga (500ms)",
     snooze_action_section: "Azione snooze 💤 — eseguita al tap sul tasto snooze",
+    persistent: "Allarme persistente 🔒",
+    persistent_help: "Rimane visibile anche quando il sensore torna alla normalità. Premi ✕ per rimuoverlo.",
+    group_section: "Raggruppa alert 🗂️",
+    group: "Abilita raggruppamento",
+    group_min: "Minimo per raggruppare",
+    group_min_help: "Numero minimo di entità attive prima di mostrare il riepilogo di gruppo (default: 3).",
+    group_message: "Messaggio di gruppo",
+    group_message_help: "Usa {count} per il numero di alert attivi e {names} per la lista dei nomi. Es. '{count} sensori attivi'. Supporta anche {{ states('sensor.x') }}.",
+    group_secondary_text: "Testo secondario di gruppo",
+    group_secondary_text_help: "Riga secondaria sotto il messaggio di gruppo. Usa {count} e {names}. Se non impostato mostra l'elenco dei nomi.",
+    group_expanded_message: "Messaggio singolo (espanso)",
+    group_expanded_message_help: "Messaggio per ogni entità quando il gruppo è espanso. Usa {state}, {name}, {entity}, {device}. Supporta anche {{ states('sensor.x') }}.",
+    group_tap_action_section: "Tap sul gruppo — azione al tocco",
+    group_hold_action_section: "Hold sul gruppo — azione pressione lunga",
     timer_theme_category: "Timer",
     message_placeholder_hint: "Segnaposto: {name} nome entità, {state} stato, {entity} ID entità, {device} nome dispositivo",
     timer_placeholder_hint: "Usa {timer} nel messaggio per mostrare il countdown (es. 'Disabilitato per {timer}')",
@@ -751,6 +925,9 @@ const ET = {
     time_range_from: "Dalle (HH:MM)",
     time_range_to: "Alle (HH:MM)",
     time_range_help: "Mostra l'avviso solo nell'intervallo orario indicato. Supporta la mezzanotte (es. 22:00–06:00). Lascia vuoto per nessun limite.",
+    music_player_controls: "Controlli lettore musicale",
+    music_player_controls_help: "Mostra play/pausa, precedente, successivo e muto con la copertina dell'album come sfondo. Funziona solo quando l'entità è un media_player.",
+    music_player_color: "Colore accento",
   },
   en: {
     tab_general: "General",
@@ -773,8 +950,13 @@ const ET = {
     clear_mode_clock: "🕐 Clock",
     clear_mode_weather: "🌤 Weather",
     clear_mode_weather_clock: "🌤🕐 Weather + Clock",
+    clear_mode_forecast: "📅 Weekly forecast",
+    clear_mode_weather_forecast: "🌤📅 Weather + Forecast (alternating)",
+    weather_forecast_interval: "Alternation interval (seconds)",
+    weather_forecast_interval_help: "Seconds between current weather and weekly forecast. Default: 5",
     clear_weather_entity_label: "Weather entity (weather.*)",
     clear_clock_show_date: "Show date",
+    clear_clock_12h: "12-hour format (AM/PM)",
     clear_clock_date_label: "Date position",
     clear_clock_style_label: "Clock style",
     clear_weather_style_label: "Weather badge style",
@@ -809,6 +991,11 @@ const ET = {
     card_border: "Show card border & name",
     card_border_help: "Adds the standard Home Assistant border around the card. When no alerts are active, shows a placeholder with the card name instead of hiding completely.",
     show_snooze_bar: "Show snooze reactivation bar 💤",
+    show_snooze_button: "Show snooze button 💤",
+    show_history_button: "Show history button 📋",
+    secondary_value_align: "Secondary value position",
+    secondary_value_align_below: "Below title (default)",
+    secondary_value_align_right: "Right of title",
     snooze_default_duration: "Snooze 💤 behaviour",
     snooze_default_duration_help: "Duration menu: tap on 💤 opens a menu to choose how long to snooze. Fixed duration: tap on 💤 snoozes immediately with no menu.",
     snooze_option_menu: "Show duration menu (as before)",
@@ -838,15 +1025,33 @@ const ET = {
     tts_engine_global_help: "TTS entity to use (e.g. tts.piper, tts.home_assistant_cloud). Auto-detected if not set.",
     tts_notify_service: "Notify service (Alexa / mobile)",
     tts_notify_service_help: "Notify service name to use instead of tts.speak (e.g. alexa_media_echo_kitchen). When set, speaker and engine fields are ignored.",
+    tts_notify_type: "Alexa notification type",
+    tts_notify_type_tts: "tts (single device)",
+    tts_notify_type_announce: "announce (group / multiroom)",
     alert_tts: "TTS voice announcement",
     alert_tts_help: "When the alert becomes active, the message is read aloud via the configured media player or notify service.",
     alert_tts_entity: "TTS speaker (overrides global)",
     alert_tts_engine: "TTS engine (overrides global)",
     alert_tts_notify_service: "Notify service (overrides global)",
+    alert_tts_notify_type: "Notification type (overrides global)",
     alert_tts_message: "Custom TTS text",
     alert_tts_message_help: "Alternative text to read aloud. If empty, uses the alert message.",
-    alert_camera_entity: "Camera snapshot in overlay",
-    alert_camera_entity_help: "When the alert triggers, shows a snapshot from this camera in the overlay banner. Only visible in the overlay, not in the card.",
+    section_push_notify: "📱 Push Notifications",
+    push_notify_master_toggle: "Enable mobile push notifications",
+    push_notify_master_toggle_help: "Master switch. When off, no alert sends a push notification, even if enabled per alert.",
+    alert_push_notify: "Send mobile push notification",
+    alert_push_notify_help: "When this alert activates, sends a push notification via the selected notify service.",
+    alert_push_notify_title: "Notification title (Jinja2)",
+    alert_push_notify_title_help: "Title sent in the push notification. Leave empty to use the alert badge label.",
+    alert_push_notify_message: "Notification message (Jinja2)",
+    alert_push_notify_message_help: "Message sent in the push notification. Leave empty to use the alert message.",
+    alert_push_notify_service: "Notify service",
+    alert_camera_entity: "Camera in overlay",
+    alert_camera_entity_help: "When the alert triggers, shows this camera in the overlay banner. Only visible in the overlay, not in the card.",
+    alert_camera_live: "📹 Live stream (instead of snapshot)",
+    alert_camera_live_help: "Shows a live stream instead of a static snapshot. Requires a camera with stream support.",
+    alert_camera_in_card: "Show as background in the alert",
+    alert_camera_in_card_help: "The camera appears as a blurred background inside the alert slide itself, visible on every rotation — not just in the overlay.",
     test_mode: "Test mode",
     test_mode_desc: "Shows all alerts as active, ignoring conditions. Cycling animation is paused — expand an alert in the editor to preview it instantly on the card.",
     test_mode_warning: "Remember to disable test mode before saving!",
@@ -878,8 +1083,10 @@ const ET = {
     use_ha_icon: "Use Home Assistant icon (mdi:)",
     icon_color: "Icon color",
     icon_color_help: "CSS color: e.g. #ff0000, red, var(--error-color). Leave empty for theme default.",
-    on_change: "Trigger on ANY state change (ignores conditions)",
-    on_change_help: "Alert fires whenever the entity state changes (any value). Best for events: counters, timestamps, sensors with no fixed states.",
+    on_change: "Trigger on ANY state change",
+    on_change_help: "Alert fires whenever the entity state changes (any value). Extra AND/OR conditions are still evaluated. Best for events: counters, timestamps, sensors with no fixed states.",
+    trigger_delay: "⏳ Trigger delay (seconds)",
+    trigger_delay_help: "Alert only appears if the condition stays true for at least N seconds (like HA automation 'for:' duration). Leave empty to trigger immediately.",
     auto_dismiss_section: "Auto-dismiss",
     auto_dismiss_after: "Auto-hide after (seconds)",
     auto_dismiss_after_help: "Alert auto-hides after N seconds. Leave empty to keep it always visible.",
@@ -919,6 +1126,11 @@ const ET = {
     anim_split:   "✂️ Split — vertical split",
     anim_roll:    "🎲 Roll — rotateY + slide",
     anim_curtain: "🎭 Curtain — theater open",
+    mode_entity: "🏷️ Single entity",
+    mode_filter: "🔎 Multi-entity filter",
+    mode_entity_help: "Monitor one specific entity.",
+    mode_filter_help: "Generates a separate alert for each entity that matches the active filters.",
+    filter_section: "Entity filters",
     entity_filter: "Entity filter (text)",
     entity_filter_help: "Matches all entities whose ID or name contains this text. Supports wildcard * (e.g. sensor.battery_*_level). Click the count to preview the list and use 'Invert selection'. Use {name}, {entity}, {state}, {device} in the message.",
     entity_filter_count: "entities match",
@@ -926,8 +1138,13 @@ const ET = {
     entity_filter_zero: "No entities match",
     entity_filter_exclude_tip: "Click an entity to exclude it — click again to re-include it",
     entity_filter_invert: "Invert selection",
+    entity_filter_exclude_label: "Exclude these entities",
     device_class: "Device class (optional)",
     device_class_help: "e.g. smoke, battery, motion — creates one alert per entity with this device_class. Alternative to the text filter.",
+    label_filter: "HA Label filter (optional)",
+    label_filter_help: "Only match entities that have this HA label. Combinable with text filter, device_class and area (AND logic).",
+    area_filter: "HA Area filter (optional)",
+    area_filter_help: "Only match entities in the selected area. Checks entity area first, then falls back to device area.",
     alert_attribute: "Attribute (optional)",
     alert_attribute_help: "e.g. battery_level — leave empty to use entity state. Supports nested paths: e.g. activity.0.forecast",
     secondary_entity: "Secondary value entity (optional)",
@@ -952,6 +1169,20 @@ const ET = {
     clear_double_tap_action_section: "Double tap on 'all clear' card",
     clear_hold_action_section: "Hold on 'all clear' card (500ms)",
     snooze_action_section: "Snooze action 💤 — executed when the snooze button is tapped",
+    persistent: "Persistent alarm 🔒",
+    persistent_help: "Stays visible even after the sensor returns to normal. Press ✕ to dismiss.",
+    group_section: "Group alerts 🗂️",
+    group: "Enable grouping",
+    group_min: "Minimum to group",
+    group_min_help: "Minimum number of active entities before showing the group summary (default: 3).",
+    group_message: "Group message",
+    group_message_help: "Use {count} for the number of active alerts and {names} for the name list. E.g. '{count} sensors active'. Supports {{ states('sensor.x') }} templates.",
+    group_secondary_text: "Group secondary text",
+    group_secondary_text_help: "Secondary line below the group message. Supports {count} and {names}. If not set, shows the entity name list.",
+    group_expanded_message: "Item message (expanded)",
+    group_expanded_message_help: "Message for each entity when the group is expanded. Use {state}, {name}, {entity}, {device}. Supports {{ states('sensor.x') }} templates.",
+    group_tap_action_section: "Group tap action",
+    group_hold_action_section: "Group hold action",
     timer_theme_category: "Timer",
     message_placeholder_hint: "Placeholders: {name} entity name, {state} state, {entity} entity ID, {device} device name",
     timer_placeholder_hint: "Use {timer} in the message to show the countdown (e.g. 'Disabled for {timer}')",
@@ -992,6 +1223,9 @@ const ET = {
     time_range_from: "From (HH:MM)",
     time_range_to: "To (HH:MM)",
     time_range_help: "Show this alert only within the specified time window. Supports midnight crossing (e.g. 22:00–06:00). Leave blank for no restriction.",
+    music_player_controls: "Music player controls",
+    music_player_controls_help: "Shows play/pause, previous, next and mute controls with album art as background. Only works when the entity is a media_player.",
+    music_player_color: "Accent color",
   },
   fr: {
     tab_general: "Général",
@@ -1014,8 +1248,13 @@ const ET = {
     clear_mode_clock: "🕐 Horloge",
     clear_mode_weather: "🌤 Météo",
     clear_mode_weather_clock: "🌤🕐 Météo + Horloge",
+    clear_mode_forecast: "📅 Prévisions de la semaine",
+    clear_mode_weather_forecast: "🌤📅 Météo + Prévisions (alternance)",
+    weather_forecast_interval: "Intervalle d'alternance (secondes)",
+    weather_forecast_interval_help: "Secondes entre la météo actuelle et les prévisions. Défaut: 5",
     clear_weather_entity_label: "Entité météo (weather.*)",
     clear_clock_show_date: "Afficher la date",
+    clear_clock_12h: "Format 12 heures (AM/PM)",
     clear_clock_date_label: "Position de la date",
     clear_clock_style_label: "Style horloge",
     clear_weather_style_label: "Style badges météo",
@@ -1050,6 +1289,11 @@ const ET = {
     card_border: "Afficher la bordure et le nom",
     card_border_help: "Ajoute la bordure standard de Home Assistant autour de la carte. Quand aucune alerte n'est active, affiche un espace réservé avec le nom de la carte au lieu de la masquer complètement.",
     show_snooze_bar: "Afficher la barre de réactivation snooze 💤",
+    show_snooze_button: "Afficher le bouton snooze 💤",
+    show_history_button: "Afficher le bouton historique 📋",
+    secondary_value_align: "Position de la valeur secondaire",
+    secondary_value_align_below: "Sous le titre (défaut)",
+    secondary_value_align_right: "À droite du titre",
     snooze_default_duration: "Comportement snooze 💤",
     snooze_default_duration_help: "Menu de durée: tap sur 💤 ouvre un menu pour choisir la durée. Durée fixe: tap sur 💤 met en veille immédiatement sans menu.",
     snooze_option_menu: "Afficher le menu de durée (comme avant)",
@@ -1079,15 +1323,33 @@ const ET = {
     tts_engine_global_help: "Entité TTS à utiliser (ex. tts.piper, tts.home_assistant_cloud). Détecté automatiquement si non défini.",
     tts_notify_service: "Service notify (Alexa / mobile)",
     tts_notify_service_help: "Nom du service notify à utiliser à la place de tts.speak (ex. alexa_media_echo_cuisine). Quand défini, les champs haut-parleur et moteur sont ignorés.",
+    tts_notify_type: "Type de notification Alexa",
+    tts_notify_type_tts: "tts (appareil individuel)",
+    tts_notify_type_announce: "announce (groupe / multiroom)",
     alert_tts: "Annonce vocale TTS",
     alert_tts_help: "Quand l'alerte s'active, le texte est lu à voix haute via le lecteur multimédia ou le service notify configuré.",
     alert_tts_entity: "Haut-parleur TTS (remplace le global)",
     alert_tts_engine: "Moteur TTS (remplace le global)",
     alert_tts_notify_service: "Service notify (remplace le global)",
+    alert_tts_notify_type: "Type de notification (remplace le global)",
     alert_tts_message: "Texte TTS personnalisé",
     alert_tts_message_help: "Texte alternatif à lire. Si vide, utilise le message de l'alerte.",
-    alert_camera_entity: "Caméra snapshot dans l'overlay",
-    alert_camera_entity_help: "Quand l'alerte se déclenche, affiche un snapshot de cette caméra dans le banner overlay. Visible uniquement dans l'overlay, pas dans la carte.",
+    section_push_notify: "📱 Notifications push",
+    push_notify_master_toggle: "Activer les notifications push mobiles",
+    push_notify_master_toggle_help: "Interrupteur principal. Si désactivé, aucune alerte n'envoie de notification push, même si activé sur chaque alerte.",
+    alert_push_notify: "Envoyer une notification push mobile",
+    alert_push_notify_help: "Quand cette alerte se déclenche, envoie une notification push via le service notify sélectionné.",
+    alert_push_notify_title: "Titre de la notification (Jinja2)",
+    alert_push_notify_title_help: "Titre envoyé dans la notification push. Laisser vide pour utiliser le label badge de l'alerte.",
+    alert_push_notify_message: "Message de la notification (Jinja2)",
+    alert_push_notify_message_help: "Message envoyé dans la notification push. Laisser vide pour utiliser le message de l'alerte.",
+    alert_push_notify_service: "Service notify",
+    alert_camera_entity: "Caméra dans l'overlay",
+    alert_camera_entity_help: "Quand l'alerte se déclenche, affiche cette caméra dans le banner overlay. Visible uniquement dans l'overlay, pas dans la carte.",
+    alert_camera_live: "📹 Live stream (à la place du snapshot)",
+    alert_camera_live_help: "Affiche un live stream au lieu d'un snapshot statique. Nécessite une caméra avec support streaming.",
+    alert_camera_in_card: "Afficher comme fond dans l'alerte",
+    alert_camera_in_card_help: "La caméra apparaît comme fond flouté dans la diapositive de l'alerte, visible à chaque rotation — pas seulement dans l'overlay.",
     test_mode: "Mode test",
     test_mode_desc: "Affiche toutes les alertes comme actives, en ignorant leurs conditions. L'animation de défilement est suspendue — ouvrez une alerte dans l'éditeur pour la voir immédiatement sur la carte.",
     test_mode_warning: "N'oubliez pas de désactiver le mode test avant de sauvegarder !",
@@ -1119,8 +1381,10 @@ const ET = {
     use_ha_icon: "Utiliser une icône Home Assistant (mdi:)",
     icon_color: "Couleur de l'icône",
     icon_color_help: "Couleur CSS: ex. #ff0000, red, var(--error-color). Laisser vide pour la couleur du thème.",
-    on_change: "Déclencher à TOUT changement d'état (ignore les conditions)",
-    on_change_help: "L'alerte s'affiche à chaque changement d'état (quelle que soit la valeur). Idéal pour les événements : compteurs, horodatages, capteurs sans états fixes.",
+    on_change: "Déclencher à TOUT changement d'état",
+    on_change_help: "L'alerte s'affiche à chaque changement d'état (quelle que soit la valeur). Les conditions AND/OR supplémentaires sont toujours évaluées. Idéal pour les événements : compteurs, horodatages, capteurs sans états fixes.",
+    trigger_delay: "⏳ Délai d'activation (secondes)",
+    trigger_delay_help: "L'alerte n'apparaît que si la condition reste vraie pendant au moins N secondes (comme le champ 'for:' dans les automations HA). Laisser vide pour déclencher immédiatement.",
     auto_dismiss_section: "Masquage automatique",
     auto_dismiss_after: "Masquer automatiquement après (secondes)",
     auto_dismiss_after_help: "L'alerte disparaît automatiquement après N secondes. Laisser vide pour la garder toujours visible.",
@@ -1160,6 +1424,11 @@ const ET = {
     anim_split:   "✂️ Split — division verticale",
     anim_roll:    "🎲 Roll — roulement",
     anim_curtain: "🎭 Curtain — rideau de théâtre",
+    mode_entity: "🏷️ Entité unique",
+    mode_filter: "🔎 Filtre multi-entités",
+    mode_entity_help: "Surveille une seule entité spécifique.",
+    mode_filter_help: "Génère une alerte distincte pour chaque entité correspondant aux filtres actifs.",
+    filter_section: "Filtres d'entités",
     entity_filter: "Filtre entité (texte)",
     entity_filter_help: "Correspond à toutes les entités dont l'ID ou le nom contient ce texte. Supporte le wildcard * (ex. sensor.battery_*_level). Cliquez sur le compteur pour prévisualiser et utiliser 'Inverser la sélection'. Utilisez {name}, {entity}, {state}, {device} dans le message.",
     entity_filter_count: "entités correspondent",
@@ -1167,8 +1436,13 @@ const ET = {
     entity_filter_zero: "Aucune entité ne correspond",
     entity_filter_exclude_tip: "Cliquez sur une entité pour l'exclure — cliquez à nouveau pour la réinclure",
     entity_filter_invert: "Inverser la sélection",
+    entity_filter_exclude_label: "Exclure ces entités",
     device_class: "Classe d'appareil (optionnel)",
     device_class_help: "ex. smoke, battery, motion — crée une alerte par entité avec cette device_class. Alternatif au filtre texte.",
+    label_filter: "Filtre étiquette HA (optionnel)",
+    label_filter_help: "Ne correspond qu'aux entités ayant cette étiquette HA. Combinable avec le filtre texte, device_class et area (logique ET).",
+    area_filter: "Filtre zone HA (optionnel)",
+    area_filter_help: "Ne correspond qu'aux entités dans la zone sélectionnée. Vérifie d'abord la zone de l'entité, puis celle du dispositif.",
     alert_attribute: "Attribut (optionnel)",
     alert_attribute_help: "ex. battery_level — laisser vide pour utiliser l'état de l'entité. Supporte les chemins imbriqués : ex. activity.0.forecast",
     secondary_entity: "Entité valeur secondaire (optionnel)",
@@ -1193,6 +1467,20 @@ const ET = {
     clear_double_tap_action_section: "Double tap sur la carte 'tout va bien'",
     clear_hold_action_section: "Maintien sur la carte 'tout va bien' (500ms)",
     snooze_action_section: "Action snooze 💤 — exécutée au tap sur le bouton snooze",
+    persistent: "Alarme persistante 🔒",
+    persistent_help: "Reste visible même après le retour à la normale du capteur. Appuyer sur ✕ pour fermer.",
+    group_section: "Grouper les alertes 🗂️",
+    group: "Activer le regroupement",
+    group_min: "Minimum pour grouper",
+    group_min_help: "Nombre minimal d'entités actives avant d'afficher le résumé de groupe (défaut : 3).",
+    group_message: "Message de groupe",
+    group_message_help: "Utilisez {count} pour le nombre d'alertes actives et {names} pour la liste des noms. Ex. '{count} capteurs actifs'. Supporte {{ states('sensor.x') }}.",
+    group_secondary_text: "Texte secondaire du groupe",
+    group_secondary_text_help: "Ligne secondaire sous le message du groupe. Supporte {count} et {names}. Si non défini, affiche la liste des noms.",
+    group_expanded_message: "Message unitaire (développé)",
+    group_expanded_message_help: "Message affiché pour chaque entité en vue développée. Utilisez {state}, {name}, {entity}, {device}. Supporte {{ states('sensor.x') }}.",
+    group_tap_action_section: "Action tap sur le groupe",
+    group_hold_action_section: "Action appui long sur le groupe",
     timer_theme_category: "Timer",
     message_placeholder_hint: "Variables : {name} nom entité, {state} état, {entity} ID entité, {device} nom appareil",
     timer_placeholder_hint: "Utilisez {timer} dans le message pour afficher le compte à rebours (ex. 'Désactivé pour {timer}')",
@@ -1233,6 +1521,9 @@ const ET = {
     time_range_from: "De (HH:MM)",
     time_range_to: "À (HH:MM)",
     time_range_help: "Affiche cette alerte uniquement dans la plage horaire indiquée. Gère le passage minuit (ex. 22:00–06:00). Laisser vide pour aucune restriction.",
+    music_player_controls: "Contrôles du lecteur musical",
+    music_player_controls_help: "Affiche lecture/pause, précédent, suivant et sourdine avec la pochette d'album en fond. Fonctionne uniquement quand l'entité est un media_player.",
+    music_player_color: "Couleur d'accentuation",
   },
   de: {
     tab_general: "Allgemein",
@@ -1255,8 +1546,13 @@ const ET = {
     clear_mode_clock: "🕐 Uhr",
     clear_mode_weather: "🌤 Wetter",
     clear_mode_weather_clock: "🌤🕐 Wetter + Uhr",
+    clear_mode_forecast: "📅 Wochenvorhersage",
+    clear_mode_weather_forecast: "🌤📅 Wetter + Vorhersage (wechselnd)",
+    weather_forecast_interval: "Wechselintervall (Sekunden)",
+    weather_forecast_interval_help: "Sekunden zwischen aktuellem Wetter und Vorhersage. Standard: 5",
     clear_weather_entity_label: "Wetter-Entität (weather.*)",
     clear_clock_show_date: "Datum anzeigen",
+    clear_clock_12h: "12-Stunden-Format (AM/PM)",
     clear_clock_date_label: "Datumsposition",
     clear_clock_style_label: "Uhr-Stil",
     clear_weather_style_label: "Wetter-Badge-Stil",
@@ -1291,6 +1587,11 @@ const ET = {
     card_border: "Rahmen und Namen anzeigen",
     card_border_help: "Fügt den Standard-Home-Assistant-Rahmen um die Karte hinzu. Wenn keine Alerts aktiv sind, wird ein Platzhalter mit dem Kartennamen angezeigt, anstatt die Karte vollständig auszublenden.",
     show_snooze_bar: "Schlummern-Reaktivierungsleiste anzeigen 💤",
+    show_snooze_button: "Schlummern-Schaltfläche anzeigen 💤",
+    show_history_button: "Verlauf-Schaltfläche anzeigen 📋",
+    secondary_value_align: "Position des Sekundärwerts",
+    secondary_value_align_below: "Unter dem Titel (Standard)",
+    secondary_value_align_right: "Rechts vom Titel",
     snooze_default_duration: "Schlummern 💤 Verhalten",
     snooze_default_duration_help: "Dauermenü: Tap auf 💤 öffnet ein Menü zur Auswahl der Dauer. Feste Dauer: Tap auf 💤 schlummert sofort ohne Menü.",
     snooze_option_menu: "Dauermenü anzeigen (wie bisher)",
@@ -1320,15 +1621,33 @@ const ET = {
     tts_engine_global_help: "TTS-Entität (z.B. tts.piper, tts.home_assistant_cloud). Wird automatisch erkannt, wenn nicht angegeben.",
     tts_notify_service: "Notify-Dienst (Alexa / Mobil)",
     tts_notify_service_help: "Name des Notify-Dienstes statt tts.speak (z.B. alexa_media_echo_kueche). Wenn gesetzt, werden Lautsprecher und Engine ignoriert.",
+    tts_notify_type: "Alexa-Benachrichtigungstyp",
+    tts_notify_type_tts: "tts (Einzelgerät)",
+    tts_notify_type_announce: "announce (Gruppe / Multiroom)",
     alert_tts: "TTS-Sprachansage",
     alert_tts_help: "Wenn die Warnung aktiv wird, wird der Text über den konfigurierten Mediaplayer oder Notify-Dienst vorgelesen.",
     alert_tts_entity: "TTS-Lautsprecher (überschreibt global)",
     alert_tts_engine: "TTS-Engine (überschreibt global)",
     alert_tts_notify_service: "Notify-Dienst (überschreibt global)",
+    alert_tts_notify_type: "Benachrichtigungstyp (überschreibt global)",
     alert_tts_message: "Benutzerdefinierter TTS-Text",
     alert_tts_message_help: "Alternativer Text zum Vorlesen. Wenn leer, wird der Warnungstext verwendet.",
-    alert_camera_entity: "Kamera-Snapshot im Overlay",
-    alert_camera_entity_help: "Wenn die Warnung ausgelöst wird, zeigt einen Snapshot dieser Kamera im Overlay-Banner. Nur im Overlay sichtbar, nicht in der Karte.",
+    section_push_notify: "📱 Push-Benachrichtigungen",
+    push_notify_master_toggle: "Mobile Push-Benachrichtigungen aktivieren",
+    push_notify_master_toggle_help: "Hauptschalter. Wenn deaktiviert, sendet keine Warnung eine Push-Benachrichtigung, auch wenn für einzelne Warnungen aktiviert.",
+    alert_push_notify: "Mobile Push-Benachrichtigung senden",
+    alert_push_notify_help: "Wenn diese Warnung aktiv wird, sendet eine Push-Benachrichtigung über den ausgewählten Notify-Dienst.",
+    alert_push_notify_title: "Benachrichtigungstitel (Jinja2)",
+    alert_push_notify_title_help: "Titel in der Push-Benachrichtigung. Leer lassen für das Standard-Badge-Label der Warnung.",
+    alert_push_notify_message: "Benachrichtigungsnachricht (Jinja2)",
+    alert_push_notify_message_help: "Nachricht in der Push-Benachrichtigung. Leer lassen für die Warnungsnachricht.",
+    alert_push_notify_service: "Notify-Dienst",
+    alert_camera_entity: "Kamera im Overlay",
+    alert_camera_entity_help: "Wenn die Warnung ausgelöst wird, zeigt diese Kamera im Overlay-Banner. Nur im Overlay sichtbar, nicht in der Karte.",
+    alert_camera_live: "📹 Live-Stream (statt Snapshot)",
+    alert_camera_live_help: "Zeigt einen Live-Stream statt eines statischen Snapshots. Benötigt eine Kamera mit Stream-Unterstützung.",
+    alert_camera_in_card: "Als Hintergrund in der Warnung anzeigen",
+    alert_camera_in_card_help: "Die Kamera erscheint als unscharfer Hintergrund in der Warn-Folie, sichtbar bei jeder Rotation — nicht nur im Overlay.",
     test_mode: "Testmodus",
     test_mode_desc: "Zeigt alle Warnungen als aktiv an, unabhängig von ihren Bedingungen. Die Scroll-Animation ist angehalten — öffne eine Warnung im Editor, um sie sofort auf der Karte anzuzeigen.",
     test_mode_warning: "Denk daran, den Testmodus vor dem Speichern zu deaktivieren!",
@@ -1360,8 +1679,10 @@ const ET = {
     use_ha_icon: "Home Assistant Symbol verwenden (mdi:)",
     icon_color: "Symbolfarbe",
     icon_color_help: "CSS-Farbe: z.B. #ff0000, red, var(--error-color). Leer lassen für Themafarbe.",
-    on_change: "Bei JEDER Statusänderung auslösen (ignoriert Bedingungen)",
-    on_change_help: "Warnung erscheint bei jeder Statusänderung (beliebiger Wert). Ideal für Ereignisse: Zähler, Zeitstempel, Sensoren ohne feste Zustände.",
+    on_change: "Bei JEDER Statusänderung auslösen",
+    on_change_help: "Warnung erscheint bei jeder Statusänderung (beliebiger Wert). Zusätzliche AND/OR-Bedingungen werden trotzdem ausgewertet. Ideal für Ereignisse: Zähler, Zeitstempel, Sensoren ohne feste Zustände.",
+    trigger_delay: "⏳ Aktivierungsverzögerung (Sekunden)",
+    trigger_delay_help: "Warnung erscheint nur, wenn die Bedingung mindestens N Sekunden lang wahr bleibt (wie das 'for:'-Feld in HA-Automatisierungen). Leer lassen für sofortige Auslösung.",
     auto_dismiss_section: "Automatisches Ausblenden",
     auto_dismiss_after: "Automatisch ausblenden nach (Sekunden)",
     auto_dismiss_after_help: "Warnung wird automatisch nach N Sekunden ausgeblendet. Leer lassen, um sie immer anzuzeigen.",
@@ -1401,6 +1722,11 @@ const ET = {
     anim_split:   "✂️ Split — vertikale Teilung",
     anim_roll:    "🎲 Roll — Rollen",
     anim_curtain: "🎭 Curtain — Theatervorhang",
+    mode_entity: "🏷️ Einzelne Entität",
+    mode_filter: "🔎 Multi-Entitäts-Filter",
+    mode_entity_help: "Überwacht eine einzelne bestimmte Entität.",
+    mode_filter_help: "Erzeugt eine separate Warnung für jede Entität, die den aktiven Filtern entspricht.",
+    filter_section: "Entitätsfilter",
     entity_filter: "Entitätsfilter (Text)",
     entity_filter_help: "Findet alle Entitäten, deren ID oder Name diesen Text enthält. Unterstützt Wildcard * (z.B. sensor.battery_*_level). Klicke auf die Anzahl für die Vorschau und 'Auswahl umkehren'. Verwende {name}, {entity}, {state}, {device} in der Nachricht.",
     entity_filter_count: "Entitäten gefunden",
@@ -1408,8 +1734,13 @@ const ET = {
     entity_filter_zero: "Keine Entitäten gefunden",
     entity_filter_exclude_tip: "Entität anklicken zum Ausschließen — erneut klicken zum Einschließen",
     entity_filter_invert: "Auswahl umkehren",
+    entity_filter_exclude_label: "Diese Entitäten ausschließen",
     device_class: "Geräteklasse (optional)",
     device_class_help: "z.B. smoke, battery, motion — erstellt eine Warnung pro Entität mit dieser device_class. Alternativ zum Textfilter.",
+    label_filter: "HA-Bezeichnungsfilter (optional)",
+    label_filter_help: "Nur Entitäten mit dieser HA-Bezeichnung werden einbezogen. Kombinierbar mit Textfilter, device_class und Bereich (UND-Logik).",
+    area_filter: "HA-Bereichsfilter (optional)",
+    area_filter_help: "Nur Entitäten im gewählten Bereich werden einbezogen. Prüft zuerst den Bereich der Entität, dann den des Geräts.",
     alert_attribute: "Attribut (optional)",
     alert_attribute_help: "z.B. battery_level — leer lassen für Entity-Zustand. Unterstützt verschachtelte Pfade: z.B. activity.0.forecast",
     secondary_entity: "Sekundärwert-Entität (optional)",
@@ -1434,6 +1765,20 @@ const ET = {
     clear_double_tap_action_section: "Doppeltipp auf 'Alles in Ordnung'-Karte",
     clear_hold_action_section: "Halten auf 'Alles in Ordnung'-Karte (500ms)",
     snooze_action_section: "Schlummern-Aktion 💤 — wird beim Tap auf den Schlummern-Button ausgeführt",
+    persistent: "Dauerhafter Alarm 🔒",
+    persistent_help: "Bleibt sichtbar, auch wenn der Sensor wieder normal ist. ✕ drücken zum Schließen.",
+    group_section: "Alarme gruppieren 🗂️",
+    group: "Gruppierung aktivieren",
+    group_min: "Minimum zum Gruppieren",
+    group_min_help: "Mindestanzahl aktiver Entitäten, bevor die Gruppenübersicht angezeigt wird (Standard: 3).",
+    group_message: "Gruppennachricht",
+    group_message_help: "Verwende {count} für die Anzahl aktiver Alarme und {names} für die Namensliste. Z.B. '{count} Sensoren aktiv'. Unterstützt {{ states('sensor.x') }}.",
+    group_secondary_text: "Sekundärer Gruppentext",
+    group_secondary_text_help: "Sekundärzeile unter der Gruppennachricht. Unterstützt {count} und {names}. Wenn nicht gesetzt, wird die Namensliste angezeigt.",
+    group_expanded_message: "Einzelnachricht (erweitert)",
+    group_expanded_message_help: "Nachricht für jede Entität in der erweiterten Ansicht. Verwende {state}, {name}, {entity}, {device}. Unterstützt {{ states('sensor.x') }}.",
+    group_tap_action_section: "Gruppen-Tap-Aktion",
+    group_hold_action_section: "Gruppen-Halte-Aktion",
     timer_theme_category: "Timer",
     message_placeholder_hint: "Platzhalter: {name} Entitätsname, {state} Zustand, {entity} Entitäts-ID, {device} Gerätename",
     timer_placeholder_hint: "Verwende {timer} in der Nachricht für den Countdown (z.B. 'Deaktiviert für {timer}')",
@@ -1474,6 +1819,9 @@ const ET = {
     time_range_from: "Von (HH:MM)",
     time_range_to: "Bis (HH:MM)",
     time_range_help: "Zeigt diese Benachrichtigung nur im angegebenen Zeitfenster. Unterstützt Mitternachtsübergang (z.B. 22:00–06:00). Leer lassen für keine Einschränkung.",
+    music_player_controls: "Musikplayer-Steuerung",
+    music_player_controls_help: "Zeigt Play/Pause, Vorheriges, Nächstes und Stumm mit Albumcover als Hintergrund. Funktioniert nur wenn die Entität ein media_player ist.",
+    music_player_color: "Akzentfarbe",
   },
   nl: {
     tab_general: "Algemeen",
@@ -1496,8 +1844,13 @@ const ET = {
     clear_mode_clock: "🕐 Klok",
     clear_mode_weather: "🌤 Weer",
     clear_mode_weather_clock: "🌤🕐 Weer + Klok",
+    clear_mode_forecast: "📅 Weekvoorspelling",
+    clear_mode_weather_forecast: "🌤📅 Weer + Voorspelling (afwisselend)",
+    weather_forecast_interval: "Wisselinterval (seconden)",
+    weather_forecast_interval_help: "Seconden tussen huidig weer en weekverwachting. Standaard: 5",
     clear_weather_entity_label: "Weerentiteit (weather.*)",
     clear_clock_show_date: "Datum weergeven",
+    clear_clock_12h: "12-uursformaat (AM/PM)",
     clear_clock_date_label: "Datumpositie",
     clear_clock_style_label: "Klokstijl",
     clear_weather_style_label: "Weer badge stijl",
@@ -1532,6 +1885,11 @@ const ET = {
     card_border: "Toon rand en naam",
     card_border_help: "Voegt de standaard Home Assistant rand toe rond de kaart. Wanneer er geen meldingen actief zijn, wordt een tijdelijke aanduiding met de kaartnaam weergegeven in plaats van de kaart volledig te verbergen.",
     show_snooze_bar: "Sluimer-reactiveringsbalk weergeven 💤",
+    show_snooze_button: "Sluimerknop weergeven 💤",
+    show_history_button: "Geschiedenisknop weergeven 📋",
+    secondary_value_align: "Positie secundaire waarde",
+    secondary_value_align_below: "Onder de titel (standaard)",
+    secondary_value_align_right: "Rechts van de titel",
     snooze_default_duration: "Sluimer 💤 gedrag",
     snooze_default_duration_help: "Duurmenu: tik op 💤 opent een menu om de duur te kiezen. Vaste duur: tik op 💤 sluimert direct zonder menu.",
     snooze_option_menu: "Duurmenu tonen (zoals voorheen)",
@@ -1561,15 +1919,33 @@ const ET = {
     tts_engine_global_help: "TTS-entiteit (bijv. tts.piper, tts.home_assistant_cloud). Automatisch gedetecteerd als niet ingesteld.",
     tts_notify_service: "Notify-service (Alexa / mobiel)",
     tts_notify_service_help: "Naam van de notify-service in plaats van tts.speak (bijv. alexa_media_echo_keuken). Als ingesteld, worden luidspreker en engine genegeerd.",
+    tts_notify_type: "Alexa meldingstype",
+    tts_notify_type_tts: "tts (enkel apparaat)",
+    tts_notify_type_announce: "announce (groep / multiroom)",
     alert_tts: "TTS-spraakmelding",
     alert_tts_help: "Wanneer de melding actief wordt, wordt de tekst hardop gelezen via de geconfigureerde mediaspeler of notify-service.",
     alert_tts_entity: "TTS-luidspreker (overschrijft globaal)",
     alert_tts_engine: "TTS-engine (overschrijft globaal)",
     alert_tts_notify_service: "Notify-service (overschrijft globaal)",
+    alert_tts_notify_type: "Meldingstype (overschrijft globaal)",
     alert_tts_message: "Aangepaste TTS-tekst",
     alert_tts_message_help: "Alternatieve tekst om voor te lezen. Als leeg, wordt de meldingstekst gebruikt.",
-    alert_camera_entity: "Camera snapshot in overlay",
-    alert_camera_entity_help: "Wanneer de melding activeert, toont een snapshot van deze camera in de overlay banner. Alleen zichtbaar in de overlay, niet in de kaart.",
+    section_push_notify: "📱 Push-meldingen",
+    push_notify_master_toggle: "Mobiele push-meldingen inschakelen",
+    push_notify_master_toggle_help: "Hoofdschakelaar. Als uitgeschakeld, stuurt geen melding een push-notificatie, ook als het per melding is ingeschakeld.",
+    alert_push_notify: "Mobiele push-melding versturen",
+    alert_push_notify_help: "Wanneer deze melding activeert, stuurt een push-melding via de geselecteerde notify-service.",
+    alert_push_notify_title: "Meldingstitel (Jinja2)",
+    alert_push_notify_title_help: "Titel in de push-melding. Leeg laten voor het standaard badge-label van de melding.",
+    alert_push_notify_message: "Meldingsbericht (Jinja2)",
+    alert_push_notify_message_help: "Bericht in de push-melding. Leeg laten voor het meldingsbericht.",
+    alert_push_notify_service: "Notify-service",
+    alert_camera_entity: "Camera in overlay",
+    alert_camera_entity_help: "Wanneer de melding activeert, toont deze camera in de overlay banner. Alleen zichtbaar in de overlay, niet in de kaart.",
+    alert_camera_live: "📹 Live stream (in plaats van snapshot)",
+    alert_camera_live_help: "Toont een live stream in plaats van een statische snapshot. Vereist een camera met streamondersteuning.",
+    alert_camera_in_card: "Tonen als achtergrond in de melding",
+    alert_camera_in_card_help: "De camera verschijnt als wazige achtergrond in de meldingsdia, zichtbaar bij elke rotatie — niet alleen in de overlay.",
     test_mode:"Testmodus",
     test_mode_desc: "Toont alle meldingen als actief, ongeacht hun voorwaarden. De scroll-animatie is gepauzeerd — open een melding in de editor om deze direct op de kaart te zien.",
     test_mode_warning: "Vergeet niet de testmodus uit te schakelen voor het opslaan!",
@@ -1601,8 +1977,10 @@ const ET = {
     use_ha_icon: "Home Assistant pictogram gebruiken (mdi:)",
     icon_color: "Pictogramkleur",
     icon_color_help: "CSS-kleur: bijv. #ff0000, red, var(--error-color). Leeg laten voor themakleur.",
-    on_change: "Activeren bij ELKE statuswijziging (negeert voorwaarden)",
-    on_change_help: "Melding verschijnt bij elke statuswijziging (willekeurige waarde). Ideaal voor gebeurtenissen: tellers, tijdstempels, sensoren zonder vaste toestanden.",
+    on_change: "Activeren bij ELKE statuswijziging",
+    on_change_help: "Melding verschijnt bij elke statuswijziging (willekeurige waarde). Extra AND/OR-voorwaarden worden nog steeds geëvalueerd. Ideaal voor gebeurtenissen: tellers, tijdstempels, sensoren zonder vaste toestanden.",
+    trigger_delay: "⏳ Activeringsvertraging (seconden)",
+    trigger_delay_help: "Melding verschijnt alleen als de voorwaarde minstens N seconden waar blijft (zoals het 'for:'-veld in HA-automatiseringen). Leeg laten om direct te activeren.",
     auto_dismiss_section: "Automatisch verbergen",
     auto_dismiss_after: "Automatisch verbergen na (seconden)",
     auto_dismiss_after_help: "Melding verdwijnt automatisch na N seconden. Leeg laten om altijd zichtbaar te blijven.",
@@ -1642,6 +2020,11 @@ const ET = {
     anim_split:   "✂️ Split — verticale splitsing",
     anim_roll:    "🎲 Roll — rollen",
     anim_curtain: "🎭 Curtain — theatergordijn",
+    mode_entity: "🏷️ Enkele entiteit",
+    mode_filter: "🔎 Multi-entiteitsfilter",
+    mode_entity_help: "Bewaakt één specifieke entiteit.",
+    mode_filter_help: "Genereert een aparte melding voor elke entiteit die overeenkomt met de actieve filters.",
+    filter_section: "Entiteitsfilters",
     entity_filter: "Entiteitsfilter (tekst)",
     entity_filter_help: "Vindt alle entiteiten waarvan het ID of de naam deze tekst bevat. Ondersteunt wildcard * (bijv. sensor.battery_*_level). Klik op het aantal voor de voorvertoning en 'Selectie omdraaien'. Gebruik {name}, {entity}, {state}, {device} in het bericht.",
     entity_filter_count: "entiteiten gevonden",
@@ -1649,8 +2032,13 @@ const ET = {
     entity_filter_zero: "Geen entiteiten gevonden",
     entity_filter_exclude_tip: "Klik op een entiteit om het uit te sluiten — klik opnieuw om het in te sluiten",
     entity_filter_invert: "Selectie omdraaien",
+    entity_filter_exclude_label: "Deze entiteiten uitsluiten",
     device_class: "Apparaatklasse (optioneel)",
     device_class_help: "bijv. smoke, battery, motion — maakt één melding per entiteit met deze device_class. Alternatief voor het tekstfilter.",
+    label_filter: "HA-labelfilter (optioneel)",
+    label_filter_help: "Alleen entiteiten met dit HA-label worden meegenomen. Combineerbaar met tekstfilter, device_class en gebied (EN-logica).",
+    area_filter: "HA-gebiedfilter (optioneel)",
+    area_filter_help: "Alleen entiteiten in het geselecteerde gebied worden meegenomen. Controleert eerst het gebied van de entiteit, dan dat van het apparaat.",
     alert_attribute: "Attribuut (optioneel)",
     alert_attribute_help: "bijv. battery_level — leeg laten voor entiteitstoestand. Ondersteunt geneste paden: bijv. activity.0.forecast",
     secondary_entity: "Secundaire waarde-entiteit (optioneel)",
@@ -1675,6 +2063,20 @@ const ET = {
     clear_double_tap_action_section: "Dubbel tikken op 'alles in orde'-kaart",
     clear_hold_action_section: "Vasthouden op 'alles in orde'-kaart (500ms)",
     snooze_action_section: "Sluimer-actie 💤 — uitgevoerd bij tik op de sluimer-knop",
+    persistent: "Aanhoudend alarm 🔒",
+    persistent_help: "Blijft zichtbaar zelfs na herstel van de sensor. Druk op ✕ om te verwijderen.",
+    group_section: "Meldingen groeperen 🗂️",
+    group: "Groepering inschakelen",
+    group_min: "Minimum om te groeperen",
+    group_min_help: "Minimaal aantal actieve entiteiten voordat de groepsamenvatting wordt weergegeven (standaard: 3).",
+    group_message: "Groepsbericht",
+    group_message_help: "Gebruik {count} voor het aantal actieve meldingen en {names} voor de namenlijst. Bijv. '{count} sensoren actief'. Ondersteunt {{ states('sensor.x') }}.",
+    group_secondary_text: "Secundaire groepstekst",
+    group_secondary_text_help: "Secundaire regel onder het groepsbericht. Ondersteunt {count} en {names}. Indien niet ingesteld, wordt de namenlijst weergegeven.",
+    group_expanded_message: "Individueel bericht (uitgevouwen)",
+    group_expanded_message_help: "Bericht voor elke entiteit in uitgevouwen weergave. Gebruik {state}, {name}, {entity}, {device}. Ondersteunt {{ states('sensor.x') }}.",
+    group_tap_action_section: "Groepstik-actie",
+    group_hold_action_section: "Groeps-houd-actie",
     timer_theme_category: "Timer",
     message_placeholder_hint: "Plaatshouders: {name} entiteitsnaam, {state} toestand, {entity} entiteits-ID, {device} apparaatnaam",
     timer_placeholder_hint: "Gebruik {timer} in het bericht voor de countdown (bijv. 'Uitgeschakeld voor {timer}')",
@@ -1715,6 +2117,9 @@ const ET = {
     time_range_from: "Van (HH:MM)",
     time_range_to: "Tot (HH:MM)",
     time_range_help: "Toon deze melding alleen binnen het opgegeven tijdvenster. Ondersteunt middernachtovergang (bv. 22:00–06:00). Leeg laten voor geen beperking.",
+    music_player_controls: "Muziekspelerbesturingen",
+    music_player_controls_help: "Toont afspelen/pauzeren, vorige, volgende en dempen met albumhoes als achtergrond. Werkt alleen wanneer de entiteit een media_player is.",
+    music_player_color: "Accentkleur",
   },
   vi: {
     tab_general: "Chung",
@@ -1737,8 +2142,13 @@ const ET = {
     clear_mode_clock: "🕐 Đồng hồ",
     clear_mode_weather: "🌤 Thời tiết",
     clear_mode_weather_clock: "🌤🕐 Thời tiết + Đồng hồ",
+    clear_mode_forecast: "📅 Dự báo tuần",
+    clear_mode_weather_forecast: "🌤📅 Thời tiết + Dự báo (xen kẽ)",
+    weather_forecast_interval: "Khoảng thời gian xen kẽ (giây)",
+    weather_forecast_interval_help: "Giây giữa thời tiết hiện tại và dự báo tuần. Mặc định: 5",
     clear_weather_entity_label: "Thực thể thời tiết (weather.*)",
     clear_clock_show_date: "Hiển thị ngày",
+    clear_clock_12h: "Định dạng 12 giờ (AM/PM)",
     clear_clock_date_label: "Vị trí ngày",
     clear_clock_style_label: "Kiểu đồng hồ",
     clear_weather_style_label: "Kiểu badge thời tiết",
@@ -1773,6 +2183,11 @@ const ET = {
     card_border: "Hiển thị viền và tên card",
     card_border_help: "Thêm viền chuẩn Home Assistant xung quanh card. Khi không có cảnh báo nào hoạt động, hiển thị placeholder với tên card thay vì ẩn hoàn toàn.",
     show_snooze_bar: "Hiển thị thanh kích hoạt lại tạm hoãn 💤",
+    show_snooze_button: "Hiển thị nút tạm hoãn 💤",
+    show_history_button: "Hiển thị nút lịch sử 📋",
+    secondary_value_align: "Vị trí giá trị phụ",
+    secondary_value_align_below: "Dưới tiêu đề (mặc định)",
+    secondary_value_align_right: "Bên phải tiêu đề",
     snooze_default_duration: "Hành vi tạm hoãn 💤",
     snooze_default_duration_help: "Menu thời gian: nhấn 💤 mở menu chọn thời lượng. Thời lượng cố định: nhấn 💤 tạm hoãn ngay không cần menu.",
     snooze_option_menu: "Hiển thị menu thời lượng (như trước)",
@@ -1802,15 +2217,33 @@ const ET = {
     tts_engine_global_help: "Thực thể TTS (vd. tts.piper, tts.home_assistant_cloud). Tự động phát hiện nếu không đặt.",
     tts_notify_service: "Dịch vụ notify (Alexa / di động)",
     tts_notify_service_help: "Tên dịch vụ notify thay cho tts.speak (vd. alexa_media_echo_bep). Khi đặt, loa và bộ máy TTS bị bỏ qua.",
+    tts_notify_type: "Loại thông báo Alexa",
+    tts_notify_type_tts: "tts (thiết bị đơn)",
+    tts_notify_type_announce: "announce (nhóm / multiroom)",
     alert_tts: "Thông báo giọng nói TTS",
     alert_tts_help: "Khi báo động kích hoạt, văn bản được đọc to qua media player hoặc dịch vụ notify được cấu hình.",
     alert_tts_entity: "Loa TTS (ghi đè toàn cục)",
     alert_tts_engine: "Bộ máy TTS (ghi đè toàn cục)",
     alert_tts_notify_service: "Dịch vụ notify (ghi đè toàn cục)",
+    alert_tts_notify_type: "Loại thông báo (ghi đè toàn cục)",
     alert_tts_message: "Văn bản TTS tùy chỉnh",
     alert_tts_message_help: "Văn bản thay thế để đọc. Nếu trống, dùng thông điệp báo động.",
-    alert_camera_entity: "Camera snapshot trong overlay",
-    alert_camera_entity_help: "Khi báo động kích hoạt, hiển thị snapshot từ camera này trong banner overlay. Chỉ hiện trong overlay, không trong card.",
+    section_push_notify: "📱 Thông báo đẩy",
+    push_notify_master_toggle: "Bật thông báo đẩy di động",
+    push_notify_master_toggle_help: "Công tắc chính. Khi tắt, không có báo động nào gửi thông báo đẩy, ngay cả khi được bật cho từng báo động.",
+    alert_push_notify: "Gửi thông báo đẩy di động",
+    alert_push_notify_help: "Khi báo động này kích hoạt, gửi thông báo đẩy qua dịch vụ notify đã chọn.",
+    alert_push_notify_title: "Tiêu đề thông báo (Jinja2)",
+    alert_push_notify_title_help: "Tiêu đề gửi trong thông báo đẩy. Để trống để dùng nhãn huy hiệu của báo động.",
+    alert_push_notify_message: "Nội dung thông báo (Jinja2)",
+    alert_push_notify_message_help: "Nội dung gửi trong thông báo đẩy. Để trống để dùng thông điệp báo động.",
+    alert_push_notify_service: "Dịch vụ notify",
+    alert_camera_entity: "Camera trong overlay",
+    alert_camera_entity_help: "Khi báo động kích hoạt, hiển thị camera này trong banner overlay. Chỉ hiện trong overlay, không trong card.",
+    alert_camera_live: "📹 Live stream (thay vì snapshot)",
+    alert_camera_live_help: "Hiển thị live stream thay vì ảnh tĩnh. Yêu cầu camera hỗ trợ streaming.",
+    alert_camera_in_card: "Hiển thị làm nền trong thông báo",
+    alert_camera_in_card_help: "Camera hiển thị như nền mờ trong slide thông báo, thấy mỗi lần xoay — không chỉ trong overlay.",
     test_mode: "Chế độ thử",
     test_mode_desc: "Hiển thị tất cả báo động như đang hoạt động, bỏ qua điều kiện. Hoạt ảnh cuộn bị tạm dừng — mở một báo động trong trình chỉnh sửa để xem ngay trên thẻ.",
     test_mode_warning: "Nhớ tắt chế độ thử trước khi lưu!",
@@ -1842,8 +2275,10 @@ const ET = {
     use_ha_icon: "Dùng biểu tượng Home Assistant (mdi:)",
     icon_color: "Màu biểu tượng",
     icon_color_help: "Màu CSS: ví dụ #ff0000, red, var(--error-color). Để trống để dùng màu theme.",
-    on_change: "Kích hoạt khi BẤT KỲ thay đổi trạng thái (bỏ qua điều kiện)",
-    on_change_help: "Báo động hiện khi trạng thái thay đổi (bất kỳ giá trị). Phù hợp cho sự kiện: bộ đếm, dấu thời gian, cảm biến không có trạng thái cố định.",
+    on_change: "Kích hoạt khi BẤT KỲ thay đổi trạng thái",
+    on_change_help: "Báo động hiện khi trạng thái thay đổi (bất kỳ giá trị). Điều kiện AND/OR bổ sung vẫn được đánh giá. Phù hợp cho sự kiện: bộ đếm, dấu thời gian, cảm biến không có trạng thái cố định.",
+    trigger_delay: "⏳ Độ trễ kích hoạt (giây)",
+    trigger_delay_help: "Báo động chỉ hiện nếu điều kiện duy trì đúng trong ít nhất N giây (như trường 'for:' trong tự động hóa HA). Để trống để kích hoạt ngay lập tức.",
     auto_dismiss_section: "Tự ẩn",
     auto_dismiss_after: "Tự ẩn sau (giây)",
     auto_dismiss_after_help: "Báo động tự ẩn sau N giây. Để trống để giữ luôn hiển thị.",
@@ -1883,6 +2318,11 @@ const ET = {
     anim_split:   "✂️ Split — chia dọc",
     anim_roll:    "🎲 Roll — cuộn",
     anim_curtain: "🎭 Curtain — màn sân khấu",
+    mode_entity: "🏷️ Thực thể đơn",
+    mode_filter: "🔎 Bộ lọc đa thực thể",
+    mode_entity_help: "Theo dõi một thực thể cụ thể.",
+    mode_filter_help: "Tạo một cảnh báo riêng cho mỗi thực thể khớp với bộ lọc đang hoạt động.",
+    filter_section: "Bộ lọc thực thể",
     entity_filter: "Bộ lọc thực thể (văn bản)",
     entity_filter_help: "Tìm tất cả thực thể có ID hoặc tên chứa văn bản này. Hỗ trợ wildcard * (vd. sensor.battery_*_level). Nhấn số kết quả để xem danh sách và dùng 'Đảo ngược lựa chọn'. Dùng {name}, {entity}, {state}, {device} trong thông báo.",
     entity_filter_count: "thực thể phù hợp",
@@ -1890,8 +2330,13 @@ const ET = {
     entity_filter_zero: "Không tìm thấy thực thể nào",
     entity_filter_exclude_tip: "Nhấn vào thực thể để loại trừ — nhấn lại để đưa vào",
     entity_filter_invert: "Đảo ngược lựa chọn",
+    entity_filter_exclude_label: "Loại trừ các thực thể này",
     device_class: "Lớp thiết bị (tùy chọn)",
     device_class_help: "vd. smoke, battery, motion — tạo một cảnh báo cho mỗi thực thể có device_class này. Thay thế cho bộ lọc văn bản.",
+    label_filter: "Bộ lọc nhãn HA (tùy chọn)",
+    label_filter_help: "Chỉ khớp các thực thể có nhãn HA này. Kết hợp được với bộ lọc văn bản, device_class và khu vực (logic VÀ).",
+    area_filter: "Bộ lọc khu vực HA (tùy chọn)",
+    area_filter_help: "Chỉ khớp các thực thể trong khu vực được chọn. Kiểm tra khu vực thực thể trước, sau đó khu vực thiết bị.",
     alert_attribute: "Thuộc tính (tùy chọn)",
     alert_attribute_help: "vd. battery_level — để trống để dùng trạng thái thực thể. Hỗ trợ đường dẫn lồng nhau: vd. activity.0.forecast",
     secondary_entity: "Thực thể giá trị phụ (tùy chọn)",
@@ -1916,6 +2361,20 @@ const ET = {
     clear_double_tap_action_section: "Nhấn đôi vào thẻ 'mọi thứ ổn'",
     clear_hold_action_section: "Giữ thẻ 'mọi thứ ổn' (500ms)",
     snooze_action_section: "Hành động tạm hoãn 💤 — thực hiện khi nhấn nút tạm hoãn",
+    persistent: "Báo động liên tục 🔒",
+    persistent_help: "Vẫn hiển thị dù cảm biến trở về bình thường. Nhấn ✕ để xóa bỏ.",
+    group_section: "Nhóm cảnh báo 🗂️",
+    group: "Bật nhóm",
+    group_min: "Tối thiểu để nhóm",
+    group_min_help: "Số lượng thực thể hoạt động tối thiểu trước khi hiển thị tóm tắt nhóm (mặc định: 3).",
+    group_message: "Tin nhắn nhóm",
+    group_message_help: "Dùng {count} cho số cảnh báo đang hoạt động và {names} cho danh sách tên. Ví dụ: '{count} cảm biến đang hoạt động'. Hỗ trợ {{ states('sensor.x') }}.",
+    group_secondary_text: "Văn bản phụ của nhóm",
+    group_secondary_text_help: "Dòng phụ bên dưới tin nhắn nhóm. Hỗ trợ {count} và {names}. Nếu không đặt, hiển thị danh sách tên.",
+    group_expanded_message: "Tin nhắn đơn (đã mở rộng)",
+    group_expanded_message_help: "Tin nhắn cho từng thực thể khi nhóm được mở rộng. Dùng {state}, {name}, {entity}, {device}. Hỗ trợ {{ states('sensor.x') }}.",
+    group_tap_action_section: "Hành động nhấn vào nhóm",
+    group_hold_action_section: "Hành động nhấn giữ vào nhóm",
     timer_theme_category: "Hẹn giờ",
     message_placeholder_hint: "Biến: {name} tên thực thể, {state} trạng thái, {entity} ID thực thể, {device} tên thiết bị",
     timer_placeholder_hint: "Dùng {timer} trong thông báo để hiển thị đếm ngược (vd. 'Đã tắt trong {timer}')",
@@ -1956,6 +2415,9 @@ const ET = {
     time_range_from: "Từ (HH:MM)",
     time_range_to: "Đến (HH:MM)",
     time_range_help: "Chỉ hiển thị cảnh báo này trong khung giờ được chỉ định. Hỗ trợ vượt nửa đêm (vd. 22:00–06:00). Để trống để không giới hạn.",
+    music_player_controls: "Điều khiển trình phát nhạc",
+    music_player_controls_help: "Hiển thị phát/tạm dừng, trước, tiếp theo và tắt tiếng với ảnh bìa album làm nền. Chỉ hoạt động khi thực thể là media_player.",
+    music_player_color: "Màu nhấn",
   },
   ru: {
     tab_general: "Основное",
@@ -1978,8 +2440,13 @@ const ET = {
     clear_mode_clock: "🕐 Часы",
     clear_mode_weather: "🌤 Погода",
     clear_mode_weather_clock: "🌤🕐 Погода + Часы",
+    clear_mode_forecast: "📅 Прогноз на неделю",
+    clear_mode_weather_forecast: "🌤📅 Погода + Прогноз (чередование)",
+    weather_forecast_interval: "Интервал чередования (секунды)",
+    weather_forecast_interval_help: "Секунды между текущей погодой и прогнозом. По умолч.: 5",
     clear_weather_entity_label: "Объект погоды (weather.*)",
     clear_clock_show_date: "Показать дату",
+    clear_clock_12h: "12-часовой формат (AM/PM)",
     clear_clock_date_label: "Позиция даты",
     clear_clock_style_label: "Стиль часов",
     clear_weather_style_label: "Стиль значка погоды",
@@ -2014,6 +2481,11 @@ const ET = {
     card_border: "Показывать рамку и название",
     card_border_help: "Добавляет стандартную рамку Home Assistant вокруг карточки. Когда нет активных оповещений, отображается заполнитель с названием карточки вместо полного скрытия.",
     show_snooze_bar: "Показывать полосу восстановления отложенных 💤",
+    show_snooze_button: "Показывать кнопку отложить 💤",
+    show_history_button: "Показывать кнопку истории 📋",
+    secondary_value_align: "Положение дополнительного значения",
+    secondary_value_align_below: "Под заголовком (по умолчанию)",
+    secondary_value_align_right: "Справа от заголовка",
     snooze_default_duration: "Поведение при откладывании 💤",
     snooze_default_duration_help: "Меню длительности: нажатие 💤 открывает меню выбора времени. Фиксированная длительность: нажатие 💤 откладывает сразу без меню.",
     snooze_option_menu: "Показать меню длительности (как раньше)",
@@ -2043,15 +2515,33 @@ const ET = {
     tts_engine_global_help: "Сущность TTS (напр. tts.piper, tts.home_assistant_cloud). Определяется автоматически, если не указан.",
     tts_notify_service: "Notify-сервис (Alexa / мобильный)",
     tts_notify_service_help: "Имя notify-сервиса вместо tts.speak (напр. alexa_media_echo_kuhnya). При указании поля динамика и движка игнорируются.",
+    tts_notify_type: "Тип уведомления Alexa",
+    tts_notify_type_tts: "tts (отдельное устройство)",
+    tts_notify_type_announce: "announce (группа / multiroom)",
     alert_tts: "Голосовое объявление TTS",
     alert_tts_help: "Когда оповещение активируется, текст читается вслух через настроенный медиаплеер или notify-сервис.",
     alert_tts_entity: "Динамик TTS (переопределяет глобальный)",
     alert_tts_engine: "Движок TTS (переопределяет глобальный)",
     alert_tts_notify_service: "Notify-сервис (переопределяет глобальный)",
+    alert_tts_notify_type: "Тип уведомления (переопределяет глобальный)",
     alert_tts_message: "Пользовательский текст TTS",
     alert_tts_message_help: "Альтернативный текст для чтения. Если пусто, используется сообщение оповещения.",
-    alert_camera_entity: "Снимок камеры в оверлее",
-    alert_camera_entity_help: "При срабатывании оповещения показывает снимок с этой камеры в баннере оверлея. Видно только в оверлее, не в карточке.",
+    section_push_notify: "📱 Push-уведомления",
+    push_notify_master_toggle: "Включить мобильные push-уведомления",
+    push_notify_master_toggle_help: "Главный переключатель. Когда выключен, ни одно оповещение не отправляет push-уведомление, даже если включено для отдельных оповещений.",
+    alert_push_notify: "Отправить мобильное push-уведомление",
+    alert_push_notify_help: "Когда это оповещение активируется, отправляет push-уведомление через выбранный notify-сервис.",
+    alert_push_notify_title: "Заголовок уведомления (Jinja2)",
+    alert_push_notify_title_help: "Заголовок push-уведомления. Оставьте пустым для использования метки значка оповещения.",
+    alert_push_notify_message: "Сообщение уведомления (Jinja2)",
+    alert_push_notify_message_help: "Сообщение push-уведомления. Оставьте пустым для использования сообщения оповещения.",
+    alert_push_notify_service: "Notify-сервис",
+    alert_camera_entity: "Камера в оверлее",
+    alert_camera_entity_help: "При срабатывании оповещения показывает эту камеру в баннере оверлея. Видно только в оверлее, не в карточке.",
+    alert_camera_live: "📹 Live-трансляция (вместо снимка)",
+    alert_camera_live_help: "Показывает прямую трансляцию вместо статичного снимка. Требует камеру с поддержкой стриминга.",
+    alert_camera_in_card: "Показать как фон в оповещении",
+    alert_camera_in_card_help: "Камера отображается как размытый фон прямо в слайде оповещения, видна при каждой ротации — не только в оверлее.",
     test_mode: "Режим тестирования",
     test_mode_desc: "Показывает все оповещения как активные, игнорируя условия. Анимация прокрутки остановлена — откройте оповещение в редакторе, чтобы сразу увидеть его на карточке.",
     test_mode_warning: "Не забудьте отключить режим тестирования перед сохранением!",
@@ -2083,8 +2573,10 @@ const ET = {
     use_ha_icon: "Использовать иконку Home Assistant (mdi:)",
     icon_color: "Цвет иконки",
     icon_color_help: "CSS цвет: например #ff0000, red, var(--error-color). Оставьте пустым для цвета темы.",
-    on_change: "Активировать при ЛЮБОМ изменении состояния (игнорировать условие)",
-    on_change_help: "Оповещение появляется при изменении состояния (любое значение). Подходит для событий: счётчики, временные метки, датчики без фиксированного состояния.",
+    on_change: "Активировать при ЛЮБОМ изменении состояния",
+    on_change_help: "Оповещение появляется при изменении состояния (любое значение). Дополнительные условия AND/OR всё равно проверяются. Подходит для событий: счётчики, временные метки, датчики без фиксированного состояния.",
+    trigger_delay: "⏳ Задержка активации (секунды)",
+    trigger_delay_help: "Оповещение появляется только если условие остаётся истинным не менее N секунд (аналог поля 'for:' в автоматизациях HA). Оставьте пустым для мгновенного срабатывания.",
     auto_dismiss_section: "Автоскрытие",
     auto_dismiss_after: "Скрыть через (секунды)",
     auto_dismiss_after_help: "Оповещение автоматически скрывается через N секунд. Оставьте пустым для постоянного отображения.",
@@ -2124,6 +2616,11 @@ const ET = {
     anim_split:   "✂️ Split — вертикальное разделение",
     anim_roll:    "🎲 Roll — прокрутка",
     anim_curtain: "🎭 Curtain — сценический занавес",
+    mode_entity: "🏷️ Один объект",
+    mode_filter: "🔎 Фильтр нескольких объектов",
+    mode_entity_help: "Отслеживает одну конкретную сущность.",
+    mode_filter_help: "Создаёт отдельное оповещение для каждой сущности, соответствующей активным фильтрам.",
+    filter_section: "Фильтры объектов",
     entity_filter: "Фильтр объектов (текст)",
     entity_filter_help: "Найти все объекты, ID или имя которых содержит этот текст. Поддерживает шаблоны * (например sensor.battery_*_level). Нажмите на количество результатов для просмотра списка. Используйте {name}, {entity}, {state}, {device} в сообщениях.",
     entity_filter_count: "подходящих объектов",
@@ -2131,8 +2628,13 @@ const ET = {
     entity_filter_zero: "Объекты не найдены",
     entity_filter_exclude_tip: "Нажмите на объект для исключения — нажмите снова для включения",
     entity_filter_invert: "Инвертировать выбор",
+    entity_filter_exclude_label: "Исключить эти объекты",
     device_class: "Класс устройства (необязательно)",
     device_class_help: "например smoke, battery, motion — создаёт одно оповещение на объект с этим device_class. Альтернатива текстовому фильтру.",
+    label_filter: "Фильтр по метке HA (необязательно)",
+    label_filter_help: "Учитываются только объекты с этой меткой HA. Комбинируется с текстовым фильтром, device_class и зоной (логика И).",
+    area_filter: "Фильтр по зоне HA (необязательно)",
+    area_filter_help: "Учитываются только объекты в выбранной зоне. Сначала проверяется зона объекта, затем зона устройства.",
     alert_attribute: "Атрибут (необязательно)",
     alert_attribute_help: "например battery_level — оставьте пустым для использования состояния объекта. Поддерживает вложенные пути: например activity.0.forecast",
     secondary_entity: "Вторичный объект значения (необязательно)",
@@ -2157,6 +2659,20 @@ const ET = {
     clear_double_tap_action_section: "Двойное нажатие на карточку 'всё в порядке'",
     clear_hold_action_section: "Удержание карточки 'всё в порядке' (500мс)",
     snooze_action_section: "Действие откладывания 💤 — выполняется при нажатии кнопки откладывания",
+    persistent: "Постоянная тревога 🔒",
+    persistent_help: "Остаётся видимым даже после нормализации датчика. Нажмите ✕ для сброса.",
+    group_section: "Группировка оповещений 🗂️",
+    group: "Включить группировку",
+    group_min: "Минимум для группировки",
+    group_min_help: "Минимальное количество активных объектов для отображения сводки группы (по умолчанию: 3).",
+    group_message: "Сообщение группы",
+    group_message_help: "Используйте {count} для количества активных оповещений и {names} для списка имён. Напр. '{count} датчиков активно'. Поддерживает {{ states('sensor.x') }}.",
+    group_secondary_text: "Дополнительный текст группы",
+    group_secondary_text_help: "Дополнительная строка под сообщением группы. Поддерживает {count} и {names}. Если не задано, показывает список имён.",
+    group_expanded_message: "Сообщение элемента (развёрнуто)",
+    group_expanded_message_help: "Сообщение для каждой сущности при развёрнутом виде. Используйте {state}, {name}, {entity}, {device}. Поддерживает {{ states('sensor.x') }}.",
+    group_tap_action_section: "Действие по нажатию на группу",
+    group_hold_action_section: "Действие по удержанию группы",
     timer_theme_category: "Таймер",
     message_placeholder_hint: "Переменные: {name} имя объекта, {state} состояние, {entity} ID объекта, {device} имя устройства",
     timer_placeholder_hint: "Используйте {timer} в сообщении для отображения обратного отсчёта (например 'Отключится через {timer}')",
@@ -2197,6 +2713,9 @@ const ET = {
     time_range_from: "С (ЧЧ:ММ)",
     time_range_to: "До (ЧЧ:ММ)",
     time_range_help: "Показывать это оповещение только в указанном временном окне. Поддерживает переход через полночь (например, 22:00–06:00). Оставьте пустым без ограничений.",
+    music_player_controls: "Управление медиаплеером",
+    music_player_controls_help: "Показывает воспроизведение/паузу, предыдущий, следующий и без звука с обложкой альбома на фоне. Работает только когда сущность является media_player.",
+    music_player_color: "Цвет акцента",
   },
   da: {
     tab_general: "Generelt",
@@ -2219,8 +2738,13 @@ const ET = {
     clear_mode_clock: "🕐 Ur",
     clear_mode_weather: "🌤 Vejr",
     clear_mode_weather_clock: "🌤🕐 Vejr + Ur",
+    clear_mode_forecast: "📅 Ugentlig prognose",
+    clear_mode_weather_forecast: "🌤📅 Vejr + Prognose (skiftende)",
+    weather_forecast_interval: "Skifteinterval (sekunder)",
+    weather_forecast_interval_help: "Sekunder mellem aktuelt vejr og ugeprognose. Standard: 5",
     clear_weather_entity_label: "Vejrentitet (weather.*)",
     clear_clock_show_date: "Vis dato",
+    clear_clock_12h: "12-timers format (AM/PM)",
     clear_clock_date_label: "Datoposition",
     clear_clock_style_label: "Ur-stil",
     clear_weather_style_label: "Vejr badge stil",
@@ -2253,6 +2777,11 @@ const ET = {
     card_height: "Fast kort‑højde (px)",
     card_height_help: "Låser højden for at undgå layout‑skift, når advarsler ændres. Lad stå tom for automatisk højde.",
     show_snooze_bar: "Vis reaktiveringsbar for slumre 💤",
+    show_snooze_button: "Vis slumreknap 💤",
+    show_history_button: "Vis historikknap 📋",
+    secondary_value_align: "Placering af sekundær værdi",
+    secondary_value_align_below: "Under titel (standard)",
+    secondary_value_align_right: "Til højre for titel",
     snooze_default_duration: "Slumre 💤‑adfærd",
     snooze_default_duration_help: "Varighedsmenu: klik på 💤 åbner en menu, hvor du vælger, hvor længe du vil slumre. Fast varighed: klik på 💤 slumrer med det samme, uden menu.",
     snooze_option_menu: "Vis varighedsmenu (som før)",
@@ -2282,15 +2811,33 @@ const ET = {
     tts_engine_global_help: "TTS-entitet (f.eks. tts.piper, tts.home_assistant_cloud). Registreres automatisk hvis ikke angivet.",
     tts_notify_service: "Notify-tjeneste (Alexa / mobil)",
     tts_notify_service_help: "Navn på notify-tjeneste i stedet for tts.speak (f.eks. alexa_media_echo_koekkenet). Når angivet ignoreres højttaler og motor.",
+    tts_notify_type: "Alexa notifikationstype",
+    tts_notify_type_tts: "tts (enkelt enhed)",
+    tts_notify_type_announce: "announce (gruppe / multiroom)",
     alert_tts: "TTS-stemmemeddelelse",
     alert_tts_help: "Når advarslen aktiveres, læses teksten højt via den konfigurerede medieafspiller eller notify-tjeneste.",
     alert_tts_entity: "TTS-højttaler (tilsidesætter global)",
     alert_tts_engine: "TTS-motor (tilsidesætter global)",
     alert_tts_notify_service: "Notify-tjeneste (tilsidesætter global)",
+    alert_tts_notify_type: "Notifikationstype (tilsidesætter global)",
     alert_tts_message: "Brugerdefineret TTS-tekst",
     alert_tts_message_help: "Alternativ tekst der skal læses. Hvis tom, bruges advarslens besked.",
-    alert_camera_entity: "Kamera-snapshot i overlay",
-    alert_camera_entity_help: "Når advarslen udløses, vises et snapshot fra dette kamera i overlay-banneret. Kun synligt i overlay, ikke i kortet.",
+    section_push_notify: "📱 Push-notifikationer",
+    push_notify_master_toggle: "Aktivér mobile push-notifikationer",
+    push_notify_master_toggle_help: "Hovedkontakt. Når slået fra, sender ingen advarsel en push-notifikation, selv hvis aktiveret på individuelle advarsler.",
+    alert_push_notify: "Send mobil push-notifikation",
+    alert_push_notify_help: "Når denne advarsel aktiveres, sendes en push-notifikation via den valgte notify-tjeneste.",
+    alert_push_notify_title: "Notifikationstitel (Jinja2)",
+    alert_push_notify_title_help: "Titel sendt i push-notifikationen. Efterlad tom for at bruge advarslens badge-label.",
+    alert_push_notify_message: "Notifikationsbesked (Jinja2)",
+    alert_push_notify_message_help: "Besked sendt i push-notifikationen. Efterlad tom for at bruge advarslens besked.",
+    alert_push_notify_service: "Notify-tjeneste",
+    alert_camera_entity: "Kamera i overlay",
+    alert_camera_entity_help: "Når advarslen udløses, vises dette kamera i overlay-banneret. Kun synligt i overlay, ikke i kortet.",
+    alert_camera_live: "📹 Live stream (i stedet for snapshot)",
+    alert_camera_live_help: "Viser et live stream i stedet for et statisk snapshot. Kræver et kamera med stream-understøttelse.",
+    alert_camera_in_card: "Vis som baggrund i advarslen",
+    alert_camera_in_card_help: "Kameraet vises som en sløret baggrund i advarselsslide, synlig ved hver rotation — ikke kun i overlay.",
     test_mode: "Testtilstand",
     test_mode_desc: "Viser alle advarsler som aktive og ignorerer betingelser. Cykling og animation er pauset – udvid en advarsel i editoren for at se den med det samme på kortet.",
     test_mode_warning: "Husk at deaktivere testtilstand, før du gemmer!",
@@ -2322,8 +2869,10 @@ const ET = {
     use_ha_icon: "Brug Home Assistant‑ikon (mdi:)",
     icon_color: "Ikonfarve",
     icon_color_help: "CSS‑farve: f.eks. #ff0000, red, var(--error-color). Lad stå tom for tema‑standard.",
-    on_change: "Udløs ved enhver tilstandsændring (ignorerer betingelser)",
-    on_change_help: "Advarsel udløser, når enhedens tilstand ændrer sig (enhver værdi). Bedst til hændelser: tællere, tidsstemle, sensorer uden faste tilstande.",
+    on_change: "Udløs ved enhver tilstandsændring",
+    on_change_help: "Advarsel udløser, når enhedens tilstand ændrer sig (enhver værdi). Ekstra AND/OR-betingelser evalueres stadig. Bedst til hændelser: tællere, tidsstemle, sensorer uden faste tilstande.",
+    trigger_delay: "⏳ Aktiveringsforsinkelse (sekunder)",
+    trigger_delay_help: "Advarsel vises kun, hvis betingelsen forbliver sand i mindst N sekunder (som 'for:'-feltet i HA-automatiseringer). Lad stå tom for øjeblikkelig aktivering.",
     auto_dismiss_section: "Auto‑luk",
     auto_dismiss_after: "Auto‑skjul efter (sekunder)",
     auto_dismiss_after_help: "Advarsel skjules automatisk efter N sekunder. Lad stå tom for at holde den altid synlig.",
@@ -2363,6 +2912,11 @@ const ET = {
     anim_split:   "✂️ Split — lodret klip",
     anim_roll:    "🎲 Roll — rotateY + slide",
     anim_curtain: "🎭 Gardin — teater åbner",
+    mode_entity: "🏷️ Enkelt enhed",
+    mode_filter: "🔎 Multi-enhedsfilter",
+    mode_entity_help: "Overvåger én specifik enhed.",
+    mode_filter_help: "Genererer en separat advarsel for hver enhed, der matcher de aktive filtre.",
+    filter_section: "Enhedsfiltre",
     entity_filter: "Enheds‑filter (tekst)",
     entity_filter_help: "Matcher alle enheder, hvis ID eller navn indeholder denne tekst. Understøtter wildcard * (f.eks. sensor.battery_*_level). Klik på tallet for at se listen og bruge 'Invertér markering'. Brug {name}, {entity}, {state} i beskeden.",
     entity_filter_count: "enheder matcher",
@@ -2370,8 +2924,13 @@ const ET = {
     entity_filter_zero: "Ingen enheder matcher",
     entity_filter_exclude_tip: "Klik på en enhed for at ekskludere den — klik igen for at gen‑inkludere",
     entity_filter_invert: "Invertér markering",
+    entity_filter_exclude_label: "Ekskludér disse enheder",
     device_class: "Enhedsklasse (valgfri)",
     device_class_help: "fx smoke, battery, motion — opretter én advarsel pr. enhed med denne device_class. Alternativ til tekstfilteret.",
+    label_filter: "HA‑mærkatfilter (valgfrit)",
+    label_filter_help: "Kun entiteter med dette HA‑mærkat medtages. Kan kombineres med tekstfilter, device_class og område (OG‑logik).",
+    area_filter: "HA‑områdefilter (valgfrit)",
+    area_filter_help: "Kun entiteter i det valgte område medtages. Kontrollerer først entitetens område, derefter enhedens område.",
     alert_attribute: "Attribut (valgfri)",
     alert_attribute_help: "f.eks. battery_level — lad stå tom for at bruge enheds‑tilstand. Understøtter nøstede stier: f.eks. activity.0.forecast",
     secondary_entity: "Sekundær værdi‑enhed (valgfri)",
@@ -2396,6 +2955,20 @@ const ET = {
     clear_double_tap_action_section: "Dobbelt‑klik på 'alt er i orden'‑kort",
     clear_hold_action_section: "Hold på 'alt er i orden'‑kort (500 ms)",
     snooze_action_section: "Slumre‑handling 💤 — udføres når slumre‑knappen trykkes",
+    persistent: "Vedvarende alarm 🔒",
+    persistent_help: "Forbliver synlig selvom sensoren returnerer til normal. Tryk ✕ for at afvise.",
+    group_section: "Grupper advarsler 🗂️",
+    group: "Aktiver gruppering",
+    group_min: "Minimum for gruppering",
+    group_min_help: "Minimalt antal aktive entiteter, inden gruppeoversigten vises (standard: 3).",
+    group_message: "Gruppebesked",
+    group_message_help: "Brug {count} til antal aktive advarsler og {names} til navnelisten. F.eks. '{count} sensorer aktive'. Understøtter {{ states('sensor.x') }}.",
+    group_secondary_text: "Sekundær gruppetekst",
+    group_secondary_text_help: "Sekundær linje under gruppebesked. Understøtter {count} og {names}. Viser navneliste hvis ikke angivet.",
+    group_expanded_message: "Enkeltbesked (udvidet)",
+    group_expanded_message_help: "Besked for hver entitet i udvidet visning. Brug {state}, {name}, {entity}, {device}. Understøtter {{ states('sensor.x') }}.",
+    group_tap_action_section: "Tap-handling på gruppe",
+    group_hold_action_section: "Hold-handling på gruppe",
     timer_theme_category: "Timer",
     message_placeholder_hint: "Pladsholdere: {name} enheds‑navn, {state} tilstand, {entity} enheds‑ID, {device} enheds‑navn",
     timer_placeholder_hint: "Brug {timer} i beskeden for at vise nedtælling (f.eks. 'Deaktiveret i {timer}')",
@@ -2438,6 +3011,9 @@ const ET = {
     time_range_help: "Vis kun denne alarm inden for det angivne tidsvindue. Understøtter midnatovergang (f.eks. 22:00–06:00). Lad være tomt for ingen begrænsning.",
     card_border: "Vis kortramme og navn",
     card_border_help: "Tilføjer den standard Home Assistant-ramme rundt om kortet. Når der ingen aktive advarsler er, vises en pladsholder med kortnavnet i stedet for at skjule det helt.",
+    music_player_controls: "Medieafspiller-kontroller",
+    music_player_controls_help: "Viser afspil/pause, forrige, næste og lyd fra med albumcover som baggrund. Virker kun når entiteten er en media_player.",
+    music_player_color: "Accentfarve",
   },
   cs: {
     tab_general: "Obecné",
@@ -2460,8 +3036,13 @@ const ET = {
     clear_mode_clock: "🕐 Hodiny",
     clear_mode_weather: "🌤 Počasí",
     clear_mode_weather_clock: "🌤🕐 Počasí + hodiny",
+    clear_mode_forecast: "📅 Týdenní předpověď",
+    clear_mode_weather_forecast: "🌤📅 Počasí + Předpověď (střídání)",
+    weather_forecast_interval: "Interval střídání (sekundy)",
+    weather_forecast_interval_help: "Sekundy mezi zobrazením počasí a předpovědi",
     clear_weather_entity_label: "Entita počasí (weather.*)",
     clear_clock_show_date: "Zobrazit datum",
+    clear_clock_12h: "12hodinový formát (AM/PM)",
     clear_clock_date_label: "Pozice data",
     date_position_above: "⬆ Nad časem",
     date_position_below: "⬇ Pod časem",
@@ -2496,6 +3077,11 @@ const ET = {
     card_border: "Zobrazit okraje a název",
     card_border_help: "Přidá standardní okraje Home Assistenta okolo karty. Zobrazí kartu, pokud nejsou aktivní žádná varování, namísto úplného schování karty.",
     show_snooze_bar: "Zobrazit nástroj pro reaktivaci odložených varování 💤",
+    show_snooze_button: "Zobrazit tlačítko odložit 💤",
+    show_history_button: "Zobrazit tlačítko historie 📋",
+    secondary_value_align: "Pozice sekundární hodnoty",
+    secondary_value_align_below: "Pod nadpisem (výchozí)",
+    secondary_value_align_right: "Napravo od nadpisu",
     snooze_default_duration: "Chování funkce odložení 💤",
     snooze_default_duration_help: "Menu odložení: kliknutí na 💤 otevře menu pro výběr délky odložení. Pevná doba: kliknutí na 💤 odloží oznámení bez zobrazení menu.",
     snooze_option_menu: "Zobraz výběr doby (jako dříve)",
@@ -2525,15 +3111,33 @@ const ET = {
     tts_engine_global_help: "TTS entita (např. tts.piper, tts.home_assistant_cloud). Automaticky zjištěno pokud není nastaveno.",
     tts_notify_service: "Notify služba (Alexa / mobil)",
     tts_notify_service_help: "Název notify služby místo tts.speak (např. alexa_media_echo_kuchyne). Když je nastaveno, reproduktor a engine jsou ignorovány.",
+    tts_notify_type: "Typ oznámení Alexa",
+    tts_notify_type_tts: "tts (jednotlivé zařízení)",
+    tts_notify_type_announce: "announce (skupina / multiroom)",
     alert_tts: "TTS hlasové oznámení",
     alert_tts_help: "Když je varování aktivní, text je přečten nahlas přes nakonfigurovaný přehrávač médií nebo notify službu.",
     alert_tts_entity: "TTS reproduktor (přepíše globální)",
     alert_tts_engine: "TTS engine (přepíše globální)",
     alert_tts_notify_service: "Notify služba (přepíše globální)",
+    alert_tts_notify_type: "Typ oznámení (přepíše globální)",
     alert_tts_message: "Vlastní TTS text",
     alert_tts_message_help: "Alternativní text k přečtení. Pokud prázdné, použije se zpráva varování.",
-    alert_camera_entity: "Snímek kamery v overlay",
-    alert_camera_entity_help: "Když se varování aktivuje, zobrazí snímek z této kamery v overlay banneru. Viditelné pouze v overlay, ne v kartě.",
+    section_push_notify: "📱 Push notifikace",
+    push_notify_master_toggle: "Povolit mobilní push notifikace",
+    push_notify_master_toggle_help: "Hlavní přepínač. Když je vypnutý, žádné varování neposílá push notifikaci, i když je povoleno pro jednotlivá varování.",
+    alert_push_notify: "Odeslat mobilní push notifikaci",
+    alert_push_notify_help: "Když se toto varování aktivuje, odešle push notifikaci přes vybranou notify službu.",
+    alert_push_notify_title: "Název notifikace (Jinja2)",
+    alert_push_notify_title_help: "Název odeslaný v push notifikaci. Nechte prázdné pro použití badge štítku varování.",
+    alert_push_notify_message: "Zpráva notifikace (Jinja2)",
+    alert_push_notify_message_help: "Zpráva odeslaná v push notifikaci. Nechte prázdné pro použití zprávy varování.",
+    alert_push_notify_service: "Notify služba",
+    alert_camera_entity: "Kamera v overlay",
+    alert_camera_entity_help: "Když se varování aktivuje, zobrazí tuto kameru v overlay banneru. Viditelné pouze v overlay, ne v kartě.",
+    alert_camera_live: "📹 Live stream (místo snapshotu)",
+    alert_camera_live_help: "Zobrazí živý přenos místo statického snímku. Vyžaduje kameru s podporou streamování.",
+    alert_camera_in_card: "Zobrazit jako pozadí ve varování",
+    alert_camera_in_card_help: "Kamera se zobrazí jako rozmazané pozadí přímo v dlaždici varování, viditelné při každé rotaci — nejen v overlay.",
     test_mode: "Testovací režim",
     test_mode_desc: "Zobrazí všechna varování jako aktivní, bez ohledu na nastavené podmínky. Rotace varování je pozastavena. Rozklikni varování v editoru pro jeho zobrazení.",
     test_mode_warning: "Nezapomeňte vypnout testovací režim před uložením!",
@@ -2565,8 +3169,10 @@ const ET = {
     use_ha_icon: "Použij ikonu HA (mdi:)",
     icon_color: "Barva ikony",
     icon_color_help: "CSS barva: např. #ff0000, červena, var(--error-color). Ponechte prázdné pro výchozí vzhled.",
-    on_change: "Aktivovat při JAKÉKOLIV změně stavu (ignorují se podmínky)",
-    on_change_help: "Varování se spustí při jakékoliv změně stavu entity (nehledě na hodnotu stavu). Vhodné pro čítače, časové značky, senzory bez pevného stavu.",
+    on_change: "Aktivovat při JAKÉKOLIV změně stavu",
+    on_change_help: "Varování se spustí při jakékoliv změně stavu entity (nehledě na hodnotu stavu). Další AND/OR podmínky jsou stále vyhodnocovány. Vhodné pro čítače, časové značky, senzory bez pevného stavu.",
+    trigger_delay: "⏳ Zpoždění aktivace (sekundy)",
+    trigger_delay_help: "Varování se zobrazí pouze pokud podmínka zůstane splněna alespoň N sekund (jako pole 'for:' v automatizacích HA). Ponechte prázdné pro okamžité spuštění.",
     auto_dismiss_section: "Automatické potvrzení",
     auto_dismiss_after: "Automaticky skrýt po (sekundy)",
     auto_dismiss_after_help: "Varování se automaticky skryje po X vteřinách. Ponechte prázdné a varování zůstane stále aktivní.",
@@ -2606,6 +3212,11 @@ const ET = {
     anim_split:   "✂️ Split — vertikální rozříznutí",
     anim_roll:    "🎲 Roll — rotace Y + odsun",
     anim_curtain: "🎭 Curtain — opona",
+    mode_entity: "🏷️ Jedna entita",
+    mode_filter: "🔎 Filtr více entit",
+    mode_entity_help: "Sleduje jednu konkrétní entitu.",
+    mode_filter_help: "Vytvoří samostatné upozornění pro každou entitu odpovídající aktivním filtrům.",
+    filter_section: "Filtry entit",
     entity_filter: "Filtr entit (text)",
     entity_filter_help: "Zachytí všechny entity u kterých ID odpovídá nastavené šabloně. Podporuje znak * (např. sensor.battery_*_level). Zobrazí počet zachycených entit a umožní vyloučení vybraných. Použij zástupné {name}, {entity}, {state}, {device} v zobrazované zprávě.",
     entity_filter_count: "zachycených entit",
@@ -2613,8 +3224,13 @@ const ET = {
     entity_filter_zero: "Žádné odpovídající entity",
     entity_filter_exclude_tip: "Klikni na entitu pro vyloučení. Klikni znovu pro navrácení.",
     entity_filter_invert: "Inverzní výběr",
+    entity_filter_exclude_label: "Vyloučit tyto entity",
     device_class: "Třída zařízení (volitelné)",
     device_class_help: "např. smoke, battery, motion — vytvoří jedno upozornění pro každou entitu s touto device_class. Alternativa k textovému filtru.",
+    label_filter: "Filtr štítků HA (volitelné)",
+    label_filter_help: "Zahrnuty jsou pouze entity s tímto štítkem HA. Kombinovatelné s textovým filtrem, device_class a oblastí (logika A).",
+    area_filter: "Filtr oblasti HA (volitelné)",
+    area_filter_help: "Zahrnuty jsou pouze entity ve vybrané oblasti. Nejprve se kontroluje oblast entity, poté oblast zařízení.",
     alert_attribute: "Atribut (volitelné)",
     alert_attribute_help: "např. battery_level. Ponechte prázdné pro použití stavu entity. Podporuje vnořené cesty k atributu: např. activity.0.forecast",
     secondary_entity: "Hodnota sekundární entity (volitelné)",
@@ -2639,6 +3255,20 @@ const ET = {
     clear_double_tap_action_section: "Dvojdotek na kartě 'Vše OK'",
     clear_hold_action_section: "Podržení na kartě 'Vše OK' (500ms)",
     snooze_action_section: "Akce odložení - spuštěno po kliknutí na tlačítko 💤",
+    persistent: "Trvalý alarm 🔒",
+    persistent_help: "Zůstává viditelný i po návratu senzoru do normálu. Stiskněte ✕ pro zavření.",
+    group_section: "Seskupit upozornění 🗂️",
+    group: "Povolit seskupení",
+    group_min: "Minimum pro seskupení",
+    group_min_help: "Minimální počet aktivních entit před zobrazením souhrnu skupiny (výchozí: 3).",
+    group_message: "Zpráva skupiny",
+    group_message_help: "Použijte {count} pro počet aktivních upozornění a {names} pro seznam jmen. Např. '{count} senzorů aktivních'. Podporuje {{ states('sensor.x') }}.",
+    group_secondary_text: "Sekundární text skupiny",
+    group_secondary_text_help: "Sekundární řádek pod zprávou skupiny. Podporuje {count} a {names}. Pokud není nastaveno, zobrazí seznam jmen.",
+    group_expanded_message: "Zpráva položky (rozbaleno)",
+    group_expanded_message_help: "Zpráva pro každou entitu v rozbalené skupině. Použijte {state}, {name}, {entity}, {device}. Podporuje {{ states('sensor.x') }}.",
+    group_tap_action_section: "Akce při doteku skupiny",
+    group_hold_action_section: "Akce při dlouhém doteku skupiny",
     timer_theme_category: "Časovač",
     message_placeholder_hint: "Zástupná slova: {name} název entity, {state} stav, {entity} ID entity, {device} název zařízení",
     timer_placeholder_hint: "Použijte {timer} v těle zprávy pro zobrazení odpočtu (např. 'Vypnuto za {timer}')",
@@ -2681,6 +3311,605 @@ const ET = {
     time_range_help: "Zobrazí varování pouze v nastaveném časovém intervalu. Podporuje přechod přes půlnoc mezi dny (např. 22:00–06:00). Ponechte prázdné pro zobrazení varování kdykoli.",
     card_border: "Zobrazit okraje a název",
     card_border_help: "Přidá standardní okraje Home Assistenta okolo karty. Zobrazí kartu, pokud nejsou aktivní žádná varování, namísto úplného schování karty.",
+    music_player_controls: "Ovládání hudebního přehrávače",
+    music_player_controls_help: "Zobrazí přehrát/pozastavit, předchozí, další a ztlumit s obalem alba jako pozadím. Funguje pouze když je entita media_player.",
+    music_player_color: "Barva zvýraznění",
+  },
+  pt: {
+    tab_general: "Geral",
+    tab_alerts: "Alertas",
+    tab_overlay: "Overlay",
+    tab_allclear: "Tudo Limpo",
+    back: "Voltar",
+    all_clear_disabled_help: "Ative 'Tudo Limpo' para configurar a mensagem de ausência de alertas.",
+    tab_layout: "Layout",
+    hub_desc_general: "Ciclo, silenciar e histórico",
+    hub_desc_layout: "Tema, altura do card e aparência visual",
+    hub_desc_overlay: "Banner global em todos os dashboards",
+    hub_desc_alerts: "Gerenciar condições de alerta",
+    hub_desc_allclear: "Mensagem quando não há alertas ativos",
+    hub_star_github: "Favoritar no GitHub",
+    hub_report_issue: "Reportar um problema",
+    hub_welcome: "Bem-vindo! Configure seu card selecionando uma seção abaixo.",
+    clear_display_mode_label: "Modo de exibição",
+    clear_mode_message: "💬 Mensagem personalizada",
+    clear_mode_clock: "🕐 Relógio",
+    clear_mode_weather: "🌤 Clima",
+    clear_mode_weather_clock: "🌤🕐 Clima + Relógio",
+    clear_mode_forecast: "📅 Previsão semanal",
+    clear_mode_weather_forecast: "🌤📅 Clima + Previsão (alternando)",
+    weather_forecast_interval: "Intervalo de alternância (segundos)",
+    weather_forecast_interval_help: "Segundos entre a exibição do clima e da previsão",
+    clear_weather_entity_label: "Entidade de clima (weather.*)",
+    clear_clock_show_date: "Mostrar data",
+    clear_clock_12h: "Formato 12 horas (AM/PM)",
+    clear_clock_date_label: "Posição da data",
+    clear_clock_style_label: "Estilo do relógio",
+    clear_weather_style_label: "Estilo do badge de clima",
+    style_default: "Padrão",
+    style_aurora: "🌌 Aurora",
+    style_gold: "✨ Gold",
+    style_matrix: "🟢 Matrix",
+    style_frosted: "🧊 Frosted",
+    style_solid: "⬛ Solid",
+    style_minimal: "◻ Minimal",
+    style_stage:     "🎭 Stage",
+    style_split:     "▌▐ Split",
+    style_cinematic: "🎬 Cinematic",
+    date_position_above: "⬆ Acima do horário",
+    date_position_below: "⬇ Abaixo do horário",
+    cycle_interval: "Intervalo do ciclo (segundos)",
+    cycle_interval_help: "Segundos entre alertas quando há mais de um ativo",
+    show_widget_in_cycle: "Mostrar clima/hora no ciclo",
+    section_all_clear: "Card 'tudo limpo'",
+    section_layout: "Layout & Aparência",
+    section_cycling: "Ciclo & Animação",
+    section_snooze: "Silenciar 💤",
+    section_history: "Histórico",
+    show_when_clear: "Mostrar quando não há alertas ativos",
+    large_buttons: "Botões grandes sempre visíveis (💤 e 📋)",
+    ha_theme: "Adaptar ao tema do HA (compatível com Mushroom e todos os temas globais)",
+    swipe_to_snooze: "Deslizar para a esquerda para silenciar 💤 (ideal para mobile)",
+    vertical: "Layout vertical (ícone no topo, texto abaixo, centralizado)",
+    text_align_center: "Texto centralizado (útil para layout Panel muito largo)",
+    card_height: "Altura fixa do card (px)",
+    card_height_help: "Fixa a altura para evitar deslocamentos de layout quando os alertas mudam. Deixe vazio para altura automática.",
+    card_border: "Mostrar borda e nome do card",
+    card_border_help: "Adiciona a borda padrão do Home Assistant ao redor do card. Quando não há alertas ativos, mostra um espaço reservado com o nome do card em vez de ocultá-lo completamente.",
+    show_snooze_bar: "Mostrar barra de reativação do silenciar 💤",
+    show_snooze_button: "Mostrar botão de silenciar 💤",
+    show_history_button: "Mostrar botão de histórico 📋",
+    secondary_value_align: "Posição do valor secundário",
+    secondary_value_align_below: "Abaixo do título (padrão)",
+    secondary_value_align_right: "À direita do título",
+    snooze_default_duration: "Comportamento do silenciar 💤",
+    snooze_default_duration_help: "Menu de duração: toque em 💤 abre um menu para escolher quanto tempo silenciar. Duração fixa: toque em 💤 silencia imediatamente sem menu.",
+    snooze_option_menu: "Mostrar menu de duração (como antes)",
+    snooze_duration: "Duração do silenciar para este alerta 💤",
+    snooze_duration_help: "Substitui a configuração global. Vazio = usar global.",
+    snooze_duration_menu: "Menu de duração",
+    snooze_duration_global: "Usar configuração global",
+    sound_enabled: "Reproduzir um som quando um alerta aparecer",
+    sound_enabled_help: "Reproduz um tom gerado automaticamente quando um alerta fica ativo. O tom varia por categoria (Crítico = bipe agudo duplo, Aviso = bipe médio, Info = bipe suave, OK = carrilhão). Requer permissão de reprodução automática do navegador.",
+    sound_url: "URL de áudio personalizado (global)",
+    sound_url_help: "URL de um arquivo .mp3 ou .wav para usar em vez do som gerado. Deixe vazio para o tom gerado.",
+    alert_sound: "Som habilitado para este alerta",
+    alert_sound_url: "URL de áudio personalizado para este alerta",
+    alert_sound_url_help: "Substitui a URL global. Deixe vazio para usar a global.",
+    tab_tts: "Texto para Fala",
+    hub_desc_tts: "Ler alertas em voz alta",
+    tts_how_works: "Como funciona",
+    tts_how_standard: "Padrão (Google Home, Sonos, Piper…): escolha um media player e um motor TTS. O motor é detectado automaticamente se não definido.",
+    tts_how_alexa: "Alexa / notify / mobile: escolha o serviço notify correspondente. O card chama notify.NOME diretamente — sem necessidade de motor TTS.",
+    tts_how_peralert: "Cada alerta pode habilitar TTS com o toggle 🗣️ em seu painel de configuração, e substituir o alto-falante, motor ou serviço notify.",
+    tts_master_toggle: "Habilitar Texto para Fala (TTS)",
+    tts_master_toggle_help: "Interruptor principal. Quando desligado, nenhum alerta lê sua mensagem em voz alta, mesmo que o TTS esteja habilitado em alertas individuais.",
+    section_tts: "🗣️ Texto para Fala (TTS)",
+    tts_entity_global: "Alto-falante TTS padrão (media player)",
+    tts_entity_global_help: "Media player usado como alto-falante padrão para todos os alertas com TTS. Pode ser substituído por alerta.",
+    tts_engine_global: "Motor TTS (opcional)",
+    tts_engine_global_help: "Entidade TTS a usar (ex. tts.piper, tts.home_assistant_cloud). Detectado automaticamente se não definido.",
+    tts_notify_service: "Serviço notify (Alexa / mobile)",
+    tts_notify_service_help: "Nome do serviço notify para usar em vez de tts.speak (ex. alexa_media_echo_cozinha). Quando definido, os campos de alto-falante e motor são ignorados.",
+    tts_notify_type: "Tipo de notificação Alexa",
+    tts_notify_type_tts: "tts (dispositivo individual)",
+    tts_notify_type_announce: "announce (grupo / multiroom)",
+    alert_tts: "Anúncio de voz TTS",
+    alert_tts_help: "Quando o alerta fica ativo, a mensagem é lida em voz alta pelo media player ou serviço notify configurado.",
+    alert_tts_entity: "Alto-falante TTS (substitui o global)",
+    alert_tts_engine: "Motor TTS (substitui o global)",
+    alert_tts_notify_service: "Serviço notify (substitui o global)",
+    alert_tts_notify_type: "Tipo de notificação (substitui o global)",
+    alert_tts_message: "Texto TTS personalizado",
+    alert_tts_message_help: "Texto alternativo para ler em voz alta. Se vazio, usa a mensagem do alerta.",
+    section_push_notify: "📱 Notificações push",
+    push_notify_master_toggle: "Habilitar notificações push móveis",
+    push_notify_master_toggle_help: "Interruptor principal. Quando desligado, nenhum alerta envia uma notificação push, mesmo que habilitado em alertas individuais.",
+    alert_push_notify: "Enviar notificação push móvel",
+    alert_push_notify_help: "Quando este alerta for ativado, envia uma notificação push via o serviço notify selecionado.",
+    alert_push_notify_title: "Título da notificação (Jinja2)",
+    alert_push_notify_title_help: "Título enviado na notificação push. Deixe vazio para usar o rótulo badge do alerta.",
+    alert_push_notify_message: "Mensagem da notificação (Jinja2)",
+    alert_push_notify_message_help: "Mensagem enviada na notificação push. Deixe vazio para usar a mensagem do alerta.",
+    alert_push_notify_service: "Serviço notify",
+    alert_camera_entity: "Câmera no overlay",
+    alert_camera_entity_help: "Quando o alerta disparar, mostra esta câmera no banner overlay. Visível apenas no overlay, não no card.",
+    alert_camera_live: "📹 Live stream (em vez de snapshot)",
+    alert_camera_live_help: "Mostra um live stream em vez de um snapshot estático. Requer uma câmera com suporte a streaming.",
+    alert_camera_in_card: "Mostrar como fundo no alerta",
+    alert_camera_in_card_help: "A câmera aparece como fundo desfocado no slide do alerta, visível a cada rotação — não apenas no overlay.",
+    test_mode: "Modo de teste",
+    test_mode_desc: "Mostra todos os alertas como ativos, ignorando as condições. A animação de ciclo está pausada — expanda um alerta no editor para pré-visualizá-lo instantaneamente no card.",
+    test_mode_warning: "Lembre-se de desativar o modo de teste antes de salvar!",
+    history_max_events: "Histórico — máximo de eventos a manter",
+    history_max_events_help: "Registra automaticamente cada alerta que fica ativo. Toque em 📋 no card para ver o histórico com data/hora. Os dados são armazenados no navegador.",
+    history: "Histórico",
+    history_clear: "Limpar",
+    history_empty: "Nenhum evento registrado ainda",
+    clear_message: "Mensagem quando não há alertas ativos",
+    clear_badge_label: "Rótulo do badge (ex. 'Tudo bem', deixe vazio para o padrão)",
+    clear_theme: "Tema para o estado 'tudo limpo'",
+    alerts_list: "Alertas configurados",
+    add_alert: "Adicionar alerta",
+    alert_entity: "Entidade",
+    alert_operator: "Condição",
+    alert_state: "Valor",
+    alert_state_help: "ex. 'on', '80' (numérico com > < >= <=). Suporta templates: {{ states('input_number.x') }}",
+    current_state: "Estado atual",
+    alert_message: "Mensagem a exibir",
+    alert_name: "Nome / Rótulo",
+    alert_name_placeholder: "ex. Sensores de movimento andar 1",
+    alert_name_help: "Rótulo opcional mostrado como prefixo à mensagem (ex. 'Sensores de movimento: corredor ativo'). Útil com entity_filter para distinguir grupos de alertas.",
+    alert_message_help: "Use {state} valor ao vivo, {name} nome, {entity} ID da entidade, {device} nome do dispositivo. Também suporta templates HA completos: {{ states('sensor.x') }}, {{ state_attr('climate.y','current_temperature') }}, {% if ... %}...{% endif %}",
+    alert_priority: "Prioridade",
+    alert_theme: "Tema",
+    alert_icon: "Ícone",
+    alert_icon_help: "Deixe vazio para usar o emoji do tema. Insira um emoji personalizado. Ative 'Usar ícone HA' para mostrar automaticamente o ícone MDI da entidade (ou escolha um com o seletor).",
+    auto_icon_preview: "Ícone automático da entidade",
+    use_ha_icon: "Usar ícone do Home Assistant (mdi:)",
+    icon_color: "Cor do ícone",
+    icon_color_help: "Cor CSS: ex. #ff0000, red, var(--error-color). Deixe vazio para o padrão do tema.",
+    on_change: "Disparar em QUALQUER mudança de estado",
+    on_change_help: "O alerta dispara sempre que o estado da entidade muda (qualquer valor). As condições AND/OR extras ainda são avaliadas. Ideal para eventos: contadores, timestamps, sensores sem estados fixos.",
+    trigger_delay: "⏳ Atraso de ativação (segundos)",
+    trigger_delay_help: "O alerta só aparece se a condição permanecer verdadeira por pelo menos N segundos (como o campo 'for:' das automações HA). Deixe vazio para disparar imediatamente.",
+    auto_dismiss_section: "Ocultação automática",
+    auto_dismiss_after: "Ocultar automaticamente após (segundos)",
+    auto_dismiss_after_help: "O alerta se oculta automaticamente após N segundos. Deixe vazio para mantê-lo sempre visível.",
+    show_badge: "Mostrar badge",
+    badge_label: "Rótulo do badge personalizado",
+    badge_label_help: "Deixe vazio para usar o rótulo padrão do tema",
+    delete: "Excluir",
+    priority_1: "1 — Crítico (vermelho)",
+    priority_2: "2 — Aviso (laranja)",
+    priority_3: "3 — Info (azul)",
+    priority_4: "4 — Baixa prioridade (cinza)",
+    no_alerts: "Nenhum alerta configurado. Clique em 'Adicionar alerta' para começar.",
+    alert_num: "Alerta",
+    collapse: "Fechar",
+    expand: "Editar",
+    move_up: "Subir",
+    move_down: "Descer",
+    version: "Versão",
+    op_eq: "= igual a",
+    op_ne: "≠ diferente de",
+    op_gt: "> maior que",
+    op_lt: "< menor que",
+    op_gte: "≥ maior ou igual",
+    op_lte: "≤ menor ou igual",
+    op_contains: "⊃ contém",
+    op_not_contains: "⊅ não contém",
+    cycle_animation: "Animação de transição",
+    anim_fold:    "🃏 Fold — virada 3D",
+    anim_slide:   "➡️ Slide — deslizamento horizontal",
+    anim_fade:    "🌫️ Fade — dissolução cruzada",
+    anim_flip:    "🔄 Flip — virada de card",
+    anim_zoom:    "🔍 Zoom — escala",
+    anim_glitch:  "⚡ Glitch — ruído digital",
+    anim_bounce:  "🏀 Bounce — mola elástica",
+    anim_swing:   "🎪 Swing — pêndulo",
+    anim_blur:    "💨 Blur — dissolução gaussiana",
+    anim_split:   "✂️ Split — divisão vertical",
+    anim_roll:    "🎲 Roll — rotateY + slide",
+    anim_curtain: "🎭 Curtain — abertura de teatro",
+    mode_entity: "🏷️ Entidade única",
+    mode_filter: "🔎 Filtro multi-entidade",
+    mode_entity_help: "Monitora uma entidade específica.",
+    mode_filter_help: "Gera um alerta separado para cada entidade que corresponde aos filtros ativos.",
+    filter_section: "Filtros de entidade",
+    entity_filter: "Filtro de entidade (texto)",
+    entity_filter_help: "Corresponde a todas as entidades cujo ID ou nome contém este texto. Suporta wildcard * (ex. sensor.battery_*_level). Clique no contador para pré-visualizar a lista e usar 'Inverter seleção'. Use {name}, {entity}, {state}, {device} na mensagem.",
+    entity_filter_count: "entidades encontradas",
+    entity_filter_excluded: "excluídas",
+    entity_filter_zero: "Nenhuma entidade encontrada",
+    entity_filter_exclude_tip: "Clique em uma entidade para excluí-la — clique novamente para reincluí-la",
+    entity_filter_invert: "Inverter seleção",
+    entity_filter_exclude_label: "Excluir estas entidades",
+    device_class: "Classe do dispositivo (opcional)",
+    device_class_help: "ex. smoke, battery, motion — cria um alerta para cada entidade com esta device_class. Alternativa ao filtro de texto.",
+    label_filter: "Filtro de etiqueta HA (opcional)",
+    label_filter_help: "Corresponde apenas a entidades que têm esta etiqueta HA. Combinável com filtro de texto, device_class e área (lógica AND).",
+    area_filter: "Filtro de área HA (opcional)",
+    area_filter_help: "Corresponde apenas a entidades na área selecionada. Verifica a área da entidade primeiro, depois volta para a área do dispositivo.",
+    alert_attribute: "Atributo (opcional)",
+    alert_attribute_help: "ex. battery_level — deixe vazio para usar o estado da entidade. Suporta caminhos aninhados: ex. activity.0.forecast",
+    secondary_entity: "Entidade de valor secundário (opcional)",
+    secondary_entity_help: "Mostra o valor ao vivo desta entidade como uma linha extra abaixo da mensagem. Ex. um sensor listando zonas abertas ou alertas ativos.",
+    secondary_text: "Texto secundário estático (opcional)",
+    secondary_text_help: "Texto fixo mostrado abaixo da mensagem. Suporta {state}, {name}, {entity}. Não requer entidade sensor.",
+    show_filter_name: "Mostrar nome da entidade (de entity_filter)",
+    show_filter_state: "Mostrar estado",
+    secondary_attribute: "Atributo de valor secundário",
+    show_secondary_name: "Mostrar nome da entidade ao lado do valor",
+    conditions_section: "Condições extras",
+    conditions_logic: "Lógica",
+    logic_and: "AND — todas devem corresponder",
+    logic_or: "OR — pelo menos uma deve corresponder",
+    add_condition: "Adicionar condição",
+    condition_entity: "Entidade de condição",
+    condition_attribute: "Atributo de condição",
+    tap_action_section: "Ação de toque",
+    double_tap_action_section: "Ação de toque duplo",
+    hold_action_section: "Ação de pressão longa (500ms)",
+    clear_tap_action_section: "Toque no card 'tudo limpo'",
+    clear_double_tap_action_section: "Toque duplo no card 'tudo limpo'",
+    clear_hold_action_section: "Pressão longa no card 'tudo limpo' (500ms)",
+    snooze_action_section: "Ação de silenciar 💤 — executada ao tocar no botão de silenciar",
+    persistent: "Alarme persistente 🔒",
+    persistent_help: "Permanece visível mesmo após o sensor retornar ao normal. Pressione ✕ para descartar.",
+    group_section: "Agrupar alertas 🗂️",
+    group: "Ativar agrupamento",
+    group_min: "Mínimo para agrupar",
+    group_min_help: "Número mínimo de entidades ativas antes de exibir o resumo do grupo (padrão: 3).",
+    group_message: "Mensagem do grupo",
+    group_message_help: "Use {count} para o número de alertas ativos e {names} para a lista de nomes. Ex.: '{count} sensores ativos'. Suporta {{ states('sensor.x') }}.",
+    group_secondary_text: "Texto secundário do grupo",
+    group_secondary_text_help: "Linha secundária abaixo da mensagem do grupo. Suporta {count} e {names}. Se não definido, mostra a lista de nomes.",
+    group_expanded_message: "Mensagem individual (expandida)",
+    group_expanded_message_help: "Mensagem para cada entidade quando o grupo está expandido. Use {state}, {name}, {entity}, {device}. Suporta {{ states('sensor.x') }}.",
+    group_tap_action_section: "Ação de toque no grupo",
+    group_hold_action_section: "Ação de pressão longa no grupo",
+    timer_theme_category: "Temporizador",
+    message_placeholder_hint: "Espaços reservados: {name} nome da entidade, {state} estado, {entity} ID da entidade, {device} nome do dispositivo",
+    timer_placeholder_hint: "Use {timer} na mensagem para mostrar a contagem regressiva (ex. 'Desabilitado por {timer}')",
+    action_type: "Tipo de ação",
+    action_none: "Nenhuma",
+    action_call_service: "Chamar serviço",
+    action_navigate: "Navegar para página",
+    action_more_info: "Mais informações",
+    action_url: "Abrir URL",
+    action_service: "Serviço HA",
+    action_target: "Entidade alvo",
+    action_service_data: "Dados extras (JSON opcional)",
+    action_navigate_path: "Caminho (ex. /lovelace/home)",
+    action_url_path: "URL a abrir",
+    delete_item: "Excluir",
+    section_overlay: "Notificação Overlay 🔔",
+    overlay_mode: "Mostrar banner overlay quando um alerta disparar",
+    overlay_mode_help: "Exibe um banner fixo no topo da tela quando um novo alerta fica ativo — visível de qualquer visualização do dashboard.",
+    overlay_position: "Posição",
+    overlay_pos_top: "Topo",
+    overlay_pos_bottom: "Rodapé",
+    overlay_pos_center: "Centro",
+    overlay_duration: "Duração (segundos, 0 = apenas fechar manualmente)",
+    overlay_duration_help: "Segundos antes do banner ser ocultado automaticamente. Defina como 0 para exigir fechamento manual.",
+    overlay_scale: "Tamanho do banner",
+    overlay_scale_help: "Escala o texto e o ícone para melhor visibilidade à distância.",
+    overlay_how_works: "O banner aparece apenas quando o card não está visível na tela — em uma visualização diferente ou rolado para fora da vista. Nenhum banner redundante quando o alerta já está visível.",
+    visible_to_section: "👤 Visibilidade do usuário",
+    visible_to_label: "Visível para",
+    visible_to_all: "Todos (padrão)",
+    visible_to_admin: "Apenas administradores",
+    visible_to_non_admin: "Apenas usuários não-administradores",
+    visible_to_custom: "Usuários específicos...",
+    visible_to_help: "Filtra este alerta por tipo de usuário HA. Com 'Usuários específicos', insira um nome ou lista separada por vírgulas.",
+    visible_to_users_label: "Nomes de usuário (separados por vírgula)",
+    visible_to_loading: "Carregando usuários...",
+    time_range_section: "🕐 Intervalo de tempo ativo",
+    time_range_from: "De (HH:MM)",
+    time_range_to: "Até (HH:MM)",
+    time_range_help: "Mostra este alerta apenas dentro da janela de tempo especificada. Suporta cruzamento de meia-noite (ex. 22:00–06:00). Deixe em branco para sem restrição.",
+    music_player_controls: "Controles do player de música",
+    music_player_controls_help: "Mostra play/pausa, anterior, próximo e mudo com arte do álbum como fundo. Funciona apenas quando a entidade é um media_player.",
+    music_player_color: "Cor de destaque",
+  },
+  es: {
+    tab_general: "General",
+    tab_alerts: "Alertas",
+    tab_overlay: "Overlay",
+    tab_allclear: "Todo Bien",
+    back: "Atrás",
+    all_clear_disabled_help: "Activa 'Todo Bien' para configurar el mensaje de ausencia de alertas.",
+    tab_layout: "Diseño",
+    hub_desc_general: "Ciclo, posponer e historial",
+    hub_desc_layout: "Tema, altura de la tarjeta y apariencia",
+    hub_desc_overlay: "Banner global en todos los paneles",
+    hub_desc_alerts: "Gestionar condiciones de alerta",
+    hub_desc_allclear: "Mensaje cuando no hay alertas activas",
+    hub_star_github: "Dar estrella en GitHub",
+    hub_report_issue: "Reportar un problema",
+    hub_welcome: "¡Bienvenido! Configura tu tarjeta seleccionando una sección.",
+    clear_display_mode_label: "Modo de visualización",
+    clear_mode_message: "💬 Mensaje personalizado",
+    clear_mode_clock: "🕐 Reloj",
+    clear_mode_weather: "🌤 Clima",
+    clear_mode_weather_clock: "🌤🕐 Clima + Reloj",
+    clear_mode_forecast: "📅 Previsión semanal",
+    clear_mode_weather_forecast: "🌤📅 Clima + Previsión (alternando)",
+    weather_forecast_interval: "Intervalo de alternancia (segundos)",
+    weather_forecast_interval_help: "Segundos entre la vista del tiempo y la previsión",
+    clear_weather_entity_label: "Entidad del tiempo (weather.*)",
+    clear_clock_show_date: "Mostrar fecha",
+    clear_clock_12h: "Formato 12 horas (AM/PM)",
+    clear_clock_date_label: "Posición de la fecha",
+    clear_clock_style_label: "Estilo del reloj",
+    clear_weather_style_label: "Estilo del badge del tiempo",
+    style_default: "Por defecto",
+    style_aurora: "🌌 Aurora",
+    style_gold: "✨ Gold",
+    style_matrix: "🟢 Matrix",
+    style_frosted: "🧊 Frosted",
+    style_solid: "⬛ Solid",
+    style_minimal: "◻ Minimal",
+    style_stage:     "🎭 Stage",
+    style_split:     "▌▐ Split",
+    style_cinematic: "🎬 Cinematic",
+    date_position_above: "⬆ Encima de la hora",
+    date_position_below: "⬇ Debajo de la hora",
+    cycle_interval: "Intervalo de ciclo (segundos)",
+    cycle_interval_help: "Segundos entre alertas cuando hay más de una activa",
+    show_widget_in_cycle: "Mostrar clima/hora en el ciclo",
+    section_all_clear: "Tarjeta 'todo bien'",
+    section_layout: "Diseño y Apariencia",
+    section_cycling: "Ciclo y Animación",
+    section_snooze: "Posponer 💤",
+    section_history: "Historial",
+    show_when_clear: "Mostrar cuando no hay alertas activas",
+    large_buttons: "Botones grandes siempre visibles (💤 y 📋)",
+    ha_theme: "Adaptar al tema HA (compatible con Mushroom y todos los temas globales)",
+    swipe_to_snooze: "Deslizar a la izquierda para posponer 💤 (ideal para móvil)",
+    vertical: "Diseño vertical (icono arriba, texto abajo, centrado)",
+    text_align_center: "Texto centrado (útil para diseño Panel muy ancho)",
+    card_height: "Altura fija de la tarjeta (px)",
+    card_height_help: "Fija la altura para evitar desplazamientos de diseño al cambiar las alertas. Deja vacío para altura automática.",
+    card_border: "Mostrar borde y nombre de la tarjeta",
+    card_border_help: "Añade el borde estándar de Home Assistant alrededor de la tarjeta. Cuando no hay alertas activas, muestra un marcador con el nombre de la tarjeta en lugar de ocultarla.",
+    show_snooze_bar: "Mostrar barra de reactivación de posponer 💤",
+    show_snooze_button: "Mostrar botón de posponer 💤",
+    show_history_button: "Mostrar botón de historial 📋",
+    secondary_value_align: "Posición del valor secundario",
+    secondary_value_align_below: "Debajo del título (predeterminado)",
+    secondary_value_align_right: "A la derecha del título",
+    snooze_default_duration: "Comportamiento de posponer 💤",
+    snooze_default_duration_help: "Menú de duración: toca 💤 para abrir un menú y elegir cuánto tiempo posponer. Duración fija: toca 💤 para posponer inmediatamente sin menú.",
+    snooze_option_menu: "Mostrar menú de duración (como antes)",
+    snooze_duration: "Duración de posponer para esta alerta 💤",
+    snooze_duration_help: "Reemplaza la configuración global. Vacío = usar global.",
+    snooze_duration_menu: "Menú de duración",
+    snooze_duration_global: "Usar configuración global",
+    sound_enabled: "Reproducir un sonido cuando aparezca una alerta",
+    sound_enabled_help: "Reproduce un tono generado automáticamente cuando una alerta se activa. El tono varía por categoría (Crítico = doble pitido agudo, Aviso = pitido medio, Info = pitido suave, OK = carillón). Requiere permiso de reproducción automática del navegador.",
+    sound_url: "URL de audio personalizado (global)",
+    sound_url_help: "URL de un archivo .mp3 o .wav para usar en lugar del sonido generado. Deja vacío para el tono generado.",
+    alert_sound: "Sonido habilitado para esta alerta",
+    alert_sound_url: "URL de audio personalizado para esta alerta",
+    alert_sound_url_help: "Reemplaza la URL global. Deja vacío para usar la global.",
+    tab_tts: "Texto a voz",
+    hub_desc_tts: "Leer alertas en voz alta",
+    tts_how_works: "Cómo funciona",
+    tts_how_standard: "Estándar (Google Home, Sonos, Piper…): elige un media player y un motor TTS. El motor se detecta automáticamente si no está configurado.",
+    tts_how_alexa: "Alexa / notify / móvil: elige el servicio notify correspondiente. La tarjeta llama a notify.NOMBRE directamente — sin motor TTS.",
+    tts_how_peralert: "Cada alerta puede activar TTS con el toggle 🗣️ en su panel de configuración, y reemplazar el altavoz, motor o servicio notify.",
+    tts_master_toggle: "Activar texto a voz (TTS)",
+    tts_master_toggle_help: "Interruptor principal. Cuando está desactivado, ninguna alerta lee su mensaje en voz alta, incluso si el TTS está activado en alertas individuales.",
+    section_tts: "🗣️ Texto a voz (TTS)",
+    tts_entity_global: "Altavoz TTS predeterminado (media player)",
+    tts_entity_global_help: "Media player usado como altavoz predeterminado para todas las alertas con TTS. Puede reemplazarse por alerta.",
+    tts_engine_global: "Motor TTS (opcional)",
+    tts_engine_global_help: "Entidad TTS a usar (ej. tts.piper, tts.home_assistant_cloud). Detectado automáticamente si no está configurado.",
+    tts_notify_service: "Servicio notify (Alexa / móvil)",
+    tts_notify_service_help: "Nombre del servicio notify para usar en lugar de tts.speak (ej. alexa_media_echo_cocina). Cuando está configurado, los campos de altavoz y motor se ignoran.",
+    tts_notify_type: "Tipo de notificación Alexa",
+    tts_notify_type_tts: "tts (dispositivo individual)",
+    tts_notify_type_announce: "announce (grupo / multiroom)",
+    alert_tts: "Anuncio de voz TTS",
+    alert_tts_help: "Cuando la alerta se activa, el mensaje se lee en voz alta a través del media player o servicio notify configurado.",
+    alert_tts_entity: "Altavoz TTS (reemplaza el global)",
+    alert_tts_engine: "Motor TTS (reemplaza el global)",
+    alert_tts_notify_service: "Servicio notify (reemplaza el global)",
+    alert_tts_notify_type: "Tipo de notificación (reemplaza el global)",
+    alert_tts_message: "Texto TTS personalizado",
+    alert_tts_message_help: "Texto alternativo para leer en voz alta. Si está vacío, usa el mensaje de la alerta.",
+    section_push_notify: "📱 Notificaciones push",
+    push_notify_master_toggle: "Activar notificaciones push móviles",
+    push_notify_master_toggle_help: "Interruptor principal. Cuando está desactivado, ninguna alerta envía una notificación push, incluso si está activado en alertas individuales.",
+    alert_push_notify: "Enviar notificación push móvil",
+    alert_push_notify_help: "Cuando esta alerta se activa, envía una notificación push a través del servicio notify seleccionado.",
+    alert_push_notify_title: "Título de la notificación (Jinja2)",
+    alert_push_notify_title_help: "Título enviado en la notificación push. Dejar vacío para usar la etiqueta badge de la alerta.",
+    alert_push_notify_message: "Mensaje de la notificación (Jinja2)",
+    alert_push_notify_message_help: "Mensaje enviado en la notificación push. Dejar vacío para usar el mensaje de la alerta.",
+    alert_push_notify_service: "Servicio notify",
+    alert_camera_entity: "Cámara en overlay",
+    alert_camera_entity_help: "Cuando la alerta se activa, muestra esta cámara en el banner overlay. Solo visible en el overlay, no en la tarjeta.",
+    alert_camera_live: "📹 Live stream (en lugar de snapshot)",
+    alert_camera_live_help: "Muestra un live stream en lugar de un snapshot estático. Requiere una cámara con soporte de streaming.",
+    alert_camera_in_card: "Mostrar como fondo en la alerta",
+    alert_camera_in_card_help: "La cámara aparece como fondo difuminado dentro del slide de la alerta, visible en cada rotación — no solo en el overlay.",
+    test_mode: "Modo de prueba",
+    test_mode_desc: "Muestra todas las alertas como activas, ignorando las condiciones. La animación de ciclo está pausada — expande una alerta en el editor para previsualizarla instantáneamente.",
+    test_mode_warning: "¡Recuerda desactivar el modo de prueba antes de guardar!",
+    history_max_events: "Historial — máximo de eventos a conservar",
+    history_max_events_help: "Registra automáticamente cada alerta que se activa. Toca 📋 en la tarjeta para ver el historial con fecha/hora. Los datos se guardan en el navegador.",
+    history: "Historial",
+    history_clear: "Borrar",
+    history_empty: "No hay eventos registrados aún",
+    clear_message: "Mensaje cuando no hay alertas activas",
+    clear_badge_label: "Etiqueta del badge (ej. 'Todo bien', deja vacío para el valor predeterminado)",
+    clear_theme: "Tema para el estado 'todo bien'",
+    alerts_list: "Alertas configuradas",
+    add_alert: "Añadir alerta",
+    alert_entity: "Entidad",
+    alert_operator: "Condición",
+    alert_state: "Valor",
+    alert_state_help: "ej. 'on', '80' (numérico con > < >= <=). Soporta templates: {{ states('input_number.x') }}",
+    current_state: "Estado actual",
+    alert_message: "Mensaje a mostrar",
+    alert_name: "Nombre / Etiqueta",
+    alert_name_placeholder: "ej. Sensores de movimiento planta 1",
+    alert_name_help: "Etiqueta opcional mostrada como prefijo al mensaje (ej. 'Sensores movimiento: pasillo activo'). Útil con entity_filter para distinguir grupos de alertas.",
+    alert_message_help: "Usa {state} valor en vivo, {name} nombre, {entity} ID de entidad, {device} nombre del dispositivo. También soporta templates HA completos: {{ states('sensor.x') }}, {{ state_attr('climate.y','current_temperature') }}, {% if ... %}...{% endif %}",
+    alert_priority: "Prioridad",
+    alert_theme: "Tema",
+    alert_icon: "Icono",
+    alert_icon_help: "Deja vacío para usar el emoji del tema. Introduce un emoji personalizado. Activa 'Usar icono HA' para mostrar automáticamente el icono MDI de la entidad.",
+    auto_icon_preview: "Icono automático de la entidad",
+    use_ha_icon: "Usar icono de Home Assistant (mdi:)",
+    icon_color: "Color del icono",
+    icon_color_help: "Color CSS: ej. #ff0000, red, var(--error-color). Deja vacío para el color del tema.",
+    on_change: "Disparar en CUALQUIER cambio de estado",
+    on_change_help: "La alerta se dispara cada vez que el estado de la entidad cambia (cualquier valor). Las condiciones AND/OR adicionales se evalúan igualmente. Ideal para eventos: contadores, timestamps, sensores sin estados fijos.",
+    trigger_delay: "⏳ Retraso de activación (segundos)",
+    trigger_delay_help: "La alerta solo aparece si la condición permanece verdadera durante al menos N segundos (como el campo 'for:' en las automatizaciones HA). Deja vacío para activar inmediatamente.",
+    auto_dismiss_section: "Ocultación automática",
+    auto_dismiss_after: "Ocultar automáticamente después de (segundos)",
+    auto_dismiss_after_help: "La alerta se oculta automáticamente después de N segundos. Deja vacío para mantenerla siempre visible.",
+    show_badge: "Mostrar badge",
+    badge_label: "Texto del badge personalizado",
+    badge_label_help: "Deja vacío para usar el texto predeterminado del tema",
+    delete: "Eliminar",
+    priority_1: "1 — Crítico (rojo)",
+    priority_2: "2 — Atención (naranja)",
+    priority_3: "3 — Info (azul)",
+    priority_4: "4 — Baja prioridad (gris)",
+    no_alerts: "No hay alertas configuradas. Haz clic en 'Añadir alerta' para empezar.",
+    alert_num: "Alerta",
+    collapse: "Cerrar",
+    expand: "Editar",
+    move_up: "Arriba",
+    move_down: "Abajo",
+    version: "Versión",
+    op_eq: "= igual a",
+    op_ne: "≠ distinto de",
+    op_gt: "> mayor que",
+    op_lt: "< menor que",
+    op_gte: "≥ mayor o igual",
+    op_lte: "≤ menor o igual",
+    op_contains: "⊃ contiene",
+    op_not_contains: "⊅ no contiene",
+    cycle_animation: "Animación de transición",
+    anim_fold:    "🃏 Fold — giro 3D",
+    anim_slide:   "➡️ Slide — deslizamiento horizontal",
+    anim_fade:    "🌫️ Fade — disolución cruzada",
+    anim_flip:    "🔄 Flip — volteo de tarjeta",
+    anim_zoom:    "🔍 Zoom — escala",
+    anim_glitch:  "⚡ Glitch — ruido digital",
+    anim_bounce:  "🏀 Bounce — rebote elástico",
+    anim_swing:   "🎪 Swing — péndulo",
+    anim_blur:    "💨 Blur — disolución gaussiana",
+    anim_split:   "✂️ Split — división vertical",
+    anim_roll:    "🎲 Roll — rotateY + slide",
+    anim_curtain: "🎭 Curtain — apertura teatral",
+    mode_entity: "🏷️ Entidad única",
+    mode_filter: "🔎 Filtro multi-entidad",
+    mode_entity_help: "Monitoriza una entidad específica.",
+    mode_filter_help: "Genera una alerta separada para cada entidad que coincide con los filtros activos.",
+    filter_section: "Filtros de entidad",
+    entity_filter: "Filtro de entidad (texto)",
+    entity_filter_help: "Coincide con todas las entidades cuyo ID o nombre contiene este texto. Soporta wildcard * (ej. sensor.battery_*_level). Haz clic en el contador para ver la lista y usar 'Invertir selección'. Usa {name}, {entity}, {state}, {device} en el mensaje.",
+    entity_filter_count: "entidades coinciden",
+    entity_filter_excluded: "excluidas",
+    entity_filter_zero: "Ninguna entidad coincide",
+    entity_filter_exclude_tip: "Haz clic en una entidad para excluirla — haz clic de nuevo para reincluirla",
+    entity_filter_invert: "Invertir selección",
+    entity_filter_exclude_label: "Excluir estas entidades",
+    device_class: "Clase del dispositivo (opcional)",
+    device_class_help: "ej. smoke, battery, motion — crea una alerta por cada entidad con esta device_class. Alternativa al filtro de texto.",
+    label_filter: "Filtro de etiqueta HA (opcional)",
+    label_filter_help: "Solo entidades que tengan esta etiqueta HA. Combinable con filtro de texto, device_class y área (lógica AND).",
+    area_filter: "Filtro de área HA (opcional)",
+    area_filter_help: "Solo entidades en el área seleccionada. Verifica primero el área de la entidad, luego la del dispositivo.",
+    alert_attribute: "Atributo (opcional)",
+    alert_attribute_help: "ej. battery_level — deja vacío para usar el estado de la entidad. Soporta rutas anidadas: ej. activity.0.forecast",
+    secondary_entity: "Entidad de valor secundario (opcional)",
+    secondary_entity_help: "Muestra el valor en vivo de esta entidad como una línea extra debajo del mensaje.",
+    secondary_text: "Texto secundario estático (opcional)",
+    secondary_text_help: "Texto fijo mostrado debajo del mensaje. Soporta {state}, {name}, {entity}. No requiere entidad sensor.",
+    show_filter_name: "Mostrar nombre de la entidad (de entity_filter)",
+    show_filter_state: "Mostrar estado",
+    secondary_attribute: "Atributo de valor secundario",
+    show_secondary_name: "Mostrar nombre de la entidad junto al valor",
+    conditions_section: "Condiciones adicionales",
+    conditions_logic: "Lógica",
+    logic_and: "AND — todas deben coincidir",
+    logic_or: "OR — al menos una debe coincidir",
+    add_condition: "Añadir condición",
+    condition_entity: "Entidad de condición",
+    condition_attribute: "Atributo de condición",
+    tap_action_section: "Acción al tocar",
+    double_tap_action_section: "Acción al doble toque",
+    hold_action_section: "Acción al mantener (500ms)",
+    clear_tap_action_section: "Toque en la tarjeta 'todo bien'",
+    clear_double_tap_action_section: "Doble toque en la tarjeta 'todo bien'",
+    clear_hold_action_section: "Mantener en la tarjeta 'todo bien' (500ms)",
+    snooze_action_section: "Acción de posponer 💤 — ejecutada al tocar el botón de posponer",
+    persistent: "Alarma persistente 🔒",
+    persistent_help: "Permanece visible incluso después de que el sensor vuelva a la normalidad. Pulse ✕ para descartar.",
+    group_section: "Agrupar alertas 🗂️",
+    group: "Activar agrupación",
+    group_min: "Mínimo para agrupar",
+    group_min_help: "Número mínimo de entidades activas antes de mostrar el resumen de grupo (por defecto: 3).",
+    group_message: "Mensaje de grupo",
+    group_message_help: "Use {count} para el número de alertas activas y {names} para la lista de nombres. Ej. '{count} sensores activos'. Admite {{ states('sensor.x') }}.",
+    group_secondary_text: "Texto secundario del grupo",
+    group_secondary_text_help: "Línea secundaria bajo el mensaje del grupo. Admite {count} y {names}. Si no se define, muestra la lista de nombres.",
+    group_expanded_message: "Mensaje individual (expandido)",
+    group_expanded_message_help: "Mensaje para cada entidad cuando el grupo está expandido. Use {state}, {name}, {entity}, {device}. Admite {{ states('sensor.x') }}.",
+    group_tap_action_section: "Acción de toque en el grupo",
+    group_hold_action_section: "Acción de pulsación larga en el grupo",
+    timer_theme_category: "Temporizador",
+    message_placeholder_hint: "Marcadores: {name} nombre de entidad, {state} estado, {entity} ID de entidad, {device} nombre del dispositivo",
+    timer_placeholder_hint: "Usa {timer} en el mensaje para mostrar la cuenta atrás (ej. 'Deshabilitado por {timer}')",
+    action_type: "Tipo de acción",
+    action_none: "Ninguna",
+    action_call_service: "Llamar servicio",
+    action_navigate: "Navegar a página",
+    action_more_info: "Más información",
+    action_url: "Abrir URL",
+    action_service: "Servicio HA",
+    action_target: "Entidad objetivo",
+    action_service_data: "Datos extra (JSON opcional)",
+    action_navigate_path: "Ruta (ej. /lovelace/home)",
+    action_url_path: "URL a abrir",
+    delete_item: "Eliminar",
+    section_overlay: "Notificación Overlay 🔔",
+    overlay_mode: "Mostrar banner overlay cuando se active una alerta",
+    overlay_mode_help: "Muestra un banner fijo en la parte superior de la pantalla cuando una nueva alerta se activa — visible desde cualquier vista del panel.",
+    overlay_position: "Posición",
+    overlay_pos_top: "Arriba",
+    overlay_pos_bottom: "Abajo",
+    overlay_pos_center: "Centro",
+    overlay_duration: "Duración (segundos, 0 = solo cierre manual)",
+    overlay_duration_help: "Segundos antes de que el banner se cierre automáticamente. 0 = requiere cierre manual.",
+    overlay_scale: "Tamaño del banner",
+    overlay_scale_help: "Escala el texto y el icono para mejor visibilidad a distancia.",
+    overlay_how_works: "El banner aparece solo cuando la tarjeta no está visible en pantalla — en otra vista o fuera del campo de visión. No aparece cuando la alerta ya es visible.",
+    visible_to_section: "👤 Visibilidad de usuario",
+    visible_to_label: "Visible para",
+    visible_to_all: "Todos (predeterminado)",
+    visible_to_admin: "Solo administradores",
+    visible_to_non_admin: "Solo usuarios no administradores",
+    visible_to_custom: "Usuarios específicos...",
+    visible_to_help: "Filtra esta alerta por tipo de usuario HA. Con 'Usuarios específicos' introduce un nombre o lista separada por comas.",
+    visible_to_users_label: "Nombres de usuario (separados por comas)",
+    visible_to_loading: "Cargando usuarios...",
+    time_range_section: "🕐 Rango de tiempo activo",
+    time_range_from: "Desde (HH:MM)",
+    time_range_to: "Hasta (HH:MM)",
+    time_range_help: "Muestra esta alerta solo dentro de la ventana de tiempo especificada. Soporta cruce de medianoche (ej. 22:00–06:00). Deja en blanco para sin restricción.",
+    music_player_controls: "Controles del reproductor de música",
+    music_player_controls_help: "Muestra reproducir/pausar, anterior, siguiente y silenciar con portada del álbum como fondo. Solo funciona cuando la entidad es un media_player.",
+    music_player_color: "Color de acento",
   },
 };
 
@@ -2717,6 +3946,8 @@ const THEME_DESC_I18N = {
   cloud:        { it: "Nuvola",                en: "Cloud puff",           fr: "Nuage",                 de: "Wolke",                 nl: "Wolk"                 },
   satellite:    { it: "Segnale",               en: "Signal",               fr: "Signal",                de: "Signal",                nl: "Signaal"              },
   tips:         { it: "Consiglio",             en: "Tip",                  fr: "Conseil",               de: "Tipp",                  nl: "Tip"                  },
+  light:        { it: "Bagliore caldo",        en: "Warm glow",            fr: "Lueur chaude",          de: "Warmes Leuchten",        nl: "Warm gloed"           },
+  music:        { it: "Note fluttuanti",      en: "Floating notes",       fr: "Notes flottantes",      de: "Schwebende Noten",       nl: "Zwevende noten"        },
   success:      { it: "Verde",                 en: "Green",                fr: "Vert",                  de: "Grün",                  nl: "Groen"                },
   check:        { it: "Anello pulsante",       en: "Pulsing ring",         fr: "Anneau pulsant",        de: "Pulsierender Ring",     nl: "Pulserende ring"      },
   confetti:     { it: "Coriandoli",            en: "Confetti",             fr: "Confettis",             de: "Konfetti",              nl: "Confetti"             },
@@ -2743,11 +3974,11 @@ const THEME_DESC_I18N = {
 
 // Category group name translations
 const THEME_GROUP_I18N = {
-  critical: { it: "Critico",      en: "Critical",  fr: "Critique",     de: "Kritisch",   nl: "Kritiek",       vi: "Nghiêm trọng", ru: "Критично"   },
-  warning:  { it: "Attenzione",   en: "Warning",   fr: "Attention",    de: "Warnung",    nl: "Waarschuwing",  vi: "Cảnh báo",     ru: "Внимание"   },
-  info:     { it: "Informazione", en: "Info",      fr: "Information",  de: "Info",       nl: "Informatie",    vi: "Thông tin",    ru: "Информация" },
-  ok:       { it: "Tutto OK",     en: "All Clear", fr: "Tout va bien", de: "Alles OK",   nl: "Alles OK",      vi: "Tất cả ổn",    ru: "Всё OK"     },
-  style:    { it: "Stile",        en: "Style",     fr: "Style",        de: "Stil",       nl: "Stijl",         vi: "Phong cách",   ru: "Стиль"      },
+  critical: { it: "Critico",      en: "Critical",  fr: "Critique",     de: "Kritisch",   nl: "Kritiek",       vi: "Nghiêm trọng", ru: "Критично",   pt: "Crítico"      },
+  warning:  { it: "Attenzione",   en: "Warning",   fr: "Attention",    de: "Warnung",    nl: "Waarschuwing",  vi: "Cảnh báo",     ru: "Внимание",   pt: "Aviso"        },
+  info:     { it: "Informazione", en: "Info",      fr: "Information",  de: "Info",       nl: "Informatie",    vi: "Thông tin",    ru: "Информация", pt: "Informação"   },
+  ok:       { it: "Tutto OK",     en: "All Clear", fr: "Tout va bien", de: "Alles OK",   nl: "Alles OK",      vi: "Tất cả ổn",    ru: "Всё OK",     pt: "Tudo Limpo"   },
+  style:    { it: "Stile",        en: "Style",     fr: "Style",        de: "Stil",       nl: "Stijl",         vi: "Phong cách",   ru: "Стиль",      pt: "Estilo"       },
 };
 
 // ---------------------------------------------------------------------------
@@ -2783,6 +4014,8 @@ const THEME_OPTIONS = [
   { value: "cloud"        },
   { value: "satellite"    },
   { value: "tips"         },
+  { value: "light"        },
+  { value: "music"        },
   { value: "success"      },
   { value: "check"        },
   { value: "confetti"     },
@@ -2818,6 +4051,7 @@ class AlertTickerCardEditor extends LitElement {
       _activeSection: { type: String },
       _editingIndex: { type: Number },
       _filterPreviewOpen: { type: Object },
+      _alertModeFilter: { type: Object },
       _lang: { type: String },
       _haUsers: { type: Array },
     };
@@ -2828,6 +4062,7 @@ class AlertTickerCardEditor extends LitElement {
     this._activeSection = null; // null = hub
     this._editingIndex = -1;            // -1 = no alert being edited
     this._filterPreviewOpen = new Set();
+    this._alertModeFilter = new Set();
     this._lang = "en";
     this._initializing = false;         // true during first render microtask burst
     this._haUsers = null;               // null = not yet fetched, [] = fetch failed/empty
@@ -2995,7 +4230,7 @@ class AlertTickerCardEditor extends LitElement {
       warning: "⚠️", caution: "🟡", radar: "🎯", temperature: "🌡️",
       battery: "🔋", door: "🚪", window: "🪟", smoke: "🌫️", wind: "💨", leak: "💧",
       info: "ℹ️", notification: "🔔", aurora: "🌌", hologram: "🔷",
-      presence: "🏠", update: "🔄", cloud: "☁️", satellite: "📡", tips: "💡",
+      presence: "🏠", update: "🔄", cloud: "☁️", satellite: "📡", tips: "💡", light: "🔆", music: "🎵",
       success: "✅", check: "🟢", confetti: "🎉", heartbeat: "💓",
       shield: "🛡️", power: "⚡", sunrise: "🌅", plant: "🌱", lock: "🔒",
       ticker: "📰", neon: "⚡", glass: "🔮", matrix: "💻", minimal: "📋",
@@ -3273,7 +4508,7 @@ class AlertTickerCardEditor extends LitElement {
             @change="${(e) => this._fireConfig({ ...this._config, snooze_default_duration: e.target.value === "menu" ? undefined : parseFloat(e.target.value) })}"
           >
             <option value="menu" ?selected="${!cfg.snooze_default_duration}">${this._t("snooze_option_menu")}</option>
-            ${[[0.5, "30 min"], [1, "1h"], [4, "4h"], [8, "8h"], [24, "24h"]].map(([v, label]) => html`
+            ${[[0.5, "30 min"], [1, "1h"], [4, "4h"], [8, "8h"], [24, "24h"], [168, "1w"], [720, "1m"]].map(([v, label]) => html`
               <option value="${v}" ?selected="${cfg.snooze_default_duration === v}">${label}</option>
             `)}
           </select>
@@ -3298,6 +4533,24 @@ class AlertTickerCardEditor extends LitElement {
           ></ha-switch>
         </div>
       </div>
+      <div class="form-row">
+        <div class="form-row-inline">
+          <span>${this._t("show_snooze_button")}</span>
+          <ha-switch
+            .checked="${cfg.show_snooze_button !== false}"
+            @change="${(e) => this._fireConfig({ ...this._config, show_snooze_button: e.target.checked ? undefined : false })}"
+          ></ha-switch>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-row-inline">
+          <span>${this._t("show_history_button")}</span>
+          <ha-switch
+            .checked="${cfg.show_history_button !== false}"
+            @change="${(e) => this._fireConfig({ ...this._config, show_history_button: e.target.checked ? undefined : false })}"
+          ></ha-switch>
+        </div>
+      </div>
 
       <!-- ── TTS MASTER ───────────────────────────────────────────────── -->
       <div class="section-divider">${this._t("section_tts")}</div>
@@ -3310,6 +4563,19 @@ class AlertTickerCardEditor extends LitElement {
           ></ha-switch>
         </div>
         <div class="helper-text">${this._t("tts_master_toggle_help")}</div>
+      </div>
+
+      <!-- ── PUSH NOTIFY MASTER ─────────────────────────────────────────── -->
+      <div class="section-divider">${this._t("section_push_notify")}</div>
+      <div class="form-row">
+        <div class="form-row-inline">
+          <span>${this._t("push_notify_master_toggle")}</span>
+          <ha-switch
+            .checked="${cfg.push_notify_enabled !== false}"
+            @change="${(e) => this._fireConfig({ ...this._config, push_notify_enabled: e.target.checked ? undefined : false })}"
+          ></ha-switch>
+        </div>
+        <div class="helper-text">${this._t("push_notify_master_toggle_help")}</div>
       </div>
 
       <!-- ── HISTORY ───────────────────────────────────────────────────── -->
@@ -3351,16 +4617,18 @@ class AlertTickerCardEditor extends LitElement {
             <select class="native-select"
               @change="${(e) => this._fireConfig({ ...this._config, clear_display_mode: e.target.value })}"
             >
-              <option value="message"       ?selected="${(cfg.clear_display_mode || 'message') === 'message'}">${this._t("clear_mode_message")}</option>
-              <option value="clock"         ?selected="${cfg.clear_display_mode === 'clock'}">${this._t("clear_mode_clock")}</option>
-              <option value="weather"       ?selected="${cfg.clear_display_mode === 'weather'}">${this._t("clear_mode_weather")}</option>
-              <option value="weather_clock" ?selected="${cfg.clear_display_mode === 'weather_clock'}">${this._t("clear_mode_weather_clock")}</option>
+              <option value="message"          ?selected="${(cfg.clear_display_mode || 'message') === 'message'}">${this._t("clear_mode_message")}</option>
+              <option value="clock"            ?selected="${cfg.clear_display_mode === 'clock'}">${this._t("clear_mode_clock")}</option>
+              <option value="weather"          ?selected="${cfg.clear_display_mode === 'weather'}">${this._t("clear_mode_weather")}</option>
+              <option value="weather_clock"    ?selected="${cfg.clear_display_mode === 'weather_clock'}">${this._t("clear_mode_weather_clock")}</option>
+              <option value="forecast"         ?selected="${cfg.clear_display_mode === 'forecast'}">${this._t("clear_mode_forecast")}</option>
+              <option value="weather_forecast" ?selected="${cfg.clear_display_mode === 'weather_forecast'}">${this._t("clear_mode_weather_forecast")}</option>
             </select>
           </div>
         </div>
 
-        <!-- Weather entity (only for weather/weather_clock modes) -->
-        ${(cfg.clear_display_mode === 'weather' || cfg.clear_display_mode === 'weather_clock') ? html`
+        <!-- Weather entity (for weather/weather_clock/forecast/weather_forecast modes) -->
+        ${(cfg.clear_display_mode === 'weather' || cfg.clear_display_mode === 'weather_clock' || cfg.clear_display_mode === 'forecast' || cfg.clear_display_mode === 'weather_forecast') ? html`
           <div class="form-row">
             <ha-entity-picker
               .hass="${this._hass}"
@@ -3373,8 +4641,8 @@ class AlertTickerCardEditor extends LitElement {
           </div>
         ` : ''}
 
-        <!-- Date toggle + position (only for clock/weather_clock modes) -->
-        ${(cfg.clear_display_mode === 'clock' || cfg.clear_display_mode === 'weather_clock') ? html`
+        <!-- Date toggle + position (only for clock/weather_clock/weather_forecast modes) -->
+        ${(cfg.clear_display_mode === 'clock' || cfg.clear_display_mode === 'weather_clock' || cfg.clear_display_mode === 'weather_forecast') ? html`
           <div class="form-row">
             <div class="switch-row">
               <span class="switch-label">${this._t("clear_clock_show_date")}</span>
@@ -3397,6 +4665,15 @@ class AlertTickerCardEditor extends LitElement {
             </div>
           </div>
           ` : ''}
+          <div class="form-row">
+            <div class="switch-row">
+              <span class="switch-label">${this._t("clear_clock_12h")}</span>
+              <ha-switch
+                .checked="${!!cfg.clear_clock_12h}"
+                @change="${(e) => this._fireConfig({ ...this._config, clear_clock_12h: e.target.checked })}"
+              ></ha-switch>
+            </div>
+          </div>
 
         ` : ''}
 
@@ -3417,8 +4694,8 @@ class AlertTickerCardEditor extends LitElement {
           </div>
         ` : ''}
 
-        <!-- Weather badge style (only for weather/weather_clock) -->
-        ${(cfg.clear_display_mode === 'weather' || cfg.clear_display_mode === 'weather_clock') ? html`
+        <!-- Weather badge style (for weather/weather_clock/weather_forecast) -->
+        ${(cfg.clear_display_mode === 'weather' || cfg.clear_display_mode === 'weather_clock' || cfg.clear_display_mode === 'weather_forecast') ? html`
           <div class="form-row">
             <div class="native-select-wrap">
               <label class="native-select-label">${this._t("clear_weather_style_label")}</label>
@@ -3429,12 +4706,30 @@ class AlertTickerCardEditor extends LitElement {
                 <option value="frosted"  ?selected="${cfg.clear_weather_style === 'frosted'}">${this._t("style_frosted")}</option>
                 <option value="solid"    ?selected="${cfg.clear_weather_style === 'solid'}">${this._t("style_solid")}</option>
                 <option value="minimal"  ?selected="${cfg.clear_weather_style === 'minimal'}">${this._t("style_minimal")}</option>
-                <option value="stage"     ?selected="${cfg.clear_weather_style === 'stage'}">${this._t("style_stage")}</option>
-                <option value="split"    ?selected="${cfg.clear_weather_style === 'split'}">${this._t("style_split")}</option>
+                <option value="stage"    ?selected="${cfg.clear_weather_style === 'stage'}">${this._t("style_stage")}</option>
+                <option value="split" ?selected="${cfg.clear_weather_style === 'split'}">${this._t("style_split")}</option>
                 <option value="cinematic" ?selected="${cfg.clear_weather_style === 'cinematic'}">${this._t("style_cinematic")}</option>
               </select>
             </div>
           </div>
+        ` : ''}
+
+        <!-- Weather+Forecast alternation interval (only for weather_forecast mode) -->
+        ${cfg.clear_display_mode === 'weather_forecast' ? html`
+          <div class="form-row">
+            <ha-textfield
+              type="number"
+              min="1"
+              max="60"
+              .label="${this._t("weather_forecast_interval")}"
+              .value="${cfg.weather_forecast_interval != null ? String(cfg.weather_forecast_interval) : '5'}"
+              @change="${(e) => {
+                const v = parseInt(e.target.value, 10);
+                this._fireConfig({ ...this._config, weather_forecast_interval: (isNaN(v) || v < 1) ? undefined : v });
+              }}"
+            ></ha-textfield>
+          </div>
+          <div class="helper-text">${this._t("weather_forecast_interval_help")}</div>
         ` : ''}
 
         <!-- Show widget in alert cycle -->
@@ -3466,6 +4761,8 @@ class AlertTickerCardEditor extends LitElement {
         <div class="form-row">
           ${this._renderThemeSelect("clear_theme", cfg.clear_theme || "success", (v) => this._clearThemeChanged(v), true)}
         </div>
+        ` : ''}
+        ${(cfg.show_when_clear || cfg.show_widget_in_cycle) ? html`
         ${this._renderCardActionConfig("clear_tap_action",        this._t("clear_tap_action_section"))}
         ${this._renderCardActionConfig("clear_double_tap_action", this._t("clear_double_tap_action_section"))}
         ${this._renderCardActionConfig("clear_hold_action",       this._t("clear_hold_action_section"))}
@@ -3665,10 +4962,10 @@ class AlertTickerCardEditor extends LitElement {
                   <div class="theme-priority-theme">
                     ${this._renderThemeSelect(
                       "alert_theme",
-                      alert.theme || ((alert.entity || "").startsWith("timer.") ? "countdown" : "emergency"),
+                      alert.theme || (this._isTimerLike(alert.entity) ? "countdown" : "emergency"),
                       (v) => this._alertThemeChanged(v, index),
                       false,
-                      (alert.entity || alert.entity_filter || "").startsWith("timer.")
+                      this._isTimerLike(alert.entity) || (alert.entity_filter || "").startsWith("timer.")
                     )}
                   </div>
                   <div class="theme-priority-priority">
@@ -3692,7 +4989,7 @@ class AlertTickerCardEditor extends LitElement {
                     </ha-select>
                   </div>
                 </div>
-                ${(alert.entity || "").startsWith("timer.") ? html`
+                ${this._isTimerLike(alert.entity) ? html`
                   <div class="helper-text">${this._t("timer_placeholder_hint")}</div>
                 ` : ""}
 
@@ -3705,18 +5002,64 @@ class AlertTickerCardEditor extends LitElement {
                 ></ha-textfield>
                 <div class="helper-text">${this._t("alert_name_help")}</div>
 
-                <!-- ── 1. ENTITÀ ─────────────────────────────────────────── -->
-                <div class="section-divider">🔍 ${this._t("alert_entity")}</div>
+                <!-- ── SELETTORE MODALITÀ ────────────────────────────────── -->
+                ${(() => {
+                  const mode = this._getAlertMode(index, alert);
+                  return html`
+                  <div class="alert-mode-selector">
+                    <button class="alert-mode-btn ${mode === "entity" ? "active" : ""}" @click="${() => {
+                      const next = new Set(this._alertModeFilter);
+                      next.delete(index);
+                      this._alertModeFilter = next;
+                      this._updateAlert(index, { entity_filter: undefined, device_class: undefined, label_filter: undefined, area_filter: undefined, entity_filter_exclude: undefined });
+                    }}">${this._t("mode_entity")}</button>
+                    <button class="alert-mode-btn ${mode === "filter" ? "active" : ""}" @click="${() => {
+                      const next = new Set(this._alertModeFilter);
+                      next.add(index);
+                      this._alertModeFilter = next;
+                      this._updateAlert(index, { entity: undefined });
+                    }}">${this._t("mode_filter")}</button>
+                  </div>
+                  <div class="helper-text" style="margin-top:-4px;margin-bottom:4px">
+                    ${mode === "entity" ? this._t("mode_entity_help") : this._t("mode_filter_help")}
+                  </div>
 
-                <!-- Entity filter (text) — expands to one alert per matched entity; hidden when device_class is set -->
-                ${!alert.device_class ? html`<div>
+                  ${mode === "entity" ? html`
+                    <!-- ── MODALITÀ SINGOLA ENTITÀ ───────────────────────── -->
+                    <ha-entity-picker
+                      .label="${this._t("alert_entity")}"
+                      .hass="${this._hass}"
+                      .value="${alert.entity || ""}"
+                      allow-custom-entity
+                      @value-changed="${(e) => this._alertEntityChanged(e.detail.value, index)}"
+                    ></ha-entity-picker>
+                    <div>
+                      <ha-textfield
+                        .label="${this._t("alert_attribute")}"
+                        .value="${alert.attribute || ""}"
+                        @change="${(e) => this._alertAttributeChanged(e.target.value, index)}"
+                      ></ha-textfield>
+                      <div class="helper-text">${this._t("alert_attribute_help")}</div>
+                    </div>
+                  ` : html`
+                    <!-- ── MODALITÀ FILTRO MULTI-ENTITÀ ──────────────────── -->
+                  `}
+                  `;
+                })()}
+
+                <!-- Entity filter (text) — visible only in filter mode; hidden when device_class is set -->
+                ${this._getAlertMode(index, alert) === "filter" && !alert.device_class ? html`<div>
                   <ha-textfield
                     .label="${this._t("entity_filter")}"
                     .value="${alert.entity_filter || ""}"
-                    @change="${(e) => this._updateAlert(index, {
-                      entity_filter: e.target.value || undefined,
-                      entity: e.target.value ? undefined : alert.entity
-                    })}"
+                    @change="${(e) => {
+                      if (e.target.value) {
+                        const next = new Set(this._filterPreviewOpen);
+                        next.add(index);
+                        this._filterPreviewOpen = next;
+                      }
+                      this._alertFilterChanged(e.target.value, index);
+                    }}"
                   ></ha-textfield>
                   <div class="helper-text">
                     ${alert.entity_filter && this._hass ? (() => {
@@ -3767,12 +5110,17 @@ class AlertTickerCardEditor extends LitElement {
                   </div>
                 </div>` : ""}
 
-                <!-- Device class filter — hidden when entity_filter is set -->
-                ${!alert.entity_filter ? html`<div>
+                <!-- Device class filter — visible only in filter mode, hidden when entity_filter is set -->
+                ${this._getAlertMode(index, alert) === "filter" && !alert.entity_filter ? html`<div>
                   <div class="native-select-wrap">
                     <label class="native-select-label">${this._t("device_class")}</label>
                     <select class="native-select" @change="${(e) => {
                       const v = e.target.value || undefined;
+                      if (v) {
+                        const next = new Set(this._filterPreviewOpen);
+                        next.add(`dc_${index}`);
+                        this._filterPreviewOpen = next;
+                      }
                       this._updateAlert(index, { device_class: v, entity: v ? undefined : alert.entity });
                     }}">
                       <option value="" ?selected="${!alert.device_class}">—</option>
@@ -3831,18 +5179,38 @@ class AlertTickerCardEditor extends LitElement {
                   </div>
                 </div>` : ""}
 
-                <!-- Entity picker — hidden when entity_filter or device_class is active -->
-                ${!alert.entity_filter && !alert.device_class ? html`
-                <ha-entity-picker
-                  .label="${this._t("alert_entity")}"
-                  .hass="${this._hass}"
-                  .value="${alert.entity || ""}"
-                  allow-custom-entity
-                  @value-changed="${(e) => this._alertEntityChanged(e.detail.value, index)}"
-                ></ha-entity-picker>
-                ` : ""}
+                <!-- Label filter — visible only in filter mode -->
+                ${this._getAlertMode(index, alert) === "filter" ? html`
+                <div>
+                  <ha-selector
+                    .hass="${this._hass}"
+                    .selector="${{label: {multiple: true}}}"
+                    .value="${Array.isArray(alert.label_filter) ? alert.label_filter : (alert.label_filter ? [alert.label_filter] : [])}"
+                    .label="${this._t("label_filter")}"
+                    @value-changed="${(e) => {
+                      const v = e.detail.value;
+                      this._updateAlert(index, { label_filter: v?.length ? v : undefined });
+                    }}"
+                  ></ha-selector>
+                  <div class="helper-text">${this._t("label_filter_help")}</div>
+                </div>
 
-                <!-- Attribute (optional) — check attribute instead of state -->
+                <!-- Area filter -->
+                <div>
+                  <ha-selector
+                    .hass="${this._hass}"
+                    .selector="${{area: {multiple: true}}}"
+                    .value="${Array.isArray(alert.area_filter) ? alert.area_filter : (alert.area_filter ? [alert.area_filter] : [])}"
+                    .label="${this._t("area_filter")}"
+                    @value-changed="${(e) => {
+                      const v = e.detail.value;
+                      this._updateAlert(index, { area_filter: v?.length ? v : undefined });
+                    }}"
+                  ></ha-selector>
+                  <div class="helper-text">${this._t("area_filter_help")}</div>
+                </div>
+
+                <!-- Attribute in filter mode -->
                 <div>
                   <ha-textfield
                     .label="${this._t("alert_attribute")}"
@@ -3852,7 +5220,7 @@ class AlertTickerCardEditor extends LitElement {
                   <div class="helper-text">${this._t("alert_attribute_help")}</div>
                 </div>
 
-                <!-- show_filter_name / show_filter_state toggles — when entity_filter or device_class is set -->
+                <!-- show_filter_name / show_filter_state toggles -->
                 ${(alert.entity_filter || alert.device_class) ? html`
                   <ha-formfield .label="${this._t("show_filter_name")}">
                     <ha-switch
@@ -3867,11 +5235,109 @@ class AlertTickerCardEditor extends LitElement {
                     ></ha-switch>
                   </ha-formfield>
                 ` : ""}
+                ` : ""}
+
+                <!-- ── MUSIC PLAYER OPTIONS ──────────────────────────────── -->
+                ${alert.theme === 'music' ? html`
+                  <div class="section-divider">🎵 ${this._t("music_player_controls")}</div>
+                  <div>
+                    <ha-formfield .label="${this._t("music_player_controls")}">
+                      <ha-switch
+                        ?checked="${!!alert.show_player_controls}"
+                        @change="${(e) => this._updateAlert(index, { show_player_controls: e.target.checked || undefined })}"
+                      ></ha-switch>
+                    </ha-formfield>
+                    <div class="helper-text">${this._t("music_player_controls_help")}</div>
+                  </div>
+                  ${alert.show_player_controls ? html`
+                    <div class="icon-color-row">
+                      <input
+                        type="color"
+                        class="icon-color-swatch"
+                        .value="${this._cssColorToHex(alert.music_player_color) || '#e040fb'}"
+                        @input="${(e) => this._updateAlert(index, { music_player_color: e.target.value })}"
+                        title="${this._t("music_player_color")}"
+                      />
+                      <ha-textfield
+                        .label="${this._t("music_player_color")}"
+                        .value="${alert.music_player_color || '#e040fb'}"
+                        placeholder="#e040fb"
+                        @change="${(e) => {
+                          const v = e.target.value.trim() || undefined;
+                          this._updateAlert(index, { music_player_color: v });
+                        }}"
+                      ></ha-textfield>
+                    </div>
+                  ` : ""}
+                  <ha-textfield
+                    .label="${this._t("badge_label")}"
+                    .value="${alert.badge_label || ""}"
+                    placeholder="NOW PLAYING"
+                    @change="${(e) => this._updateAlert(index, { badge_label: e.target.value.trim() || undefined })}"
+                  ></ha-textfield>
+                ` : ""}
+
+                <!-- Group settings — visible only for filter-mode alerts -->
+                ${this._getAlertMode(index, alert) === "filter" ? html`
+                <div class="section-divider">🗂️ ${this._t("group_section")}</div>
+                <div class="form-row">
+                  <div class="form-row-inline">
+                    <span>${this._t("group")}</span>
+                    <ha-switch
+                      .checked="${!!alert.group}"
+                      @change="${(e) => this._updateAlert(index, { group: e.target.checked || undefined })}"
+                    ></ha-switch>
+                  </div>
+                </div>
+                ${alert.group ? html`
+                  <div class="form-row">
+                    <ha-textfield
+                      .label="${this._t("group_min")}"
+                      .value="${alert.group_min != null ? String(alert.group_min) : ""}"
+                      placeholder="3"
+                      @change="${(e) => {
+                        const v = parseInt(e.target.value, 10);
+                        this._updateAlert(index, { group_min: (v >= 2 && !isNaN(v)) ? v : undefined });
+                      }}"
+                    ></ha-textfield>
+                    <div class="helper-text">${this._t("group_min_help")}</div>
+                  </div>
+                  <div class="form-row">
+                    <ha-textfield
+                      .label="${this._t("group_message")}"
+                      .value="${alert.group_message || ""}"
+                      placeholder="{count} alerts active"
+                      @change="${(e) => this._updateAlert(index, { group_message: e.target.value || undefined })}"
+                    ></ha-textfield>
+                    <div class="helper-text">${this._t("group_message_help")}</div>
+                  </div>
+                  <div class="form-row">
+                    <ha-textfield
+                      .label="${this._t("group_secondary_text")}"
+                      .value="${alert.group_secondary_text || ""}"
+                      placeholder="Tocca per gestire"
+                      @change="${(e) => this._updateAlert(index, { group_secondary_text: e.target.value || undefined })}"
+                    ></ha-textfield>
+                    <div class="helper-text">${this._t("group_secondary_text_help")}</div>
+                  </div>
+                  <div class="form-row">
+                    <ha-textfield
+                      .label="${this._t("group_expanded_message")}"
+                      .value="${alert.group_expanded_message || ""}"
+                      placeholder="{name}: {state}%"
+                      @change="${(e) => this._updateAlert(index, { group_expanded_message: e.target.value || undefined })}"
+                    ></ha-textfield>
+                    <div class="helper-text">${this._t("group_expanded_message_help")}</div>
+                  </div>
+                  ${this._renderActionConfig(alert, index, "group_tap_action",  this._t("group_tap_action_section"))}
+                  ${this._renderActionConfig(alert, index, "group_hold_action", this._t("group_hold_action_section"))}
+                ` : ""}
+                ` : ""}
 
                 <!-- ── 2. CONDIZIONE ──────────────────────────────────────── -->
                 <div class="section-divider">⚡ ${this._t("conditions_section")}</div>
 
-                <!-- on_change toggle — when active hides operator/state/conditions -->
+                <!-- on_change toggle — when active hides only the primary operator/state fields -->
                 <div>
                   <ha-formfield .label="${this._t("on_change")}">
                     <ha-switch
@@ -3882,7 +5348,7 @@ class AlertTickerCardEditor extends LitElement {
                   <div class="helper-text">${this._t("on_change_help")}</div>
                 </div>
                 ${!alert.on_change ? html`
-                <!-- Primary condition: operator + value -->
+                <!-- Primary condition: operator + value (hidden when on_change is active) -->
                 <div class="form-row-2col">
                   <div class="native-select-wrap">
                     <label class="native-select-label">${this._t("alert_operator")}</label>
@@ -3934,7 +5400,9 @@ class AlertTickerCardEditor extends LitElement {
                   </div>
                 </div>
 
-                <!-- Extra AND/OR conditions -->
+                ` : ""} <!-- end !alert.on_change primary condition -->
+
+                <!-- Extra AND/OR conditions: always visible (work with both on_change and normal mode) -->
                 <div class="form-row">
                   <div class="native-select-wrap">
                     <label class="native-select-label">${this._t("conditions_logic")}</label>
@@ -3990,9 +5458,23 @@ class AlertTickerCardEditor extends LitElement {
                 <button class="btn-add-small" @click="${() => this._addCondition(index)}">
                   + ${this._t("add_condition")}
                 </button>
-                ` : ""} <!-- end !alert.on_change -->
-                <!-- ── AUTO-DISMISS ──────────────────────────────────────── -->
+                <!-- ── TRIGGER DELAY + AUTO-DISMISS ─────────────────────── -->
                 <div class="section-divider">⏱ ${this._t("auto_dismiss_section")}</div>
+
+                <div>
+                  <ha-textfield
+                    type="number"
+                    .label="${this._t("trigger_delay")}"
+                    .value="${alert.trigger_delay != null ? String(alert.trigger_delay) : ""}"
+                    placeholder=""
+                    min="1"
+                    @change="${(e) => {
+                      const v = parseInt(e.target.value, 10);
+                      this._updateAlert(index, { trigger_delay: v > 0 ? v : undefined });
+                    }}"
+                  ></ha-textfield>
+                  <div class="helper-text">${this._t("trigger_delay_help")}</div>
+                </div>
 
                 <div>
                   <ha-textfield
@@ -4008,6 +5490,8 @@ class AlertTickerCardEditor extends LitElement {
                   ></ha-textfield>
                   <div class="helper-text">${this._t("auto_dismiss_after_help")}</div>
                 </div>
+
+                ${!(alert.theme === 'music' && alert.show_player_controls) ? html`
 
                 <!-- ── 4. MESSAGGIO ──────────────────────────────────────── -->
                 <div class="section-divider">💬 ${this._t("alert_message")}</div>
@@ -4122,11 +5606,43 @@ class AlertTickerCardEditor extends LitElement {
                   ></ha-textfield>
                   <div class="helper-text">${this._t("secondary_text_help")}</div>
                 </div>
+                <div class="form-row">
+                  <ha-select
+                    .label="${this._t("secondary_value_align")}"
+                    .value="${alert.secondary_value_align || 'below'}"
+                    fixedMenuPosition naturalMenuWidth
+                    @closed="${(e) => e.stopPropagation()}"
+                  >
+                    ${["below","right"].map(opt => html`
+                      <mwc-list-item value="${opt}" ?selected="${(alert.secondary_value_align || 'below') === opt}"
+                        @request-selected="${(e) => {
+                          if (e.detail.source !== "interaction") return;
+                          const v = e.target.getAttribute("value");
+                          this._updateAlert(index, { secondary_value_align: v === 'below' ? undefined : v });
+                        }}"
+                      >${this._t("secondary_value_align_" + opt)}</mwc-list-item>
+                    `)}
+                  </ha-select>
+                </div>
+                ` : ""}
 
                 <!-- ── 5. OPZIONI ─────────────────────────────────────────── -->
                 <div class="section-divider">⚙️ ${this._t("snooze_duration")}</div>
 
-                <!-- Per-alert snooze duration override -->
+                <!-- Persistent alarm toggle -->
+                <div class="form-row">
+                  <div class="form-row-inline">
+                    <span>${this._t("persistent")}</span>
+                    <ha-switch
+                      .checked="${!!alert.persistent}"
+                      @change="${(e) => this._updateAlert(index, { persistent: e.target.checked || undefined })}"
+                    ></ha-switch>
+                  </div>
+                </div>
+                <div class="helper-text">${this._t("persistent_help")}</div>
+
+                <!-- Per-alert snooze duration override (hidden when persistent) -->
+                ${alert.persistent ? "" : html`
                 <div class="native-select-wrap">
                   <select class="native-select"
                     @change="${(e) => {
@@ -4136,13 +5652,16 @@ class AlertTickerCardEditor extends LitElement {
                   >
                     <option value="__global__" ?selected="${alert.snooze_duration === undefined}">${this._t("snooze_duration_global")}</option>
                     <option value="__menu__"   ?selected="${alert.snooze_duration === null}">${this._t("snooze_duration_menu")}</option>
-                    <option value="1"  ?selected="${alert.snooze_duration === 1}">1h</option>
-                    <option value="4"  ?selected="${alert.snooze_duration === 4}">4h</option>
-                    <option value="8"  ?selected="${alert.snooze_duration === 8}">8h</option>
-                    <option value="24" ?selected="${alert.snooze_duration === 24}">24h</option>
+                    <option value="1"   ?selected="${alert.snooze_duration === 1}">1h</option>
+                    <option value="4"   ?selected="${alert.snooze_duration === 4}">4h</option>
+                    <option value="8"   ?selected="${alert.snooze_duration === 8}">8h</option>
+                    <option value="24"  ?selected="${alert.snooze_duration === 24}">24h</option>
+                    <option value="168" ?selected="${alert.snooze_duration === 168}">1w</option>
+                    <option value="720" ?selected="${alert.snooze_duration === 720}">1m</option>
                   </select>
                 </div>
                 <div class="helper-text">${this._t("snooze_duration_help")}</div>
+                `}
 
                 <!-- Sound per alert -->
                 <div class="section-divider">🔊 ${this._t("alert_sound")}</div>
@@ -4214,6 +5733,19 @@ class AlertTickerCardEditor extends LitElement {
                       </select>
                     </div>
                   </div>
+                  ${alert.tts_notify_service ? html`
+                  <div class="form-row">
+                    <div class="native-select-wrap">
+                      <label class="native-select-label">${this._t('alert_tts_notify_type')}</label>
+                      <select class="native-select"
+                        @change="${(e) => this._updateAlert(index, { tts_notify_type: e.target.value || undefined })}"
+                      >
+                        <option value="" ?selected="${!alert.tts_notify_type}">${this._t('tts_notify_type_tts')}</option>
+                        <option value="announce" ?selected="${alert.tts_notify_type === 'announce'}">${this._t('tts_notify_type_announce')}</option>
+                      </select>
+                    </div>
+                  </div>
+                  ` : ''}
                   <div class="form-row">
                     <ha-textfield
                       .label="${this._t("alert_tts_message")}"
@@ -4224,8 +5756,53 @@ class AlertTickerCardEditor extends LitElement {
                   </div>
                 ` : ""}
 
-                <!-- Camera snapshot in overlay -->
-                <div class="section-divider">📷 ${this._t("alert_camera_entity")}</div>
+                <!-- Push notify per alert -->
+                <div class="section-divider">${this._t("section_push_notify")}</div>
+                <div class="form-row">
+                  <div class="form-row-inline">
+                    <span>${this._t("alert_push_notify")}</span>
+                    <ha-switch
+                      .checked="${!!alert.push_notify}"
+                      @change="${(e) => this._updateAlert(index, { push_notify: e.target.checked || undefined })}"
+                    ></ha-switch>
+                  </div>
+                  <div class="helper-text">${this._t("alert_push_notify_help")}</div>
+                </div>
+                ${alert.push_notify ? html`
+                  <div class="form-row">
+                    <ha-textfield
+                      .label="${this._t('alert_push_notify_title')}"
+                      .value="${alert.push_notify_title || ''}"
+                      @change="${(e) => this._updateAlert(index, { push_notify_title: e.target.value || undefined })}"
+                    ></ha-textfield>
+                    <div class="helper-text">${this._t("alert_push_notify_title_help")}</div>
+                  </div>
+                  <div class="form-row">
+                    <ha-textfield
+                      .label="${this._t('alert_push_notify_message')}"
+                      .value="${alert.push_notify_message || ''}"
+                      @change="${(e) => this._updateAlert(index, { push_notify_message: e.target.value || undefined })}"
+                    ></ha-textfield>
+                    <div class="helper-text">${this._t("alert_push_notify_message_help")}</div>
+                  </div>
+                  <div class="form-row">
+                    <div class="native-select-wrap">
+                      <label class="native-select-label">${this._t('alert_push_notify_service')}</label>
+                      <select class="native-select"
+                        @change="${(e) => this._updateAlert(index, { push_notify_service: e.target.value || undefined })}"
+                      >
+                        <option value="" ?selected="${!alert.push_notify_service}">—</option>
+                        ${Object.keys(this._hass?.services?.notify || {}).sort().map((svc) => html`
+                          <option value="${svc}" ?selected="${alert.push_notify_service === svc}">notify.${svc}</option>
+                        `)}
+                      </select>
+                    </div>
+                  </div>
+                ` : ""}
+
+                <!-- Camera in overlay — hidden for music player theme -->
+                ${alert.theme !== 'music' ? html`
+                <div class="section-divider">${alert.camera_live ? "📹" : "📷"} ${this._t("alert_camera_entity")}</div>
                 <div class="form-row">
                   <ha-entity-picker
                     .hass="${this._hass}"
@@ -4237,6 +5814,29 @@ class AlertTickerCardEditor extends LitElement {
                   ></ha-entity-picker>
                   <div class="helper-text">${this._t("alert_camera_entity_help")}</div>
                 </div>
+                ${alert.camera_entity ? html`
+                <div class="form-row">
+                  <div class="form-row-inline">
+                    <span>${this._t("alert_camera_live")}</span>
+                    <ha-switch
+                      .checked="${!!alert.camera_live}"
+                      @change="${(e) => this._updateAlert(index, { camera_live: e.target.checked || undefined })}"
+                    ></ha-switch>
+                  </div>
+                  <div class="helper-text">${this._t("alert_camera_live_help")}</div>
+                </div>
+                <div class="form-row">
+                  <div class="form-row-inline">
+                    <span>${this._t("alert_camera_in_card")}</span>
+                    <ha-switch
+                      .checked="${!!alert.camera_in_card}"
+                      @change="${(e) => this._updateAlert(index, { camera_in_card: e.target.checked || undefined })}"
+                    ></ha-switch>
+                  </div>
+                  <div class="helper-text">${this._t("alert_camera_in_card_help")}</div>
+                </div>
+                ` : ""}
+                ` : ""}
 
                 <!-- User visibility filter -->
                 ${(() => {
@@ -4374,6 +5974,11 @@ class AlertTickerCardEditor extends LitElement {
     this._fireConfig({ ...this._config, alerts, ...extra });
   }
 
+  _getAlertMode(index, alert) {
+    if (alert.entity_filter || alert.device_class || alert.label_filter || alert.area_filter) return "filter";
+    return this._alertModeFilter.has(index) ? "filter" : "entity";
+  }
+
   _toggleFilterExclude(alertIndex, entityId) {
     const alert = (this._config.alerts || [])[alertIndex] || {};
     const excluded = new Set(alert.entity_filter_exclude || []);
@@ -4455,19 +6060,28 @@ class AlertTickerCardEditor extends LitElement {
   }
 
   // -------------------------------------------------------------------------
+  // Helper — true for timer.* entities AND device_class:timestamp sensors
+  // -------------------------------------------------------------------------
+  _isTimerLike(entityId) {
+    if (!entityId) return false;
+    if (entityId.startsWith("timer.")) return true;
+    return this._hass?.states[entityId]?.attributes?.device_class === "timestamp";
+  }
+
+  // -------------------------------------------------------------------------
   // Event handlers — individual alert fields
   // -------------------------------------------------------------------------
   _alertEntityChanged(value, index) {
     const alert = (this._config.alerts || [])[index] || {};
     const changes = { entity: value };
-    const isTimer = value && value.startsWith("timer.");
-    const wasTimer = (alert.entity || "").startsWith("timer.");
+    const isTimer     = value && value.startsWith("timer.");
+    const isTimestamp = value && !isTimer && this._hass?.states[value]?.attributes?.device_class === "timestamp";
+    const wasTimerLike = this._isTimerLike(alert.entity);
 
-    // Timer entity → auto-set state "active" and switch to first timer theme
+    // timer.* entity → auto-set state "active" and switch to first timer theme
     if (isTimer) {
       changes.state = "active";
       changes.operator = "=";
-      // Switch theme only if previous theme was not already a timer theme
       const prevThemeCat = (THEME_META[alert.theme] || {}).category;
       if (prevThemeCat !== "timer") {
         changes.theme = "countdown";
@@ -4475,13 +6089,48 @@ class AlertTickerCardEditor extends LitElement {
       }
     }
 
-    // Leaving timer entity → reset theme to emergency if it was a timer theme
-    if (!isTimer && wasTimer) {
+    // device_class:timestamp sensor — alert when timer IS running (state is a datetime).
+    // Alexa next_timer reports "unknown" when idle (most common), "unavailable" when
+    // device is offline, and "none" on some integrations. AND all three to be safe.
+    if (isTimestamp) {
+      changes.state = "unknown";
+      changes.operator = "!=";
+      changes.conditions = [
+        { entity: value, operator: "!=", state: "unavailable" },
+        { entity: value, operator: "!=", state: "none" },
+      ];
+      changes.conditions_logic = "and";
+      const prevThemeCat = (THEME_META[alert.theme] || {}).category;
+      if (prevThemeCat !== "timer") {
+        changes.theme = "countdown";
+        changes.icon = THEME_META.countdown.icon;
+      }
+    }
+
+    // Leaving a timer-like entity → reset theme to emergency if it was a timer theme
+    if (!isTimer && !isTimestamp && wasTimerLike) {
       const prevThemeCat = (THEME_META[alert.theme] || {}).category;
       if (prevThemeCat === "timer") {
         changes.theme = "emergency";
         changes.icon = THEME_META.emergency.icon;
       }
+    }
+
+    // media_player.* entity → auto-set theme to "music" + player controls
+    const isMediaPlayer = !!(value && value.startsWith("media_player."));
+    const wasMediaPlayer = !!(alert.entity && alert.entity.startsWith("media_player."));
+    if (isMediaPlayer && !isTimer && !isTimestamp && alert.theme !== "music") {
+      changes.theme = "music";
+      changes.icon = THEME_META.music.icon;
+      changes.show_player_controls = true;
+      changes.state = "playing";
+      changes.operator = "=";
+    }
+    // Leaving a media_player entity → reset theme/controls if it was music
+    if (!isMediaPlayer && wasMediaPlayer && alert.theme === "music") {
+      changes.theme = "emergency";
+      changes.icon = THEME_META.emergency.icon;
+      changes.show_player_controls = undefined;
     }
 
     // Auto-fill message with friendly name if message is still empty or the theme default
@@ -4495,6 +6144,24 @@ class AlertTickerCardEditor extends LitElement {
       }
     }
 
+    this._updateAlert(index, changes);
+  }
+
+  _alertFilterChanged(value, index) {
+    const alert = (this._config.alerts || [])[index] || {};
+    const changes = { entity_filter: value || undefined, entity: value ? undefined : alert.entity };
+    const isTimerFilter = !!(value && value.startsWith("timer."));
+    const wasTimerFilter = !!(alert.entity_filter && alert.entity_filter.startsWith("timer."));
+    const prevThemeCat = (THEME_META[alert.theme] || {}).category;
+    if (isTimerFilter && prevThemeCat !== "timer") {
+      changes.theme = "countdown";
+      changes.icon = THEME_META.countdown.icon;
+      changes.state = "active";
+      changes.operator = "=";
+    } else if (!isTimerFilter && wasTimerFilter && prevThemeCat === "timer") {
+      changes.theme = "emergency";
+      changes.icon = THEME_META.emergency.icon;
+    }
     this._updateAlert(index, changes);
   }
 
@@ -4554,6 +6221,29 @@ class AlertTickerCardEditor extends LitElement {
   }
 
   /** Builds a matcher function for entity_filter (mirrors card logic). */
+  /** Returns all [entityId, state] pairs matching the alert's active filters (entity_filter, device_class, label_filter, area_filter) */
+  _getFilteredEntities(alert) {
+    if (!this._hass) return [];
+    const matchFn = alert.entity_filter ? this._buildFilterMatcher(alert.entity_filter) : null;
+    const labelFilter = alert.label_filter ? (Array.isArray(alert.label_filter) ? alert.label_filter : [alert.label_filter]) : null;
+    const areaFilter  = alert.area_filter  ? (Array.isArray(alert.area_filter)  ? alert.area_filter  : [alert.area_filter])  : null;
+    return Object.entries(this._hass.states).filter(([id, s]) => {
+      if (alert.device_class && s.attributes?.device_class !== alert.device_class) return false;
+      if (matchFn && !matchFn(id) && !matchFn(s.attributes?.friendly_name || "")) return false;
+      if (labelFilter) {
+        const labels = this._hass.entities?.[id]?.labels || [];
+        if (!labelFilter.some(l => labels.includes(l))) return false;
+      }
+      if (areaFilter) {
+        const meta = this._hass.entities?.[id];
+        const entityArea = meta?.area_id;
+        const deviceArea = meta?.device_id ? this._hass.devices?.[meta.device_id]?.area_id : null;
+        if (!areaFilter.some(ar => ar === entityArea || ar === deviceArea)) return false;
+      }
+      return true;
+    });
+  }
+
   _buildFilterMatcher(filter) {
     const f = filter.toLowerCase();
     if (f.includes("*")) {
@@ -5332,6 +7022,32 @@ class AlertTickerCardEditor extends LitElement {
       .theme-priority-theme ha-select,
       .theme-priority-priority ha-select {
         width: 100%;
+      }
+      .alert-mode-selector {
+        display: flex;
+        background: var(--secondary-background-color, #f5f5f5);
+        border-radius: 10px;
+        padding: 3px;
+        gap: 3px;
+        margin-bottom: 8px;
+      }
+      .alert-mode-btn {
+        flex: 1;
+        padding: 8px 10px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.82rem;
+        font-weight: 500;
+        background: transparent;
+        color: var(--secondary-text-color, #888);
+        transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+        white-space: nowrap;
+      }
+      .alert-mode-btn.active {
+        background: var(--card-background-color, #fff);
+        color: var(--primary-color, #03a9f4);
+        box-shadow: 0 1px 4px rgba(0,0,0,0.13);
       }
       .filter-count-btn {
         display: inline-flex;
