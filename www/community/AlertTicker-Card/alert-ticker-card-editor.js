@@ -1,5 +1,5 @@
 /**
- * AlertTicker Card Editor v1.3.1
+ * AlertTicker Card Editor v1.3.2.3
  * Visual editor for the AlertTicker Card custom Lovelace component.
  */
 
@@ -10,7 +10,7 @@ const html = LitElement.prototype.html;
 const css = LitElement.prototype.css;
 
 // Must match the version in alert-ticker-card.js
-const CARD_VERSION = "1.3.1";
+const CARD_VERSION = "1.3.2.3";
 
 // ---------------------------------------------------------------------------
 // Theme metadata — mirrors alert-ticker-card.js
@@ -64,6 +64,15 @@ const THEME_META = {
   sunrise:      { icon: "🌅", category: "ok"       },
   plant:        { icon: "🌱", category: "ok"       },
   lock:         { icon: "🔒", category: "ok"       },
+  // --- 3D Spectacular ---
+  portal:   { icon: "🌀", category: "critical" },
+  void:     { icon: "⚫", category: "critical" },
+  volt:     { icon: "⚡", category: "warning"  },
+  nebula:   { icon: "🌌", category: "warning"  },
+  prism:    { icon: "💎", category: "info"     },
+  arcade:   { icon: "🕹️", category: "info"     },
+  diamond:  { icon: "💠", category: "ok"       },
+  quantum:  { icon: "⚛️", category: "ok"       },
   // --- Timer (only shown when entity is timer.*) ---
   countdown:    { icon: "⏱️", category: "timer"    },
   hourglass:    { icon: "⏳", category: "timer"    },
@@ -124,6 +133,14 @@ const DEFAULT_MSG = {
     sunrise:      "Tutto a posto",
     plant:        "Stato ottimale",
     lock:         "Sistema protetto",
+    portal:       "Portale dimensionale aperto",
+    void:         "Anomalia del vuoto rilevata",
+    volt:         "Scarica elettrica in corso",
+    nebula:       "Interferenza nebulare",
+    prism:        "Segnale prismatico",
+    arcade:       "Sistema online",
+    diamond:      "Stato cristallino",
+    quantum:      "Stato quantistico stabile",
   },
   en: {
     emergency:    "Emergency active",
@@ -174,6 +191,14 @@ const DEFAULT_MSG = {
     sunrise:      "All good",
     plant:        "Optimal state",
     lock:         "System secured",
+    portal:       "Dimensional portal open",
+    void:         "Void anomaly detected",
+    volt:         "Electric discharge",
+    nebula:       "Nebular interference",
+    prism:        "Prismatic signal",
+    arcade:       "System online",
+    diamond:      "Crystalline status",
+    quantum:      "Quantum state stable",
   },
   fr: {
     emergency:    "Urgence active",
@@ -224,6 +249,14 @@ const DEFAULT_MSG = {
     sunrise:      "Tout va bien",
     plant:        "État optimal",
     lock:         "Système sécurisé",
+    portal:       "Portail dimensionnel ouvert",
+    void:         "Anomalie du vide détectée",
+    volt:         "Décharge électrique",
+    nebula:       "Interférence nébulaire",
+    prism:        "Signal prismatique",
+    arcade:       "Système en ligne",
+    diamond:      "Statut cristallin",
+    quantum:      "État quantique stable",
   },
   de: {
     emergency:    "Notfall aktiv",
@@ -274,6 +307,14 @@ const DEFAULT_MSG = {
     sunrise:      "Alles in Ordnung",
     plant:        "Optimaler Zustand",
     lock:         "System gesichert",
+    portal:       "Dimensionsportal geöffnet",
+    void:         "Void-Anomalie erkannt",
+    volt:         "Elektrische Entladung",
+    nebula:       "Nebelinterferenz",
+    prism:        "Prismatisches Signal",
+    arcade:       "System online",
+    diamond:      "Kristallzustand",
+    quantum:      "Quantenzustand stabil",
   },
   nl: {
     emergency:    "Noodgeval actief",
@@ -324,6 +365,14 @@ const DEFAULT_MSG = {
     sunrise:      "Alles in orde",
     plant:        "Optimale staat",
     lock:         "Systeem beveiligd",
+    portal:       "Dimensionaal portaal open",
+    void:         "Void-anomalie gedetecteerd",
+    volt:         "Elektrische ontlading",
+    nebula:       "Nevulaire interferentie",
+    prism:        "Prismatisch signaal",
+    arcade:       "Systeem online",
+    diamond:      "Kristallijne status",
+    quantum:      "Kwantumtoestand stabiel",
   },
   vi: {
     emergency:    "Khẩn cấp",
@@ -374,6 +423,14 @@ const DEFAULT_MSG = {
     sunrise:      "Mọi thứ ổn",
     plant:        "Trạng thái tối ưu",
     lock:         "Hệ thống an toàn",
+    portal:       "Cổng chiều mở",
+    void:         "Phát hiện dị thường không gian",
+    volt:         "Phóng điện",
+    nebula:       "Nhiễu tinh vân",
+    prism:        "Tín hiệu lăng kính",
+    arcade:       "Hệ thống trực tuyến",
+    diamond:      "Trạng thái tinh thể",
+    quantum:      "Trạng thái lượng tử ổn định",
   },
   ru: {
     emergency:    "Чрезвычайная ситуация",
@@ -424,6 +481,14 @@ const DEFAULT_MSG = {
     sunrise:      "Всё в порядке",
     plant:        "Оптимальное состояние",
     lock:         "Система в безопасности",
+    portal:       "Портал открыт",
+    void:         "Аномалия пустоты обнаружена",
+    volt:         "Электрический разряд",
+    nebula:       "Туманные помехи",
+    prism:        "Призматический сигнал",
+    arcade:       "Система в сети",
+    diamond:      "Кристаллический статус",
+    quantum:      "Квантовое состояние стабильно",
   },
   da: {
     emergency:    "Nødsituation aktiv",
@@ -474,6 +539,14 @@ const DEFAULT_MSG = {
     sunrise:      "Alt OK",
     plant:        "Optimal tilstand",
     lock:         "System sikret",
+    portal:       "Dimensionsportal åbent",
+    void:         "Void-anomali registreret",
+    volt:         "Elektrisk udladning",
+    nebula:       "Tågeinterferens",
+    prism:        "Prismatisk signal",
+    arcade:       "System online",
+    diamond:      "Krystallinsk status",
+    quantum:      "Kvantetilstand stabil",
   },
   cs: {
     emergency:    "Poplach",
@@ -524,6 +597,14 @@ const DEFAULT_MSG = {
     sunrise:      "Vše OK",
     plant:        "Optimální stav",
     lock:         "Zabezpečeno",
+    portal:       "Dimenzionální portál otevřen",
+    void:         "Detekována anomálie prázdnoty",
+    volt:         "Elektrický výboj",
+    nebula:       "Mlhovinové rušení",
+    prism:        "Prismatický signál",
+    arcade:       "Systém online",
+    diamond:      "Krystalický stav",
+    quantum:      "Kvantový stav stabilní",
   },
   pt: {
     emergency:    "Emergência ativa",
@@ -574,6 +655,14 @@ const DEFAULT_MSG = {
     sunrise:      "Tudo bem",
     plant:        "Estado ótimo",
     lock:         "Sistema seguro",
+    portal:       "Portal dimensional aberto",
+    void:         "Anomalia do vazio detectada",
+    volt:         "Descarga elétrica",
+    nebula:       "Interferência nebular",
+    prism:        "Sinal prismático",
+    arcade:       "Sistema online",
+    diamond:      "Estado cristalino",
+    quantum:      "Estado quântico estável",
   },
   es: {
     emergency:    "Emergencia activa",
@@ -624,6 +713,14 @@ const DEFAULT_MSG = {
     sunrise:      "Todo bien",
     plant:        "Estado óptimo",
     lock:         "Sistema seguro",
+    portal:       "Portal dimensional abierto",
+    void:         "Anomalía del vacío detectada",
+    volt:         "Descarga eléctrica",
+    nebula:       "Interferencia nebular",
+    prism:        "Señal prismática",
+    arcade:       "Sistema en línea",
+    diamond:      "Estado cristalino",
+    quantum:      "Estado cuántico estable",
   },
 };
 
@@ -657,10 +754,20 @@ const ET = {
     weather_forecast_interval: "Intervallo alternanza (secondi)",
     weather_forecast_interval_help: "Secondi tra meteo corrente e previsioni settimanali. Default: 5",
     clear_weather_entity_label: "Entità meteo (weather.*)",
+    clear_weather_sensors_title: "Sensori personalizzati (opzionale)",
+    clear_weather_temperature_entity: "Temperatura (sensore locale)",
+    clear_weather_humidity_entity: "Umidità (sensore locale)",
+    clear_weather_temp_high_entity: "Temperatura massima di oggi (sensore)",
+    clear_weather_temp_low_entity: "Temperatura minima di oggi (sensore)",
+    clear_weather_aqi_entity: "Qualità dell'aria / PM2.5 (sensore)",
     clear_clock_show_date: "Mostra data",
     clear_clock_12h: "Formato 12 ore (AM/PM)",
     clear_clock_date_label: "Posizione data",
     clear_clock_style_label: "Stile orologio",
+    clear_clock_colors_title: "Colori personalizzati (opzionale)",
+    clear_clock_color: "Colore cifre orologio",
+    clear_clock_date_color: "Colore data",
+    clear_clock_background: "Colore sfondo",
     clear_weather_style_label: "Stile badge meteo",
     style_default: "Default",
     style_aurora: "🌌 Aurora",
@@ -692,6 +799,8 @@ const ET = {
     card_height_help: "Fissa l'altezza per evitare spostamenti del layout quando cambiano gli avvisi. Lascia vuoto per altezza automatica.",
     card_border: "Mostra bordo e nome card",
     card_border_help: "Aggiunge il bordo standard di Home Assistant attorno alla card. Quando non ci sono avvisi attivi, mostra un segnaposto con il nome della card invece di nasconderla completamente.",
+    card_background: "Sfondo personalizzato / trasparenza",
+    card_background_help: "Attiva per usare la variabile tema HA (--ha-card-background). Inserisci un valore CSS personalizzato per usare un colore fisso, es. rgba(0,0,0,0.5).",
     show_snooze_bar: "Mostra barra di riattivazione snooze 💤",
     show_snooze_button: "Mostra pulsante snooze 💤",
     show_history_button: "Mostra pulsante cronologia 📋",
@@ -785,6 +894,8 @@ const ET = {
     use_ha_icon: "Usa icona Home Assistant (mdi:)",
     icon_color: "Colore icona",
     icon_color_help: "Colore CSS: es. #ff0000, red, var(--error-color). Lascia vuoto per il colore del tema.",
+    icon_size: "Dimensione icona",
+    icon_size_help: "Valore CSS: es. 1.2em, 24px. Lascia vuoto per il default del tema (1.6em).",
     on_change: "Attiva ad OGNI cambio di stato",
     on_change_help: "L'alert appare ogni volta che lo stato cambia (qualunque valore). Le condizioni aggiuntive AND/OR vengono comunque valutate. Usa questa opzione per eventi: contatori, timestamp, sensori senza stati fissi.",
     trigger_delay: "⏳ Ritardo attivazione (secondi)",
@@ -955,10 +1066,20 @@ const ET = {
     weather_forecast_interval: "Alternation interval (seconds)",
     weather_forecast_interval_help: "Seconds between current weather and weekly forecast. Default: 5",
     clear_weather_entity_label: "Weather entity (weather.*)",
+    clear_weather_sensors_title: "Custom sensors (optional)",
+    clear_weather_temperature_entity: "Temperature (local sensor)",
+    clear_weather_humidity_entity: "Humidity (local sensor)",
+    clear_weather_temp_high_entity: "Today's high temperature (sensor)",
+    clear_weather_temp_low_entity: "Today's low temperature (sensor)",
+    clear_weather_aqi_entity: "Air quality / PM2.5 (sensor)",
     clear_clock_show_date: "Show date",
     clear_clock_12h: "12-hour format (AM/PM)",
     clear_clock_date_label: "Date position",
     clear_clock_style_label: "Clock style",
+    clear_clock_colors_title: "Custom colors (optional)",
+    clear_clock_color: "Clock digits color",
+    clear_clock_date_color: "Date color",
+    clear_clock_background: "Background color",
     clear_weather_style_label: "Weather badge style",
     style_default: "Default",
     style_aurora: "🌌 Aurora",
@@ -990,6 +1111,8 @@ const ET = {
     card_height_help: "Locks the height to prevent layout shifts when alerts change. Leave empty for automatic height.",
     card_border: "Show card border & name",
     card_border_help: "Adds the standard Home Assistant border around the card. When no alerts are active, shows a placeholder with the card name instead of hiding completely.",
+    card_background: "Custom background / transparency",
+    card_background_help: "Enable to use the HA theme variable (--ha-card-background). Enter a custom CSS value to use a fixed color, e.g. rgba(0,0,0,0.5).",
     show_snooze_bar: "Show snooze reactivation bar 💤",
     show_snooze_button: "Show snooze button 💤",
     show_history_button: "Show history button 📋",
@@ -1083,6 +1206,8 @@ const ET = {
     use_ha_icon: "Use Home Assistant icon (mdi:)",
     icon_color: "Icon color",
     icon_color_help: "CSS color: e.g. #ff0000, red, var(--error-color). Leave empty for theme default.",
+    icon_size: "Icon size",
+    icon_size_help: "CSS value: e.g. 1.2em, 24px. Leave empty for theme default (1.6em).",
     on_change: "Trigger on ANY state change",
     on_change_help: "Alert fires whenever the entity state changes (any value). Extra AND/OR conditions are still evaluated. Best for events: counters, timestamps, sensors with no fixed states.",
     trigger_delay: "⏳ Trigger delay (seconds)",
@@ -1253,10 +1378,20 @@ const ET = {
     weather_forecast_interval: "Intervalle d'alternance (secondes)",
     weather_forecast_interval_help: "Secondes entre la météo actuelle et les prévisions. Défaut: 5",
     clear_weather_entity_label: "Entité météo (weather.*)",
+    clear_weather_sensors_title: "Capteurs personnalisés (optionnel)",
+    clear_weather_temperature_entity: "Température (capteur local)",
+    clear_weather_humidity_entity: "Humidité (capteur local)",
+    clear_weather_temp_high_entity: "Température max du jour (capteur)",
+    clear_weather_temp_low_entity: "Température min du jour (capteur)",
+    clear_weather_aqi_entity: "Qualité de l'air / PM2.5 (capteur)",
     clear_clock_show_date: "Afficher la date",
     clear_clock_12h: "Format 12 heures (AM/PM)",
     clear_clock_date_label: "Position de la date",
     clear_clock_style_label: "Style horloge",
+    clear_clock_colors_title: "Couleurs personnalisées (optionnel)",
+    clear_clock_color: "Couleur des chiffres",
+    clear_clock_date_color: "Couleur de la date",
+    clear_clock_background: "Couleur de fond",
     clear_weather_style_label: "Style badges météo",
     style_default: "Default",
     style_aurora: "🌌 Aurora",
@@ -1288,6 +1423,8 @@ const ET = {
     card_height_help: "Fixe la hauteur pour éviter les décalages de mise en page lors des changements d'alertes. Laisser vide pour hauteur automatique.",
     card_border: "Afficher la bordure et le nom",
     card_border_help: "Ajoute la bordure standard de Home Assistant autour de la carte. Quand aucune alerte n'est active, affiche un espace réservé avec le nom de la carte au lieu de la masquer complètement.",
+    card_background: "Arrière-plan personnalisé / transparence",
+    card_background_help: "Activer pour utiliser la variable du thème HA (--ha-card-background). Entrez une valeur CSS pour une couleur fixe, ex. rgba(0,0,0,0.5).",
     show_snooze_bar: "Afficher la barre de réactivation snooze 💤",
     show_snooze_button: "Afficher le bouton snooze 💤",
     show_history_button: "Afficher le bouton historique 📋",
@@ -1381,6 +1518,8 @@ const ET = {
     use_ha_icon: "Utiliser une icône Home Assistant (mdi:)",
     icon_color: "Couleur de l'icône",
     icon_color_help: "Couleur CSS: ex. #ff0000, red, var(--error-color). Laisser vide pour la couleur du thème.",
+    icon_size: "Taille de l'icône",
+    icon_size_help: "Valeur CSS : ex. 1.2em, 24px. Laisser vide pour le défaut du thème (1.6em).",
     on_change: "Déclencher à TOUT changement d'état",
     on_change_help: "L'alerte s'affiche à chaque changement d'état (quelle que soit la valeur). Les conditions AND/OR supplémentaires sont toujours évaluées. Idéal pour les événements : compteurs, horodatages, capteurs sans états fixes.",
     trigger_delay: "⏳ Délai d'activation (secondes)",
@@ -1551,10 +1690,20 @@ const ET = {
     weather_forecast_interval: "Wechselintervall (Sekunden)",
     weather_forecast_interval_help: "Sekunden zwischen aktuellem Wetter und Vorhersage. Standard: 5",
     clear_weather_entity_label: "Wetter-Entität (weather.*)",
+    clear_weather_sensors_title: "Benutzerdefinierte Sensoren (optional)",
+    clear_weather_temperature_entity: "Temperatur (lokaler Sensor)",
+    clear_weather_humidity_entity: "Luftfeuchtigkeit (lokaler Sensor)",
+    clear_weather_temp_high_entity: "Heutige Höchsttemperatur (Sensor)",
+    clear_weather_temp_low_entity: "Heutige Tiefsttemperatur (Sensor)",
+    clear_weather_aqi_entity: "Luftqualität / PM2.5 (Sensor)",
     clear_clock_show_date: "Datum anzeigen",
     clear_clock_12h: "12-Stunden-Format (AM/PM)",
     clear_clock_date_label: "Datumsposition",
     clear_clock_style_label: "Uhr-Stil",
+    clear_clock_colors_title: "Benutzerdefinierte Farben (optional)",
+    clear_clock_color: "Farbe der Ziffern",
+    clear_clock_date_color: "Farbe des Datums",
+    clear_clock_background: "Hintergrundfarbe",
     clear_weather_style_label: "Wetter-Badge-Stil",
     style_default: "Default",
     style_aurora: "🌌 Aurora",
@@ -1586,6 +1735,8 @@ const ET = {
     card_height_help: "Sperrt die Höhe, um Layoutverschiebungen beim Wechsel von Alerts zu verhindern. Leer lassen für automatische Höhe.",
     card_border: "Rahmen und Namen anzeigen",
     card_border_help: "Fügt den Standard-Home-Assistant-Rahmen um die Karte hinzu. Wenn keine Alerts aktiv sind, wird ein Platzhalter mit dem Kartennamen angezeigt, anstatt die Karte vollständig auszublenden.",
+    card_background: "Benutzerdefinierter Hintergrund / Transparenz",
+    card_background_help: "Aktivieren, um die HA-Themenvariable (--ha-card-background) zu verwenden. CSS-Wert für feste Farbe eingeben, z.B. rgba(0,0,0,0.5).",
     show_snooze_bar: "Schlummern-Reaktivierungsleiste anzeigen 💤",
     show_snooze_button: "Schlummern-Schaltfläche anzeigen 💤",
     show_history_button: "Verlauf-Schaltfläche anzeigen 📋",
@@ -1679,6 +1830,8 @@ const ET = {
     use_ha_icon: "Home Assistant Symbol verwenden (mdi:)",
     icon_color: "Symbolfarbe",
     icon_color_help: "CSS-Farbe: z.B. #ff0000, red, var(--error-color). Leer lassen für Themafarbe.",
+    icon_size: "Symbolgröße",
+    icon_size_help: "CSS-Wert: z.B. 1.2em, 24px. Leer lassen für Thema-Standard (1.6em).",
     on_change: "Bei JEDER Statusänderung auslösen",
     on_change_help: "Warnung erscheint bei jeder Statusänderung (beliebiger Wert). Zusätzliche AND/OR-Bedingungen werden trotzdem ausgewertet. Ideal für Ereignisse: Zähler, Zeitstempel, Sensoren ohne feste Zustände.",
     trigger_delay: "⏳ Aktivierungsverzögerung (Sekunden)",
@@ -1849,10 +2002,20 @@ const ET = {
     weather_forecast_interval: "Wisselinterval (seconden)",
     weather_forecast_interval_help: "Seconden tussen huidig weer en weekverwachting. Standaard: 5",
     clear_weather_entity_label: "Weerentiteit (weather.*)",
+    clear_weather_sensors_title: "Aangepaste sensoren (optioneel)",
+    clear_weather_temperature_entity: "Temperatuur (lokale sensor)",
+    clear_weather_humidity_entity: "Luchtvochtigheid (lokale sensor)",
+    clear_weather_temp_high_entity: "Hoogste temperatuur vandaag (sensor)",
+    clear_weather_temp_low_entity: "Laagste temperatuur vandaag (sensor)",
+    clear_weather_aqi_entity: "Luchtkwaliteit / PM2.5 (sensor)",
     clear_clock_show_date: "Datum weergeven",
     clear_clock_12h: "12-uursformaat (AM/PM)",
     clear_clock_date_label: "Datumpositie",
     clear_clock_style_label: "Klokstijl",
+    clear_clock_colors_title: "Aangepaste kleuren (optioneel)",
+    clear_clock_color: "Kleur van de cijfers",
+    clear_clock_date_color: "Kleur van de datum",
+    clear_clock_background: "Achtergrondkleur",
     clear_weather_style_label: "Weer badge stijl",
     style_default: "Default",
     style_aurora: "🌌 Aurora",
@@ -1884,6 +2047,8 @@ const ET = {
     card_height_help: "Vergrendelt de hoogte om lay-outverschuivingen bij wisselende meldingen te voorkomen. Leeg laten voor automatische hoogte.",
     card_border: "Toon rand en naam",
     card_border_help: "Voegt de standaard Home Assistant rand toe rond de kaart. Wanneer er geen meldingen actief zijn, wordt een tijdelijke aanduiding met de kaartnaam weergegeven in plaats van de kaart volledig te verbergen.",
+    card_background: "Aangepaste achtergrond / transparantie",
+    card_background_help: "Inschakelen om de HA-themavariabele (--ha-card-background) te gebruiken. Voer een CSS-waarde in voor een vaste kleur, bijv. rgba(0,0,0,0.5).",
     show_snooze_bar: "Sluimer-reactiveringsbalk weergeven 💤",
     show_snooze_button: "Sluimerknop weergeven 💤",
     show_history_button: "Geschiedenisknop weergeven 📋",
@@ -1977,6 +2142,8 @@ const ET = {
     use_ha_icon: "Home Assistant pictogram gebruiken (mdi:)",
     icon_color: "Pictogramkleur",
     icon_color_help: "CSS-kleur: bijv. #ff0000, red, var(--error-color). Leeg laten voor themakleur.",
+    icon_size: "Pictogramgrootte",
+    icon_size_help: "CSS-waarde: bijv. 1.2em, 24px. Leeg laten voor thema-standaard (1.6em).",
     on_change: "Activeren bij ELKE statuswijziging",
     on_change_help: "Melding verschijnt bij elke statuswijziging (willekeurige waarde). Extra AND/OR-voorwaarden worden nog steeds geëvalueerd. Ideaal voor gebeurtenissen: tellers, tijdstempels, sensoren zonder vaste toestanden.",
     trigger_delay: "⏳ Activeringsvertraging (seconden)",
@@ -2147,10 +2314,20 @@ const ET = {
     weather_forecast_interval: "Khoảng thời gian xen kẽ (giây)",
     weather_forecast_interval_help: "Giây giữa thời tiết hiện tại và dự báo tuần. Mặc định: 5",
     clear_weather_entity_label: "Thực thể thời tiết (weather.*)",
+    clear_weather_sensors_title: "Cảm biến tùy chỉnh (tùy chọn)",
+    clear_weather_temperature_entity: "Nhiệt độ (cảm biến cục bộ)",
+    clear_weather_humidity_entity: "Độ ẩm (cảm biến cục bộ)",
+    clear_weather_temp_high_entity: "Nhiệt độ cao nhất hôm nay (cảm biến)",
+    clear_weather_temp_low_entity: "Nhiệt độ thấp nhất hôm nay (cảm biến)",
+    clear_weather_aqi_entity: "Chất lượng không khí / PM2.5 (cảm biến)",
     clear_clock_show_date: "Hiển thị ngày",
     clear_clock_12h: "Định dạng 12 giờ (AM/PM)",
     clear_clock_date_label: "Vị trí ngày",
     clear_clock_style_label: "Kiểu đồng hồ",
+    clear_clock_colors_title: "Màu tùy chỉnh (tùy chọn)",
+    clear_clock_color: "Màu chữ số",
+    clear_clock_date_color: "Màu ngày tháng",
+    clear_clock_background: "Màu nền",
     clear_weather_style_label: "Kiểu badge thời tiết",
     style_default: "Default",
     style_aurora: "🌌 Aurora",
@@ -2182,6 +2359,8 @@ const ET = {
     card_height_help: "Khóa chiều cao để ngăn dịch chuyển bố cục khi cảnh báo thay đổi. Để trống để chiều cao tự động.",
     card_border: "Hiển thị viền và tên card",
     card_border_help: "Thêm viền chuẩn Home Assistant xung quanh card. Khi không có cảnh báo nào hoạt động, hiển thị placeholder với tên card thay vì ẩn hoàn toàn.",
+    card_background: "Nền tùy chỉnh / độ trong suốt",
+    card_background_help: "Bật để dùng biến theme HA (--ha-card-background). Nhập giá trị CSS cho màu cố định, ví dụ rgba(0,0,0,0.5).",
     show_snooze_bar: "Hiển thị thanh kích hoạt lại tạm hoãn 💤",
     show_snooze_button: "Hiển thị nút tạm hoãn 💤",
     show_history_button: "Hiển thị nút lịch sử 📋",
@@ -2275,6 +2454,8 @@ const ET = {
     use_ha_icon: "Dùng biểu tượng Home Assistant (mdi:)",
     icon_color: "Màu biểu tượng",
     icon_color_help: "Màu CSS: ví dụ #ff0000, red, var(--error-color). Để trống để dùng màu theme.",
+    icon_size: "Kích thước biểu tượng",
+    icon_size_help: "Giá trị CSS: ví dụ 1.2em, 24px. Để trống để dùng mặc định (1.6em).",
     on_change: "Kích hoạt khi BẤT KỲ thay đổi trạng thái",
     on_change_help: "Báo động hiện khi trạng thái thay đổi (bất kỳ giá trị). Điều kiện AND/OR bổ sung vẫn được đánh giá. Phù hợp cho sự kiện: bộ đếm, dấu thời gian, cảm biến không có trạng thái cố định.",
     trigger_delay: "⏳ Độ trễ kích hoạt (giây)",
@@ -2445,10 +2626,20 @@ const ET = {
     weather_forecast_interval: "Интервал чередования (секунды)",
     weather_forecast_interval_help: "Секунды между текущей погодой и прогнозом. По умолч.: 5",
     clear_weather_entity_label: "Объект погоды (weather.*)",
+    clear_weather_sensors_title: "Пользовательские датчики (необязательно)",
+    clear_weather_temperature_entity: "Температура (локальный датчик)",
+    clear_weather_humidity_entity: "Влажность (локальный датчик)",
+    clear_weather_temp_high_entity: "Макс. температура сегодня (датчик)",
+    clear_weather_temp_low_entity: "Мин. температура сегодня (датчик)",
+    clear_weather_aqi_entity: "Качество воздуха / PM2.5 (датчик)",
     clear_clock_show_date: "Показать дату",
     clear_clock_12h: "12-часовой формат (AM/PM)",
     clear_clock_date_label: "Позиция даты",
     clear_clock_style_label: "Стиль часов",
+    clear_clock_colors_title: "Пользовательские цвета (необязательно)",
+    clear_clock_color: "Цвет цифр",
+    clear_clock_date_color: "Цвет даты",
+    clear_clock_background: "Цвет фона",
     clear_weather_style_label: "Стиль значка погоды",
     style_default: "Default",
     style_aurora: "🌌 Aurora",
@@ -2480,6 +2671,8 @@ const ET = {
     card_height_help: "Фиксирует высоту для предотвращения смещений при смене оповещений. Оставьте пустым для автоматической высоты.",
     card_border: "Показывать рамку и название",
     card_border_help: "Добавляет стандартную рамку Home Assistant вокруг карточки. Когда нет активных оповещений, отображается заполнитель с названием карточки вместо полного скрытия.",
+    card_background: "Пользовательский фон / прозрачность",
+    card_background_help: "Включите для использования переменной темы HA (--ha-card-background). Введите значение CSS для фиксированного цвета, напр. rgba(0,0,0,0.5).",
     show_snooze_bar: "Показывать полосу восстановления отложенных 💤",
     show_snooze_button: "Показывать кнопку отложить 💤",
     show_history_button: "Показывать кнопку истории 📋",
@@ -2573,6 +2766,8 @@ const ET = {
     use_ha_icon: "Использовать иконку Home Assistant (mdi:)",
     icon_color: "Цвет иконки",
     icon_color_help: "CSS цвет: например #ff0000, red, var(--error-color). Оставьте пустым для цвета темы.",
+    icon_size: "Размер иконки",
+    icon_size_help: "CSS значение: например 1.2em, 24px. Оставьте пустым для стандарта темы (1.6em).",
     on_change: "Активировать при ЛЮБОМ изменении состояния",
     on_change_help: "Оповещение появляется при изменении состояния (любое значение). Дополнительные условия AND/OR всё равно проверяются. Подходит для событий: счётчики, временные метки, датчики без фиксированного состояния.",
     trigger_delay: "⏳ Задержка активации (секунды)",
@@ -2743,10 +2938,20 @@ const ET = {
     weather_forecast_interval: "Skifteinterval (sekunder)",
     weather_forecast_interval_help: "Sekunder mellem aktuelt vejr og ugeprognose. Standard: 5",
     clear_weather_entity_label: "Vejrentitet (weather.*)",
+    clear_weather_sensors_title: "Brugerdefinerede sensorer (valgfrit)",
+    clear_weather_temperature_entity: "Temperatur (lokal sensor)",
+    clear_weather_humidity_entity: "Luftfugtighed (lokal sensor)",
+    clear_weather_temp_high_entity: "Dagens højeste temperatur (sensor)",
+    clear_weather_temp_low_entity: "Dagens laveste temperatur (sensor)",
+    clear_weather_aqi_entity: "Luftkvalitet / PM2.5 (sensor)",
     clear_clock_show_date: "Vis dato",
     clear_clock_12h: "12-timers format (AM/PM)",
     clear_clock_date_label: "Datoposition",
     clear_clock_style_label: "Ur-stil",
+    clear_clock_colors_title: "Brugerdefinerede farver (valgfrit)",
+    clear_clock_color: "Farve på cifrene",
+    clear_clock_date_color: "Datofarve",
+    clear_clock_background: "Baggrundsfarve",
     clear_weather_style_label: "Vejr badge stil",
     style_default: "Default",
     style_aurora: "🌌 Aurora",
@@ -2869,6 +3074,8 @@ const ET = {
     use_ha_icon: "Brug Home Assistant‑ikon (mdi:)",
     icon_color: "Ikonfarve",
     icon_color_help: "CSS‑farve: f.eks. #ff0000, red, var(--error-color). Lad stå tom for tema‑standard.",
+    icon_size: "Ikonstørrelse",
+    icon_size_help: "CSS-værdi: f.eks. 1.2em, 24px. Lad stå tom for tema-standard (1.6em).",
     on_change: "Udløs ved enhver tilstandsændring",
     on_change_help: "Advarsel udløser, når enhedens tilstand ændrer sig (enhver værdi). Ekstra AND/OR-betingelser evalueres stadig. Bedst til hændelser: tællere, tidsstemle, sensorer uden faste tilstande.",
     trigger_delay: "⏳ Aktiveringsforsinkelse (sekunder)",
@@ -3011,6 +3218,8 @@ const ET = {
     time_range_help: "Vis kun denne alarm inden for det angivne tidsvindue. Understøtter midnatovergang (f.eks. 22:00–06:00). Lad være tomt for ingen begrænsning.",
     card_border: "Vis kortramme og navn",
     card_border_help: "Tilføjer den standard Home Assistant-ramme rundt om kortet. Når der ingen aktive advarsler er, vises en pladsholder med kortnavnet i stedet for at skjule det helt.",
+    card_background: "Brugerdefineret baggrund / gennemsigtighed",
+    card_background_help: "Aktiver for at bruge HA-temavariablen (--ha-card-background). Indtast en CSS-værdi for en fast farve, f.eks. rgba(0,0,0,0.5).",
     music_player_controls: "Medieafspiller-kontroller",
     music_player_controls_help: "Viser afspil/pause, forrige, næste og lyd fra med albumcover som baggrund. Virker kun når entiteten er en media_player.",
     music_player_color: "Accentfarve",
@@ -3041,12 +3250,22 @@ const ET = {
     weather_forecast_interval: "Interval střídání (sekundy)",
     weather_forecast_interval_help: "Sekundy mezi zobrazením počasí a předpovědi",
     clear_weather_entity_label: "Entita počasí (weather.*)",
+    clear_weather_sensors_title: "Vlastní senzory (volitelné)",
+    clear_weather_temperature_entity: "Teplota (místní senzor)",
+    clear_weather_humidity_entity: "Vlhkost (místní senzor)",
+    clear_weather_temp_high_entity: "Dnešní maximální teplota (senzor)",
+    clear_weather_temp_low_entity: "Dnešní minimální teplota (senzor)",
+    clear_weather_aqi_entity: "Kvalita ovzduší / PM2.5 (senzor)",
     clear_clock_show_date: "Zobrazit datum",
     clear_clock_12h: "12hodinový formát (AM/PM)",
     clear_clock_date_label: "Pozice data",
     date_position_above: "⬆ Nad časem",
     date_position_below: "⬇ Pod časem",
     clear_clock_style_label: "Styl hodin",
+    clear_clock_colors_title: "Vlastní barvy (volitelné)",
+    clear_clock_color: "Barva číslic",
+    clear_clock_date_color: "Barva data",
+    clear_clock_background: "Barva pozadí",
     clear_weather_style_label: "Styl widgetu počasí",
     style_default: "Default",
     style_aurora: "🌌 Aurora",
@@ -3076,6 +3295,8 @@ const ET = {
     card_height_help: "Uzamkne výšku karty aby nedocházelo k posunům při změně varování. Ponechte prázdné pro automatickou výšku.",
     card_border: "Zobrazit okraje a název",
     card_border_help: "Přidá standardní okraje Home Assistenta okolo karty. Zobrazí kartu, pokud nejsou aktivní žádná varování, namísto úplného schování karty.",
+    card_background: "Vlastní pozadí / průhlednost",
+    card_background_help: "Zapněte pro použití proměnné tématu HA (--ha-card-background). Zadejte CSS hodnotu pro pevnou barvu, např. rgba(0,0,0,0.5).",
     show_snooze_bar: "Zobrazit nástroj pro reaktivaci odložených varování 💤",
     show_snooze_button: "Zobrazit tlačítko odložit 💤",
     show_history_button: "Zobrazit tlačítko historie 📋",
@@ -3169,6 +3390,8 @@ const ET = {
     use_ha_icon: "Použij ikonu HA (mdi:)",
     icon_color: "Barva ikony",
     icon_color_help: "CSS barva: např. #ff0000, červena, var(--error-color). Ponechte prázdné pro výchozí vzhled.",
+    icon_size: "Velikost ikony",
+    icon_size_help: "CSS hodnota: např. 1.2em, 24px. Ponechte prázdné pro výchozí (1.6em).",
     on_change: "Aktivovat při JAKÉKOLIV změně stavu",
     on_change_help: "Varování se spustí při jakékoliv změně stavu entity (nehledě na hodnotu stavu). Další AND/OR podmínky jsou stále vyhodnocovány. Vhodné pro čítače, časové značky, senzory bez pevného stavu.",
     trigger_delay: "⏳ Zpoždění aktivace (sekundy)",
@@ -3311,6 +3534,8 @@ const ET = {
     time_range_help: "Zobrazí varování pouze v nastaveném časovém intervalu. Podporuje přechod přes půlnoc mezi dny (např. 22:00–06:00). Ponechte prázdné pro zobrazení varování kdykoli.",
     card_border: "Zobrazit okraje a název",
     card_border_help: "Přidá standardní okraje Home Assistenta okolo karty. Zobrazí kartu, pokud nejsou aktivní žádná varování, namísto úplného schování karty.",
+    card_background: "Vlastní pozadí / průhlednost",
+    card_background_help: "Zapněte pro použití proměnné tématu HA (--ha-card-background). Zadejte CSS hodnotu pro pevnou barvu, např. rgba(0,0,0,0.5).",
     music_player_controls: "Ovládání hudebního přehrávače",
     music_player_controls_help: "Zobrazí přehrát/pozastavit, předchozí, další a ztlumit s obalem alba jako pozadím. Funguje pouze když je entita media_player.",
     music_player_color: "Barva zvýraznění",
@@ -3341,10 +3566,20 @@ const ET = {
     weather_forecast_interval: "Intervalo de alternância (segundos)",
     weather_forecast_interval_help: "Segundos entre a exibição do clima e da previsão",
     clear_weather_entity_label: "Entidade de clima (weather.*)",
+    clear_weather_sensors_title: "Sensores personalizados (opcional)",
+    clear_weather_temperature_entity: "Temperatura (sensor local)",
+    clear_weather_humidity_entity: "Umidade (sensor local)",
+    clear_weather_temp_high_entity: "Temperatura máxima de hoje (sensor)",
+    clear_weather_temp_low_entity: "Temperatura mínima de hoje (sensor)",
+    clear_weather_aqi_entity: "Qualidade do ar / PM2.5 (sensor)",
     clear_clock_show_date: "Mostrar data",
     clear_clock_12h: "Formato 12 horas (AM/PM)",
     clear_clock_date_label: "Posição da data",
     clear_clock_style_label: "Estilo do relógio",
+    clear_clock_colors_title: "Cores personalizadas (opcional)",
+    clear_clock_color: "Cor dos dígitos",
+    clear_clock_date_color: "Cor da data",
+    clear_clock_background: "Cor de fundo",
     clear_weather_style_label: "Estilo do badge de clima",
     style_default: "Padrão",
     style_aurora: "🌌 Aurora",
@@ -3376,6 +3611,8 @@ const ET = {
     card_height_help: "Fixa a altura para evitar deslocamentos de layout quando os alertas mudam. Deixe vazio para altura automática.",
     card_border: "Mostrar borda e nome do card",
     card_border_help: "Adiciona a borda padrão do Home Assistant ao redor do card. Quando não há alertas ativos, mostra um espaço reservado com o nome do card em vez de ocultá-lo completamente.",
+    card_background: "Fundo personalizado / transparência",
+    card_background_help: "Ativar para usar a variável do tema HA (--ha-card-background). Insira um valor CSS para cor fixa, ex. rgba(0,0,0,0.5).",
     show_snooze_bar: "Mostrar barra de reativação do silenciar 💤",
     show_snooze_button: "Mostrar botão de silenciar 💤",
     show_history_button: "Mostrar botão de histórico 📋",
@@ -3469,6 +3706,8 @@ const ET = {
     use_ha_icon: "Usar ícone do Home Assistant (mdi:)",
     icon_color: "Cor do ícone",
     icon_color_help: "Cor CSS: ex. #ff0000, red, var(--error-color). Deixe vazio para o padrão do tema.",
+    icon_size: "Tamanho do ícone",
+    icon_size_help: "Valor CSS: ex. 1.2em, 24px. Deixe vazio para o padrão do tema (1.6em).",
     on_change: "Disparar em QUALQUER mudança de estado",
     on_change_help: "O alerta dispara sempre que o estado da entidade muda (qualquer valor). As condições AND/OR extras ainda são avaliadas. Ideal para eventos: contadores, timestamps, sensores sem estados fixos.",
     trigger_delay: "⏳ Atraso de ativação (segundos)",
@@ -3639,10 +3878,20 @@ const ET = {
     weather_forecast_interval: "Intervalo de alternancia (segundos)",
     weather_forecast_interval_help: "Segundos entre la vista del tiempo y la previsión",
     clear_weather_entity_label: "Entidad del tiempo (weather.*)",
+    clear_weather_sensors_title: "Sensores personalizados (opcional)",
+    clear_weather_temperature_entity: "Temperatura (sensor local)",
+    clear_weather_humidity_entity: "Humedad (sensor local)",
+    clear_weather_temp_high_entity: "Temperatura máxima de hoy (sensor)",
+    clear_weather_temp_low_entity: "Temperatura mínima de hoy (sensor)",
+    clear_weather_aqi_entity: "Calidad del aire / PM2.5 (sensor)",
     clear_clock_show_date: "Mostrar fecha",
     clear_clock_12h: "Formato 12 horas (AM/PM)",
     clear_clock_date_label: "Posición de la fecha",
     clear_clock_style_label: "Estilo del reloj",
+    clear_clock_colors_title: "Colores personalizados (opcional)",
+    clear_clock_color: "Color de los dígitos",
+    clear_clock_date_color: "Color de la fecha",
+    clear_clock_background: "Color de fondo",
     clear_weather_style_label: "Estilo del badge del tiempo",
     style_default: "Por defecto",
     style_aurora: "🌌 Aurora",
@@ -3674,6 +3923,8 @@ const ET = {
     card_height_help: "Fija la altura para evitar desplazamientos de diseño al cambiar las alertas. Deja vacío para altura automática.",
     card_border: "Mostrar borde y nombre de la tarjeta",
     card_border_help: "Añade el borde estándar de Home Assistant alrededor de la tarjeta. Cuando no hay alertas activas, muestra un marcador con el nombre de la tarjeta en lugar de ocultarla.",
+    card_background: "Fondo personalizado / transparencia",
+    card_background_help: "Activar para usar la variable del tema HA (--ha-card-background). Introduce un valor CSS para color fijo, ej. rgba(0,0,0,0.5).",
     show_snooze_bar: "Mostrar barra de reactivación de posponer 💤",
     show_snooze_button: "Mostrar botón de posponer 💤",
     show_history_button: "Mostrar botón de historial 📋",
@@ -3767,6 +4018,8 @@ const ET = {
     use_ha_icon: "Usar icono de Home Assistant (mdi:)",
     icon_color: "Color del icono",
     icon_color_help: "Color CSS: ej. #ff0000, red, var(--error-color). Deja vacío para el color del tema.",
+    icon_size: "Tamaño del icono",
+    icon_size_help: "Valor CSS: ej. 1.2em, 24px. Dejar vacío para el valor por defecto del tema (1.6em).",
     on_change: "Disparar en CUALQUIER cambio de estado",
     on_change_help: "La alerta se dispara cada vez que el estado de la entidad cambia (cualquier valor). Las condiciones AND/OR adicionales se evalúan igualmente. Ideal para eventos: contadores, timestamps, sensores sin estados fijos.",
     trigger_delay: "⏳ Retraso de activación (segundos)",
@@ -3970,6 +4223,14 @@ const THEME_DESC_I18N = {
   hourglass:    { it: "Riempimento verticale", en: "Vertical fill",        fr: "Remplissage vertical",  de: "Vertikale Füllung",     nl: "Verticale vulling"    },
   timer_pulse:  { it: "Pulsante veloce",       en: "Fast pulse",           fr: "Pulsation rapide",      de: "Schneller Puls",        nl: "Snelle puls"          },
   timer_ring:   { it: "Anello SVG",            en: "SVG ring",             fr: "Anneau SVG",            de: "SVG-Ring",              nl: "SVG ring"             },
+  portal:       { it: "Vortice 3D rotante",   en: "3D spinning vortex",   fr: "Vortex 3D rotatif",     de: "3D-Wirbel",             nl: "3D draaikolk"         },
+  void:         { it: "Buco nero 3D",         en: "3D black hole",        fr: "Trou noir 3D",          de: "3D Schwarzes Loch",     nl: "3D zwart gat"         },
+  volt:         { it: "Scarica elettrica",    en: "Electric discharge",   fr: "Décharge électrique",   de: "Elektrische Entladung", nl: "Elektrische ontlading"},
+  nebula:       { it: "Nuvole gas 3D",        en: "3D gas clouds",        fr: "Nuages de gaz 3D",      de: "3D Gaswolken",          nl: "3D gaswolken"         },
+  prism:        { it: "Spettro prismatico",   en: "Prismatic spectrum",   fr: "Spectre prismatique",   de: "Prismatisches Spektrum",nl: "Prismatisch spectrum"  },
+  arcade:       { it: "Griglia 3D Tron",      en: "3D Tron grid",         fr: "Grille 3D Tron",        de: "3D Tron-Raster",        nl: "3D Tron raster"       },
+  diamond:      { it: "Bagliore cristallo",   en: "Crystal shimmer",      fr: "Scintillement cristal", de: "Kristallschimmer",      nl: "Kristal glinstering"  },
+  quantum:      { it: "Orbite atomiche 3D",   en: "3D atomic orbitals",   fr: "Orbitales atomiques 3D",de: "3D Atomorbitale",       nl: "3D atoomorbits"       },
 };
 
 // Category group name translations
@@ -4025,6 +4286,14 @@ const THEME_OPTIONS = [
   { value: "sunrise"      },
   { value: "plant"        },
   { value: "lock"         },
+  { value: "portal"       },
+  { value: "void"         },
+  { value: "volt"         },
+  { value: "nebula"       },
+  { value: "prism"        },
+  { value: "arcade"       },
+  { value: "diamond"      },
+  { value: "quantum"      },
   { value: "ticker"       },
   { value: "neon"         },
   { value: "glass"        },
@@ -4236,6 +4505,8 @@ class AlertTickerCardEditor extends LitElement {
       ticker: "📰", neon: "⚡", glass: "🔮", matrix: "💻", minimal: "📋",
       retro: "📺", cyberpunk: "🤖", vapor: "🌸", lava: "🌋",
       countdown: "⏱️", hourglass: "⏳", timer_pulse: "💥", timer_ring: "🔵",
+      portal: "🌀", void: "⚫", volt: "⚡", nebula: "🌌",
+      prism: "💎", arcade: "🕹️", diamond: "💠", quantum: "⚛️",
     };
     const NAME = {
       timer_pulse: "Timer Pulse", timer_ring: "Timer Ring",
@@ -4464,6 +4735,62 @@ class AlertTickerCardEditor extends LitElement {
         </div>
         <div class="helper-text">${this._t("card_border_help")}</div>
       </div>
+      <div class="form-row">
+        <div class="toggle-row">
+          <span>${this._t("card_background")}</span>
+          <ha-switch
+            .checked="${!!cfg.card_background}"
+            @change="${(e) => {
+              if (e.target.checked) {
+                this._fireConfig({ ...this._config, card_background: true });
+              } else {
+                const { card_background, ...rest } = this._config;
+                this._fireConfig(rest);
+              }
+            }}"
+          ></ha-switch>
+        </div>
+        ${cfg.card_background ? (() => {
+          const { hex, alpha } = this._parseBgValue(cfg.card_background);
+          return html`
+            <div class="icon-color-row" style="margin-top:6px">
+              <input
+                type="color"
+                class="icon-color-swatch"
+                .value="${hex}"
+                @input="${(e) => {
+                  const { alpha: a } = this._parseBgValue(cfg.card_background);
+                  this._fireConfig({ ...this._config, card_background: this._hexAlphaToRgba(e.target.value, a) });
+                }}"
+                title="Base color"
+              />
+              <ha-textfield
+                .label="${this._t("card_background")}"
+                .value="${typeof cfg.card_background === 'string' ? cfg.card_background : ''}"
+                placeholder="rgba(20, 20, 30, 0.7)"
+                @change="${(e) => {
+                  const v = e.target.value.trim();
+                  this._fireConfig({ ...this._config, card_background: v || true });
+                }}"
+              ></ha-textfield>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+              <span style="font-size:0.82rem;opacity:0.65;white-space:nowrap">Opacity</span>
+              <input
+                type="range" min="0" max="100" step="1"
+                .value="${Math.round(alpha * 100)}"
+                style="flex:1"
+                @input="${(e) => {
+                  const { hex: h } = this._parseBgValue(cfg.card_background);
+                  this._fireConfig({ ...this._config, card_background: this._hexAlphaToRgba(h, e.target.value / 100) });
+                }}"
+              />
+              <span style="font-size:0.82rem;min-width:34px;text-align:right">${Math.round(alpha * 100)}%</span>
+            </div>
+          `;
+        })() : ""}
+        <div class="helper-text">${this._t("card_background_help")}</div>
+      </div>
     `;
   }
 
@@ -4639,6 +4966,35 @@ class AlertTickerCardEditor extends LitElement {
               @value-changed="${(e) => this._fireConfig({ ...this._config, clear_weather_entity: e.detail.value || undefined })}"
             ></ha-entity-picker>
           </div>
+          <!-- Custom sensor overrides (visible when weather entity is set) -->
+          ${cfg.clear_weather_entity ? html`
+          <div class="form-section-title" style="font-size:0.78rem;opacity:0.6;padding:4px 0 2px;letter-spacing:0.04em;text-transform:uppercase;">${this._t("clear_weather_sensors_title")}</div>
+          <div class="form-row">
+            <ha-entity-picker .hass="${this._hass}" .value="${cfg.clear_weather_temperature_entity || ''}" .label="${this._t('clear_weather_temperature_entity')}" allow-custom-entity
+              @value-changed="${(e) => this._fireConfig({ ...this._config, clear_weather_temperature_entity: e.detail.value || undefined })}"
+            ></ha-entity-picker>
+          </div>
+          <div class="form-row">
+            <ha-entity-picker .hass="${this._hass}" .value="${cfg.clear_weather_humidity_entity || ''}" .label="${this._t('clear_weather_humidity_entity')}" allow-custom-entity
+              @value-changed="${(e) => this._fireConfig({ ...this._config, clear_weather_humidity_entity: e.detail.value || undefined })}"
+            ></ha-entity-picker>
+          </div>
+          <div class="form-row">
+            <ha-entity-picker .hass="${this._hass}" .value="${cfg.clear_weather_temp_high_entity || ''}" .label="${this._t('clear_weather_temp_high_entity')}" allow-custom-entity
+              @value-changed="${(e) => this._fireConfig({ ...this._config, clear_weather_temp_high_entity: e.detail.value || undefined })}"
+            ></ha-entity-picker>
+          </div>
+          <div class="form-row">
+            <ha-entity-picker .hass="${this._hass}" .value="${cfg.clear_weather_temp_low_entity || ''}" .label="${this._t('clear_weather_temp_low_entity')}" allow-custom-entity
+              @value-changed="${(e) => this._fireConfig({ ...this._config, clear_weather_temp_low_entity: e.detail.value || undefined })}"
+            ></ha-entity-picker>
+          </div>
+          <div class="form-row">
+            <ha-entity-picker .hass="${this._hass}" .value="${cfg.clear_weather_aqi_entity || ''}" .label="${this._t('clear_weather_aqi_entity')}" allow-custom-entity
+              @value-changed="${(e) => this._fireConfig({ ...this._config, clear_weather_aqi_entity: e.detail.value || undefined })}"
+            ></ha-entity-picker>
+          </div>
+          ` : ''}
         ` : ''}
 
         <!-- Date toggle + position (only for clock/weather_clock/weather_forecast modes) -->
@@ -4690,6 +5046,40 @@ class AlertTickerCardEditor extends LitElement {
                 <option value="gold"    ?selected="${cfg.clear_clock_style === 'gold'}">${this._t("style_gold")}</option>
                 <option value="matrix"  ?selected="${cfg.clear_clock_style === 'matrix'}">${this._t("style_matrix")}</option>
               </select>
+            </div>
+          </div>
+          <!-- Clock color customization -->
+          <div class="form-section-title" style="font-size:0.78rem;opacity:0.6;padding:4px 0 2px;letter-spacing:0.04em;text-transform:uppercase;">${this._t("clear_clock_colors_title")}</div>
+          <div class="form-row" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+            <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px;">
+              <label style="font-size:0.78rem;opacity:0.7;">${this._t("clear_clock_color")}</label>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input type="color" .value="${cfg.clear_clock_color || '#dce8ff'}"
+                  @input="${(e) => this._fireConfig({ ...this._config, clear_clock_color: e.target.value })}"
+                  style="width:36px;height:28px;border:none;border-radius:6px;cursor:pointer;padding:2px;">
+                ${cfg.clear_clock_color ? html`<button style="font-size:0.7rem;opacity:0.6;background:none;border:none;cursor:pointer;color:inherit;"
+                  @click="${() => this._fireConfig({ ...this._config, clear_clock_color: undefined })}">✕</button>` : ""}
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px;">
+              <label style="font-size:0.78rem;opacity:0.7;">${this._t("clear_clock_date_color")}</label>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input type="color" .value="${cfg.clear_clock_date_color || '#94affe'}"
+                  @input="${(e) => this._fireConfig({ ...this._config, clear_clock_date_color: e.target.value })}"
+                  style="width:36px;height:28px;border:none;border-radius:6px;cursor:pointer;padding:2px;">
+                ${cfg.clear_clock_date_color ? html`<button style="font-size:0.7rem;opacity:0.6;background:none;border:none;cursor:pointer;color:inherit;"
+                  @click="${() => this._fireConfig({ ...this._config, clear_clock_date_color: undefined })}">✕</button>` : ""}
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px;">
+              <label style="font-size:0.78rem;opacity:0.7;">${this._t("clear_clock_background")}</label>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input type="color" .value="${cfg.clear_clock_background || '#060c1c'}"
+                  @input="${(e) => this._fireConfig({ ...this._config, clear_clock_background: e.target.value })}"
+                  style="width:36px;height:28px;border:none;border-radius:6px;cursor:pointer;padding:2px;">
+                ${cfg.clear_clock_background ? html`<button style="font-size:0.7rem;opacity:0.6;background:none;border:none;cursor:pointer;color:inherit;"
+                  @click="${() => this._fireConfig({ ...this._config, clear_clock_background: undefined })}">✕</button>` : ""}
+              </div>
             </div>
           </div>
         ` : ''}
@@ -5546,6 +5936,16 @@ class AlertTickerCardEditor extends LitElement {
                         ></ha-textfield>
                       </div>
                       <div class="helper-text">${this._t("icon_color_help")}</div>
+                      <ha-textfield
+                        .label="${this._t("icon_size")}"
+                        .value="${alert.icon_size || ""}"
+                        placeholder="1.6em"
+                        @change="${(e) => {
+                          const v = e.target.value.trim() || undefined;
+                          this._updateAlert(index, { icon_size: v });
+                        }}"
+                      ></ha-textfield>
+                      <div class="helper-text">${this._t("icon_size_help")}</div>
                       <div class="helper-text">${this._t("alert_icon_help")}</div>
                   ` : ""}
                 </div>
@@ -6204,6 +6604,23 @@ class AlertTickerCardEditor extends LitElement {
 
   /** Converts a CSS color string to a hex value for <input type="color">.
    *  Returns #000000 for anything that cannot be parsed (CSS vars, named colors etc.). */
+  _parseBgValue(val) {
+    if (!val || val === true) return { hex: "#141e1e", alpha: 0.7 };
+    const m = String(val).match(/rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)/);
+    if (m) {
+      const hex = "#" + [m[1], m[2], m[3]].map(n => parseInt(n).toString(16).padStart(2, "0")).join("");
+      return { hex, alpha: parseFloat(m[4] ?? "1") };
+    }
+    return { hex: this._cssColorToHex(val), alpha: 1 };
+  }
+
+  _hexAlphaToRgba(hex, alpha) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(2)})`;
+  }
+
   _cssColorToHex(color) {
     if (!color) return "#000000";
     if (/^#[0-9a-fA-F]{6}$/.test(color)) return color;

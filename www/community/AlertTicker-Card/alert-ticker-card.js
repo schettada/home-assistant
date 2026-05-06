@@ -1,7 +1,7 @@
 ﻿/**
- * AlertTicker Card v1.3.1
+ * AlertTicker Card v1.3.2.3
  * A Home Assistant custom Lovelace card to display alerts based on entity states.
- * Supports 42 visual themes with per-alert theme assignment, priority ordering,
+ * Supports 50 visual themes with per-alert theme assignment, priority ordering,
  * fold animation cycling, snooze, numeric conditions, attribute triggers,
  * multi-entity AND/OR conditions, action buttons, and a full visual editor.
  *
@@ -23,7 +23,7 @@ const css = LitElement.prototype.css;
 // ---------------------------------------------------------------------------
 // Card version — declared early so getConfigElement() can reference it
 // ---------------------------------------------------------------------------
-const CARD_VERSION = "1.3.1";
+const CARD_VERSION = "1.3.2.3";
 
 // ---------------------------------------------------------------------------
 // Theme metadata — drives default icons and category labels
@@ -71,6 +71,15 @@ const THEME_META = {
   sunrise:      { icon: "🌅", category: "ok",       color: "#ffd54f", bg: "linear-gradient(135deg,#1a0f00,#2e2200)" },
   plant:        { icon: "🌱", category: "ok",       color: "#69f0ae", bg: "linear-gradient(135deg,#001400,#002900)" },
   lock:         { icon: "🔒", category: "ok",       color: "#69f0ae", bg: "linear-gradient(135deg,#001a00,#003300)" },
+  // --- 3D Spectacular ---
+  portal:   { icon: "🌀", category: "critical", color: "#ff1744", bg: "linear-gradient(135deg,#1a0005,#2d0010)" },
+  void:     { icon: "⚫", category: "critical", color: "#d500f9", bg: "linear-gradient(135deg,#08000f,#14002a)" },
+  volt:     { icon: "⚡", category: "warning",  color: "#f9f926", bg: "linear-gradient(135deg,#080800,#141400)" },
+  nebula:   { icon: "🌌", category: "warning",  color: "#ce93d8", bg: "linear-gradient(135deg,#0d0019,#0a1529)" },
+  prism:    { icon: "💎", category: "info",     color: "#ffffff", bg: "linear-gradient(135deg,#0a0a14,#14141e)" },
+  arcade:   { icon: "🕹️", category: "info",     color: "#00e5ff", bg: "linear-gradient(135deg,#00050d,#00101a)" },
+  diamond:  { icon: "💠", category: "ok",       color: "#80deea", bg: "linear-gradient(135deg,#00141a,#001a24)" },
+  quantum:  { icon: "⚛️", category: "ok",       color: "#69f0ae", bg: "linear-gradient(135deg,#001a0d,#001a19)" },
   // --- Style ---
   ticker:       { icon: "📰", category: "style",    color: "#ea80fc", bg: "linear-gradient(135deg,#0d0019,#1a0033)" },
   neon:         { icon: "⚡", category: "style",    color: "#ea80fc", bg: "linear-gradient(135deg,#0d0019,#1a0033)" },
@@ -857,13 +866,15 @@ const _ATC_OVERLAY = (() => {
     // Add camera (snapshot or live stream) AFTER scale so dimensions are proportional
     if (cameraLive && camHass && camState) {
       const bar = toast.querySelector(".atc-ov-bar");
-      const streamCssText = `width:100%;max-height:${180 * scale}px;border-radius:${8 * scale}px;margin-top:${6 * scale}px;display:block;flex-shrink:0;overflow:hidden;`;
       if (customElements.get("ha-camera-stream")) {
+        const wrapper = document.createElement("div");
+        wrapper.style.cssText = `width:100%;border-radius:${8 * scale}px;margin-top:${6 * scale}px;flex-shrink:0;overflow:hidden;line-height:0;background:#000;`;
         const stream = document.createElement("ha-camera-stream");
         stream.hass = camHass;
         stream.stateObj = camState;
-        stream.style.cssText = streamCssText;
-        toast.insertBefore(stream, bar || null);
+        stream.style.cssText = "width:100%;display:block;";
+        wrapper.appendChild(stream);
+        toast.insertBefore(wrapper, bar || null);
       } else {
         // ha-camera-stream not yet loaded — fall back to snapshot img
         const snapUrl = camState.attributes?.entity_picture;
@@ -877,11 +888,14 @@ const _ATC_OVERLAY = (() => {
       }
     } else if (cameraUrl) {
       const bar = toast.querySelector(".atc-ov-bar");
+      const wrapper = document.createElement("div");
+      wrapper.style.cssText = `width:100%;border-radius:${8 * scale}px;margin-top:${6 * scale}px;flex-shrink:0;overflow:hidden;line-height:0;background:#000;`;
       const img = document.createElement("img");
       img.src = cameraUrl;
-      img.style.cssText = `width:100%;max-height:${180 * scale}px;object-fit:cover;border-radius:${8 * scale}px;margin-top:${6 * scale}px;display:block;flex-shrink:0;`;
-      img.onerror = () => img.remove();
-      toast.insertBefore(img, bar || null);
+      img.style.cssText = "width:100%;display:block;";
+      img.onerror = () => wrapper.remove();
+      wrapper.appendChild(img);
+      toast.insertBefore(wrapper, bar || null);
     }
     _root.style.display = "";
     _root.appendChild(toast);
@@ -889,7 +903,15 @@ const _ATC_OVERLAY = (() => {
   }
 
   function _hide() {
-    try { clearTimeout(_autoTimer); if (_root) _root.style.display = "none"; } catch (_) {}
+    try {
+      clearTimeout(_autoTimer);
+      if (_root) {
+        // Remove live stream element before hiding so its disconnectedCallback fires and stops audio
+        const stream = _root.querySelector("ha-camera-stream");
+        if (stream) stream.remove();
+        _root.style.display = "none";
+      }
+    } catch (_) {}
   }
 
   // ── Dedup — prevents card-path + watcher-path from both firing ─────────────
@@ -1084,7 +1106,7 @@ const _ATC_OVERLAY = (() => {
       let v = es.attributes; for (const p of parts) v = v?.[p];
       return v != null ? String(v) : "";
     });
-    if (/\{\{/.test(r)) return null; // unsupported syntax remains
+    if (/\{\{/.test(r) || /\{%/.test(r)) return null; // unsupported syntax remains
     return r.trim();
   }
 
@@ -1464,6 +1486,7 @@ class AlertTickerCard extends LitElement {
     this._cycleTimer = null;
     this._timerInterval = null;
     this._lastSignature = "";
+    this._lastAppliedPreviewIndex = null;
     this._animPhase = "";
     this._initialLoadDone = false; // prevents sound/history on first compute after init
     this._snoozeMenuOpen = null;
@@ -1564,6 +1587,7 @@ class AlertTickerCard extends LitElement {
     }
     // Force full recompute so grouping/config changes take effect immediately
     this._lastSignature = "";
+    this._lastAppliedPreviewIndex = null;
     if (this._hass) {
       this._computeActiveAlerts();
     }
@@ -1706,7 +1730,7 @@ class AlertTickerCard extends LitElement {
     const testMode = !!this._config.test_mode;
     let active = expandedAlerts.filter((alert) => {
       const entityState = this._hass.states[alert.entity];
-      if (!entityState) return false;
+      if (!entityState && !testMode) return false;
       if (!testMode) {
         if (!_evalVisibleTo(this._hass, alert)) return false;
         if (!_evalTimeRange(alert)) return false;
@@ -1847,16 +1871,19 @@ class AlertTickerCard extends LitElement {
     // alerts match via the _sourceAlert reference preserved during expansion.
     if (testMode && this._config._preview_index != null) {
       const configIdx = this._config._preview_index;
-      const target = (this._config.alerts || [])[configIdx];
-      const pi = target
-        ? active.findIndex(a => a._configIdx === configIdx || a._sourceAlert === target)
-        : -1;
-      if (pi >= 0 && pi !== this._currentIndex) {
-        this._currentIndex = pi;
-        this._animPhase = "";
-        this._activeAlerts = active;
-        this.requestUpdate();
-        return;
+      if (configIdx !== this._lastAppliedPreviewIndex) {
+        this._lastAppliedPreviewIndex = configIdx;
+        const target = (this._config.alerts || [])[configIdx];
+        const pi = target
+          ? active.findIndex(a => a._configIdx === configIdx || a._sourceAlert === target)
+          : -1;
+        if (pi >= 0 && pi !== this._currentIndex) {
+          this._currentIndex = pi;
+          this._animPhase = "";
+          this._activeAlerts = active;
+          this.requestUpdate();
+          return;
+        }
       }
     }
 
@@ -1868,7 +1895,7 @@ class AlertTickerCard extends LitElement {
     // On first load: record history (so alerts already active on load appear in cronologia)
     // but skip sound and deduplicate — if the same entity was recorded within the last
     // 5 minutes we skip it (avoids duplicate history entries on page reload).
-    if (!testMode) {
+    if (!testMode && !_isEditMode()) {
       const prevKeys = new Set(this._activeAlerts.map((a) => this._snoozeKey(a)));
       const now = Date.now();
       let _overlayShown = false;
@@ -2159,6 +2186,9 @@ class AlertTickerCard extends LitElement {
       this._weatherTemp = null;
       this._weatherWind = null;
       this._weatherHumidity = null;
+      this._weatherTempHigh = null;
+      this._weatherTempLow = null;
+      this._weatherAqi = null;
       if (this._forecastUnsub) { try { this._forecastUnsub(); } catch (_) {} this._forecastUnsub = null; this._forecastEntity = null; }
       this._stopWfFlipTimer();
       return;
@@ -2169,16 +2199,47 @@ class AlertTickerCard extends LitElement {
     if (needsWeather) {
       const temp = ws.attributes?.temperature;
       const unit = ws.attributes?.temperature_unit || "°";
-      this._weatherState    = ws.state;
-      this._weatherTemp     = temp != null ? `${Math.round(temp)}${unit}` : null;
-      const windSpeed       = ws.attributes?.wind_speed;
-      const windUnit        = ws.attributes?.wind_speed_unit || "km/h";
-      this._weatherWind     = windSpeed != null ? `${Math.round(windSpeed)} ${windUnit}` : null;
-      const humidity        = ws.attributes?.humidity;
-      this._weatherHumidity = humidity != null ? `${Math.round(humidity)}%` : null;
+      this._weatherState = ws.state;
+      // Temperature — sensor override or weather entity attribute
+      const tempS = this._config.clear_weather_temperature_entity && hass.states[this._config.clear_weather_temperature_entity];
+      if (tempS) {
+        const v = parseFloat(tempS.state), u = tempS.attributes?.unit_of_measurement || unit;
+        this._weatherTemp = !isNaN(v) ? `${Math.round(v)}${u}` : null;
+      } else {
+        this._weatherTemp = temp != null ? `${Math.round(temp)}${unit}` : null;
+      }
+      // Wind speed (no sensor override)
+      const windSpeed = ws.attributes?.wind_speed;
+      const windUnit  = ws.attributes?.wind_speed_unit || "km/h";
+      this._weatherWind = windSpeed != null ? `${Math.round(windSpeed)} ${windUnit}` : null;
+      // Humidity — sensor override or weather entity attribute
+      const humS = this._config.clear_weather_humidity_entity && hass.states[this._config.clear_weather_humidity_entity];
+      if (humS) {
+        const v = parseFloat(humS.state);
+        this._weatherHumidity = !isNaN(v) ? `${Math.round(v)}%` : null;
+      } else {
+        const humidity = ws.attributes?.humidity;
+        this._weatherHumidity = humidity != null ? `${Math.round(humidity)}%` : null;
+      }
+      // Today high/low — sensor overrides; forecast-sourced values set in _subscribeForecast callback
+      const hiS = this._config.clear_weather_temp_high_entity && hass.states[this._config.clear_weather_temp_high_entity];
+      const loS = this._config.clear_weather_temp_low_entity  && hass.states[this._config.clear_weather_temp_low_entity];
+      if (hiS) { const v = parseFloat(hiS.state), u = hiS.attributes?.unit_of_measurement || unit; this._weatherTempHigh = !isNaN(v) ? `${Math.round(v)}${u}` : null; }
+      else if (!this._config.clear_weather_temp_high_entity) { /* kept from _subscribeForecast */ }
+      if (loS) { const v = parseFloat(loS.state), u = loS.attributes?.unit_of_measurement || unit; this._weatherTempLow  = !isNaN(v) ? `${Math.round(v)}${u}` : null; }
+      else if (!this._config.clear_weather_temp_low_entity)  { /* kept from _subscribeForecast */ }
+      // AQI / PM2.5 — sensor only
+      const aqiS = this._config.clear_weather_aqi_entity && hass.states[this._config.clear_weather_aqi_entity];
+      if (aqiS) {
+        const v = parseFloat(aqiS.state), u = aqiS.attributes?.unit_of_measurement || "µg/m³";
+        this._weatherAqi = !isNaN(v) ? `${Math.round(v)} ${u}` : null;
+      } else {
+        this._weatherAqi = null;
+      }
     }
-    // Subscribe to forecast data when needed
-    if (needsForecast && entity !== this._forecastEntity) {
+    // Subscribe to forecast data when needed — includes weather/weather_clock so today's
+    // high/low are populated even without the forecast panel
+    if ((needsForecast || needsWeather) && entity !== this._forecastEntity) {
       this._forecastEntity = entity;
       this._subscribeForecast(entity, hass);
     }
@@ -2221,6 +2282,12 @@ class AlertTickerCard extends LitElement {
         (event) => {
           const list = event?.forecast || [];
           this._forecastData = list.map((d) => ({ ...d, _unit: unit }));
+          // Populate today's high/low for the weather badge unless sensor overrides are configured
+          const today = list[0];
+          if (!this._config?.clear_weather_temp_high_entity && today?.temperature != null)
+            this._weatherTempHigh = `${Math.round(today.temperature)}${unit}`;
+          if (!this._config?.clear_weather_temp_low_entity && today?.templow != null)
+            this._weatherTempLow = `${Math.round(today.templow)}${unit}`;
         },
         { type: "weather/subscribe_forecast", forecast_type: "daily", entity_id: entity }
       );
@@ -2464,8 +2531,13 @@ class AlertTickerCard extends LitElement {
     const clockStyle   = this._config.clear_clock_style   || "default";
     const weatherStyle = this._config.clear_weather_style || "default";
     if (mode === "clock") {
+      const ckVars = [
+        this._config.clear_clock_color      ? `--atc-ck-color:${this._config.clear_clock_color}`           : "",
+        this._config.clear_clock_date_color ? `--atc-ck-date-color:${this._config.clear_clock_date_color}` : "",
+        this._config.clear_clock_background ? `--atc-ck-bg:${this._config.clear_clock_background}`         : "",
+      ].filter(Boolean).join(";");
       return html`
-        <div class="atc-clear-widget atc-clear-clock atc-ck-style--${clockStyle}">
+        <div class="atc-clear-widget atc-clear-clock atc-ck-style--${clockStyle}" style="${ckVars}">
           <div class="atc-ck-bg"></div>
           <div class="atc-ck-glow"></div>
           <div class="atc-ck-content">
@@ -2494,10 +2566,16 @@ class AlertTickerCard extends LitElement {
                 <ha-icon icon="${icon}" class="atc-cw-w-icon"></ha-icon>
                 <span class="atc-cw-temp">${this._weatherTemp || ""}</span>
               </div>
-              ${(this._weatherWind || this._weatherHumidity) ? html`
+              ${(this._weatherTempHigh || this._weatherTempLow || this._weatherAqi || this._weatherHumidity) ? html`
+              <div class="atc-cw-badge-row-minmax">
+                ${this._weatherTempHigh ? html`<span class="atc-cw-meta atc-cw-minmax-hi">↑${this._weatherTempHigh}</span>` : ""}
+                ${this._weatherTempLow  ? html`<span class="atc-cw-meta atc-cw-minmax-lo">↓${this._weatherTempLow}</span>`  : ""}
+                ${this._weatherAqi      ? html`<span class="atc-cw-meta">🌿 ${this._weatherAqi}</span>`                       : ""}
+                ${this._weatherHumidity ? html`<span class="atc-cw-meta">💧 ${this._weatherHumidity}</span>`                 : ""}
+              </div>` : ""}
+              ${this._weatherWind ? html`
               <div class="atc-cw-badge-row2">
-                ${this._weatherWind ? html`<span class="atc-cw-meta">💨 ${this._weatherWind}</span>` : ""}
-                ${this._weatherHumidity ? html`<span class="atc-cw-meta">💧 ${this._weatherHumidity}</span>` : ""}
+                <span class="atc-cw-meta">💨 ${this._weatherWind}</span>
               </div>` : ""}
               <div class="atc-cw-badge-row3">
                 <span class="atc-cw-condition">${conditionLabel}</span>
@@ -2634,12 +2712,14 @@ class AlertTickerCard extends LitElement {
    */
   _syncTemplates() {
     const needed = new Set();
+    const _hasTpl = (s) => typeof s === "string" && (s.includes("{{") || s.includes("{%"));
     for (const alert of this._config?.alerts || []) {
-      if ((alert.message || "").includes("{{") || (alert.message || "").includes("{%")) needed.add(alert.message);
-      if ((alert.secondary_text || "").includes("{{") || (alert.secondary_text || "").includes("{%")) needed.add(alert.secondary_text);
-      if ((alert.group_message || "").includes("{{") || (alert.group_message || "").includes("{%")) needed.add(alert.group_message);
-      if ((alert.group_expanded_message || "").includes("{{") || (alert.group_expanded_message || "").includes("{%")) needed.add(alert.group_expanded_message);
-      if ((alert.group_secondary_text || "").includes("{{") || (alert.group_secondary_text || "").includes("{%")) needed.add(alert.group_secondary_text);
+      if (_hasTpl(alert.message))               needed.add(alert.message);
+      if (_hasTpl(alert.secondary_text))        needed.add(alert.secondary_text);
+      if (_hasTpl(alert.group_message))         needed.add(alert.group_message);
+      if (_hasTpl(alert.group_expanded_message))needed.add(alert.group_expanded_message);
+      if (_hasTpl(alert.group_secondary_text))  needed.add(alert.group_secondary_text);
+      if (_hasTpl(alert.state))                 needed.add(alert.state);
     }
     // Preserve pre-substituted subscriptions created by _resolveMessage (#113):
     // their cache keys differ from raw alert.message (e.g. {name} → friendly name),
@@ -3025,11 +3105,14 @@ class AlertTickerCard extends LitElement {
         .replace(/\{entity\}/g, alert.entity);
     }
     try {
+      let done = false;
       let unsubFn;
-      const timer = setTimeout(() => { try { unsubFn?.(); } catch (_) {} }, 3000);
+      const abort = setTimeout(() => { done = true; try { unsubFn?.(); } catch (_) {} }, 5000);
       this._hass.connection.subscribeMessage(
         (result) => {
-          clearTimeout(timer);
+          if (done) return;
+          done = true;
+          clearTimeout(abort);
           try { unsubFn?.(); } catch (_) {}
           const resolved = (result.result || "").replace(/\s+/g, " ").trim();
           if (resolved) { entry.message = resolved; this._saveHistory(); this.requestUpdate(); }
@@ -3037,7 +3120,7 @@ class AlertTickerCard extends LitElement {
         { type: "render_template", template: tpl, variables: {}, strict: false }
       ).then(u => {
         unsubFn = u;
-        setTimeout(() => { try { u(); } catch (_) {} }, 500);
+        if (done) try { u(); } catch (_) {}
       }).catch(() => {});
     } catch (_) {}
   }
@@ -3307,8 +3390,25 @@ class AlertTickerCard extends LitElement {
         </div>
       `;
     }
-    // Group slide: snooze all members with duration picker
+    // Group slide: snooze all members
     if (alert._isGroup) {
+      const groupFixedDuration = this._config.snooze_default_duration != null
+        ? this._config.snooze_default_duration
+        : null;
+      if (groupFixedDuration != null) {
+        return html`
+          <div class="atc-snooze-wrap">
+            <button
+              class="atc-snooze-btn"
+              title="${this._t("snooze")}"
+              @click="${(e) => {
+                e.stopPropagation();
+                this._snoozeGroup(alert, groupFixedDuration);
+              }}"
+            >💤</button>
+          </div>
+        `;
+      }
       const menuOpen = this._snoozeMenuOpen === alert._groupKey;
       return html`
         <div class="atc-snooze-wrap">
@@ -3468,7 +3568,11 @@ class AlertTickerCard extends LitElement {
       }
       case "navigate": {
         if (!cfg.navigation_path) return;
-        window.history.pushState(null, "", cfg.navigation_path);
+        let navPath = cfg.navigation_path;
+        if (this._hass && (navPath.includes("{{") || navPath.includes("{%"))) {
+          navPath = _evalTemplate(this._hass, navPath) ?? navPath;
+        }
+        window.history.pushState(null, "", navPath);
         window.dispatchEvent(new CustomEvent("location-changed", { bubbles: true, composed: true }));
         break;
       }
@@ -3762,9 +3866,20 @@ class AlertTickerCard extends LitElement {
     // Fixed card height — prevents layout shifts when cycling between alerts
     const cardHeight = this._config?.card_height;
     this.style.setProperty("--atc-card-height", cardHeight ? `${cardHeight}px` : "");
+    // Density scaling: when card_height is set, shrink padding/gap/icon proportionally.
+    // Base natural height ≈ 72px (16px top + 16px bottom + ~40px content).
     this.style.setProperty("--atc-card-outline", this._config?.card_border
       ? "1px solid var(--ha-card-border-color, var(--divider-color, rgba(255,255,255,0.25)))"
-      : "none");
+      : "var(--ha-card-border-width, 0px) solid var(--ha-card-border-color, transparent)");
+    const bg = this._config?.card_background;
+    if (bg && bg !== false) {
+      this.style.setProperty("--atc-card-bg-override",
+        bg === true ? "var(--ha-card-background, var(--card-background-color, rgba(0,0,0,0.55)))" : bg);
+      this.classList.add("atc-has-bg-override");
+    } else {
+      this.style.removeProperty("--atc-card-bg-override");
+      this.classList.remove("atc-has-bg-override");
+    }
     this.classList.toggle("atc-center-text", this._config?.text_align === "center");
     this.shadowRoot?.querySelectorAll(".atc-ha-icon").forEach(el => {
       el.parentElement?.classList.add("atc-has-mdi-icon");
@@ -3783,7 +3898,8 @@ class AlertTickerCard extends LitElement {
    *  Priority: theme animated MDI > manual icon > entity auto-icon (HA registry/state) > theme emoji > 🔔 */
   _getIcon(alert) {
     const themeMeta = THEME_META[alert.theme] || {};
-    const colorStyle = alert.icon_color ? `color: ${alert.icon_color};` : "";
+    const sizeStyle = alert.icon_size ? `--mdc-icon-size: ${alert.icon_size};` : "";
+    const colorStyle = (alert.icon_color ? `color: ${alert.icon_color};` : "") + sizeStyle;
 
     // Theme animated MDI icon (door, window, fire…) — skipped when user explicitly enabled HA icon
     if (!alert.icon && !alert.use_ha_icon && themeMeta.mdiIcon) {
@@ -4864,7 +4980,7 @@ class AlertTickerCard extends LitElement {
     const vol = Math.round((es.attributes.volume_level || 0) * 100);
     const volBg = `linear-gradient(to right, var(--mu-accent, #e040fb) ${vol}%, rgba(255,255,255,0.15) ${vol}%)`;
     const artUrl = art
-      ? (art.startsWith("http") ? art : (this._hass.hassUrl ? this._hass.hassUrl(art) : art))
+      ? (art.startsWith("http") ? art : `${(this._hass.hassUrl ? this._hass.hassUrl("") : "").replace(/\/$/, "")}${art}`)
       : "";
     const accent = alert.music_player_color || '#e040fb';
     const call = (svc, extra = {}) =>
@@ -5041,6 +5157,160 @@ class AlertTickerCard extends LitElement {
     `;
   }
 
+  /** PORTAL — spinning crimson vortex portal, critical 3D */
+  _renderPortal(alert) {
+    if (!alert) return html``;
+    const icon = this._getIcon(alert);
+    const label = this._getCategoryLabel(alert);
+    return html`
+      <div class="at-portal">
+        <div class="pt-vortex"></div>
+        <div class="pt-core"></div>
+        <div class="pt-icon">${icon}</div>
+        <div class="pt-content">
+          <div class="pt-badge">${label}</div>
+          <div class="pt-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
+        </div>
+        <div class="pt-right">${this._renderCounter()}</div>
+      </div>
+    `;
+  }
+
+  /** VOID — black hole cosmic void with purple accretion disk, critical 3D */
+  _renderVoid(alert) {
+    if (!alert) return html``;
+    const icon = this._getIcon(alert);
+    const label = this._getCategoryLabel(alert);
+    return html`
+      <div class="at-void">
+        <div class="vd-field"></div>
+        <div class="vd-disk"></div>
+        <div class="vd-icon">${icon}</div>
+        <div class="vd-content">
+          <div class="vd-badge">${label}</div>
+          <div class="vd-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
+        </div>
+        <div class="vd-right">${this._renderCounter()}</div>
+      </div>
+    `;
+  }
+
+  /** VOLT — electric discharge with glitching scanlines, warning 3D */
+  _renderVolt(alert) {
+    if (!alert) return html``;
+    const icon = this._getIcon(alert);
+    const label = this._getCategoryLabel(alert);
+    return html`
+      <div class="at-volt">
+        <div class="vt-grid"></div>
+        <div class="vt-zap"></div>
+        <div class="vt-icon">${icon}</div>
+        <div class="vt-content">
+          <div class="vt-badge">${label}</div>
+          <div class="vt-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
+        </div>
+        <div class="vt-right">${this._renderCounter()}</div>
+      </div>
+    `;
+  }
+
+  /** NEBULA — deep space nebula with drifting gas clouds, warning 3D */
+  _renderNebula(alert) {
+    if (!alert) return html``;
+    const icon = this._getIcon(alert);
+    const label = this._getCategoryLabel(alert);
+    return html`
+      <div class="at-nebula">
+        <div class="nb-gas nb-gas1"></div>
+        <div class="nb-gas nb-gas2"></div>
+        <div class="nb-gas nb-gas3"></div>
+        <div class="nb-icon">${icon}</div>
+        <div class="nb-content">
+          <div class="nb-badge">${label}</div>
+          <div class="nb-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
+        </div>
+        <div class="nb-right">${this._renderCounter()}</div>
+      </div>
+    `;
+  }
+
+  /** PRISM — prismatic rainbow refraction light sweep, info 3D */
+  _renderPrism(alert) {
+    if (!alert) return html``;
+    const icon = this._getIcon(alert);
+    const label = this._getCategoryLabel(alert);
+    return html`
+      <div class="at-prism">
+        <div class="pm-facets"></div>
+        <div class="pm-sweep"></div>
+        <div class="pm-icon">${icon}</div>
+        <div class="pm-content">
+          <div class="pm-badge">${label}</div>
+          <div class="pm-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
+        </div>
+        <div class="pm-right">${this._renderCounter()}</div>
+      </div>
+    `;
+  }
+
+  /** ARCADE — Tron-style 3D perspective grid scrolling toward viewer, info 3D */
+  _renderArcade(alert) {
+    if (!alert) return html``;
+    const icon = this._getIcon(alert);
+    const label = this._getCategoryLabel(alert);
+    return html`
+      <div class="at-arcade">
+        <div class="ac-grid"></div>
+        <div class="ac-scan"></div>
+        <div class="ac-icon">${icon}</div>
+        <div class="ac-content">
+          <div class="ac-badge">${label}</div>
+          <div class="ac-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
+        </div>
+        <div class="ac-right">${this._renderCounter()}</div>
+      </div>
+    `;
+  }
+
+  /** DIAMOND — crystalline gem with light shimmer sweep, ok 3D */
+  _renderDiamond(alert) {
+    if (!alert) return html``;
+    const icon = this._getIcon(alert);
+    const label = this._getCategoryLabel(alert);
+    return html`
+      <div class="at-diamond">
+        <div class="dm-facet"></div>
+        <div class="dm-shimmer"></div>
+        <div class="dm-icon">${icon}</div>
+        <div class="dm-content">
+          <div class="dm-badge">${label}</div>
+          <div class="dm-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
+        </div>
+        <div class="dm-right">${this._renderCounter()}</div>
+      </div>
+    `;
+  }
+
+  /** QUANTUM — atomic orbital rings rotating in 3D space, ok 3D */
+  _renderQuantum(alert) {
+    if (!alert) return html``;
+    const icon = this._getIcon(alert);
+    const label = this._getCategoryLabel(alert);
+    return html`
+      <div class="at-quantum">
+        <div class="qm-orbit qm-orbit1"></div>
+        <div class="qm-orbit qm-orbit2"></div>
+        <div class="qm-nucleus"></div>
+        <div class="qm-icon">${icon}</div>
+        <div class="qm-content">
+          <div class="qm-badge">${label}</div>
+          <div class="qm-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
+        </div>
+        <div class="qm-right">${this._renderCounter()}</div>
+      </div>
+    `;
+  }
+
   _renderForTheme(theme, alert) {
     switch ((theme || "emergency").toLowerCase()) {
       case "ticker":       return this._renderTicker(alert);
@@ -5095,6 +5365,14 @@ class AlertTickerCard extends LitElement {
       case "hourglass":    return this._renderHourglass(alert);
       case "timer_pulse":  return this._renderTimerPulse(alert);
       case "timer_ring":   return this._renderTimerRing(alert);
+      case "portal":       return this._renderPortal(alert);
+      case "void":         return this._renderVoid(alert);
+      case "volt":         return this._renderVolt(alert);
+      case "nebula":       return this._renderNebula(alert);
+      case "prism":        return this._renderPrism(alert);
+      case "arcade":       return this._renderArcade(alert);
+      case "diamond":      return this._renderDiamond(alert);
+      case "quantum":      return this._renderQuantum(alert);
       default:             return this._renderEmergency(alert);
     }
   }
@@ -5315,6 +5593,7 @@ class AlertTickerCard extends LitElement {
       :host {
         display: block;
         border-radius: var(--ha-card-border-radius, 12px);
+        box-shadow: var(--ha-card-box-shadow, none);
       }
       .at-card {
         padding: 0;
@@ -7643,7 +7922,7 @@ class AlertTickerCard extends LitElement {
       .mu-title { font-weight: 600; color: #f3e5f5; }
 
       /* --- Music player mode ------------------------------------------------ */
-      .at-music--player { padding: 0; min-height: 90px; align-items: stretch; }
+      .at-music--player { padding: 0; min-height: 90px; align-items: stretch; background: #0c0a14; position: relative; overflow: hidden; }
       .mu-art-bg {
         position: absolute; top: 0; left: 0; right: 0; bottom: 0;
         background-size: cover; background-position: center;
@@ -8409,6 +8688,394 @@ class AlertTickerCard extends LitElement {
       }
 
       /* -----------------------------------------------------------------------
+       * PORTAL — spinning crimson vortex portal, critical 3D
+       * --------------------------------------------------------------------- */
+      .at-portal {
+        display: flex; align-items: center; gap: 14px; padding: 16px 18px;
+        background: linear-gradient(135deg, #1a0005, #2d0010);
+        border-radius: 12px; position: relative; overflow: hidden;
+        animation: ptPulse 2.5s ease-in-out infinite;
+      }
+      @keyframes ptPulse {
+        0%,100% { box-shadow: 0 0 24px rgba(255,23,68,0.35), inset 0 0 20px rgba(255,23,68,0.05); }
+        50%      { box-shadow: 0 0 65px rgba(255,23,68,0.7),  inset 0 0 40px rgba(255,23,68,0.12); }
+      }
+      .pt-vortex {
+        position: absolute; top: 50%; left: 50%;
+        width: 220%; height: 220%;
+        background: conic-gradient(from 0deg,
+          transparent 0%, rgba(255,23,68,0.5) 18%, rgba(220,0,60,0.3) 30%,
+          transparent 42%, rgba(180,0,40,0.25) 60%, transparent 78%);
+        animation: ptSpin1 3s linear infinite;
+        border-radius: 50%; pointer-events: none;
+        transform: translate(-50%, -50%);
+      }
+      .pt-core {
+        position: absolute; top: 50%; left: 50%;
+        width: 150%; height: 150%;
+        background: conic-gradient(from 90deg,
+          transparent 0%, rgba(255,100,120,0.4) 12%, transparent 30%,
+          rgba(200,0,70,0.3) 52%, transparent 68%);
+        animation: ptSpin2 1.8s linear infinite;
+        border-radius: 50%; pointer-events: none;
+        transform: translate(-50%, -50%);
+      }
+      @keyframes ptSpin1 { from { transform: translate(-50%,-50%) rotate(0deg); }   to { transform: translate(-50%,-50%) rotate(360deg); } }
+      @keyframes ptSpin2 { from { transform: translate(-50%,-50%) rotate(0deg); }   to { transform: translate(-50%,-50%) rotate(-360deg); } }
+      .pt-icon {
+        font-size: 2.2rem; flex-shrink: 0; position: relative; z-index: 1;
+        filter: drop-shadow(0 0 14px rgba(255,23,68,0.95));
+        animation: ptIconSpin 2.5s ease-in-out infinite;
+      }
+      @keyframes ptIconSpin {
+        0%,100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 14px rgba(255,23,68,0.9)); }
+        50%      { transform: scale(1.12) rotate(20deg); filter: drop-shadow(0 0 32px rgba(255,80,100,1)); }
+      }
+      .pt-content { flex: 1; min-width: 0; position: relative; z-index: 1; }
+      .pt-right   { flex-shrink: 0; position: relative; z-index: 1; }
+      .pt-badge   { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #ff5252; margin-bottom: 3px; }
+      .pt-title   { font-weight: 600; color: #ffc1c1; }
+
+      /* -----------------------------------------------------------------------
+       * VOID — black hole cosmic void with accretion disk, critical 3D
+       * --------------------------------------------------------------------- */
+      .at-void {
+        display: flex; align-items: center; gap: 14px; padding: 16px 18px;
+        background: radial-gradient(ellipse at 25% 50%, #1a0033 0%, #08000f 55%);
+        border-radius: 12px; position: relative; overflow: hidden;
+        animation: vdCollapse 4s ease-in-out infinite;
+      }
+      @keyframes vdCollapse {
+        0%,100% { box-shadow: 0 0 20px rgba(170,0,255,0.25); }
+        50%      { box-shadow: 0 0 55px rgba(213,0,249,0.55), 0 0 100px rgba(100,0,180,0.2); }
+      }
+      .vd-field {
+        position: absolute; left: -8%; top: 50%;
+        width: 55%; height: 140%; transform: translateY(-50%);
+        background: radial-gradient(ellipse 55% 100% at 50% 50%,
+          transparent 28%, rgba(170,0,255,0.35) 48%, rgba(100,0,200,0.15) 62%, transparent 75%);
+        animation: vdField 3s ease-in-out infinite; pointer-events: none;
+      }
+      @keyframes vdField { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+      .vd-disk {
+        position: absolute; left: -3%; top: 50%;
+        width: 44%; height: 56%;
+        background: conic-gradient(from 270deg,
+          transparent 0%, rgba(213,0,249,0.6) 12%, rgba(140,0,200,0.8) 28%, rgba(80,0,150,0.5) 42%,
+          transparent 55%, rgba(60,0,120,0.3) 72%, transparent 88%);
+        border-radius: 50%;
+        transform: translateY(-50%) perspective(120px) rotateX(74deg);
+        animation: vdDisk 3.5s linear infinite; pointer-events: none;
+      }
+      @keyframes vdDisk { to { transform: translateY(-50%) perspective(120px) rotateX(74deg) rotate(360deg); } }
+      .vd-icon {
+        font-size: 2.2rem; flex-shrink: 0; position: relative; z-index: 2;
+        filter: drop-shadow(0 0 18px rgba(213,0,249,0.85));
+        animation: vdIcon 4s ease-in-out infinite;
+      }
+      @keyframes vdIcon {
+        0%,100% { transform: scale(1);    filter: drop-shadow(0 0 18px rgba(213,0,249,0.85)); }
+        50%      { transform: scale(0.91); filter: drop-shadow(0 0 36px rgba(213,0,249,1)); }
+      }
+      .vd-content { flex: 1; min-width: 0; position: relative; z-index: 2; }
+      .vd-right   { flex-shrink: 0; position: relative; z-index: 2; }
+      .vd-badge   { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #d500f9; margin-bottom: 3px; }
+      .vd-title   { font-weight: 600; color: #f0c4ff; }
+
+      /* -----------------------------------------------------------------------
+       * VOLT — electric discharge with glitching scanlines, warning 3D
+       * --------------------------------------------------------------------- */
+      .at-volt {
+        display: flex; align-items: center; gap: 14px; padding: 16px 18px;
+        background: linear-gradient(135deg, #080800, #141400);
+        border: 1px solid rgba(249,249,38,0.5); border-radius: 12px;
+        position: relative; overflow: hidden;
+        animation: vtFlash 1.2s ease-in-out infinite;
+      }
+      @keyframes vtFlash {
+        0%,78%,100% { box-shadow: 0 0 12px rgba(249,249,38,0.18); border-color: rgba(249,249,38,0.45); }
+        82%           { box-shadow: 0 0 55px rgba(249,249,38,0.9), 0 0 100px rgba(220,220,0,0.3); border-color: rgba(249,249,38,1); }
+      }
+      .vt-grid {
+        position: absolute; inset: 0; pointer-events: none;
+        background: repeating-linear-gradient(0deg,
+          transparent, transparent 3px, rgba(249,249,38,0.045) 3px, rgba(249,249,38,0.045) 4px);
+        animation: vtScan 1.2s linear infinite;
+      }
+      @keyframes vtScan { to { background-position: 0 40px; } }
+      .vt-zap {
+        position: absolute; top: 0; bottom: 0; left: 18%;
+        width: 2px; pointer-events: none;
+        background: linear-gradient(180deg,
+          transparent 0%, rgba(249,249,38,0.7) 35%, rgba(255,255,120,1) 50%, rgba(249,249,38,0.7) 65%, transparent 100%);
+        filter: blur(1.5px);
+        animation: vtZap 1.2s ease-in-out infinite; opacity: 0;
+      }
+      @keyframes vtZap {
+        0%,74%,100% { opacity: 0; transform: skewX(0deg); }
+        80%           { opacity: 1; transform: skewX(-12deg); }
+      }
+      .vt-icon {
+        font-size: 2.2rem; flex-shrink: 0; position: relative; z-index: 1;
+        animation: vtIconFlash 1.2s ease-in-out infinite;
+      }
+      @keyframes vtIconFlash {
+        0%,78%,100% { filter: drop-shadow(0 0 8px rgba(249,249,38,0.6)); transform: scale(1); }
+        82%           { filter: drop-shadow(0 0 30px rgba(249,249,38,1)) drop-shadow(0 0 60px rgba(249,249,38,0.5)); transform: scale(1.18); }
+      }
+      .vt-content { flex: 1; min-width: 0; position: relative; z-index: 1; }
+      .vt-right   { flex-shrink: 0; position: relative; z-index: 1; }
+      .vt-badge   { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #f9f926; margin-bottom: 3px; }
+      .vt-title   { font-weight: 600; color: #fffff0; }
+
+      /* -----------------------------------------------------------------------
+       * NEBULA — deep space nebula with drifting gas clouds, warning 3D
+       * --------------------------------------------------------------------- */
+      .at-nebula {
+        display: flex; align-items: center; gap: 14px; padding: 16px 18px;
+        background: linear-gradient(135deg, #0d0019, #0a1529);
+        border-radius: 12px; position: relative; overflow: hidden;
+      }
+      .nb-gas {
+        position: absolute; border-radius: 50%; pointer-events: none; filter: blur(18px);
+      }
+      .nb-gas1 {
+        width: 130px; height: 90px; top: -25px; left: -15px;
+        background: radial-gradient(ellipse, rgba(206,147,216,0.5) 0%, transparent 70%);
+        animation: nbDrift1 7s ease-in-out infinite;
+      }
+      .nb-gas2 {
+        width: 110px; height: 75px; top: 15px; left: 50px;
+        background: radial-gradient(ellipse, rgba(100,181,246,0.4) 0%, transparent 70%);
+        animation: nbDrift2 9s ease-in-out infinite;
+      }
+      .nb-gas3 {
+        width: 95px; height: 65px; top: -10px; right: 10px;
+        background: radial-gradient(ellipse, rgba(178,223,219,0.35) 0%, transparent 70%);
+        animation: nbDrift3 11s ease-in-out infinite;
+      }
+      @keyframes nbDrift1 {
+        0%,100% { transform: translate(0,0) scale(1);    opacity: 0.7; }
+        33%      { transform: translate(12px,8px) scale(1.12); opacity: 1; }
+        66%      { transform: translate(-6px,12px) scale(0.95); opacity: 0.5; }
+      }
+      @keyframes nbDrift2 {
+        0%,100% { transform: translate(0,0) scale(1);      opacity: 0.6; }
+        40%      { transform: translate(-10px,-6px) scale(1.15); opacity: 0.95; }
+        70%      { transform: translate(8px,10px) scale(1.05);   opacity: 0.4; }
+      }
+      @keyframes nbDrift3 {
+        0%,100% { transform: translate(0,0) scale(1);    opacity: 0.5; }
+        50%      { transform: translate(-12px,6px) scale(1.12); opacity: 0.9; }
+      }
+      .nb-icon {
+        font-size: 2.2rem; flex-shrink: 0; position: relative; z-index: 1;
+        filter: drop-shadow(0 0 12px rgba(206,147,216,0.9));
+        animation: nbFloat 5s ease-in-out infinite;
+      }
+      @keyframes nbFloat {
+        0%,100% { transform: translateY(0); }
+        50%      { transform: translateY(-4px); }
+      }
+      .nb-content { flex: 1; min-width: 0; position: relative; z-index: 1; }
+      .nb-right   { flex-shrink: 0; position: relative; z-index: 1; }
+      .nb-badge   { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #ce93d8; margin-bottom: 3px; }
+      .nb-title   { font-weight: 600; color: #ede7f6; }
+
+      /* -----------------------------------------------------------------------
+       * PRISM — prismatic rainbow light refraction, info 3D
+       * --------------------------------------------------------------------- */
+      .at-prism {
+        display: flex; align-items: center; gap: 14px; padding: 16px 18px;
+        background: linear-gradient(135deg, #0a0a14, #14141e);
+        border: 1px solid rgba(255,255,255,0.18); border-radius: 12px;
+        position: relative; overflow: hidden;
+      }
+      .pm-facets {
+        position: absolute; inset: 0; pointer-events: none;
+        background:
+          linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 35%),
+          linear-gradient(45deg,  transparent 55%, rgba(255,255,255,0.025) 72%, transparent 88%);
+      }
+      .pm-sweep {
+        position: absolute; top: 0; bottom: 0; width: 45%;
+        background: linear-gradient(90deg,
+          transparent 0%, rgba(255,30,120,0.14) 10%, rgba(255,165,0,0.12) 22%,
+          rgba(255,240,0,0.12) 34%, rgba(0,255,100,0.10) 46%, rgba(0,200,255,0.12) 58%,
+          rgba(120,0,255,0.10) 70%, transparent 100%);
+        animation: pmSweep 4s ease-in-out infinite;
+        pointer-events: none; transform: skewX(-8deg);
+      }
+      @keyframes pmSweep {
+        0%   { left: -50%; }
+        100% { left: 150%; }
+      }
+      .pm-icon {
+        font-size: 2.2rem; flex-shrink: 0; position: relative; z-index: 1;
+        animation: pmSparkle 4s ease-in-out infinite;
+      }
+      @keyframes pmSparkle {
+        0%,100%  { filter: drop-shadow(0 0 8px rgba(255,255,255,0.5)); }
+        10%       { filter: drop-shadow(0 0 22px rgba(255,30,120,0.95)) drop-shadow(0 0 8px rgba(255,255,255,0.7)); }
+        25%       { filter: drop-shadow(0 0 22px rgba(255,165,0,0.95)); }
+        40%       { filter: drop-shadow(0 0 22px rgba(0,255,100,0.9)); }
+        55%       { filter: drop-shadow(0 0 22px rgba(0,200,255,0.9)); }
+        70%       { filter: drop-shadow(0 0 22px rgba(180,0,255,0.9)); }
+        85%       { filter: drop-shadow(0 0 22px rgba(255,30,120,0.9)); }
+      }
+      .pm-content { flex: 1; min-width: 0; position: relative; z-index: 1; }
+      .pm-right   { flex-shrink: 0; position: relative; z-index: 1; }
+      .pm-badge {
+        font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+        background: linear-gradient(90deg, #ff69b4, #ffa500, #ffe000, #00e676, #00bfff, #aa44ff);
+        -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        margin-bottom: 3px;
+      }
+      .pm-title { font-weight: 600; color: #f5f5ff; }
+
+      /* -----------------------------------------------------------------------
+       * ARCADE — Tron-style 3D perspective grid, info 3D
+       * --------------------------------------------------------------------- */
+      .at-arcade {
+        display: flex; align-items: center; gap: 14px; padding: 16px 18px;
+        background: linear-gradient(180deg, #00050d 0%, #00101a 100%);
+        border: 1px solid rgba(0,229,255,0.55); border-radius: 12px;
+        position: relative; overflow: hidden;
+        box-shadow: 0 0 20px rgba(0,229,255,0.2), inset 0 0 30px rgba(0,229,255,0.06);
+      }
+      .ac-grid {
+        position: absolute; bottom: -100%; left: -20%; right: -20%;
+        height: 240%; pointer-events: none;
+        background-image:
+          linear-gradient(rgba(0,229,255,0.28) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0,229,255,0.28) 1px, transparent 1px);
+        background-size: 28px 28px;
+        transform: perspective(180px) rotateX(62deg);
+        transform-origin: bottom center;
+        animation: acScroll 1.8s linear infinite;
+      }
+      @keyframes acScroll { from { background-position: 0 0; } to { background-position: 0 28px; } }
+      .ac-scan {
+        position: absolute; top: 0; bottom: 0; width: 45%;
+        background: linear-gradient(90deg, transparent, rgba(0,229,255,0.18), transparent);
+        animation: acScan 3s linear infinite; pointer-events: none;
+        left: -50%;
+      }
+      @keyframes acScan { to { left: 150%; } }
+      .ac-icon {
+        font-size: 2.2rem; flex-shrink: 0; position: relative; z-index: 1;
+        filter: drop-shadow(0 0 14px rgba(0,229,255,0.95));
+        animation: acBlink 2s ease-in-out infinite;
+      }
+      @keyframes acBlink {
+        0%,100% { filter: drop-shadow(0 0 14px rgba(0,229,255,0.9)); }
+        50%      { filter: drop-shadow(0 0 32px rgba(0,229,255,1)) drop-shadow(0 0 60px rgba(0,229,255,0.4)); transform: scale(1.06); }
+      }
+      .ac-content { flex: 1; min-width: 0; position: relative; z-index: 1; }
+      .ac-right   { flex-shrink: 0; position: relative; z-index: 1; }
+      .ac-badge   { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #00e5ff; margin-bottom: 3px; }
+      .ac-title   { font-weight: 600; color: #b2ebf2; font-family: monospace; letter-spacing: 1px; }
+
+      /* -----------------------------------------------------------------------
+       * DIAMOND — crystalline gem shimmer, ok 3D
+       * --------------------------------------------------------------------- */
+      .at-diamond {
+        display: flex; align-items: center; gap: 14px; padding: 16px 18px;
+        background: linear-gradient(135deg, #00141a, #001a24);
+        border: 1px solid rgba(128,222,234,0.5); border-radius: 12px;
+        position: relative; overflow: hidden;
+        animation: dmGlow 3s ease-in-out infinite;
+      }
+      @keyframes dmGlow {
+        0%,100% { box-shadow: 0 0 18px rgba(128,222,234,0.2); }
+        50%      { box-shadow: 0 0 48px rgba(128,222,234,0.55), 0 0 90px rgba(100,200,220,0.18); }
+      }
+      .dm-facet {
+        position: absolute; inset: 0; pointer-events: none;
+        background:
+          linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 38%),
+          linear-gradient(225deg, rgba(128,222,234,0.06) 0%, transparent 38%),
+          linear-gradient(315deg, rgba(100,180,200,0.05) 0%, transparent 38%),
+          linear-gradient(45deg,  rgba(200,240,255,0.04) 0%, transparent 38%);
+      }
+      .dm-shimmer {
+        position: absolute; top: 0; bottom: 0; width: 22%;
+        background: linear-gradient(90deg,
+          transparent, rgba(255,255,255,0.28), rgba(200,240,255,0.18), rgba(255,255,255,0.22), transparent);
+        animation: dmShimmer 3.5s ease-in-out infinite;
+        pointer-events: none; transform: skewX(-20deg);
+      }
+      @keyframes dmShimmer { 0% { left: -30%; } 100% { left: 130%; } }
+      .dm-icon {
+        font-size: 2.2rem; flex-shrink: 0; position: relative; z-index: 1;
+        animation: dmFacet 3.5s ease-in-out infinite;
+      }
+      @keyframes dmFacet {
+        0%,100% { filter: drop-shadow(0 0 10px rgba(128,222,234,0.7)); transform: scale(1) rotate(0deg); }
+        25%      { filter: drop-shadow(0 0 28px rgba(200,240,255,0.95)) drop-shadow(2px -2px 10px rgba(255,255,255,0.8)); transform: scale(1.1) rotate(-4deg); }
+        75%      { filter: drop-shadow(0 0 28px rgba(128,222,234,0.85)) drop-shadow(-2px 2px 10px rgba(100,200,220,0.75)); transform: scale(1.07) rotate(4deg); }
+      }
+      .dm-content { flex: 1; min-width: 0; position: relative; z-index: 1; }
+      .dm-right   { flex-shrink: 0; position: relative; z-index: 1; }
+      .dm-badge   { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #80deea; margin-bottom: 3px; }
+      .dm-title   { font-weight: 600; color: #e0f7fa; }
+
+      /* -----------------------------------------------------------------------
+       * QUANTUM — atomic orbital rings rotating in 3D, ok 3D
+       * --------------------------------------------------------------------- */
+      .at-quantum {
+        display: flex; align-items: center; gap: 14px; padding: 16px 18px;
+        background: linear-gradient(135deg, #001a0d, #001a19);
+        border-radius: 12px; position: relative; overflow: hidden;
+        animation: qmGlow 3s ease-in-out infinite;
+      }
+      @keyframes qmGlow {
+        0%,100% { box-shadow: 0 0 16px rgba(105,240,174,0.18); }
+        50%      { box-shadow: 0 0 42px rgba(105,240,174,0.45), 0 0 80px rgba(0,229,255,0.12); }
+      }
+      .qm-orbit {
+        position: absolute; border-radius: 50%; pointer-events: none;
+        left: 5px;
+      }
+      .qm-orbit1 {
+        width: 66px; height: 66px; top: 50%;
+        border: 1.5px solid rgba(105,240,174,0.55);
+        transform: translateY(-50%) perspective(90px) rotateX(68deg);
+        animation: qmOrbit1 2.8s linear infinite;
+      }
+      .qm-orbit2 {
+        width: 52px; height: 52px; top: 50%;
+        border: 1.5px solid rgba(0,229,255,0.45);
+        transform: translateY(-50%) perspective(90px) rotateX(68deg) rotateZ(55deg);
+        animation: qmOrbit2 1.9s linear infinite;
+      }
+      @keyframes qmOrbit1 { to { transform: translateY(-50%) perspective(90px) rotateX(68deg) rotateZ(360deg); } }
+      @keyframes qmOrbit2 { to { transform: translateY(-50%) perspective(90px) rotateX(68deg) rotateZ(-360deg); } }
+      .qm-nucleus {
+        position: absolute; left: 34px; top: 50%; transform: translateY(-50%);
+        width: 8px; height: 8px; border-radius: 50%; pointer-events: none;
+        background: radial-gradient(circle, #fff 0%, rgba(105,240,174,0.9) 55%, transparent 100%);
+        animation: qmNuc 1.5s ease-in-out infinite;
+      }
+      @keyframes qmNuc {
+        0%,100% { box-shadow: 0 0 8px rgba(105,240,174,0.9), 0 0 16px rgba(105,240,174,0.4); transform: translateY(-50%) scale(1); }
+        50%      { box-shadow: 0 0 18px rgba(105,240,174,1), 0 0 35px rgba(105,240,174,0.6); transform: translateY(-50%) scale(1.35); }
+      }
+      .qm-icon {
+        font-size: 2.2rem; flex-shrink: 0; position: relative; z-index: 1;
+        filter: drop-shadow(0 0 12px rgba(105,240,174,0.85));
+        animation: qmFloat 3s ease-in-out infinite;
+      }
+      @keyframes qmFloat {
+        0%,100% { transform: translateY(0); }
+        50%      { transform: translateY(-3px); }
+      }
+      .qm-content { flex: 1; min-width: 0; position: relative; z-index: 1; }
+      .qm-right   { flex-shrink: 0; position: relative; z-index: 1; }
+      .qm-badge   { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #69f0ae; margin-bottom: 3px; }
+      .qm-title   { font-weight: 600; color: #c8f7d8; }
+
+      /* -----------------------------------------------------------------------
        * HA THEME ADAPTATION — ha_theme: true
        * Overrides hardcoded dark palettes with HA CSS custom properties.
        * Compatible with any HA theme including Mushroom, Material, etc.
@@ -8558,6 +9225,65 @@ class AlertTickerCard extends LitElement {
         color: var(--success-color, #43a047) !important;
       }
 
+      /* ── 3D Spectacular — critical ── */
+      .atc-ha-theme .at-portal,
+      .atc-ha-theme .at-void {
+        border: 1px solid var(--error-color, #f44336) !important;
+      }
+      .atc-ha-theme .at-portal [class$="-badge"],
+      .atc-ha-theme .at-void   [class$="-badge"] {
+        color: var(--error-color, #f44336) !important;
+      }
+      /* suppress spinning vortex / disk in HA theme */
+      .atc-ha-theme .pt-vortex,
+      .atc-ha-theme .pt-core,
+      .atc-ha-theme .vd-field,
+      .atc-ha-theme .vd-disk { opacity: 0.15 !important; }
+
+      /* ── 3D Spectacular — warning ── */
+      .atc-ha-theme .at-volt,
+      .atc-ha-theme .at-nebula {
+        border: 1px solid var(--warning-color, #ff9800) !important;
+      }
+      .atc-ha-theme .at-volt   [class$="-badge"],
+      .atc-ha-theme .at-nebula [class$="-badge"] {
+        color: var(--warning-color, #ff9800) !important;
+      }
+      .atc-ha-theme .vt-grid,
+      .atc-ha-theme .vt-zap,
+      .atc-ha-theme .nb-gas { opacity: 0.15 !important; }
+
+      /* ── 3D Spectacular — info ── */
+      .atc-ha-theme .at-prism,
+      .atc-ha-theme .at-arcade {
+        border: 1px solid var(--info-color, var(--primary-color, #2196f3)) !important;
+      }
+      .atc-ha-theme .at-prism  [class$="-badge"] {
+        background: var(--info-color, var(--primary-color, #2196f3)) !important;
+        -webkit-text-fill-color: unset !important; color: var(--info-color, #2196f3) !important;
+      }
+      .atc-ha-theme .at-arcade [class$="-badge"] {
+        color: var(--info-color, var(--primary-color, #2196f3)) !important;
+      }
+      .atc-ha-theme .pm-sweep,
+      .atc-ha-theme .pm-facets,
+      .atc-ha-theme .ac-grid,
+      .atc-ha-theme .ac-scan { opacity: 0.12 !important; }
+
+      /* ── 3D Spectacular — ok ── */
+      .atc-ha-theme .at-diamond,
+      .atc-ha-theme .at-quantum {
+        border: 1px solid var(--success-color, #43a047) !important;
+      }
+      .atc-ha-theme .at-diamond [class$="-badge"],
+      .atc-ha-theme .at-quantum [class$="-badge"] {
+        color: var(--success-color, #43a047) !important;
+      }
+      .atc-ha-theme .dm-facet,
+      .atc-ha-theme .dm-shimmer,
+      .atc-ha-theme .qm-orbit,
+      .atc-ha-theme .qm-nucleus { opacity: 0.18 !important; }
+
       /* ── Timers ── */
       .atc-ha-theme .at-countdown,
       .atc-ha-theme .at-hourglass,
@@ -8570,10 +9296,14 @@ class AlertTickerCard extends LitElement {
       /* ── Decorative elements reset ── */
       .atc-ha-theme [class$="-fill"],
       .atc-ha-theme [class$="-drain"],
-      .atc-ha-theme [class$="-bg"],
+      .atc-ha-theme [class$="-bg"]:not(.mu-art-bg),
       .atc-ha-theme [class$="-glow"],
       .atc-ha-theme [class$="-ring"]:not(.tr2-ring-wrap) {
         opacity: 0.25 !important;
+      }
+      /* Music player: art and base background are functional, not decorative */
+      .atc-ha-theme .at-music--player {
+        background: #0c0a14 !important;
       }
       /* Icon filters → remove neon/glow effects */
       .atc-ha-theme [class$="-icon"] {
@@ -8653,9 +9383,16 @@ class AlertTickerCard extends LitElement {
         height: 100% !important;
         min-height: unset !important;
       }
+      /* camera_in_card wrapper: propagate full height, no flex side-effects */
+      .atc-vertical .atc-cam-bg-wrap,
+      .atc-vertical .atc-cam-bg-content {
+        height: 100% !important;
+        width: 100% !important;
+      }
 
       /* Core: flip theme card to vertical stacking */
-      .atc-vertical .at-fold-wrapper > div:not(.at-ticker):not(.atc-snoozed-bar):not(.atc-history-card):not(.at-music--player) {
+      .atc-vertical .at-fold-wrapper > div:not(.at-ticker):not(.atc-snoozed-bar):not(.atc-history-card):not(.at-music--player):not(.atc-cam-bg-wrap),
+      .atc-vertical .atc-cam-bg-content > div:not(.at-ticker):not(.atc-snoozed-bar):not(.atc-history-card):not(.at-music--player) {
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
@@ -8666,7 +9403,9 @@ class AlertTickerCard extends LitElement {
 
       /* Icon: was flex-shrink on left edge, now centered at top */
       .atc-vertical .at-fold-wrapper > div:not(.at-ticker):not(.at-music--player) > [class$="-icon"],
-      .atc-vertical .at-fold-wrapper > div:not(.at-ticker):not(.at-music--player) > [class$="-icon-wrap"] {
+      .atc-vertical .at-fold-wrapper > div:not(.at-ticker):not(.at-music--player) > [class$="-icon-wrap"],
+      .atc-vertical .atc-cam-bg-content > div:not(.at-ticker):not(.at-music--player) > [class$="-icon"],
+      .atc-vertical .atc-cam-bg-content > div:not(.at-ticker):not(.at-music--player) > [class$="-icon-wrap"] {
         flex-shrink: 0;
         font-size: 2.2rem !important;
         width: auto !important;
@@ -8675,7 +9414,8 @@ class AlertTickerCard extends LitElement {
       }
 
       /* Content area: full width, centered text */
-      .atc-vertical .at-fold-wrapper > div:not(.at-ticker):not(.at-music--player) > [class$="-content"] {
+      .atc-vertical .at-fold-wrapper > div:not(.at-ticker):not(.at-music--player) > [class$="-content"],
+      .atc-vertical .atc-cam-bg-content > div:not(.at-ticker):not(.at-music--player) > [class$="-content"] {
         flex: unset !important;
         width: 100% !important;
         min-width: unset !important;
@@ -8683,7 +9423,8 @@ class AlertTickerCard extends LitElement {
       }
 
       /* Right column: reset horizontal flex, center counter below content */
-      .atc-vertical .at-fold-wrapper > div:not(.at-ticker):not(.at-music--player) > [class$="-right"] {
+      .atc-vertical .at-fold-wrapper > div:not(.at-ticker):not(.at-music--player) > [class$="-right"],
+      .atc-vertical .atc-cam-bg-content > div:not(.at-ticker):not(.at-music--player) > [class$="-right"] {
         flex-shrink: 0;
         align-self: center !important;
         flex-direction: row !important;
@@ -8755,6 +9496,13 @@ class AlertTickerCard extends LitElement {
       }
 
       /* -----------------------------------------------------------------------
+       * CARD BACKGROUND OVERRIDE — card_background option or theme variable
+       * --------------------------------------------------------------------- */
+      :host(.atc-has-bg-override) .at-fold-wrapper > div:not(.atc-history-card) {
+        background: var(--atc-card-bg-override) !important;
+      }
+
+      /* -----------------------------------------------------------------------
        * MDI ICON — transparent background/border/shadow/filter when ha-icon
        * is used. Class 'atc-has-mdi-icon' is stamped by updated() on the
        * direct parent of .atc-ha-icon, covering both -icon and -icon-wrap
@@ -8799,7 +9547,7 @@ class AlertTickerCard extends LitElement {
       }
       .atc-clear-clock {
         min-height: 68px;
-        background: linear-gradient(135deg, #060c1c 0%, #0c1a3a 45%, #0a1428 75%, #060c1c 100%);
+        background: var(--atc-ck-bg, linear-gradient(135deg, #060c1c 0%, #0c1a3a 45%, #0a1428 75%, #060c1c 100%));
         align-items: center;
         justify-content: center;
       }
@@ -8834,7 +9582,7 @@ class AlertTickerCard extends LitElement {
         font-variant-numeric: tabular-nums;
         letter-spacing: 0.12em;
         line-height: 1;
-        color: #dce8ff;
+        color: var(--atc-ck-color, #dce8ff);
         text-shadow:
           0 0 18px rgba(90,150,255,0.55),
           0 0 40px rgba(60,110,255,0.25),
@@ -8846,13 +9594,13 @@ class AlertTickerCard extends LitElement {
         font-weight: 500;
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: rgba(148,175,255,0.52);
+        color: var(--atc-ck-date-color, rgba(148,175,255,0.52));
         line-height: 1;
       }
 
       /* ── CLOCK STYLE: aurora ─────────────────────────────────────────── */
       .atc-ck-style--aurora {
-        background: linear-gradient(135deg, #020d0a 0%, #041a10 40%, #061220 75%, #020d0a 100%);
+        background: var(--atc-ck-bg, linear-gradient(135deg, #020d0a 0%, #041a10 40%, #061220 75%, #020d0a 100%));
       }
       .atc-ck-style--aurora .atc-ck-bg {
         background: radial-gradient(ellipse 80% 50% at 30% 60%, rgba(0,220,120,0.18) 0%, transparent 70%),
@@ -8870,16 +9618,16 @@ class AlertTickerCard extends LitElement {
         animation: atc-ck-pulse 6s ease-in-out infinite;
       }
       .atc-ck-style--aurora .atc-ck-time {
-        color: #a0ffd6;
+        color: var(--atc-ck-color, #a0ffd6);
         text-shadow: 0 0 18px rgba(0,220,120,0.6), 0 0 40px rgba(0,180,100,0.3);
       }
       .atc-ck-style--aurora .atc-ck-date {
-        color: rgba(0,220,140,0.55);
+        color: var(--atc-ck-date-color, rgba(0,220,140,0.55));
       }
 
       /* ── CLOCK STYLE: gold ───────────────────────────────────────────── */
       .atc-ck-style--gold {
-        background: linear-gradient(135deg, #080600 0%, #120e00 40%, #0e0a00 70%, #080600 100%);
+        background: var(--atc-ck-bg, linear-gradient(135deg, #080600 0%, #120e00 40%, #0e0a00 70%, #080600 100%));
       }
       .atc-ck-style--gold .atc-ck-bg {
         background: radial-gradient(ellipse 70% 50% at 50% 55%, rgba(200,150,0,0.14) 0%, transparent 70%),
@@ -8890,19 +9638,19 @@ class AlertTickerCard extends LitElement {
         animation: atc-ck-pulse 7s ease-in-out infinite;
       }
       .atc-ck-style--gold .atc-ck-time {
-        color: #f5d060;
+        color: var(--atc-ck-color, #f5d060);
         font-weight: 300;
         letter-spacing: 0.18em;
         text-shadow: 0 0 16px rgba(220,160,0,0.55), 0 0 36px rgba(180,120,0,0.25), 0 2px 6px rgba(0,0,0,0.8);
       }
       .atc-ck-style--gold .atc-ck-date {
-        color: rgba(200,155,30,0.55);
+        color: var(--atc-ck-date-color, rgba(200,155,30,0.55));
         letter-spacing: 0.18em;
       }
 
       /* ── CLOCK STYLE: matrix ─────────────────────────────────────────── */
       .atc-ck-style--matrix {
-        background: #000;
+        background: var(--atc-ck-bg, #000);
       }
       .atc-ck-style--matrix .atc-ck-bg {
         background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,180,40,0.10) 0%, transparent 70%);
@@ -8912,14 +9660,14 @@ class AlertTickerCard extends LitElement {
         animation: atc-ck-pulse 4s ease-in-out infinite;
       }
       .atc-ck-style--matrix .atc-ck-time {
-        color: #00e840;
+        color: var(--atc-ck-color, #00e840);
         font-family: monospace;
         font-weight: 400;
         letter-spacing: 0.22em;
         text-shadow: 0 0 10px rgba(0,220,50,0.8), 0 0 28px rgba(0,200,40,0.4), 0 0 50px rgba(0,180,30,0.2);
       }
       .atc-ck-style--matrix .atc-ck-date {
-        color: rgba(0,200,50,0.50);
+        color: var(--atc-ck-date-color, rgba(0,200,50,0.50));
         font-family: monospace;
         letter-spacing: 0.18em;
       }
@@ -9023,25 +9771,46 @@ class AlertTickerCard extends LitElement {
           0 2px 12px rgba(0,0,0,0.80);
       }
       .atc-cw-style--stage .atc-cw-badge--weather {
-        flex-direction: row;
-        align-items: center;
-        gap: 0;
+        display: grid;
+        grid-template-columns: auto 1fr;
         background: rgba(0,0,0,0.28);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border: 1px solid rgba(255,255,255,0.10);
-        border-radius: 22px;
-        padding: 3px 12px 3px 8px;
+        border-radius: 16px;
+        padding: 5px 12px 5px 8px;
+        gap: 0;
       }
       .atc-cw-style--stage .atc-cw-badge-row1 {
+        grid-column: 1;
+        grid-row: 1;
+        display: flex;
         align-items: center;
         gap: 3px;
         padding-right: 8px;
       }
       .atc-cw-style--stage .atc-cw-badge-row2 { display: none; }
       .atc-cw-style--stage .atc-cw-badge-row3 {
+        grid-column: 2;
+        grid-row: 1;
+        display: flex;
+        align-items: center;
         border-left: 1px solid rgba(255,255,255,0.18);
         padding-left: 8px;
+      }
+      .atc-cw-style--stage .atc-cw-badge-row-minmax {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 10px;
+        padding-top: 4px;
+        border-top: 1px solid rgba(255,255,255,0.12);
+        margin-top: 3px;
+        font-size: 0.60rem;
+        line-height: 1;
+        opacity: 0.85;
       }
       .atc-cw-style--stage .atc-cw-temp {
         font-size: 1.2rem;
@@ -9688,7 +10457,7 @@ if (!window.customCards.find((c) => c.type === "alert-ticker-card")) {
   window.customCards.push({
     type: "alert-ticker-card",
     name: "AlertTicker Card",
-    description: "Display alerts based on entity states with 36 visual themes, 12 animations, snooze, numeric conditions, attribute triggers, AND/OR conditions, action buttons, and a full visual editor.",
+    description: "Display alerts based on entity states with 50 visual themes, 12 animations, snooze, numeric conditions, attribute triggers, AND/OR conditions, action buttons, and a full visual editor.",
     preview: false,
   });
 }
