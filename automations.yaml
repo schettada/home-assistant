@@ -328,30 +328,25 @@
   alias: Auto Arm Security
   description: ''
   triggers:
-  - entity_id:
-    - person.arleepta
-    - person.sooraj_chettada
-    to:
-    - not_home
+  - trigger: template
+    value_template: "{{ is_state('person.arleepta', 'not_home') and\n   is_state('person.sooraj_chettada',
+      'not_home') }}\n"
     for:
       hours: 0
       minutes: 5
       seconds: 0
-    trigger: state
-    enabled: true
+    alias: When Sooraj & Arleepta not home for more than 5 minutes
   conditions:
   - condition: and
     conditions:
     - condition: state
       entity_id: alarm_control_panel.home
       state: disarmed
-    - condition: state
-      entity_id: person.arleepta
-      state: not_home
-    - condition: state
-      entity_id: person.sooraj_chettada
-      state: not_home
   actions:
+  - device_id: f6fb94ee1b2f598b481ded658a4af30b
+    domain: lock
+    entity_id: 191d58b23eef085ccf6f38511077e5cd
+    type: lock
   - data:
       code: '1985'
       mode: away
@@ -359,10 +354,6 @@
       skip_delay: true
       entity_id: alarm_control_panel.home
     action: alarmo.arm
-  - device_id: f6fb94ee1b2f598b481ded658a4af30b
-    domain: lock
-    entity_id: 191d58b23eef085ccf6f38511077e5cd
-    type: lock
   mode: single
 - id: '1677274589664'
   alias: Rack Light On/Off
