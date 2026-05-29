@@ -73,6 +73,10 @@ class DreoDeviceDetails:
     override_fn: Callable | None
     """Optional function called once after initial state load to apply hardware-specific overrides."""
 
+    ambient_light_levels: tuple | None
+    """Valid rgblevel values for the ambient light ring. None = not set (use default).
+    Examples: (0, 2) = off/full only, (0, 1, 2) = off/low/full."""
+
     def __init__(
         self,
         device_type: DreoDeviceType = None,
@@ -84,6 +88,7 @@ class DreoDeviceDetails:
         cooking_modes: list[str] = None,
         cooking_range: dict = None,
         override_fn: Callable | None = None,
+        ambient_light_levels: tuple | None = None,
     ):
         if device_type is None:
             raise ValueError("device_type is required")
@@ -99,6 +104,7 @@ class DreoDeviceDetails:
         self.cooking_modes = cooking_modes
         self.cooking_range = cooking_range
         self.override_fn = override_fn
+        self.ambient_light_levels = ambient_light_levels
 
 
 @dataclass
@@ -183,6 +189,16 @@ SUPPORTED_DEVICES = {
         ],
         device_ranges={SPEED_RANGE: (1, 9)},
     ),
+    "DR-HTF017S": DreoDeviceDetails(
+        device_type=DreoDeviceType.TOWER_FAN,
+        preset_modes=[
+            ("normal", 1),
+            ("natural", 2),
+            ("sleep", 3),
+            ("auto", 4),
+        ],
+        device_ranges={SPEED_RANGE: (1, 4)},
+    ),
     "DR-HTF024S": DreoDeviceDetails(
         device_type=DreoDeviceType.TOWER_FAN,
         preset_modes=[
@@ -199,6 +215,11 @@ SUPPORTED_DEVICES = {
         device_type=DreoDeviceType.AIR_CIRCULATOR,
         override_fn=_haf004s_mcu_override,
     ),
+    "DR-HAF008S": DreoDeviceDetails(
+        device_type=DreoDeviceType.AIR_CIRCULATOR,
+        preset_modes=[("normal", 1), ("natural", 2), ("sleep", 3), ("auto", 4)],
+        device_ranges={SPEED_RANGE: (1, 9)},
+    ),
     "DR-HPF": DreoDeviceDetails(device_type=DreoDeviceType.AIR_CIRCULATOR),
     # HPF-series devices: The API returns controlsConf with only a template reference
     # (e.g. {"template": "DR-HPF002S"}) and no control/schedule.modes data, so
@@ -212,6 +233,10 @@ SUPPORTED_DEVICES = {
         preset_modes=[("normal", 1), ("auto", 2), ("sleep", 3), ("natural", 4), ("turbo", 5)],
         device_ranges={SPEED_RANGE: (1, 9), VERTICAL_ANGLE_RANGE: (-30, 90)},
     ),
+    "DR-HPF015S": DreoDeviceDetails(
+        device_type=DreoDeviceType.AIR_CIRCULATOR,
+        device_ranges={SPEED_RANGE: (1, 12)},
+    ),
     "DR-HPF007S": DreoDeviceDetails(
         device_type=DreoDeviceType.AIR_CIRCULATOR,
         preset_modes=[("normal", 1), ("auto", 2), ("sleep", 3), ("natural", 4), ("turbo", 5), ("custom", 6)],
@@ -223,6 +248,11 @@ SUPPORTED_DEVICES = {
     "DR-HPF020S": DreoDeviceDetails(
         device_type=DreoDeviceType.AIR_CIRCULATOR,
         preset_modes=[("normal", 1), ("auto", 2), ("sleep", 3), ("natural", 4), ("turbo", 5), ("custom", 6)],
+        device_ranges={SPEED_RANGE: (1, 9), HORIZONTAL_ANGLE_RANGE: (-60, 60), VERTICAL_ANGLE_RANGE: (-30, 90)},
+    ),
+    "DR-HPF022S": DreoDeviceDetails(
+        device_type=DreoDeviceType.AIR_CIRCULATOR,
+        preset_modes=[("normal", 1), ("natural", 2), ("sleep", 3), ("auto", 4), ("turbo", 5)],
         device_ranges={SPEED_RANGE: (1, 9), HORIZONTAL_ANGLE_RANGE: (-60, 60), VERTICAL_ANGLE_RANGE: (-30, 90)},
     ),
     "DR-HPF025S": DreoDeviceDetails(
@@ -321,7 +351,11 @@ SUPPORTED_DEVICES = {
         cooking_modes=COOKING_MODES,
         cooking_range=COOKING_RANGES,
     ),
-    "DR-HHM": DreoDeviceDetails(device_type=DreoDeviceType.HUMIDIFIER),
+    "DR-HHM": DreoDeviceDetails(device_type=DreoDeviceType.HUMIDIFIER, ambient_light_levels=(0, 2)),
+    "DR-HHM003S": DreoDeviceDetails(
+        device_type=DreoDeviceType.HUMIDIFIER,
+        ambient_light_levels=(0, 1, 2),
+    ),
     "DR-HHM014S": DreoDeviceDetails(
         device_type=DreoDeviceType.HUMIDIFIER,
         preset_modes=[
