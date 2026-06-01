@@ -108,3 +108,478 @@ alexa_announcement:
       action: notify.alexa_media
   mode: single
   icon: mdi:bell-ring
+notify_mobile_v2:
+  alias: Notify Mobile v2
+  description: Sends a push notification to all available phones. Skips any phone
+    whose companion sensor is unavailable. Add/remove phones here only — automations
+    don't need to change.
+  icon: mdi:cellphone-message
+  mode: parallel
+  max: 10
+  fields:
+    message:
+      name: Message
+      description: Notification body text
+      required: true
+      selector:
+        text:
+    title:
+      name: Title
+      description: Notification title
+      required: false
+      default: CrashPad
+      selector:
+        text:
+    data:
+      name: Extra data
+      description: Optional extra payload dict (e.g. push priority, URL)
+      required: false
+      selector:
+        object:
+  sequence:
+  - alias: Notify SJ (if available)
+    if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: sensor.sj_connection_type
+        state: unavailable
+    then:
+    - action: notify.send_message
+      data:
+        message: '{{ message }}'
+        title: '{{ title | default(''CrashPad'') }}'
+      target:
+        entity_id: notify.sj
+  - alias: Notify Arleepta (if available)
+    if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: sensor.arleepta_connection_type
+        state: unavailable
+    then:
+    - action: notify.send_message
+      data:
+        message: '{{ message }}'
+        title: '{{ title | default(''CrashPad'') }}'
+      target:
+        entity_id: notify.arleepta
+  - alias: Notify Neeva (if available)
+    if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: sensor.neeva_connection_type
+        state: unavailable
+    then:
+    - action: notify.send_message
+      data:
+        message: '{{ message }}'
+        title: '{{ title | default(''CrashPad'') }}'
+      target:
+        entity_id: notify.neeva
+notify_audio_v2:
+  alias: Notify Audio v2
+  description: Plays an Alexa TTS announcement or sound on all Alexa devices. Skipped
+    automatically when Guest Mode is on. Add/remove speakers here only.
+  fields:
+    media_id:
+      description: Optional Alexa sound ID (e.g. amzn_sfx_doorbell_chime_01). If set,
+        plays as sound instead of TTS.
+      name: Sound ID
+      required: false
+      selector:
+        text:
+    message:
+      description: TTS message to announce. Ignored if media_id is set.
+      name: Message
+      required: false
+      selector:
+        text:
+  icon: mdi:bullhorn
+  mode: single
+  sequence:
+  - alias: Skip if guest mode is on
+    condition: state
+    entity_id: input_boolean.guest_mode
+    state: 'off'
+  - alias: Play sound or TTS
+    choose:
+    - alias: Play a sound effect
+      conditions:
+      - condition: template
+        value_template: '{{ media_id is defined and media_id != '''' }}'
+      sequence:
+      - action: media_player.play_media
+        data:
+          media_content_id: '{{ media_id }}'
+          media_content_type: sound
+        target:
+          entity_id: media_player.all_alexa
+    - alias: Announce TTS
+      conditions:
+      - condition: template
+        value_template: '{{ message is defined and message != '''' }}'
+      sequence:
+      - action: notify.alexa_media
+        data:
+          message: '{{ message }}'
+          target:
+          - media_player.loft_echo_dot
+          - media_player.great_room_echo_show
+          - media_player.loft_speakers
+          - media_player.bedroom
+notify_v2:
+  alias: Notify v2
+  description: Master notification dispatcher. Always sends to all available phones.
+    Optionally plays audio on Alexa if audio=true. Pass message, title, and optional
+    audio/media_id fields.
+  fields:
+    audio:
+      default: false
+      description: Set true to also play an Alexa announcement alongside the push
+        notification
+      name: Audio announcement
+      required: false
+      selector:
+        boolean:
+    media_id:
+      description: 'Optional Alexa sound ID to play instead of TTS (requires audio:
+        true)'
+      name: Sound ID
+      required: false
+      selector:
+        text:
+    message:
+      description: Notification message body
+      name: Message
+      required: true
+      selector:
+        text:
+    title:
+      default: CrashPad
+      description: Notification title
+      name: Title
+      required: false
+      selector:
+        text:
+  icon: mdi:bell-ring
+  max: 10
+  mode: parallel
+  sequence:
+  - alias: Send to all phones
+    action: script.notify_mobile_v2
+    data:
+      message: '{{ message }}'
+      title: '{{ title | default(''CrashPad'') }}'
+  - alias: Audio announcement (if requested)
+    if:
+    - condition: template
+      value_template: '{{ audio | default(false) == true }}'
+    then:
+    - action: script.notify_audio_v2
+      data:
+        media_id: '{{ media_id | default('''') }}'
+        message: '{{ message }}'
+notify_critical_v1:
+  alias: Notify Critical v1
+  description: 'Critical alert dispatcher — bypasses quiet mode, guest mode, and all
+    suppression. Always sends to ALL available phones and plays audio. Use only for
+    life-safety events: smoke, CO, water leak.'
+  icon: mdi:bell-alert
+  mode: parallel
+  max: 10
+  fields:
+    message:
+      name: Message
+      description: Alert message body
+      required: true
+      selector:
+        text:
+    title:
+      name: Title
+      description: Alert title
+      required: true
+      selector:
+        text:
+    media_id:
+      name: Sound ID
+      description: Optional Alexa sound ID to play. If omitted, TTS announcement is
+        used.
+      required: false
+      selector:
+        text:
+  sequence:
+  - alias: Notify SJ (if available)
+    if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: sensor.sj_connection_type
+        state: unavailable
+    then:
+    - action: notify.send_message
+      target:
+        entity_id: notify.sj
+      data:
+        title: '{{ title }}'
+        message: '{{ message }}'
+  - alias: Notify Arleepta (if available)
+    if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: sensor.arleepta_connection_type
+        state: unavailable
+    then:
+    - action: notify.send_message
+      target:
+        entity_id: notify.arleepta
+      data:
+        title: '{{ title }}'
+        message: '{{ message }}'
+  - alias: Notify Neeva (if available)
+    if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: sensor.neeva_connection_type
+        state: unavailable
+    then:
+    - action: notify.send_message
+      target:
+        entity_id: notify.neeva
+      data:
+        title: '{{ title }}'
+        message: '{{ message }}'
+  - alias: Play sound or TTS on all Alexas
+    choose:
+    - alias: Play sound effect if media_id provided
+      conditions:
+      - condition: template
+        value_template: '{{ media_id is defined and media_id != '''' }}'
+      sequence:
+      - action: media_player.play_media
+        target:
+          entity_id: media_player.all_alexa
+        data:
+          media_content_id: '{{ media_id }}'
+          media_content_type: sound
+    - alias: TTS announcement
+      conditions:
+      - condition: template
+        value_template: '{{ media_id is not defined or media_id == '''' }}'
+      sequence:
+      - action: notify.alexa_media
+        data:
+          message: '{{ message }}'
+          target:
+          - media_player.loft_echo_dot
+          - media_player.great_room_echo_show
+          - media_player.loft_speakers
+          - media_player.bedroom
+notify_mobile_v3:
+  alias: Notify Mobile v3
+  description: Sends push notifications to all available phones. When Quiet Mode is
+    on, only sends to Sooraj — Arleepta and Neeva are suppressed so they aren't woken.
+    Skips any phone whose companion sensor is unavailable. Add/remove phones here
+    only.
+  fields:
+    message:
+      description: Notification body text
+      name: Message
+      required: true
+      selector:
+        text:
+    title:
+      default: CrashPad
+      description: Notification title
+      name: Title
+      required: false
+      selector:
+        text:
+  icon: mdi:cellphone-message
+  max: 10
+  mode: parallel
+  sequence:
+  - alias: Always notify SJ (if available)
+    if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: sensor.sj_connection_type
+        state: unavailable
+    then:
+    - action: notify.send_message
+      data:
+        message: '{{ message }}'
+        title: '{{ title | default(''CrashPad'') }}'
+      target:
+        entity_id: notify.sj
+  - alias: Notify Arleepta (if available and not quiet mode)
+    if:
+    - condition: state
+      entity_id: input_boolean.quiet_mode
+      state: 'off'
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: sensor.arleepta_connection_type
+        state: unavailable
+    then:
+    - action: notify.send_message
+      data:
+        message: '{{ message }}'
+        title: '{{ title | default(''CrashPad'') }}'
+      target:
+        entity_id: notify.arleepta
+  - alias: Notify Neeva (if available and not quiet mode)
+    if:
+    - condition: state
+      entity_id: input_boolean.quiet_mode
+      state: 'off'
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: sensor.neeva_connection_type
+        state: unavailable
+    then:
+    - action: notify.send_message
+      data:
+        message: '{{ message }}'
+        title: '{{ title | default(''CrashPad'') }}'
+      target:
+        entity_id: notify.neeva
+notify_audio_v3:
+  alias: Notify Audio v3
+  description: Plays Alexa TTS or sound alerts. Suppressed when Guest Mode OR Quiet
+    Mode is on. For alerts that must bypass suppression, use notify_critical_v1 directly.
+  fields:
+    media_id:
+      description: Optional Alexa sound ID. If set, plays as sound instead of TTS.
+      name: Sound ID
+      required: false
+      selector:
+        text:
+    message:
+      description: TTS message to announce. Ignored if media_id is set.
+      name: Message
+      required: false
+      selector:
+        text:
+  icon: mdi:bullhorn
+  mode: single
+  sequence:
+  - alias: Skip if guest mode or quiet mode is on
+    condition: and
+    conditions:
+    - condition: state
+      entity_id: input_boolean.guest_mode
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.quiet_mode
+      state: 'off'
+  - alias: Play sound or TTS
+    choose:
+    - alias: Play a sound effect
+      conditions:
+      - condition: template
+        value_template: '{{ media_id is defined and media_id != '''' }}'
+      sequence:
+      - action: media_player.play_media
+        data:
+          media_content_id: '{{ media_id }}'
+          media_content_type: sound
+        target:
+          entity_id: media_player.all_alexa
+    - alias: Announce TTS
+      conditions:
+      - condition: template
+        value_template: '{{ message is defined and message != '''' }}'
+      sequence:
+      - action: notify.alexa_media
+        data:
+          message: '{{ message }}'
+          target:
+          - media_player.loft_echo_dot
+          - media_player.great_room_echo_show
+          - media_player.loft_speakers
+          - media_player.bedroom
+notify_v3:
+  alias: Notify v3
+  description: 'Master notification dispatcher. Normal notifications go to phones
+    (quiet-mode aware) and optionally audio. Critical notifications (critical: true)
+    bypass all suppression — all phones + audio always. Use critical only for life-safety
+    events.'
+  fields:
+    audio:
+      default: false
+      description: Set true to also play Alexa announcement. Suppressed in quiet/guest
+        mode unless critical.
+      name: Audio
+      required: false
+      selector:
+        boolean:
+    critical:
+      default: false
+      description: Set true to bypass quiet mode, guest mode — all phones and audio
+        always fire. Use for smoke, CO, leak.
+      name: Critical
+      required: false
+      selector:
+        boolean:
+    media_id:
+      description: 'Optional Alexa sound ID (requires audio: true or critical: true)'
+      name: Sound ID
+      required: false
+      selector:
+        text:
+    message:
+      description: Notification message body
+      name: Message
+      required: true
+      selector:
+        text:
+    title:
+      default: CrashPad
+      description: Notification title
+      name: Title
+      required: false
+      selector:
+        text:
+  icon: mdi:bell-ring
+  max: 10
+  mode: parallel
+  sequence:
+  - alias: Route based on criticality
+    choose:
+    - alias: Critical — bypass all suppression
+      conditions:
+      - condition: template
+        value_template: '{{ critical | default(false) == true }}'
+      sequence:
+      - action: script.notify_critical_v1
+        data:
+          media_id: '{{ media_id | default('''') }}'
+          message: '{{ message }}'
+          title: '{{ title | default(''CrashPad'') }}'
+    - alias: Normal — quiet and guest mode aware
+      conditions:
+      - condition: template
+        value_template: '{{ critical | default(false) != true }}'
+      sequence:
+      - action: script.notify_mobile_v3
+        alias: Send to phones (quiet mode aware)
+        data:
+          message: '{{ message }}'
+          title: '{{ title | default(''CrashPad'') }}'
+      - alias: Audio if requested
+        if:
+        - condition: template
+          value_template: '{{ audio | default(false) == true }}'
+        then:
+        - action: script.notify_audio_v3
+          data:
+            media_id: '{{ media_id | default('''') }}'
+            message: '{{ message }}'

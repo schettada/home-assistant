@@ -1,13 +1,13 @@
 - id: '1661747369154'
   alias: HA Start/Stop
-  description: ''
+  description: Notifies Sooraj (admin only) when Home Assistant starts or shuts down.
   triggers:
   - event: start
     id: hastart
-    trigger: homeassistant
+    platform: homeassistant
   - event: shutdown
     id: hastop
-    trigger: homeassistant
+    platform: homeassistant
   conditions: []
   actions:
   - choose:
@@ -15,18 +15,26 @@
       - condition: trigger
         id: hastart
       sequence:
-      - data:
-          message: Home Assistant Online!
-          title: Critical Message
-        action: notify.mobile_app_sj
+      - delay:
+          seconds: 30
+      - action: notify.send_message
+        target:
+          entity_id: notify.sj
+        data:
+          title: ✅ CrashPad Online
+          message: Home Assistant started successfully at {{ now().strftime("%-I:%M
+            %p") }} on {{ now().strftime("%A, %B %-d") }}
     - conditions:
       - condition: trigger
         id: hastop
       sequence:
-      - data:
-          message: Home Assistant Rebooting!
-          title: Critical Message
-        action: notify.mobile_app_sj
+      - action: notify.send_message
+        target:
+          entity_id: notify.sj
+        data:
+          title: ⚠️ CrashPad Offline
+          message: Home Assistant is shutting down at {{ now().strftime("%-I:%M %p")
+            }} on {{ now().strftime("%A, %B %-d") }}
     default: []
   mode: single
 - id: '1663217810869'
@@ -326,22 +334,30 @@
   max: 10
 - id: '1664594503267'
   alias: Auto Arm Security
-  description: ''
+  description: Automatically locks the front door and arms the alarm in away mode
+    when both Sooraj and Arleepta have been away for 5 minutes. Only triggers if alarm
+    is currently disarmed.
   triggers:
-  - trigger: template
-    value_template: "{{ is_state('person.arleepta', 'not_home') and\n   is_state('person.sooraj_chettada',
-      'not_home') }}\n"
+  - platform: state
+    entity_id:
+    - person.sooraj_chettada
+    - person.arleepta
+    to: not_home
     for:
       hours: 0
       minutes: 5
       seconds: 0
-    alias: When Sooraj & Arleepta not home for more than 5 minutes
+    id: person_away
   conditions:
-  - condition: and
-    conditions:
-    - condition: state
-      entity_id: alarm_control_panel.home
-      state: disarmed
+  - condition: state
+    entity_id: alarm_control_panel.home
+    state: disarmed
+  - condition: state
+    entity_id: person.sooraj_chettada
+    state: not_home
+  - condition: state
+    entity_id: person.arleepta
+    state: not_home
   actions:
   - device_id: f6fb94ee1b2f598b481ded658a4af30b
     domain: lock
@@ -357,13 +373,14 @@
   mode: single
 - id: '1677274589664'
   alias: Rack Light On/Off
-  description: ''
+  description: Toggles the network rack light via its Zigbee button (single press).
+    Uses device trigger as this is a Z2M MQTT button with no state entity.
   triggers:
   - domain: mqtt
     device_id: 3b8b80a17913ddb5ed8063e241f17e18
     type: action
     subtype: single
-    trigger: device
+    platform: device
   conditions: []
   actions:
   - data: {}
@@ -396,11 +413,12 @@
   mode: single
 - id: '1684639035497'
   alias: Lights On
-  description: ''
+  description: Turns on kitchen, driveway, porch, and staircase lights 10 minutes
+    before sunset.
   triggers:
   - event: sunset
     offset: -00:10:00
-    trigger: sun
+    platform: sun
   conditions: []
   actions:
   - action: light.turn_on
@@ -415,18 +433,20 @@
   mode: single
 - id: '1684639231696'
   alias: Lights Off
-  description: ''
+  description: 'Three-stage lights-off schedule: at 10:30pm turns off all first floor
+    and basement lights; at 11:30pm turns off the porch light specifically; at sunrise
+    turns off all remaining outdoor lights.'
   triggers:
   - at: '22:30:00'
     id: night
-    trigger: time
+    platform: time
   - at: '23:30:00'
     id: latenight
-    trigger: time
+    platform: time
   - event: sunrise
     offset: 0
     id: sunrise
-    trigger: sun
+    platform: sun
   conditions: []
   actions:
   - choose:
@@ -461,7 +481,7 @@
         data: {}
         target:
           entity_id: light.porch_light
-  mode: single
+  mode: restart
 - id: '1690577897483'
   alias: Leak Sensor Notification
   description: ''
@@ -756,49 +776,6 @@
           entity_id: alarm_control_panel.home
         action: alarm_control_panel.alarm_disarm
   mode: single
-- id: '1721442422593'
-  alias: Turn Off Automations
-  description: ''
-  triggers:
-  - entity_id:
-    - input_boolean.turn_off_automations
-    from: 'off'
-    to: 'on'
-    id: turnoff
-    trigger: state
-  - entity_id:
-    - input_boolean.turn_off_automations
-    from: 'on'
-    to: 'off'
-    id: turnon
-    trigger: state
-  conditions: []
-  actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - turnoff
-      sequence:
-      - target:
-          entity_id:
-          - automation.door_lock_unlock_status
-          - automation.doors_windows_open_close
-        data:
-          stop_actions: true
-        action: automation.turn_off
-    - conditions:
-      - condition: trigger
-        id:
-        - turnon
-      sequence:
-      - target:
-          entity_id:
-          - automation.door_lock_unlock_status
-          - automation.doors_windows_open_close
-        data: {}
-        action: automation.turn_on
-  mode: single
 - id: '1727806768707'
   alias: Power Status
   description: ''
@@ -833,66 +810,13 @@
           message: Power Is On
         action: script.notify_phones
   mode: single
-- id: '1733801932803'
-  alias: Holiday Lights
-  description: ''
-  triggers:
-  - trigger: time
-    at: '23:30:00'
-    id: night
-  - trigger: sun
-    event: sunset
-    offset: 0
-    id: eve
-  conditions: []
-  actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - eve
-      sequence:
-      - action: light.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id:
-          - light.driveway_light
-          - light.porch_light
-      - action: switch.turn_on
-        metadata: {}
-        data: {}
-        target:
-          entity_id: switch.holiday_lights
-      - action: light.turn_on
-        metadata: {}
-        data: {}
-        target:
-          entity_id: light.outdoor_spolights
-    - conditions:
-      - condition: trigger
-        id:
-        - night
-      sequence:
-      - action: switch.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id: switch.holiday_lights
-      - action: light.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id: light.outdoor_spolights
-      - action: light.turn_on
-        metadata: {}
-        data: {}
-        target:
-          entity_id: light.driveway_light
-  mode: single
 - id: '1734902479753'
   alias: Basement Lights
-  description: ''
+  description: 'Controls basement stair and main lights based on the basement door
+    and occupancy. Door open: turn on both lights (stair always, basement if not already
+    on). Door closed: turn off stair light only if basement is unoccupied. Door open
+    15+ min: turn off stair light (person is in basement, no longer needed on stairs).
+    No occupancy for 15 min: turn off all basement lights.'
   triggers:
   - entity_id:
     - binary_sensor.basement_door
@@ -901,7 +825,7 @@
     to:
     - 'on'
     id: open
-    trigger: state
+    platform: state
   - entity_id:
     - binary_sensor.basement_door
     from:
@@ -909,7 +833,7 @@
     to:
     - 'off'
     id: close
-    trigger: state
+    platform: state
   - entity_id:
     - binary_sensor.basement_door
     from:
@@ -921,18 +845,15 @@
       minutes: 15
       seconds: 0
     id: openlong
-    trigger: state
-  - type: not_occupied
-    device_id: fce32ba62b5184c5193c55dc48226f91
-    entity_id: a23bfcd660adc44e9eacd78b1e3b1831
-    domain: binary_sensor
-    trigger: device
+    platform: state
+  - platform: state
+    entity_id: binary_sensor.basement_multi_sensor_occupancy
+    to: 'off'
     for:
       hours: 0
       minutes: 15
       seconds: 0
     id: noone
-    enabled: true
   conditions: []
   actions:
   - choose:
@@ -949,6 +870,11 @@
         target:
           entity_id:
           - light.basement_stair_light
+      - action: light.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
           - light.basement_light
     - conditions:
       - condition: trigger
@@ -956,6 +882,9 @@
       - condition: state
         entity_id: light.basement_stair_light
         state: 'on'
+      - condition: state
+        entity_id: binary_sensor.basement_multi_sensor_occupancy
+        state: 'off'
       sequence:
       - action: light.turn_off
         metadata: {}
@@ -986,7 +915,7 @@
           entity_id:
           - light.basement_light
           - light.basement_stair_light
-  mode: single
+  mode: restart
 - id: '1739472330506'
   alias: Recirculation Pump Control
   description: ''
@@ -1103,14 +1032,15 @@
   mode: single
 - id: '1769925219628'
   alias: Wall Panel Control
-  description: ''
+  description: Cuts PoE power to the Arleepta office wall panel at 11:30pm and restores
+    it at 5:30am to save power overnight.
   triggers:
-  - trigger: time
-    at: '23:30:00'
+  - at: '23:30:00'
     id: Night
-  - trigger: time
-    at: 05:30:00
-    id: 'Morning '
+    platform: time
+  - at: 05:30:00
+    id: Morning
+    platform: time
   conditions: []
   actions:
   - choose:
@@ -1127,7 +1057,7 @@
     - conditions:
       - condition: trigger
         id:
-        - 'Morning '
+        - Morning
       sequence:
       - action: switch.turn_on
         metadata: {}
@@ -1135,59 +1065,18 @@
         target:
           entity_id: switch.usw_pro_24_poe_arleepta_office_poe
   mode: single
-- id: '1770871189882'
-  alias: Test Doors
-  description: ''
-  triggers:
-  - entity_id:
-    - binary_sensor.doors_windows
-    to:
-    - 'on'
-    id: doorwindowopen
-    trigger: state
-  - entity_id:
-    - binary_sensor.doors_windows
-    to:
-    - 'off'
-    id: doorwindowclose
-    trigger: state
-  conditions: []
-  actions:
-  - data: {}
-    action: script.door_alert
-  - choose:
-    - conditions:
-      - condition: trigger
-        id: doorwindowopen
-      sequence:
-      - data:
-          message: '{{ trigger.to_state.attributes.friendly_name }} is Open'
-        action: script.notify_all
-    - conditions:
-      - condition: trigger
-        id: doorwindowclose
-      sequence:
-      - data:
-          message: '{{ trigger.to_state.attributes.friendly_name }} is Closed'
-          title: Security Message
-        action: script.notify_all
-  mode: single
 - id: '1775093597448'
   alias: Pooja Room Lights
-  description: ''
+  description: Turns the Pooja Room light on when occupied, off after 2 minutes of
+    no occupancy.
   triggers:
-  - type: occupied
-    device_id: 8eb24ac06958179d41b9e54f44553268
-    entity_id: f3b2a5ea13aad341b431767c21bad3ce
-    domain: binary_sensor
-    trigger: device
+  - platform: state
+    entity_id: binary_sensor.pooja_room_motion_sensor_occupancy
+    to: 'on'
     id: turnon
-    enabled: true
-  - type: not_occupied
-    device_id: 8eb24ac06958179d41b9e54f44553268
-    entity_id: f3b2a5ea13aad341b431767c21bad3ce
-    domain: binary_sensor
-    trigger: device
+  - platform: state
+    entity_id: binary_sensor.pooja_room_motion_sensor_occupancy
+    to: 'off'
     for:
       hours: 0
       minutes: 2
@@ -1195,23 +1084,24 @@
     id: turnoff
   conditions: []
   actions:
-  - if:
-    - condition: trigger
-      id:
-      - turnon
-    then:
-    - action: light.turn_on
-      metadata: {}
-      target:
-        entity_id: light.pooja_room
-      data: {}
-    else:
-    - action: light.turn_off
-      metadata: {}
-      target:
-        entity_id: light.pooja_room
-      data: {}
-  mode: single
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: turnon
+      sequence:
+      - action: light.turn_on
+        target:
+          entity_id: light.pooja_room
+        data: {}
+    - conditions:
+      - condition: trigger
+        id: turnoff
+      sequence:
+      - action: light.turn_off
+        target:
+          entity_id: light.pooja_room
+        data: {}
+  mode: restart
 - id: '1777007700138'
   alias: 3D Printer Control
   description: ''
@@ -1237,4 +1127,1002 @@
     data:
       message: 3D Print Complete
       title: Info Message
+  mode: single
+- id: '1780340937774'
+  alias: Front Door Bell v2
+  description: Notifies all phones and plays doorbell chime on Alexa when visitor
+    detected at front door.
+  triggers:
+  - entity_id:
+    - binary_sensor.front_door_visitor
+    from:
+    - 'off'
+    to:
+    - 'on'
+    platform: state
+  actions:
+  - action: script.notify_v2
+    data:
+      audio: true
+      media_id: amzn_sfx_doorbell_chime_01
+      message: Visitor detected at the Front Door — {{ now().strftime("%-I:%M %p")
+        }}
+      title: "\U0001F514 Someone at the Door"
+  mode: single
+- id: '1780340947177'
+  alias: Doors & Windows v2
+  description: Notifies all phones and plays a door alert chime on Alexa when any
+    door or window opens or closes.
+  triggers:
+  - entity_id:
+    - binary_sensor.front_door
+    - binary_sensor.garage_door
+    - binary_sensor.loft_window
+    - binary_sensor.walkout_door
+    - binary_sensor.basement_door
+    - binary_sensor.basement_window
+    - binary_sensor.deck_sliding_door
+    - binary_sensor.neeva_windows
+    - binary_sensor.yard_gate
+    id: doorwindowopen
+    platform: state
+    to:
+    - 'on'
+  - entity_id:
+    - binary_sensor.front_door
+    - binary_sensor.garage_door
+    - binary_sensor.loft_window
+    - binary_sensor.walkout_door
+    - binary_sensor.basement_door
+    - binary_sensor.basement_window
+    - binary_sensor.deck_sliding_door
+    - binary_sensor.neeva_windows
+    - binary_sensor.yard_gate
+    id: doorwindowclose
+    platform: state
+    to:
+    - 'off'
+  actions:
+  - action: script.notify_audio_v2
+    alias: Play door alert sound
+    data:
+      media_id: clock_01
+  - alias: Send push notification
+    choose:
+    - conditions:
+      - condition: trigger
+        id: doorwindowopen
+      sequence:
+      - action: script.notify_v2
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} opened at {{ now().strftime("%-I:%M
+            %p") }}'
+          title: "\U0001F6AA Entry Point Opened"
+    - conditions:
+      - condition: trigger
+        id: doorwindowclose
+      sequence:
+      - action: script.notify_v2
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} closed at {{ now().strftime("%-I:%M
+            %p") }}'
+          title: "\U0001F6AA Entry Point Closed"
+  mode: single
+- id: '1780340960709'
+  alias: Door Lock Unlock Status v2
+  description: Notifies all phones when any lock is locked, unlocked, or jammed. No
+    audio.
+  triggers:
+  - device_id: f6fb94ee1b2f598b481ded658a4af30b
+    domain: lock
+    entity_id: 191d58b23eef085ccf6f38511077e5cd
+    id: gd_unlock
+    platform: device
+    type: unlocked
+  - device_id: f6fb94ee1b2f598b481ded658a4af30b
+    domain: lock
+    entity_id: 191d58b23eef085ccf6f38511077e5cd
+    id: gd_locked
+    platform: device
+    type: locked
+  - device_id: f6fb94ee1b2f598b481ded658a4af30b
+    domain: lock
+    entity_id: 191d58b23eef085ccf6f38511077e5cd
+    id: gd_jammed
+    platform: device
+    type: jammed
+  - device_id: ffdf93c07bcdcb929e54e064d383b470
+    domain: lock
+    entity_id: b438392b34f145fed27c1ed5aaf709c7
+    id: fd_unlock
+    platform: device
+    type: unlocked
+  - device_id: ffdf93c07bcdcb929e54e064d383b470
+    domain: lock
+    entity_id: b438392b34f145fed27c1ed5aaf709c7
+    id: fd_locked
+    platform: device
+    type: locked
+  - device_id: ffdf93c07bcdcb929e54e064d383b470
+    domain: lock
+    entity_id: b438392b34f145fed27c1ed5aaf709c7
+    id: fd_jammed
+    platform: device
+    type: jammed
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - gd_unlock
+        - fd_unlock
+      sequence:
+      - action: script.notify_v2
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} was unlocked at
+            {{ now().strftime("%-I:%M %p") }}'
+          title: "\U0001F513 Lock Opened"
+    - conditions:
+      - condition: trigger
+        id:
+        - gd_locked
+        - fd_locked
+      sequence:
+      - action: script.notify_v2
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} was locked at
+            {{ now().strftime("%-I:%M %p") }}'
+          title: "\U0001F512 Lock Secured"
+    - conditions:
+      - condition: trigger
+        id:
+        - gd_jammed
+        - fd_jammed
+      sequence:
+      - action: script.notify_v2
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} is jammed and
+            cannot lock! Check immediately — {{ now().strftime("%-I:%M %p") }}'
+          title: ⚠️ Lock Jammed
+  mode: single
+- id: '1780340971242'
+  alias: Garage Status v2
+  description: Notifies all phones when a garage door opens, closes, or has been open
+    for 5+ minutes. No audio.
+  triggers:
+  - entity_id:
+    - cover.garage_1
+    - cover.garage_2
+    from:
+    - closed
+    id: open
+    platform: state
+    to:
+    - opening
+  - entity_id:
+    - cover.garage_1
+    - cover.garage_2
+    from:
+    - open
+    id: close
+    platform: state
+    to:
+    - closing
+  - entity_id:
+    - cover.garage_1
+    - cover.garage_2
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    id: longopen
+    platform: state
+    to:
+    - open
+  - platform: state
+    entity_id:
+    - cover.garage_1
+    - cover.garage_2
+    to: open
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
+    id: verylong
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - open
+      sequence:
+      - action: script.notify_v2
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} is opening — {{
+            now().strftime("%-I:%M %p") }}'
+          title: "\U0001F3E0 Garage Opening"
+    - conditions:
+      - condition: trigger
+        id:
+        - close
+      sequence:
+      - action: script.notify_v2
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} is closing — {{
+            now().strftime("%-I:%M %p") }}'
+          title: "\U0001F3E0 Garage Closing"
+    - conditions:
+      - condition: trigger
+        id:
+        - longopen
+      sequence:
+      - action: script.notify_v2
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} has been open
+            for 5 minutes — {{ now().strftime("%-I:%M %p") }}'
+          title: ⚠️ Garage Left Open
+    - conditions:
+      - condition: trigger
+        id:
+        - verylong
+      sequence:
+      - action: script.notify_v2
+        data:
+          title: "\U0001F6A8 Garage Still Open"
+          message: '{{ trigger.to_state.attributes.friendly_name }} has been open
+            for 15 minutes — {{ now().strftime("%-I:%M %p") }}'
+  mode: single
+- id: '1780340979224'
+  alias: Leak Sensor Notification v2
+  description: Notifies all phones AND announces on Alexa when any water leak sensor
+    fires. Audio is intentional — this is urgent.
+  triggers:
+  - entity_id:
+    - binary_sensor.sump_pump_water_leak
+    - binary_sensor.basement_drain_water_leak
+    - binary_sensor.master_bathroom_water_leak
+    - binary_sensor.kitchen_sink_water_leak
+    - binary_sensor.guest_bathroom_water_leak
+    platform: state
+    to:
+    - 'on'
+  actions:
+  - action: script.notify_v2
+    data:
+      audio: true
+      message: '{{ trigger.to_state.attributes.friendly_name }} is reporting a leak
+        at {{ now().strftime("%-I:%M %p") }} — shut off water if needed!'
+      title: "\U0001F4A7 Water Leak Detected"
+  mode: single
+- id: '1780340989546'
+  alias: Night Check v2
+  description: Sends a nightly summary at 10:30pm of lights on, open doors/windows,
+    unlocked locks, and active switches.
+  triggers:
+  - at: '22:30:00'
+    platform: time
+  actions:
+  - action: script.notify_v2
+    data:
+      message: '{{ expand(state_attr(''light.all_lights'', ''entity_id'')) | selectattr(''state'',''eq'',''on'')
+        | map(attribute=''name'') | list | count }} light(s) on: {{ expand(state_attr(''light.all_lights'',
+        ''entity_id'')) | selectattr(''state'',''eq'',''on'') | map(attribute=''name'')
+        | list | join('', '') }}'
+      title: "Night Check \U0001F4A1"
+  - action: script.notify_v2
+    data:
+      message: '{{ expand(state_attr(''binary_sensor.doors_windows'', ''entity_id''))
+        | selectattr(''state'',''eq'',''on'') | map(attribute=''name'') | list | count
+        }} door(s)/window(s) open: {{ expand(state_attr(''binary_sensor.doors_windows'',
+        ''entity_id'')) | selectattr(''state'',''eq'',''on'') | map(attribute=''name'')
+        | list | join('', '') }}'
+      title: "Night Check \U0001F6AA"
+  - action: script.notify_v2
+    data:
+      message: '{{ expand(state_attr(''lock.all_doors'', ''entity_id'')) | selectattr(''state'',''eq'',''unlocked'')
+        | map(attribute=''name'') | list | count }} door(s) unlocked: {{ expand(state_attr(''lock.all_doors'',
+        ''entity_id'')) | selectattr(''state'',''eq'',''unlocked'') | map(attribute=''name'')
+        | list | join('', '') }}'
+      title: "Night Check \U0001F513"
+  - action: script.notify_v2
+    data:
+      message: '{{ expand(state_attr(''switch.all_switches'', ''entity_id'')) | selectattr(''state'',''eq'',''on'')
+        | map(attribute=''name'') | list | count }} switch(es) on: {{ expand(state_attr(''switch.all_switches'',
+        ''entity_id'')) | selectattr(''state'',''eq'',''on'') | map(attribute=''name'')
+        | list | join('', '') }}'
+      title: "Night Check \U0001F50C"
+  mode: single
+- id: '1780343265731'
+  alias: Front Door Bell v3
+  description: Notifies all phones and plays doorbell chime on Alexa when a visitor
+    is detected. Audio suppressed in quiet/guest mode.
+  triggers:
+  - entity_id:
+    - binary_sensor.front_door_visitor
+    from:
+    - 'off'
+    to:
+    - 'on'
+    platform: state
+  actions:
+  - action: script.notify_v3
+    data:
+      audio: true
+      media_id: amzn_sfx_doorbell_chime_01
+      message: Visitor detected at the Front Door — {{ now().strftime('%-I:%M %p')
+        }}
+      title: "\U0001F514 Someone at the Door"
+  mode: single
+- id: '1780343279672'
+  alias: Doors & Windows v3
+  description: Notifies all phones and plays a door alert chime on Alexa when any
+    door or window opens or closes. Audio and non-SJ notifications suppressed in quiet/guest
+    mode.
+  triggers:
+  - entity_id:
+    - binary_sensor.front_door
+    - binary_sensor.garage_door
+    - binary_sensor.loft_window
+    - binary_sensor.walkout_door
+    - binary_sensor.basement_door
+    - binary_sensor.basement_window
+    - binary_sensor.deck_sliding_door
+    - binary_sensor.neeva_windows
+    - binary_sensor.yard_gate
+    id: doorwindowopen
+    platform: state
+    to:
+    - 'on'
+  - entity_id:
+    - binary_sensor.front_door
+    - binary_sensor.garage_door
+    - binary_sensor.loft_window
+    - binary_sensor.walkout_door
+    - binary_sensor.basement_door
+    - binary_sensor.basement_window
+    - binary_sensor.deck_sliding_door
+    - binary_sensor.neeva_windows
+    - binary_sensor.yard_gate
+    id: doorwindowclose
+    platform: state
+    to:
+    - 'off'
+  actions:
+  - action: script.notify_audio_v3
+    alias: Play door alert sound
+    data:
+      media_id: clock_01
+  - alias: Send push notification
+    choose:
+    - conditions:
+      - condition: trigger
+        id: doorwindowopen
+      sequence:
+      - action: script.notify_v3
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} opened at {{ now().strftime(''%-I:%M
+            %p'') }}'
+          title: "\U0001F6AA Entry Point Opened"
+    - conditions:
+      - condition: trigger
+        id: doorwindowclose
+      sequence:
+      - action: script.notify_v3
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} closed at {{ now().strftime(''%-I:%M
+            %p'') }}'
+          title: "\U0001F6AA Entry Point Closed"
+  mode: single
+- id: '1780343297712'
+  alias: Door Lock Unlock Status v3
+  description: Notifies all phones when any lock is locked, unlocked, or jammed. No
+    audio. Arleepta and Neeva suppressed in quiet mode.
+  triggers:
+  - device_id: f6fb94ee1b2f598b481ded658a4af30b
+    domain: lock
+    entity_id: 191d58b23eef085ccf6f38511077e5cd
+    id: gd_unlock
+    platform: device
+    type: unlocked
+  - device_id: f6fb94ee1b2f598b481ded658a4af30b
+    domain: lock
+    entity_id: 191d58b23eef085ccf6f38511077e5cd
+    id: gd_locked
+    platform: device
+    type: locked
+  - device_id: f6fb94ee1b2f598b481ded658a4af30b
+    domain: lock
+    entity_id: 191d58b23eef085ccf6f38511077e5cd
+    id: gd_jammed
+    platform: device
+    type: jammed
+  - device_id: ffdf93c07bcdcb929e54e064d383b470
+    domain: lock
+    entity_id: b438392b34f145fed27c1ed5aaf709c7
+    id: fd_unlock
+    platform: device
+    type: unlocked
+  - device_id: ffdf93c07bcdcb929e54e064d383b470
+    domain: lock
+    entity_id: b438392b34f145fed27c1ed5aaf709c7
+    id: fd_locked
+    platform: device
+    type: locked
+  - device_id: ffdf93c07bcdcb929e54e064d383b470
+    domain: lock
+    entity_id: b438392b34f145fed27c1ed5aaf709c7
+    id: fd_jammed
+    platform: device
+    type: jammed
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - gd_unlock
+        - fd_unlock
+      sequence:
+      - action: script.notify_v3
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} was unlocked at
+            {{ now().strftime(''%-I:%M %p'') }}'
+          title: "\U0001F513 Lock Opened"
+    - conditions:
+      - condition: trigger
+        id:
+        - gd_locked
+        - fd_locked
+      sequence:
+      - action: script.notify_v3
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} was locked at
+            {{ now().strftime(''%-I:%M %p'') }}'
+          title: "\U0001F512 Lock Secured"
+    - conditions:
+      - condition: trigger
+        id:
+        - gd_jammed
+        - fd_jammed
+      sequence:
+      - action: script.notify_v3
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} is jammed and
+            cannot lock! Check immediately — {{ now().strftime(''%-I:%M %p'') }}'
+          title: ⚠️ Lock Jammed
+  mode: single
+- id: '1780343315359'
+  alias: Garage Status v3
+  description: Notifies all phones when a garage door opens, closes, or has been open
+    for 5 or 15+ minutes. Arleepta and Neeva suppressed in quiet mode.
+  triggers:
+  - entity_id:
+    - cover.garage_1
+    - cover.garage_2
+    from:
+    - closed
+    id: open
+    platform: state
+    to:
+    - opening
+  - entity_id:
+    - cover.garage_1
+    - cover.garage_2
+    from:
+    - open
+    id: close
+    platform: state
+    to:
+    - closing
+  - entity_id:
+    - cover.garage_1
+    - cover.garage_2
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    id: longopen
+    platform: state
+    to:
+    - open
+  - entity_id:
+    - cover.garage_1
+    - cover.garage_2
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
+    id: verylong
+    platform: state
+    to:
+    - open
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - open
+      sequence:
+      - action: script.notify_v3
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} is opening — {{
+            now().strftime(''%-I:%M %p'') }}'
+          title: "\U0001F3E0 Garage Opening"
+    - conditions:
+      - condition: trigger
+        id:
+        - close
+      sequence:
+      - action: script.notify_v3
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} is closing — {{
+            now().strftime(''%-I:%M %p'') }}'
+          title: "\U0001F3E0 Garage Closing"
+    - conditions:
+      - condition: trigger
+        id:
+        - longopen
+      sequence:
+      - action: script.notify_v3
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} has been open
+            for 5 minutes — {{ now().strftime(''%-I:%M %p'') }}'
+          title: ⚠️ Garage Left Open
+    - conditions:
+      - condition: trigger
+        id:
+        - verylong
+      sequence:
+      - action: script.notify_v3
+        data:
+          message: '{{ trigger.to_state.attributes.friendly_name }} has been open
+            for 15 minutes — {{ now().strftime(''%-I:%M %p'') }}'
+          title: "\U0001F6A8 Garage Still Open"
+  mode: single
+- id: '1780343330462'
+  alias: Night Check v3
+  description: Sends a nightly summary at 10:30pm of lights on, open doors/windows,
+    unlocked locks, and active switches. Arleepta and Neeva suppressed in quiet mode.
+  triggers:
+  - at: '22:30:00'
+    platform: time
+  actions:
+  - action: script.notify_v3
+    data:
+      message: '{{ expand(state_attr(''light.all_lights'', ''entity_id'')) | selectattr(''state'',''eq'',''on'')
+        | map(attribute=''name'') | list | count }} light(s) on: {{ expand(state_attr(''light.all_lights'',
+        ''entity_id'')) | selectattr(''state'',''eq'',''on'') | map(attribute=''name'')
+        | list | join('', '') }}'
+      title: "Night Check \U0001F4A1"
+  - action: script.notify_v3
+    data:
+      message: '{{ expand(state_attr(''binary_sensor.doors_windows'', ''entity_id''))
+        | selectattr(''state'',''eq'',''on'') | map(attribute=''name'') | list | count
+        }} door(s)/window(s) open: {{ expand(state_attr(''binary_sensor.doors_windows'',
+        ''entity_id'')) | selectattr(''state'',''eq'',''on'') | map(attribute=''name'')
+        | list | join('', '') }}'
+      title: "Night Check \U0001F6AA"
+  - action: script.notify_v3
+    data:
+      message: '{{ expand(state_attr(''lock.all_doors'', ''entity_id'')) | selectattr(''state'',''eq'',''unlocked'')
+        | map(attribute=''name'') | list | count }} door(s) unlocked: {{ expand(state_attr(''lock.all_doors'',
+        ''entity_id'')) | selectattr(''state'',''eq'',''unlocked'') | map(attribute=''name'')
+        | list | join('', '') }}'
+      title: "Night Check \U0001F513"
+  - action: script.notify_v3
+    data:
+      message: '{{ expand(state_attr(''switch.all_switches'', ''entity_id'')) | selectattr(''state'',''eq'',''on'')
+        | map(attribute=''name'') | list | count }} switch(es) on: {{ expand(state_attr(''switch.all_switches'',
+        ''entity_id'')) | selectattr(''state'',''eq'',''on'') | map(attribute=''name'')
+        | list | join('', '') }}'
+      title: "Night Check \U0001F50C"
+  mode: single
+- id: '1780343343606'
+  alias: Leak Sensor Notification v3
+  description: CRITICAL — Notifies all phones AND announces on Alexa when any water
+    leak sensor fires. Bypasses quiet mode and guest mode. Always fires.
+  triggers:
+  - entity_id:
+    - binary_sensor.sump_pump_water_leak
+    - binary_sensor.basement_drain_water_leak
+    - binary_sensor.master_bathroom_water_leak
+    - binary_sensor.kitchen_sink_water_leak
+    - binary_sensor.guest_bathroom_water_leak
+    platform: state
+    to:
+    - 'on'
+  actions:
+  - action: script.notify_critical_v1
+    data:
+      message: "\U0001F4A7 {{ trigger.to_state.attributes.friendly_name }} is reporting
+        a leak at {{ now().strftime('%-I:%M %p') }} — shut off water if needed!"
+      title: "\U0001F4A7 Water Leak Detected"
+  mode: single
+- id: '1780343356570'
+  alias: Critical Alerts v1
+  description: CRITICAL — Smoke and CO detection. Notifies all phones and announces
+    on Alexa regardless of quiet mode, guest mode, or any other suppression. Never
+    disable this automation.
+  triggers:
+  - platform: state
+    entity_id:
+    - binary_sensor.garage_smoke_detector_smoke
+    - binary_sensor.network_rack_smoke_detector_smoke
+    to: 'on'
+    id: smoke
+  - platform: numeric_state
+    entity_id: sensor.garage_smoke_detector_carbon_monoxide
+    above: 0
+    id: co
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: smoke
+      sequence:
+      - action: script.notify_critical_v1
+        data:
+          title: "\U0001F525 Smoke Detected"
+          message: '{{ trigger.to_state.attributes.friendly_name }} has detected smoke
+            at {{ now().strftime(''%-I:%M %p'') }} — evacuate if needed and call 911!'
+    - conditions:
+      - condition: trigger
+        id: co
+      sequence:
+      - action: script.notify_critical_v1
+        data:
+          title: ☠️ Carbon Monoxide Alert
+          message: Carbon monoxide detected by {{ trigger.to_state.attributes.friendly_name
+            }} at {{ now().strftime('%-I:%M %p') }} — evacuate immediately and call
+            911!
+  mode: parallel
+  max: 10
+- id: '1780348324573'
+  alias: Lights Schedule v1
+  description: 'Unified lights schedule. Sunset -10min: turns on entry and exterior
+    lights. 10:30pm: turns off first floor and basement. 11:30pm: turns off porch
+    light. Sunrise: turns off all remaining outdoor lights.'
+  triggers:
+  - platform: sun
+    event: sunset
+    offset: -00:10:00
+    id: sunset
+  - platform: time
+    at: '22:30:00'
+    id: night
+  - platform: time
+    at: '23:30:00'
+    id: latenight
+  - platform: sun
+    event: sunrise
+    offset: 00:00:00
+    id: sunrise
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: sunset
+      sequence:
+      - action: light.turn_on
+        target:
+          entity_id:
+          - light.kitchen_light
+          - light.driveway_light
+          - light.porch_light
+          - light.staircase_light
+        data: {}
+    - conditions:
+      - condition: trigger
+        id: night
+      sequence:
+      - action: light.turn_off
+        target:
+          entity_id:
+          - light.first_floor
+          - light.basement
+        data: {}
+    - conditions:
+      - condition: trigger
+        id: latenight
+      sequence:
+      - action: light.turn_off
+        target:
+          entity_id: light.porch_light
+        data: {}
+    - conditions:
+      - condition: trigger
+        id: sunrise
+      sequence:
+      - action: light.turn_off
+        target:
+          entity_id: light.outdoor
+        data: {}
+  mode: restart
+- id: '1780348561530'
+  alias: Shutdown Home Assistant v2
+  description: Shuts down the host when UPS battery drops below 25% for 1 minute.
+    Sends a critical notification to all phones before shutdown.
+  triggers:
+  - entity_id:
+    - sensor.apc_battery_charge
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    below: 25
+    platform: numeric_state
+  actions:
+  - action: script.notify_critical_v1
+    data:
+      title: "\U0001F50B UPS Battery Critical"
+      message: UPS battery is at {{ states('sensor.apc_battery_charge') }}% — CrashPad
+        is shutting down now to protect data. {{ now().strftime('%-I:%M %p') }}
+  - delay:
+      seconds: 10
+  - action: hassio.host_shutdown
+    data: {}
+  mode: single
+- id: '1780348574852'
+  alias: Power Status v2
+  description: Notifies all phones critically when mains power is lost (UPS kicks
+    in) or restored. Bypasses quiet mode.
+  triggers:
+  - entity_id:
+    - sensor.tripp_lite_status
+    from: Online
+    id: poweroff
+    platform: state
+  - entity_id:
+    - sensor.tripp_lite_status
+    id: poweron
+    platform: state
+    to: Online
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: poweroff
+      sequence:
+      - action: script.notify_v3
+        data:
+          critical: true
+          message: CrashPad has lost mains power and is running on UPS battery. {{
+            now().strftime('%-I:%M %p') }}
+          title: ⚡ Power Outage
+    - conditions:
+      - condition: trigger
+        id: poweron
+      sequence:
+      - action: script.notify_v3
+        data:
+          critical: true
+          message: Mains power has been restored. UPS is back online. {{ now().strftime('%-I:%M
+            %p') }}
+          title: ✅ Power Restored
+  mode: single
+- id: '1780348587251'
+  alias: 3D Printer Control v2
+  description: Notifies Sooraj when a 3D print completes, but only if the printer
+    switch is actually on.
+  triggers:
+  - entity_id:
+    - sensor.k1se_print_status
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+    platform: state
+    to:
+    - completed
+  conditions:
+  - condition: state
+    entity_id: switch.3d_printer
+    state: 'on'
+  actions:
+  - action: notify.send_message
+    data:
+      message: "Your 3D print has completed! \U0001F5A8️ {{ now().strftime('%-I:%M
+        %p') }}"
+      title: ✅ 3D Print Complete
+    target:
+      entity_id: notify.sj
+  mode: single
+- id: '1780348603100'
+  alias: Auto Disarm Security v2
+  description: Automatically unlocks the front door and disarms the alarm when Sooraj
+    or Arleepta arrives home.
+  triggers:
+  - entity_id: person.sooraj_chettada
+    event: enter
+    platform: zone
+    zone: zone.home
+  - entity_id: person.arleepta
+    event: enter
+    platform: zone
+    zone: zone.home
+  actions:
+  - alias: Unlock front door if locked
+    if:
+    - condition: state
+      entity_id: lock.front_door
+      state: locked
+    then:
+    - action: lock.unlock
+      target:
+        entity_id: lock.front_door
+  - alias: Disarm alarm if armed away
+    if:
+    - condition: state
+      entity_id: alarm_control_panel.home
+      state: armed_away
+    then:
+    - action: alarm_control_panel.alarm_disarm
+      data:
+        code: '1985'
+      target:
+        entity_id: alarm_control_panel.home
+  mode: single
+- id: '1780348614726'
+  alias: Fireplace Monitoring v2
+  description: Notifies all phones whenever the fireplace is turned on or off.
+  triggers:
+  - entity_id: switch.fireplace_fireplace
+    platform: state
+    to:
+    - 'on'
+    - 'off'
+  actions:
+  - action: script.notify_v3
+    data:
+      message: Fireplace is {{ trigger.to_state.state | title }} — {{ now().strftime('%-I:%M
+        %p') }}
+      title: "\U0001F525 Fireplace {{ 'On' if trigger.to_state.state == 'on' else
+        'Off' }}"
+  mode: single
+- id: '1780348630584'
+  alias: Check All Door Status v2
+  description: Checks every 15 minutes whether the front door or garage door has been
+    open continuously for 15+ minutes and sends a notification if so.
+  triggers:
+  - minutes: /15
+    platform: time_pattern
+  actions:
+  - alias: Alert if front door open 15+ min
+    if:
+    - condition: state
+      entity_id: binary_sensor.front_door
+      for:
+        hours: 0
+        minutes: 15
+        seconds: 0
+      state: 'on'
+    then:
+    - action: script.notify_v3
+      data:
+        message: Front Door has been open for {{ relative_time(states.binary_sensor.front_door.last_changed)
+          }} — {{ now().strftime('%-I:%M %p') }}
+        title: "\U0001F6AA Front Door Left Open"
+  - alias: Alert if garage door open 15+ min
+    if:
+    - condition: state
+      entity_id: binary_sensor.garage_door
+      for:
+        hours: 0
+        minutes: 15
+        seconds: 0
+      state: 'on'
+    then:
+    - action: script.notify_v3
+      data:
+        message: Garage Door has been open for {{ relative_time(states.binary_sensor.garage_door.last_changed)
+          }} — {{ now().strftime('%-I:%M %p') }}
+        title: "\U0001F3EA Garage Door Left Open"
+  mode: single
+- id: '1780348642218'
+  alias: Lock Front Door v2
+  description: Automatically locks the front door 5 minutes after it closes, if it's
+    still unlocked.
+  triggers:
+  - entity_id:
+    - binary_sensor.front_door
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    from:
+    - 'on'
+    platform: state
+    to:
+    - 'off'
+  conditions:
+  - condition: state
+    entity_id: lock.front_door
+    state: unlocked
+  actions:
+  - action: lock.lock
+    target:
+      entity_id: lock.front_door
+  mode: single
+- id: '1780348658097'
+  alias: House Schedule v1
+  description: 'Unified daily schedule at 5:30am and 11:30pm. Morning: powers on the
+    office wall panel (PoE) and recirculation pump, turns off bathroom heat lamp.
+    Night: reverses all — panel off, pump off, heat lamp on.'
+  triggers:
+  - at: 05:30:00
+    id: morning
+    platform: time
+  - at: '23:30:00'
+    id: night
+    platform: time
+  actions:
+  - choose:
+    - alias: Morning — power on panel and pump, power off heat lamp
+      conditions:
+      - condition: trigger
+        id: morning
+      sequence:
+      - action: switch.turn_on
+        data: {}
+        target:
+          entity_id: switch.usw_pro_24_poe_arleepta_office_poe
+      - action: switch.turn_on
+        data: {}
+        target:
+          entity_id: switch.master_bathroom_outlet_1
+      - action: switch.turn_off
+        data: {}
+        target:
+          entity_id: switch.master_bathroom_outlet_2
+    - alias: Night — power off panel and pump, power on heat lamp
+      conditions:
+      - condition: trigger
+        id: night
+      sequence:
+      - action: switch.turn_off
+        data: {}
+        target:
+          entity_id: switch.usw_pro_24_poe_arleepta_office_poe
+      - action: switch.turn_off
+        data: {}
+        target:
+          entity_id: switch.master_bathroom_outlet_1
+      - action: switch.turn_on
+        data: {}
+        target:
+          entity_id: switch.master_bathroom_outlet_2
+  mode: single
+- id: '1780354029167'
+  alias: Auto Disarm Security v3
+  description: Automatically unlocks the garage door lock and disarms the alarm when
+    Sooraj or Arleepta arrives home.
+  triggers:
+  - entity_id: person.sooraj_chettada
+    event: enter
+    platform: zone
+    zone: zone.home
+  - entity_id: person.arleepta
+    event: enter
+    platform: zone
+    zone: zone.home
+  actions:
+  - alias: Unlock garage door if locked
+    if:
+    - condition: state
+      entity_id: lock.garage_door_lock
+      state: locked
+    then:
+    - action: lock.unlock
+      target:
+        entity_id: lock.garage_door_lock
+  - alias: Disarm alarm if armed away
+    if:
+    - condition: state
+      entity_id: alarm_control_panel.home
+      state: armed_away
+    then:
+    - action: alarm_control_panel.alarm_disarm
+      data:
+        code: '1985'
+      target:
+        entity_id: alarm_control_panel.home
   mode: single
