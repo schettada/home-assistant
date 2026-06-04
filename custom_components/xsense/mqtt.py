@@ -10,7 +10,7 @@ import logging
 from typing import Any
 
 import paho.mqtt.client as mqtt
-from xsense.mqtt_helper import MQTTHelper
+from .api.mqtt_helper import MQTTHelper
 
 from homeassistant.components.mqtt.client import Subscription, _matcher_for_topic
 from homeassistant.components.mqtt.models import ReceiveMessage
@@ -32,7 +32,7 @@ _LOGGER = logging.getLogger(__name__)
 INITIAL_SUBSCRIBE_COOLDOWN = 0.5
 UNSUBSCRIBE_COOLDOWN = 0.1
 TIMEOUT_ACK = 10
-RECONNECT_INTERVAL_SECONDS = 15  # was 300 — 5 minuten is veel te lang na disconnect
+RECONNECT_INTERVAL_SECONDS = 15
 DEFAULT_ENCODING = "utf-8"
 DEFAULT_OPTIMISTIC = False
 DEFAULT_QOS = 0
@@ -228,7 +228,6 @@ class XSenseMQTT:
             self._async_on_socket_register_write, client, None, sock
         )
 
-    # Uunchanged
     @callback
     def _async_on_socket_register_write(
         self, client: mqtt.Client, userdata: Any, sock: SocketType
@@ -273,6 +272,10 @@ class XSenseMQTT:
         )
         await self._async_wait_for_mid_or_raise(msg_info.mid, msg_info.rc)
 
+    async def _async_prepare_connection(self) -> None:
+        """Prepare MQTT connection settings without blocking the event loop."""
+        await self.hass.async_add_executor_job(self.mqtt_helper.prepare_connection)
+
     # updated call, added exception handler
     async def async_connect(self) -> None:
         """Connect to the host. Does not process messages yet."""
@@ -282,7 +285,7 @@ class XSenseMQTT:
         self._should_reconnect = True
         try:
             async with self._connection_lock, self._async_connect_in_executor():
-                self.mqtt_helper.prepare_connect()
+                await self._async_prepare_connection()
                 result = await self.hass.async_add_executor_job(
                     self._mqttc.connect, self.mqtt_helper.house.mqtt_server, 443
                 )
@@ -323,33 +326,27 @@ class XSenseMQTT:
             self._reconnect_task.cancel()
             self._reconnect_task = None
 
-    # Updated: exponentiële backoff zodat reconnect snel is maar niet spamt
     async def _reconnect_loop(self) -> None:
         """Reconnect to the MQTT server with exponential backoff."""
-        delay = 1  # begin met 1 seconde
+        delay = 1
         while True:
             await asyncio.sleep(delay)
 
             if self.connected:
-                # Al opnieuw verbonden (bv. door een andere code path)
                 delay = 1
                 continue
 
-            _LOGGER.debug("Herverbinden met MQTT server (volgende poging in %ss)...", delay)
+            _LOGGER.debug("Reconnecting to XSense MQTT server")
             try:
                 async with self._connection_lock, self._async_connect_in_executor():
-                    self.mqtt_helper.prepare_connect()
+                    await self._async_prepare_connection()
                     await self.hass.async_add_executor_job(self._mqttc.reconnect)
-                # Reconnect gelukt — reset delay
                 delay = 1
             except OSError as err:
-                _LOGGER.debug(
-                    "Fout bij herverbinden met MQTT server: %s", err
-                )
-                # Exponentieel verhogen tot max RECONNECT_INTERVAL_SECONDS
+                _LOGGER.debug("Error reconnecting to XSense MQTT server: %s", err)
                 delay = min(delay * 2, RECONNECT_INTERVAL_SECONDS)
             except mqtt.WebsocketConnectionError as err:
-                _LOGGER.error("WebSocket fout bij herverbinden met X-Sense MQTT: %s", err)
+                _LOGGER.error("WebSocket error reconnecting to XSense MQTT: %s", err)
                 delay = min(delay * 2, RECONNECT_INTERVAL_SECONDS)
 
     async def async_disconnect(self, disconnect_paho_client: bool = False) -> None:
@@ -493,9 +490,13 @@ class XSenseMQTT:
         matcher = None if is_simple_match else _matcher_for_topic(topic)
 
         try:
-            subscription = Subscription(topic, is_simple_match, matcher, job, qos, encoding, 1)
+            subscription = Subscription(
+                topic, is_simple_match, matcher, job, qos, encoding, 1
+            )
         except TypeError:
-            subscription = Subscription(topic, is_simple_match, matcher, job, qos, encoding)
+            subscription = Subscription(
+                topic, is_simple_match, matcher, job, qos, encoding
+            )
 
         self._async_track_subscription(subscription)
         self._matching_subscriptions.cache_clear()
@@ -592,9 +593,9 @@ class XSenseMQTT:
         self,
         _mqttc: mqtt.Client,
         _userdata: None,
-        _flags: dict[str, int],
-        result_code: int,
-        properties: mqtt.Properties | None = None,
+        _flags: mqtt.ConnectFlags,
+        result_code: mqtt.ReasonCode,
+        _properties: mqtt.Properties,
     ) -> None:
         """On connect callback.
 
@@ -641,19 +642,12 @@ class XSenseMQTT:
         )
         return subscriptions
 
-    # updated: filter duplicaat AWS IoT topics weg aan de bron
     @callback
     def _async_mqtt_on_message(
         self, _mqttc: mqtt.Client, _userdata: None, msg: mqtt.MQTTMessage
     ) -> None:
         topic = msg.topic
 
-        # AWS IoT stuurt elke shadow update drie keer:
-        #   .../update           ← de echte update, die willen we
-        #   .../update/accepted  ← bevestiging van AWS (duplicaat)
-        #   .../update/documents ← vorige + nieuwe state gecombineerd (duplicaat)
-        # Door hier te filteren vermijden we dat de coordinator dezelfde
-        # state 3x verwerkt, wat race conditions en traagte veroorzaakt.
         if (
             topic.endswith("/update/accepted")
             or topic.endswith("/update/documents")
@@ -664,15 +658,14 @@ class XSenseMQTT:
         if self.on_data is not None:
             self.on_data(topic, msg.payload)
 
-    # unchanged
     @callback
     def _async_mqtt_on_callback(
         self,
         _mqttc: mqtt.Client,
         _userdata: None,
         mid: int,
-        _granted_qos_reason: tuple[int, ...] | mqtt.ReasonCodes | None = None,
-        _properties_reason: mqtt.ReasonCodes | None = None,
+        _granted_qos_reason: tuple[int, ...] | mqtt.ReasonCode | None = None,
+        _properties_reason: mqtt.Properties | None = None,
     ) -> None:
         """Publish / Subscribe / Unsubscribe callback."""
         # The callback signature for on_unsubscribe is different from on_subscribe
@@ -700,11 +693,12 @@ class XSenseMQTT:
         self,
         _mqttc: mqtt.Client,
         _userdata: None,
-        result_code: int,
-        properties: mqtt.Properties | None = None,
+        _disconnect_flags: mqtt.DisconnectFlags,
+        result_code: mqtt.ReasonCode,
+        _properties: mqtt.Properties,
     ) -> None:
         """Disconnected callback."""
-        self._async_on_disconnect(result_code)
+        self._async_on_disconnect(result_code.value)
 
     # remove mqtt status dispatching
     @callback
@@ -717,6 +711,9 @@ class XSenseMQTT:
         # result is set make sure the first connection result is set
         self._async_connection_result(False)
         self.connected = False
+        if result_code == mqtt.MQTT_ERR_SUCCESS:
+            _LOGGER.debug("Disconnected from MQTT server cleanly")
+            return
         _LOGGER.warning(
             "Disconnected from MQTT server (%s)",
             result_code,
