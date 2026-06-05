@@ -227,3 +227,75 @@ notify_v3:
           data:
             media_id: '{{ media_id | default('''') }}'
             message: '{{ message }}'
+notify_mobile_v3:
+  alias: Notify Mobile v3
+  description: Sends push notifications to all available phones. When Quiet Mode is
+    on, only sends to Sooraj — Arleepta and Neeva are suppressed so they aren't woken.
+    Skips any phone whose companion sensor is unavailable. Add/remove phones here
+    only.
+  fields:
+    message:
+      description: Notification body text
+      name: Message
+      required: true
+      selector:
+        text:
+    title:
+      default: CrashPad
+      description: Notification title
+      name: Title
+      required: false
+      selector:
+        text:
+  icon: mdi:cellphone-message
+  max: 10
+  mode: parallel
+  sequence:
+  - alias: Always notify SJ (if available)
+    if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: sensor.sj_connection_type
+        state: unavailable
+    then:
+    - action: notify.send_message
+      data:
+        message: '{{ message }}'
+        title: '{{ title | default(''CrashPad'') }}'
+      target:
+        entity_id: notify.sj
+  - alias: Notify Arleepta (if available and not quiet mode)
+    if:
+    - condition: state
+      entity_id: input_boolean.quiet_mode
+      state: 'off'
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: sensor.arleepta_connection_type
+        state: unavailable
+    then:
+    - action: notify.send_message
+      data:
+        message: '{{ message }}'
+        title: '{{ title | default(''CrashPad'') }}'
+      target:
+        entity_id: notify.arleepta
+  - alias: Notify Neeva (if available and not quiet mode)
+    if:
+    - condition: state
+      entity_id: input_boolean.quiet_mode
+      state: 'off'
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: sensor.neeva_connection_type
+        state: unavailable
+    then:
+    - action: notify.send_message
+      data:
+        message: '{{ message }}'
+        title: '{{ title | default(''CrashPad'') }}'
+      target:
+        entity_id: notify.neeva
