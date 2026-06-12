@@ -24,10 +24,9 @@ from .const import (
     CAMERA_SCAN_INTERVAL,
     DOMAIN,
     LOGGER,
-    LOGIN_TIMEOUT,
     POLL_INTERVAL_MIN,
 )
-from .mqtt import DEFAULT_ENCODING, DEFAULT_QOS, XSenseMQTT
+from .mqtt import DEFAULT_ENCODING, DEFAULT_SUBSCRIBE_QOS, XSenseMQTT
 
 _IGNORED_TOPIC_SUFFIXES = ("/update/accepted", "/update/documents", "/update/rejected")
 
@@ -49,6 +48,7 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._initialized: bool = False
         self._camera_initialized: bool = False
         self._last_camera_update_attempt: datetime | None = None
+        self._camera_station_cache: dict[str, Any] = {}
         super().__init__(
             hass,
             LOGGER,
@@ -83,23 +83,22 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         if self.xsense is not None:
             await self.xsense.close()
 
-        xsense = AsyncXSense(async_get_clientsession(self.hass))
+        xsense = AsyncXSense(
+            async_get_clientsession(self.hass), language=self.hass.config.language
+        )
 
         try:
-            await asyncio.wait_for(
-                _async_init_and_login(xsense, email, password), timeout=LOGIN_TIMEOUT
-            )
+            await _async_init_and_login(xsense, email, password)
         except AuthFailed as ex:
             raise ConfigEntryAuthFailed(f"Login failed: {ex!s}") from ex
         except APIFailure as ex:
             raise UpdateFailed(f"XSense API Issue: {ex}") from ex
-        except TimeoutError as ex:
-            raise UpdateFailed("Timed out connecting to X-Sense") from ex
 
         self.xsense = xsense
         self._initialized = False
         self._camera_initialized = False
         self._last_camera_update_attempt = None
+        self._camera_station_cache = {}
 
     async def _async_update_data(self) -> dict[str, Any]:
         if self.xsense is None:
@@ -207,7 +206,9 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 self._initialized = True
                 LOGGER.debug("Initial XSense discovery complete")
 
-            await self._update_cameras()
+            camera_data_refreshed = await self._update_cameras()
+            if camera_data_refreshed:
+                self._cache_camera_stations()
 
             for h in self.xsense.houses.values():
                 stations.update(h.stations.items())
@@ -220,6 +221,8 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     if s.type == "SBS50":
                         await self._update_safe_mode(s)
                     devices.update(s.devices.items())
+
+            self._merge_cached_camera_stations(stations)
 
         except (SessionExpired, AuthFailed) as ex:
             if not retry:
@@ -234,8 +237,14 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         else:
             return {"stations": stations, "devices": devices}
 
-    async def _update_cameras(self) -> None:
-        """Fetch camera metadata from the Android app IPC/ADDX APIs when present."""
+    async def _update_cameras(self) -> bool:
+        """Fetch camera metadata from the Android app IPC/ADDX APIs when present.
+
+        Return True only when the camera API was actually refreshed. Normal
+        coordinator refreshes may skip this expensive path, but cached ADDX
+        camera stations still need to stay in coordinator data so Home Assistant
+        does not mark their entities unavailable.
+        """
         now = datetime.now(timezone.utc)
         if (
             self._camera_initialized
@@ -243,7 +252,7 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             and now - self._last_camera_update_attempt
             < timedelta(seconds=CAMERA_SCAN_INTERVAL)
         ):
-            return
+            return False
 
         self._last_camera_update_attempt = now
         try:
@@ -252,8 +261,23 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             self._camera_initialized = False
             self._last_camera_update_attempt = None
             LOGGER.warning("Could not update X-Sense camera data: %s", ex)
+            return False
         else:
             self._camera_initialized = True
+            return True
+
+    def _cache_camera_stations(self) -> None:
+        """Remember ADDX camera stations between camera API refreshes."""
+        self._camera_station_cache = {
+            station.entity_id: station
+            for house in self.xsense.houses.values()
+            for station in house.stations.values()
+            if is_camera_entity(station)
+        }
+
+    def _merge_cached_camera_stations(self, stations: dict[str, Any]) -> None:
+        """Keep ADDX-only cameras present when the camera API refresh is skipped."""
+        stations.update(self._camera_station_cache)
 
     async def _update_safe_mode(self, station) -> None:
         """Fetch safeMode from the 2nd_safemode AWS IoT shadow as a fallback."""
@@ -308,8 +332,11 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         station_data = _mqtt_reported_data(data)
 
-        station_sn = station_data.get("stationSN") or station_data.get("_stationSN")
-        device_sn = station_data.get("deviceSN") or station_data.get("_deviceSN")
+        station_sn = None
+        device_sn = None
+        if isinstance(station_data, dict):
+            station_sn = station_data.get("stationSN") or station_data.get("_stationSN")
+            device_sn = station_data.get("deviceSN") or station_data.get("_deviceSN")
 
         station = self._get_station_by_id(station_sn)
         if station is None:
@@ -331,6 +358,11 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             if event_type := data.get("eventType"):
                 station._set_online(event_type == "connected")
                 self.async_update_listeners()
+            return
+
+        if isinstance(station_data, list):
+            self.xsense.parse_get_state(station, station_data)
+            self.async_update_listeners()
             return
 
         is_safemode_topic = "/shadow/name/2nd_safemode/update" in topic
@@ -360,13 +392,9 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         ):
             dev.set_data(station_data)
         else:
-            if isinstance(children, list):
+            if isinstance(children, (dict, list)):
                 station_data["devs"] = children
             self.xsense.parse_get_state(station, station_data)
-        if isinstance(children, dict):
-            for k, v in children.items():
-                if dev := station.get_device_by_sn(k):
-                    dev.set_data(v)
 
         self.async_update_listeners()
 
@@ -410,7 +438,7 @@ class XSenseDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     f"'{msg.topic}': '{msg.payload}'"
                 ),
             ),
-            DEFAULT_QOS,
+            DEFAULT_SUBSCRIBE_QOS,
             DEFAULT_ENCODING,
         )
 
@@ -455,11 +483,13 @@ def _apply_safe_mode(station, safe_mode: str) -> None:
     station._data["safeMode"] = safe_mode
 
 
-def _mqtt_reported_data(data: dict[str, Any]) -> dict[str, Any]:
+def _mqtt_reported_data(data: dict[str, Any]) -> dict[str, Any] | list[Any]:
     """Return device data from either shadow reports or X-Sense event payloads."""
     reported = data.get("state", {}).get("reported")
     if isinstance(reported, dict):
         return reported.copy()
+    if isinstance(reported, list):
+        return list(reported)
 
     event_data = data.get("eventData")
     if isinstance(event_data, dict):

@@ -20,7 +20,6 @@ from .constant import (
     VERTICAL_ANGLE_RANGE,
     DreoACMode,
     DreoACFanMode,
-    FANON_KEY,
     POWERON_KEY,
 )
 
@@ -198,17 +197,6 @@ def _htf007s_mcu_override(device) -> None:
         device._speed_range = (1, 4)  # pylint: disable=protected-access
 
 
-def _hpf017s_power_override(device) -> None:
-    """Use poweron commands for DR-HPF017S even though REST state reports fanon.
-
-    This device sends fanon in both REST state and websocket updates, but must
-    be commanded via poweron.  Set _power_on_key for commands and
-    _power_state_key so websocket state updates are read from fanon.
-    """
-    device._power_on_key = POWERON_KEY  # pylint: disable=protected-access
-    device._power_state_key = FANON_KEY  # pylint: disable=protected-access
-
-
 SUPPORTED_DEVICES = {
     # Tower Fans
     "DR-HTF": DreoDeviceDetails(device_type=DreoDeviceType.TOWER_FAN),
@@ -277,6 +265,13 @@ SUPPORTED_DEVICES = {
     ),
     # Air Circulators
     "DR-HAF": DreoDeviceDetails(device_type=DreoDeviceType.AIR_CIRCULATOR),
+    # DR-HAF001S: The API may return controlsConf with only a template reference,
+    # so preset_modes and speed_range are hardcoded here to ensure full functionality.
+    "DR-HAF001S": DreoDeviceDetails(
+        device_type=DreoDeviceType.AIR_CIRCULATOR,
+        preset_modes=[("normal", 1), ("natural", 2), ("sleep", 3), ("auto", 4)],
+        device_ranges={SPEED_RANGE: (1, 4)},
+    ),
     "DR-HAF004S": DreoDeviceDetails(
         device_type=DreoDeviceType.AIR_CIRCULATOR,
         override_fn=_haf004s_mcu_override,
@@ -301,12 +296,13 @@ SUPPORTED_DEVICES = {
     ),
     "DR-HPF015S": DreoDeviceDetails(
         device_type=DreoDeviceType.AIR_CIRCULATOR,
+        preset_modes=[("normal", 1), ("auto", 2), ("sleep", 3), ("natural", 4), ("turbo", 5), ("custom", 6)],
         device_ranges={SPEED_RANGE: (1, 12)},
     ),
     "DR-HPF017S": DreoDeviceDetails(
         device_type=DreoDeviceType.AIR_CIRCULATOR,
-        device_ranges={SPEED_RANGE: (1, 12)},
-        override_fn=_hpf017s_power_override,
+        preset_modes=[("normal", 1), ("auto", 2), ("sleep", 3), ("natural", 4), ("turbo", 5), ("custom", 6)],
+        device_ranges={SPEED_RANGE: (1, 12), HORIZONTAL_ANGLE_RANGE: (-75, 75), VERTICAL_ANGLE_RANGE: (-30, 90)},
     ),
     "DR-HPF007S": DreoDeviceDetails(
         device_type=DreoDeviceType.AIR_CIRCULATOR,
@@ -333,7 +329,17 @@ SUPPORTED_DEVICES = {
     ),
     # Ceiling Fans
     "DR-HCF": DreoDeviceDetails(device_type=DreoDeviceType.CEILING_FAN),
+    "DR-HCF001S": DreoDeviceDetails(
+        device_type=DreoDeviceType.CEILING_FAN,
+        preset_modes=[("normal", 1), ("natural", 2), ("sleep", 3), ("reverse", 4)],
+        device_ranges={SPEED_RANGE: (1, 12)},
+    ),
     "DR-HCF002S": DreoDeviceDetails(device_type=DreoDeviceType.CEILING_FAN, device_ranges={SPEED_RANGE: (1, 12)}),
+    "DR-HCF007S": DreoDeviceDetails(
+        device_type=DreoDeviceType.CEILING_FAN,
+        preset_modes=[("normal", 1), ("natural", 2), ("sleep", 3), ("reverse", 4)],
+        device_ranges={SPEED_RANGE: (1, 12)},
+    ),
     "DR-HCF521S": DreoDeviceDetails(device_type=DreoDeviceType.CEILING_FAN, device_ranges={SPEED_RANGE: (1, 12)}),
     # Air Purifiers
     "DR-HAP": DreoDeviceDetails(device_type=DreoDeviceType.AIR_PURIFIER),
@@ -455,6 +461,7 @@ SUPPORTED_DEVICES = {
     # Dehumidifiers
     "DR-HDH001S": DreoDeviceDetails(device_type=DreoDeviceType.DEHUMIDIFIER, device_ranges={HUMIDITY_RANGE: (30, 85), SPEED_RANGE: (1, 3)}),
     "DR-HDH002S": DreoDeviceDetails(device_type=DreoDeviceType.DEHUMIDIFIER, device_ranges={HUMIDITY_RANGE: (30, 85), SPEED_RANGE: (1, 3)}),
+    "DR-HDH003S": DreoDeviceDetails(device_type=DreoDeviceType.DEHUMIDIFIER, device_ranges={HUMIDITY_RANGE: (30, 85), SPEED_RANGE: (1, 3)}),
     "DR-HDH005S": DreoDeviceDetails(device_type=DreoDeviceType.DEHUMIDIFIER, device_ranges={HUMIDITY_RANGE: (30, 85), SPEED_RANGE: (1, 3)}),
     # Evaporative Coolers
     "DR-HEC": DreoDeviceDetails(

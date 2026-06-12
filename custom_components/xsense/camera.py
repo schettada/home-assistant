@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from contextlib import suppress
 from dataclasses import dataclass
 from importlib import import_module
@@ -21,7 +22,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .api.async_xsense import is_camera_entity
+from .api.async_xsense import camera_live_resolution, is_camera_entity
 from .const import DOMAIN, LOGGER
 from .coordinator import XSenseDataUpdateCoordinator
 from .entity import XSenseEntity
@@ -68,6 +69,7 @@ class XSenseCameraEntity(XSenseEntity, Camera):
         Camera.__init__(self)
         self.entity_description = entity_description
         self._webrtc_sessions: dict[str, object] = {}
+        self._webrtc_close_tasks: set[asyncio.Task] = set()
         super().__init__(coordinator, entity)
 
     @callback
@@ -125,13 +127,9 @@ class XSenseCameraEntity(XSenseEntity, Camera):
         entity = self._current_entity()
         if entity is None:
             return None
-        source = await self.coordinator.xsense.start_camera_live(entity)
-        if _url_scheme(source) == "webrtc":
-            LOGGER.info(
-                "X-Sense camera %s returned an ADDX WebRTC stream that Home Assistant's native stream worker cannot open",
-                entity.entity_id,
-            )
+        if _is_webrtc_camera(entity):
             return None
+        source = await self.coordinator.xsense.start_camera_live(entity)
         return source
 
     @callback
@@ -153,7 +151,15 @@ class XSenseCameraEntity(XSenseEntity, Camera):
             )
             return
 
+        LOGGER.debug(
+            "X-Sense camera WebRTC offer received: %s",
+            _camera_debug_context(entity, session_id),
+        )
         ticket_data = await self.coordinator.xsense.get_camera_webrtc_ticket(entity)
+        LOGGER.debug(
+            "X-Sense camera WebRTC ticket response: %s",
+            _ticket_data_debug_context(ticket_data),
+        )
         if not isinstance(ticket_data, dict):
             send_message(
                 WebRTCError(
@@ -170,16 +176,54 @@ class XSenseCameraEntity(XSenseEntity, Camera):
             import_module, __package__ + ".webrtc_signal"
         )
 
+        try:
+            ticket = webrtc_signal.XSenseWebRTCTicket.from_api(entity.sn, ticket_data)
+        except (KeyError, TypeError, ValueError) as err:
+            LOGGER.debug(
+                "X-Sense camera WebRTC ticket parse failed: %s",
+                _camera_debug_context(entity, session_id, error=type(err).__name__),
+            )
+            send_message(
+                WebRTCError(
+                    "xsense_webrtc_ticket_failed",
+                    "Unable to parse X-Sense WebRTC ticket",
+                )
+            )
+            return
+        if not ticket.is_valid:
+            LOGGER.debug(
+                "X-Sense camera WebRTC ticket expired or incomplete: %s",
+                _camera_debug_context(entity, session_id),
+            )
+            send_message(
+                WebRTCError(
+                    "xsense_webrtc_ticket_expired",
+                    "X-Sense WebRTC ticket expired",
+                )
+            )
+            return
+
+        def remove_session() -> None:
+            if self._webrtc_sessions.get(session_id) is session:
+                self._webrtc_sessions.pop(session_id, None)
+
         session = webrtc_signal.XSenseWebRTCSession(
             session=async_get_clientsession(self.hass),
-            ticket=webrtc_signal.XSenseWebRTCTicket.from_api(entity.sn, ticket_data),
+            ticket=ticket,
             offer_sdp=offer_sdp,
             resolution=_camera_live_resolution(entity),
             send_message=send_message,
+            on_close=remove_session,
+            camera_online=_camera_online(entity),
+        )
+        LOGGER.debug(
+            "X-Sense camera WebRTC bridge created: %s",
+            _camera_debug_context(entity, session_id),
         )
         self._webrtc_sessions[session_id] = session
         if not await session.start():
-            self._webrtc_sessions.pop(session_id, None)
+            await session.close()
+            remove_session()
 
     async def async_on_webrtc_candidate(self, session_id, candidate) -> None:
         """Forward a Home Assistant WebRTC candidate to X-Sense."""
@@ -190,13 +234,22 @@ class XSenseCameraEntity(XSenseEntity, Camera):
     def close_webrtc_session(self, session_id: str) -> None:
         """Close an X-Sense WebRTC session."""
         if session := self._webrtc_sessions.pop(session_id, None):
-            self.hass.async_create_task(session.close())
+            task = self.hass.async_create_task(session.close())
+            self._webrtc_close_tasks.add(task)
+            task.add_done_callback(self._webrtc_close_tasks.discard)
         super().close_webrtc_session(session_id)
 
     async def async_will_remove_from_hass(self) -> None:
         """Stop any live view session when Home Assistant removes the entity."""
-        for session_id in list(self._webrtc_sessions):
-            self.close_webrtc_session(session_id)
+        sessions = list(self._webrtc_sessions.values())
+        self._webrtc_sessions.clear()
+        for session in sessions:
+            await session.close()
+        close_tasks = list(self._webrtc_close_tasks)
+        self._webrtc_close_tasks.clear()
+        for task in close_tasks:
+            with suppress(asyncio.CancelledError, Exception):
+                await task
         entity = self._current_entity()
         if entity is not None and entity.data.get("cameraLiveUrl"):
             with suppress(Exception):
@@ -204,11 +257,11 @@ class XSenseCameraEntity(XSenseEntity, Camera):
         await super().async_will_remove_from_hass()
 
 
-def _url_scheme(url: str | None) -> str | None:
-    """Return the URL scheme without exposing the full stream URL."""
-    if not isinstance(url, str) or "://" not in url:
-        return None
-    return url.split("://", 1)[0].lower()
+def _camera_online(entity) -> bool:
+    """Return whether ADDX currently reports the camera online."""
+    if entity.online is not None:
+        return entity.online is True
+    return entity.data.get("online") == 1
 
 
 def _stream_protocol(entity) -> str | None:
@@ -232,16 +285,45 @@ def _is_webrtc_camera(entity) -> bool:
     protocol = _stream_protocol(entity)
     if protocol is None:
         return True
-    return (
-        protocol not in {"rtsp", "rtmp"}
-        and "rtsp" not in protocol
-        and "rtmp" not in protocol
-    )
+    return "rtsp" not in protocol and "rtmp" not in protocol
 
 
 def _camera_live_resolution(entity) -> str:
     """Return the live resolution string used by the ADDX player."""
-    value = entity.data.get("liveResolution")
-    if isinstance(value, str) and (value == "auto" or "x" in value):
-        return value
-    return "auto"
+    return camera_live_resolution(entity)
+
+
+def _short_id(value):
+    """Return a short diagnostic id without logging full serial-like values."""
+    if value in (None, ""):
+        return None
+    text = str(value)
+    return text if len(text) <= 6 else f"...{text[-6:]}"
+
+
+def _camera_debug_context(entity, session_id, **extra):
+    """Return debug-only camera context without SDP, tokens, or full serials."""
+    context = {
+        "camera": _short_id(getattr(entity, "sn", None)),
+        "session": _short_id(session_id),
+        "model": entity.data.get("cameraModel") or entity.data.get("modelNo"),
+        "protocol": entity.data.get("streamProtocol"),
+        "online": getattr(entity, "online", None),
+        "data_online": entity.data.get("online"),
+        "resolution": _camera_live_resolution(entity),
+    }
+    context.update(extra)
+    return context
+
+
+def _ticket_data_debug_context(ticket_data):
+    """Return safe ticket metadata for debug logs."""
+    if not isinstance(ticket_data, dict):
+        return {"type": type(ticket_data).__name__}
+    return {
+        "keys": sorted(key for key in ticket_data if key not in {"sign"}),
+        "has_sign": bool(ticket_data.get("sign")),
+        "has_signal_ip": bool(ticket_data.get("signalServerIpAddress")),
+        "ice_servers": len(ticket_data.get("iceServer") or []),
+        "has_expiration": ticket_data.get("expirationTime") not in (None, ""),
+    }

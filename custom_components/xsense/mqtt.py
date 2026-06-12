@@ -6,6 +6,7 @@ from collections.abc import AsyncGenerator, Callable, Coroutine, Iterable
 import contextlib
 from functools import lru_cache, partial
 from itertools import chain
+import inspect
 import logging
 from typing import Any
 
@@ -36,6 +37,7 @@ RECONNECT_INTERVAL_SECONDS = 15
 DEFAULT_ENCODING = "utf-8"
 DEFAULT_OPTIMISTIC = False
 DEFAULT_QOS = 0
+DEFAULT_SUBSCRIBE_QOS = 1
 
 MAX_SUBSCRIBES_PER_CALL = 500
 MAX_UNSUBSCRIBES_PER_CALL = 500
@@ -44,6 +46,20 @@ MAX_PACKETS_TO_READ = 500
 
 type SocketType = mqtt.WebsocketWrapper | Any
 type PublishPayloadType = str | bytes | int | float | None
+
+
+def _redact_account_title(title: str) -> str:
+    if title.startswith("XSense Account "):
+        return "XSense Account <redacted>"
+    return title
+
+
+def _subscription_accepts_id() -> bool:
+    """Return whether this Home Assistant version wants subscription_id."""
+    try:
+        return "subscription_id" in inspect.signature(Subscription).parameters
+    except (TypeError, ValueError):
+        return False
 
 
 class XSenseMQTT:
@@ -80,6 +96,7 @@ class XSenseMQTT:
 
         # self.topics: list[str] = []
         self.on_data: Callable[[str, bytes], None] | None = None
+        self._debug_name = _redact_account_title(config_entry.title)
 
         self.connected = False
         self._connection_lock = asyncio.Lock()
@@ -88,6 +105,7 @@ class XSenseMQTT:
         self._misc_timer: asyncio.TimerHandle | None = None
         self._reconnect_task: asyncio.Task | None = None
         self._should_reconnect: bool = True
+        self._subscription_id: int = 0
 
     # def _async_ha_started
     # async def _async_ha_stop(self, _event: Event) -> None:
@@ -154,7 +172,7 @@ class XSenseMQTT:
     def _async_start_misc_periodic(self) -> None:
         """Start the misc periodic."""
         assert self._misc_timer is None, "Misc periodic already started"
-        _LOGGER.debug("%s: Starting client misc loop", self.config_entry.title)
+        _LOGGER.debug("%s: Starting client misc loop", self._debug_name)
         # pylint: disable=import-outside-toplevel
         # import paho.mqtt.client as mqtt
 
@@ -186,7 +204,7 @@ class XSenseMQTT:
     ) -> None:
         """Handle socket open."""
         fileno = sock.fileno()
-        _LOGGER.debug("%s: connection opened %s", self.config_entry.title, fileno)
+        _LOGGER.debug("%s: connection opened %s", self._debug_name, fileno)
         if fileno > -1:
             self.loop.add_reader(sock, partial(self._async_reader_callback, client))
         if not self._misc_timer:
@@ -202,7 +220,7 @@ class XSenseMQTT:
     ) -> None:
         """Handle socket close."""
         fileno = sock.fileno()
-        _LOGGER.debug("%s: connection closed %s", self.config_entry.title, fileno)
+        _LOGGER.debug("%s: connection closed %s", self._debug_name, fileno)
         # If socket close is called before the connect
         # result is set make sure the first connection result is set
         self._async_connection_result(False)
@@ -234,7 +252,7 @@ class XSenseMQTT:
     ) -> None:
         """Register the socket for writing."""
         fileno = sock.fileno()
-        _LOGGER.debug("%s: register write %s", self.config_entry.title, fileno)
+        _LOGGER.debug("%s: register write %s", self._debug_name, fileno)
         if fileno > -1:
             self.loop.add_writer(sock, partial(self._async_writer_callback, client))
 
@@ -245,7 +263,7 @@ class XSenseMQTT:
     ) -> None:
         """Unregister the socket for writing."""
         fileno = sock.fileno()
-        _LOGGER.debug("%s: unregister write %s", self.config_entry.title, fileno)
+        _LOGGER.debug("%s: unregister write %s", self._debug_name, fileno)
         if fileno > -1:
             self.loop.remove_writer(sock)
 
@@ -489,14 +507,19 @@ class XSenseMQTT:
         is_simple_match = not ("+" in topic or "#" in topic)
         matcher = None if is_simple_match else _matcher_for_topic(topic)
 
-        try:
-            subscription = Subscription(
-                topic, is_simple_match, matcher, job, qos, encoding, 1
-            )
-        except TypeError:
-            subscription = Subscription(
-                topic, is_simple_match, matcher, job, qos, encoding
-            )
+        self._subscription_id += 1
+        subscription_kwargs = {}
+        if _subscription_accepts_id():
+            subscription_kwargs["subscription_id"] = self._subscription_id
+        subscription = Subscription(
+            topic,
+            is_simple_match,
+            matcher,
+            job,
+            qos,
+            encoding,
+            **subscription_kwargs,
+        )
 
         self._async_track_subscription(subscription)
         self._matching_subscriptions.cache_clear()
