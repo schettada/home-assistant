@@ -1179,3 +1179,39 @@
       entity_id: alarm_control_panel.home
     action: alarmo.arm
   mode: single
+- id: '1781411532718'
+  alias: Power Status v3
+  description: Notifies all phones critically when mains power is lost (UPS on battery)
+    or restored. Uses substring matching on the UPS status so restoration is detected
+    immediately, even while the UPS reports 'Online, Battery Charging' rather than
+    waiting for it to settle to exactly 'Online'. Bypasses quiet mode.
+  triggers:
+  - id: poweroff
+    trigger: template
+    value_template: '{{ ''On Battery'' in states(''sensor.tripp_lite_status'') }}'
+  - id: poweron
+    trigger: template
+    value_template: '{{ ''Online'' in states(''sensor.tripp_lite_status'') }}'
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: poweroff
+      sequence:
+      - action: script.notify_v3
+        data:
+          critical: true
+          title: ⚡ Power Outage
+          message: CrashPad has lost mains power and is running on UPS battery. {{
+            now().strftime('%-I:%M %p') }}
+    - conditions:
+      - condition: trigger
+        id: poweron
+      sequence:
+      - action: script.notify_v3
+        data:
+          critical: true
+          title: ✅ Power Restored
+          message: Mains power has been restored. {{ now().strftime('%-I:%M %p') }}
+  mode: single
