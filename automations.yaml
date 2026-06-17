@@ -1073,10 +1073,10 @@
   triggers:
   - at: 05:30:00
     id: morning
-    platform: time
+    trigger: time
   - at: '23:30:00'
     id: night
-    platform: time
+    trigger: time
   actions:
   - choose:
     - alias: Morning — power on panel and pump, power off heat lamp
@@ -1087,7 +1087,7 @@
       - action: switch.turn_on
         data: {}
         target:
-          entity_id: switch.usw_pro_24_poe_arleepta_office_poe
+          entity_id: switch.usw_pro_24_poe_wp_poe
       - action: switch.turn_on
         data: {}
         target:
@@ -1104,7 +1104,7 @@
       - action: switch.turn_off
         data: {}
         target:
-          entity_id: switch.usw_pro_24_poe_arleepta_office_poe
+          entity_id: switch.usw_pro_24_poe_wp_poe
       - action: switch.turn_off
         data: {}
         target:
