@@ -302,7 +302,7 @@ SUPPORTED_DEVICES = {
         # Note: Fan preset_modes use tuple format (name, value) despite type annotation.
         # This is required for fans that map preset names to numeric mode values.
         preset_modes=[("normal", 1), ("auto", 2), ("sleep", 3), ("natural", 4), ("turbo", 5)],
-        device_ranges={SPEED_RANGE: (1, 9), VERTICAL_ANGLE_RANGE: (-30, 90)},
+        device_ranges={SPEED_RANGE: (1, 9), VERTICAL_ANGLE_RANGE: (-30, 90), "atm_brightness_range": (1, 3)},
     ),
     "DR-HPF015S": DreoDeviceDetails(
         device_type=DreoDeviceType.AIR_CIRCULATOR,
@@ -316,11 +316,13 @@ SUPPORTED_DEVICES = {
     ),
     "DR-HPF007S": DreoDeviceDetails(
         device_type=DreoDeviceType.AIR_CIRCULATOR,
-        preset_modes=[("normal", 1), ("auto", 2), ("sleep", 3), ("natural", 4), ("turbo", 5), ("custom", 6)],
+        preset_modes=[("normal", 1), ("natural", 2), ("sleep", 3), ("auto", 4), ("turbo", 5), ("custom", 6)],
         device_ranges={SPEED_RANGE: (1, 10), HORIZONTAL_ANGLE_RANGE: (-75, 75), VERTICAL_ANGLE_RANGE: (-30, 90)},
     ),
     "DR-HPF005S": DreoDeviceDetails(
-        device_type=DreoDeviceType.AIR_CIRCULATOR, device_ranges={SPEED_RANGE: (1, 10), HORIZONTAL_ANGLE_RANGE: (-60, 60)}
+        device_type=DreoDeviceType.AIR_CIRCULATOR,
+        preset_modes=[("normal", 1), ("natural", 2), ("sleep", 3), ("auto", 4), ("turbo", 5), ("custom", 6)],
+        device_ranges={SPEED_RANGE: (1, 10), HORIZONTAL_ANGLE_RANGE: (-60, 60)},
     ),
     "DR-HPF020S": DreoDeviceDetails(
         device_type=DreoDeviceType.AIR_CIRCULATOR,
@@ -335,7 +337,7 @@ SUPPORTED_DEVICES = {
     "DR-HPF025S": DreoDeviceDetails(
         device_type=DreoDeviceType.AIR_CIRCULATOR,
         preset_modes=[("normal", 1), ("auto", 2), ("sleep", 3), ("natural", 4), ("turbo", 5)],
-        device_ranges={SPEED_RANGE: (1, 9), HORIZONTAL_ANGLE_RANGE: (-60, 60), VERTICAL_ANGLE_RANGE: (0, 90)},
+        device_ranges={SPEED_RANGE: (1, 9), HORIZONTAL_ANGLE_RANGE: (-60, 60), VERTICAL_ANGLE_RANGE: (-30, 90)},
     ),
     "DR-HPF004S": DreoDeviceDetails(
         device_type=DreoDeviceType.AIR_CIRCULATOR,
@@ -353,7 +355,7 @@ SUPPORTED_DEVICES = {
     "DR-HCF007S": DreoDeviceDetails(
         device_type=DreoDeviceType.CEILING_FAN,
         preset_modes=[("normal", 1), ("natural", 2), ("sleep", 3), ("reverse", 4)],
-        device_ranges={SPEED_RANGE: (1, 12)},
+        device_ranges={SPEED_RANGE: (1, 12), "atm_brightness_range": (1, 100)},
     ),
     "DR-HCF521S": DreoDeviceDetails(device_type=DreoDeviceType.CEILING_FAN, device_ranges={SPEED_RANGE: (1, 12)}),
     # Air Purifiers
@@ -491,10 +493,11 @@ SUPPORTED_DEVICES = {
     ),
     # DR-HEC006S is the TurboCool Misting Fan 516S.
     # controlsConf is empty so speed range and preset modes must be hardcoded.
+    # DR-HEC006S has +/-75° oscillation range and the turbo-mode is 4
     "DR-HEC006S": DreoDeviceDetails(
         device_type=DreoDeviceType.EVAPORATIVE_COOLER,
-        preset_modes=[("Normal", 1), ("Turbo", 2)],
-        device_ranges={SPEED_RANGE: (1, 6)},
+        preset_modes=[("Normal", 1), ("Turbo", 4)],
+        device_ranges={SPEED_RANGE: (1, 6), HORIZONTAL_ANGLE_RANGE: (-75, 75)},
     ),
     # DR-HEC005S is the TurboCool Misting Fan 765S.
     # It has 12 fan speeds and can expose an empty controlsConf.

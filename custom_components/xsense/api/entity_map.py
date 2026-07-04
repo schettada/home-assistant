@@ -64,25 +64,55 @@ def SBS50SecondGenTestAction():
     return TestAction("app2ndSelfTest", extra={"userParam": "source=1"})
 
 
+def XP0JTestAction():
+    return TestAction(
+        "app2ndSelfTest",
+        extra={"userParam": "source=1"},
+        target=lambda entity: _ThingTarget(entity, f"SBS50{entity.sn}"),
+    )
+
+
 def _smoke_rf_test_shadow(entity) -> str:
     return "app2ndSelfTest" if _is_smoke_v9(entity) else "appSelfTest"
-
-
-def _smoke_rf_test_extra(entity) -> Dict:
-    return {"userParam": "source=1"}
 
 
 def _smoke_rf_test_target(entity):
     station = getattr(entity, "station", entity)
     if _is_smoke_v9(entity) or getattr(station, "type", None) == "SBS50":
         return station
-    return _ThingTarget(station, f"{entity.type}{station.sn}")
+    return _ThingTarget(station, station.sn)
+
+
+def _smoke_rf_test_topic(entity):
+    station = getattr(entity, "station", entity)
+    if _is_smoke_v9(entity) or getattr(station, "type", None) == "SBS50":
+        return f"2nd_selftest_{entity.sn}"
+    return f"appselftest_{entity.sn}"
+
+
+def _smoke_rf_test_time_format(entity) -> str | None:
+    station = getattr(entity, "station", entity)
+    if _is_smoke_v9(entity) or getattr(station, "type", None) == "SBS50":
+        return "epoch_ms"
+    return None
+
+
+def _smoke_rf_test_extra(entity) -> Dict:
+    station = getattr(entity, "station", entity)
+    if _is_smoke_v9(entity) or getattr(station, "type", None) == "SBS50":
+        return {"userParam": "source=1"}
+    return {}
 
 
 def SmokeRFTestAction():
-    return TestAction(
-        _smoke_rf_test_shadow, extra=_smoke_rf_test_extra, target=_smoke_rf_test_target
-    )
+    return {
+        "action": "test",
+        "topic": _smoke_rf_test_topic,
+        "shadow": _smoke_rf_test_shadow,
+        "extra": _smoke_rf_test_extra,
+        "target": _smoke_rf_test_target,
+        "time_format": _smoke_rf_test_time_format,
+    }
 
 
 class _ThingTarget:
@@ -160,24 +190,6 @@ def SATestAction(shadow="appSelfTest"):
         "topic": lambda x: f"appselftest_{x.sn}",
         "shadow": shadow,
         "time_format": None,
-    }
-
-
-def XS01WXTestAction():
-    """XS01-WX self test for standalone and SBS50-linked Wi-Fi smoke devices."""
-    return {
-        "action": "test",
-        "topic": lambda entity: (
-            f"2nd_selftest_{entity.sn}"
-            if getattr(getattr(entity, "station", None), "type", None) == "SBS50"
-            else f"appselftest_{entity.sn}"
-        ),
-        "shadow": "appSelfTest",
-        "time_format": lambda entity: (
-            "epoch_ms"
-            if getattr(getattr(entity, "station", None), "type", None) == "SBS50"
-            else None
-        ),
     }
 
 
@@ -528,7 +540,6 @@ entities = {
     "XS01-WX": {
         "type": EntityType.SMOKE,
         "actions": [
-            XS01WXTestAction(),
             XS01WXMuteAction(),
         ],
     },
@@ -545,7 +556,6 @@ entities = {
         "type": EntityType.SMOKE,
         "actions": [
             SmokeRFTestAction(),
-            SmokeRFAppMuteAction(),
         ],
     },
     "XS03-WX": {
@@ -587,7 +597,7 @@ entities = {
     "XP0J-iA": {
         "type": EntityType.COMBI,
         "actions": [
-            WifiSelfTestAction(),
+            XP0JTestAction(),
             WifiAlarmMuteAction(),
             FireDrillAction(),
         ],
