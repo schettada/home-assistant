@@ -501,9 +501,10 @@
   mode: single
 - id: '1780343279672'
   alias: Doors & Windows v3
-  description: Notifies all phones and plays a door alert chime on Alexa when any
+  description: 'Notifies all phones and plays a door alert chime on Alexa when any
     door or window opens or closes. Audio and non-SJ notifications suppressed in quiet/guest
-    mode.
+    mode. Uses explicit from: constraints to prevent false triggers when sensors recover
+    from unavailable state.'
   triggers:
   - entity_id:
     - binary_sensor.front_door
@@ -515,10 +516,12 @@
     - binary_sensor.deck_sliding_door
     - binary_sensor.neeva_windows
     - binary_sensor.yard_gate
+    from:
+    - 'off'
     id: doorwindowopen
-    platform: state
     to:
     - 'on'
+    trigger: state
   - entity_id:
     - binary_sensor.front_door
     - binary_sensor.garage_door
@@ -529,10 +532,12 @@
     - binary_sensor.deck_sliding_door
     - binary_sensor.neeva_windows
     - binary_sensor.yard_gate
+    from:
+    - 'on'
     id: doorwindowclose
-    platform: state
     to:
     - 'off'
+    trigger: state
   actions:
   - action: script.notify_audio_v3
     alias: Play door alert sound
@@ -642,8 +647,9 @@
   mode: single
 - id: '1780343315359'
   alias: Garage Status v3
-  description: Notifies all phones when a garage door opens, closes, or has been open
-    for 5 or 15+ minutes. Arleepta and Neeva suppressed in quiet mode.
+  description: Notifies all phones when a garage door opens or closes. Fires on 'opening'
+    (door starts moving) and 'closed' (door fully shut). Also alerts at 5 and 15 minutes
+    if left open. Arleepta and Neeva suppressed in quiet mode.
   triggers:
   - entity_id:
     - cover.garage_1
@@ -651,18 +657,16 @@
     from:
     - closed
     id: open
-    platform: state
     to:
     - opening
+    trigger: state
   - entity_id:
     - cover.garage_1
     - cover.garage_2
-    from:
-    - open
     id: close
-    platform: state
     to:
-    - closing
+    - closed
+    trigger: state
   - entity_id:
     - cover.garage_1
     - cover.garage_2
@@ -671,9 +675,9 @@
       minutes: 5
       seconds: 0
     id: longopen
-    platform: state
     to:
     - open
+    trigger: state
   - entity_id:
     - cover.garage_1
     - cover.garage_2
@@ -682,9 +686,9 @@
       minutes: 15
       seconds: 0
     id: verylong
-    platform: state
     to:
     - open
+    trigger: state
   actions:
   - choose:
     - conditions:
@@ -704,9 +708,9 @@
       sequence:
       - action: script.notify_v3
         data:
-          message: '{{ trigger.to_state.attributes.friendly_name }} is closing — {{
+          message: '{{ trigger.to_state.attributes.friendly_name }} is closed — {{
             now().strftime(''%-I:%M %p'') }}'
-          title: "\U0001F3E0 {{ trigger.to_state.attributes.friendly_name }} Closing"
+          title: "\U0001F3E0 {{ trigger.to_state.attributes.friendly_name }} Closed"
     - conditions:
       - condition: trigger
         id:
@@ -769,8 +773,9 @@
   mode: single
 - id: '1780343343606'
   alias: Leak Sensor Notification v3
-  description: CRITICAL — Notifies all phones AND announces on Alexa when any water
-    leak sensor fires. Bypasses quiet mode and guest mode. Always fires.
+  description: 'CRITICAL — Notifies all phones AND announces on Alexa when any water
+    leak sensor fires. Bypasses quiet mode and guest mode. Always fires. Uses from:
+    off guard to prevent false alerts when sensors recover from unavailable.'
   triggers:
   - entity_id:
     - binary_sensor.sump_pump_water_leak
@@ -778,9 +783,11 @@
     - binary_sensor.master_bathroom_water_leak
     - binary_sensor.kitchen_sink_water_leak
     - binary_sensor.guest_bathroom_water_leak
-    platform: state
+    from:
+    - 'off'
     to:
     - 'on'
+    trigger: state
   actions:
   - action: script.notify_critical_v1
     data:
@@ -986,13 +993,22 @@
   mode: single
 - id: '1780348614726'
   alias: Fireplace Monitoring v2
-  description: Notifies all phones whenever the fireplace is turned on or off.
+  description: 'Notifies all phones whenever the fireplace is turned on or off. Uses
+    explicit from: guards to prevent spurious notifications when the fireplace switch
+    recovers from unavailable.'
   triggers:
   - entity_id: switch.fireplace_fireplace
-    platform: state
+    from:
+    - 'off'
     to:
     - 'on'
+    trigger: state
+  - entity_id: switch.fireplace_fireplace
+    from:
+    - 'on'
+    to:
     - 'off'
+    trigger: state
   actions:
   - action: script.notify_v3
     data:
