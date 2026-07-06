@@ -337,70 +337,78 @@
   mode: single
 - id: '1734902479753'
   alias: Basement Lights
-  description: 'Controls basement stair and main lights based on the basement door
-    and occupancy. Door open: turn on both lights (stair always, basement if not already
-    on). Door closed: turn off stair light only if basement is unoccupied. Door open
-    15+ min: turn off stair light (person is in basement, no longer needed on stairs).
-    No occupancy for 15 min: turn off all basement lights.'
+  description: 'Controls basement lights based on door, motion, and occupancy. Door
+    open or motion detected: turn on light.basement group (stair + main). Door closed
+    + unoccupied: turn off stair light only. Door open 15+ min: turn off stair light
+    (person settled). No occupancy for 15 min: turn off light.basement group.'
   triggers:
   - entity_id:
     - binary_sensor.basement_door
     from:
     - 'off'
-    to:
-    - 'on'
     id: open
-    platform: state
+    to:
+    - 'on'
+    trigger: state
   - entity_id:
     - binary_sensor.basement_door
     from:
     - 'on'
-    to:
-    - 'off'
     id: close
-    platform: state
+    to:
+    - 'off'
+    trigger: state
   - entity_id:
     - binary_sensor.basement_door
-    from:
-    - 'off'
-    to:
-    - 'on'
     for:
       hours: 0
       minutes: 15
       seconds: 0
+    from:
+    - 'off'
     id: openlong
-    platform: state
-  - platform: state
-    entity_id: binary_sensor.basement_multi_sensor_occupancy
-    to: 'off'
+    to:
+    - 'on'
+    trigger: state
+  - entity_id: binary_sensor.basement_motion_sensor
+    from:
+    - 'off'
+    id: motion
+    to:
+    - 'on'
+    trigger: state
+  - entity_id: binary_sensor.basement_multi_sensor_occupancy
     for:
       hours: 0
       minutes: 15
       seconds: 0
     id: noone
-  conditions: []
+    to: 'off'
+    trigger: state
   actions:
   - choose:
     - conditions:
       - condition: trigger
         id: open
       - condition: state
-        entity_id: light.basement_stair_light
+        entity_id: light.basement
         state: 'off'
       sequence:
       - action: light.turn_on
-        metadata: {}
         data: {}
         target:
-          entity_id:
-          - light.basement_stair_light
+          entity_id: light.basement
+    - conditions:
+      - condition: trigger
+        id: motion
+      - condition: state
+        entity_id: light.basement
+        state: 'off'
+      sequence:
       - action: light.turn_on
-        metadata: {}
         data: {}
         target:
-          entity_id:
-          - light.basement_light
+          entity_id: light.basement
     - conditions:
       - condition: trigger
         id: close
@@ -412,7 +420,6 @@
         state: 'off'
       sequence:
       - action: light.turn_off
-        metadata: {}
         data: {}
         target:
           entity_id: light.basement_stair_light
@@ -420,11 +427,10 @@
       - condition: trigger
         id: openlong
       - condition: state
-        entity_id: light.basement_light
+        entity_id: light.basement
         state: 'on'
       sequence:
       - action: light.turn_off
-        metadata: {}
         data: {}
         target:
           entity_id: light.basement_stair_light
@@ -434,12 +440,9 @@
         - noone
       sequence:
       - action: light.turn_off
-        metadata: {}
         data: {}
         target:
-          entity_id:
-          - light.basement_light
-          - light.basement_stair_light
+          entity_id: light.basement
   mode: restart
 - id: '1775093597448'
   alias: Pooja Room Lights
@@ -570,52 +573,61 @@
   mode: single
 - id: '1780343297712'
   alias: Door Lock Unlock Status v3
-  description: Notifies all phones when any lock is locked, unlocked, or jammed. No
-    audio. Arleepta and Neeva suppressed in quiet mode.
+  description: Notifies all phones when any lock is locked, unlocked, or jammed. Uses
+    entity-based state triggers instead of device triggers so it survives Z-Wave re-pairing.
+    From guards prevent false triggers on unavailability recovery. No audio.
   triggers:
-  - device_id: f6fb94ee1b2f598b481ded658a4af30b
-    domain: lock
-    entity_id: 191d58b23eef085ccf6f38511077e5cd
-    id: gd_unlock
-    platform: device
-    type: unlocked
-  - device_id: f6fb94ee1b2f598b481ded658a4af30b
-    domain: lock
-    entity_id: 191d58b23eef085ccf6f38511077e5cd
-    id: gd_locked
-    platform: device
-    type: locked
-  - device_id: f6fb94ee1b2f598b481ded658a4af30b
-    domain: lock
-    entity_id: 191d58b23eef085ccf6f38511077e5cd
-    id: gd_jammed
-    platform: device
-    type: jammed
-  - device_id: ffdf93c07bcdcb929e54e064d383b470
-    domain: lock
-    entity_id: b438392b34f145fed27c1ed5aaf709c7
-    id: fd_unlock
-    platform: device
-    type: unlocked
-  - device_id: ffdf93c07bcdcb929e54e064d383b470
-    domain: lock
-    entity_id: b438392b34f145fed27c1ed5aaf709c7
+  - entity_id: lock.front_door
+    from:
+    - unlocked
     id: fd_locked
-    platform: device
-    type: locked
-  - device_id: ffdf93c07bcdcb929e54e064d383b470
-    domain: lock
-    entity_id: b438392b34f145fed27c1ed5aaf709c7
+    to:
+    - locked
+    trigger: state
+  - entity_id: lock.front_door
+    from:
+    - locked
+    id: fd_unlocked
+    to:
+    - unlocked
+    trigger: state
+  - entity_id: lock.front_door
+    from:
+    - locked
+    - unlocked
     id: fd_jammed
-    platform: device
-    type: jammed
+    to:
+    - jammed
+    trigger: state
+  - entity_id: lock.garage_door_lock
+    from:
+    - unlocked
+    id: gd_locked
+    to:
+    - locked
+    trigger: state
+  - entity_id: lock.garage_door_lock
+    from:
+    - locked
+    id: gd_unlocked
+    to:
+    - unlocked
+    trigger: state
+  - entity_id: lock.garage_door_lock
+    from:
+    - locked
+    - unlocked
+    id: gd_jammed
+    to:
+    - jammed
+    trigger: state
   actions:
   - choose:
     - conditions:
       - condition: trigger
         id:
-        - gd_unlock
-        - fd_unlock
+        - fd_unlocked
+        - gd_unlocked
       sequence:
       - action: script.notify_v3
         data:
@@ -625,8 +637,8 @@
     - conditions:
       - condition: trigger
         id:
-        - gd_locked
         - fd_locked
+        - gd_locked
       sequence:
       - action: script.notify_v3
         data:
@@ -636,8 +648,8 @@
     - conditions:
       - condition: trigger
         id:
-        - gd_jammed
         - fd_jammed
+        - gd_jammed
       sequence:
       - action: script.notify_v3
         data:
@@ -1231,3 +1243,80 @@
           title: ✅ Power Restored
           message: Mains power has been restored. {{ now().strftime('%-I:%M %p') }}
   mode: single
+- id: '1783296077303'
+  alias: Basement Lights v2
+  description: Controls basement lights based on door state, motion, and occupancy.
+    (1) Door opens → both lights on. (2) No motion for 15 min → both lights off (only
+    if on). (3) Door closes → stair light off only. (4) Motion detected → both lights
+    on. (5) Door open 15+ min → stair light off.
+  triggers:
+  - entity_id: binary_sensor.basement_door
+    from: 'off'
+    id: door_open
+    to: 'on'
+    trigger: state
+  - entity_id: binary_sensor.basement_door
+    from: 'on'
+    id: door_close
+    to: 'off'
+    trigger: state
+  - entity_id: binary_sensor.basement_door
+    for:
+      minutes: 15
+    from: 'off'
+    id: door_open_long
+    to: 'on'
+    trigger: state
+  - entity_id: binary_sensor.basement_motion_sensor
+    from: 'off'
+    id: motion
+    to: 'on'
+    trigger: state
+  - entity_id: binary_sensor.basement_motion_sensor
+    for:
+      minutes: 15
+    id: no_motion
+    to: 'off'
+    trigger: state
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: door_open
+      sequence:
+      - action: light.turn_on
+        target:
+          entity_id: light.basement
+    - conditions:
+      - condition: trigger
+        id: motion
+      sequence:
+      - action: light.turn_on
+        target:
+          entity_id: light.basement
+    - conditions:
+      - condition: trigger
+        id: door_close
+      sequence:
+      - action: light.turn_off
+        target:
+          entity_id: light.basement_stair_light
+    - conditions:
+      - condition: trigger
+        id: door_open_long
+      sequence:
+      - action: light.turn_off
+        target:
+          entity_id: light.basement_stair_light
+    - conditions:
+      - condition: trigger
+        id: no_motion
+      - condition: state
+        entity_id: light.basement
+        state: 'on'
+      sequence:
+      - action: light.turn_off
+        target:
+          entity_id: light.basement
+  mode: restart
