@@ -23,20 +23,27 @@ class DreoFanHA(DreoBaseDeviceHA, FanEntity):
         """Initialize the Dreo fan device."""
         super().__init__(pyDreoFan)
         self.device = pyDreoFan
+        self._attr_translation_key = "fan"
         if self.device.type is DreoDeviceType.CEILING_FAN:
             self._attr_icon = "mdi:ceiling-fan"
         elif self.device.type is DreoDeviceType.DEHUMIDIFIER:
-            self._attr_name = f"{super().name} Fan Speed"
+            # Localize the sub-entity name via has_entity_name + translation_key
+            # instead of hardcoding an English string. The base class sets
+            # _attr_name to the device name; delete it so the translation_key is
+            # used instead.
+            self._attr_has_entity_name = True
+            del self._attr_name
+            self._attr_translation_key = "fan_speed"
 
     @property
     def percentage(self) -> int | None:
         """Return the current speed."""
         if self.device.type is DreoDeviceType.DEHUMIDIFIER:
-            if self.device.preset_mode == "Low":
+            if self.device.preset_mode == "low":
                 return 33
-            elif self.device.preset_mode == "Medium":
+            elif self.device.preset_mode == "medium":
                 return 67
-            elif self.device.preset_mode == "High":
+            elif self.device.preset_mode == "high":
                 return 100
             return None
         if self.device.speed_range is None or self.device.fan_speed is None:
@@ -132,11 +139,11 @@ class DreoFanHA(DreoBaseDeviceHA, FanEntity):
 
         if self.device.type is DreoDeviceType.DEHUMIDIFIER:
             if percentage <= 33:
-                self.device.set_preset_mode("Low")
+                self.device.set_preset_mode("low")
             elif percentage <= 67:
-                self.device.set_preset_mode("Medium")
+                self.device.set_preset_mode("medium")
             else:
-                self.device.set_preset_mode("High")
+                self.device.set_preset_mode("high")
         else:
             if self.device.speed_range is None:
                 _LOGGER.error("set_percentage: speed_range not available for %s", self.device.name)
