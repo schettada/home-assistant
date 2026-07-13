@@ -4,12 +4,11 @@ from __future__ import annotations
 
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
-from datetime import UTC, datetime
 from functools import partial
 
-from .api.async_xsense import is_camera_entity
-from .api.device import Device
-from .api.entity import Entity
+from .python_xsense.async_xsense import is_camera_entity
+from .python_xsense.device import Device
+from .python_xsense.entity import Entity
 
 from homeassistant import config_entries
 from homeassistant.components.button import ButtonEntity, ButtonEntityDescription
@@ -19,7 +18,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, LOGGER
-from .api.async_xsense import AsyncXSense
+from .python_xsense.async_xsense import AsyncXSense
 from .coordinator import XSenseDataUpdateCoordinator
 from .entity import (
     XSenseEntity,
@@ -181,14 +180,6 @@ class XSenseButtonEntity(XSenseEntity, ButtonEntity):
                 ),
             )
             raise
-        if self.entity_description.key == "test":
-            device.set_data(
-                {
-                    "lastSelfTest": "0",
-                    "lastSelfTestTime": datetime.now(UTC).strftime("%Y%m%d%H%M%S"),
-                }
-            )
-            self.coordinator.async_update_listeners()
         LOGGER.debug(
             "X-Sense button action completed: %s",
             _button_debug_context(device, self.entity_description.key),

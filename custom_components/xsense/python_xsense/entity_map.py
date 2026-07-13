@@ -66,9 +66,9 @@ def SBS50SecondGenTestAction():
 
 def XP0JTestAction():
     return TestAction(
-        "app2ndSelfTest",
+        "appSelfTest",
         extra={"userParam": "source=1"},
-        target=lambda entity: _ThingTarget(entity, f"SBS50{entity.sn}"),
+        target=_wifi_thing_target,
     )
 
 
@@ -203,6 +203,26 @@ def _is_smoke_v9(entity) -> bool:
 def _xs01_wx_target(entity):
     station = getattr(entity, "station", entity)
     return _ThingTarget(station, _xs01_wx_thing_name(station.sn))
+
+
+def _xs01_wx_test_topic(entity) -> str:
+    if _is_smoke_v9(entity):
+        return f"2nd_selftest_{entity.sn}"
+    return f"appselftest_{entity.sn}"
+
+
+def _xs01_wx_test_time_format(entity) -> str | None:
+    return "epoch_ms" if _is_smoke_v9(entity) else None
+
+
+def XS01WXSelfTestAction():
+    return {
+        "action": "test",
+        "topic": _xs01_wx_test_topic,
+        "shadow": "appSelfTest",
+        "target": _xs01_wx_target,
+        "time_format": _xs01_wx_test_time_format,
+    }
 
 
 def XS01WXMuteAction():
@@ -540,6 +560,7 @@ entities = {
     "XS01-WX": {
         "type": EntityType.SMOKE,
         "actions": [
+            XS01WXSelfTestAction(),
             XS01WXMuteAction(),
         ],
     },

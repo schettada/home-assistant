@@ -1,5 +1,5 @@
 ﻿/**
- * AlertTicker Card v1.3.5
+ * AlertTicker Card v1.3.7
  * A Home Assistant custom Lovelace card to display alerts based on entity states.
  * Supports 50 visual themes with per-alert theme assignment, priority ordering,
  * fold animation cycling, snooze, numeric conditions, attribute triggers,
@@ -27,7 +27,7 @@ const css = LitElement.prototype.css ?? ((strings, ...values) => {
 // ---------------------------------------------------------------------------
 // Card version — declared early so getConfigElement() can reference it
 // ---------------------------------------------------------------------------
-const CARD_VERSION = "1.3.5";
+const CARD_VERSION = "1.3.7";
 
 // ---------------------------------------------------------------------------
 // Google Cast compatibility (#171)
@@ -1157,15 +1157,19 @@ const _ATC_OVERLAY = (() => {
   function _resolveMsg(hass, a) {
     let msg = a.message || "";
     const es = a.entity ? hass.states[a.entity] : null;
-    const deviceId   = a.entity ? hass.entities?.[a.entity]?.device_id : null;
+    const entityEntry = a.entity ? hass.entities?.[a.entity] : null;
+    const deviceId   = entityEntry?.device_id ?? null;
     const dev        = deviceId ? hass.devices?.[deviceId] : null;
     const deviceName = dev ? (dev.name_by_user || dev.name || "") : "";
+    const areaId     = entityEntry?.area_id || dev?.area_id || null;
+    const areaName   = areaId ? (hass.areas?.[areaId]?.name || "") : "";
     // Resolve {placeholders} first so _evalTemplate sees real entity IDs
     msg = msg
       .replace(/\{state\}/g,  es ? _ovFmtState(hass, es, null) : "")
       .replace(/\{name\}/g,   es?.attributes?.friendly_name || a.entity || "")
       .replace(/\{entity\}/g, a.entity || "")
       .replace(/\{device\}/g, deviceName)
+      .replace(/\{area\}/g,   areaName)
       .replace(/\{timer\}/g,  "");
     // Try to evaluate supported {{ }} template patterns directly from hass.states
     const evaluated = _evalTemplate(hass, msg);
@@ -1208,14 +1212,18 @@ const _ATC_OVERLAY = (() => {
   // Resolves {placeholders} only — used to pre-substitute before sending to HA engine.
   function _resolvePlaceholders(hass, a, raw) {
     const es = a.entity ? hass.states[a.entity] : null;
-    const deviceId   = a.entity ? hass.entities?.[a.entity]?.device_id : null;
+    const entityEntry = a.entity ? hass.entities?.[a.entity] : null;
+    const deviceId   = entityEntry?.device_id ?? null;
     const dev        = deviceId ? hass.devices?.[deviceId] : null;
     const deviceName = dev ? (dev.name_by_user || dev.name || "") : "";
+    const areaId     = entityEntry?.area_id || dev?.area_id || null;
+    const areaName   = areaId ? (hass.areas?.[areaId]?.name || "") : "";
     return raw
       .replace(/\{state\}/g,  es ? _ovFmtState(hass, es, null) : "")
       .replace(/\{name\}/g,   es?.attributes?.friendly_name || a.entity || "")
       .replace(/\{entity\}/g, a.entity || "")
       .replace(/\{device\}/g, deviceName)
+      .replace(/\{area\}/g,   areaName)
       .replace(/\{timer\}/g,  "");
   }
 
@@ -1673,6 +1681,8 @@ class AlertTickerCard extends LitElement {
     this._forecastData = [];
     this._forecastEntity = null;
     this._forecastUnsub = null;
+    this._haStartedSetup = false;
+    this._haStartedUnsub = null;
     this._wfShowForecast = false;
     this._wfForecastShown = false;
     this._wfFlipTimer = null;
@@ -1794,6 +1804,22 @@ class AlertTickerCard extends LitElement {
     this._syncTemplates();
     this._computeActiveAlerts();
     this._updateWeather(hass);
+    // One-time setup: subscribe to homeassistant_started so the weather/subscribe_forecast
+    // subscription is re-established after every HA restart without a page reload.
+    // subscribeEvents auto-resubscribes after WebSocket reconnects, so this listener
+    // survives the connection drop and fires once HA has fully started again.
+    if (!this._haStartedSetup && hass?.connection) {
+      this._haStartedSetup = true;
+      hass.connection.subscribeEvents(
+        () => {
+          this._forecastEntity = null;
+          if (this._hass) this._updateWeather(this._hass);
+        },
+        'homeassistant_started'
+      ).then(unsub => { this._haStartedUnsub = unsub; }).catch(() => {
+        this._haStartedSetup = false;
+      });
+    }
   }
 
   // ---- Translation helper --------------------------------------------------
@@ -2052,31 +2078,13 @@ class AlertTickerCard extends LitElement {
     // Sort by priority (lower number = first; undefined priority goes last)
     active.sort((a, b) => (a.priority ?? 99) - (b.priority ?? 99));
 
-    // In test mode: jump immediately to the previewed alert before the early-return check.
-    // _preview_index is the index in this._config.alerts (config order), NOT in the
-    // sorted active array. For regular alerts match by object reference; for entity_filter
-    // alerts match via the _sourceAlert reference preserved during expansion.
-    if (testMode && this._config._preview_index != null) {
-      const configIdx = this._config._preview_index;
-      if (configIdx !== this._lastAppliedPreviewIndex) {
-        this._lastAppliedPreviewIndex = configIdx;
-        const target = (this._config.alerts || [])[configIdx];
-        const pi = target
-          ? active.findIndex(a => a._configIdx === configIdx || a._sourceAlert === target)
-          : -1;
-        if (pi >= 0 && pi !== this._currentIndex) {
-          this._currentIndex = pi;
-          this._animPhase = "";
-          this._activeAlerts = active;
-          this.requestUpdate();
-          return;
-        }
-      }
-    }
-
-    // Build a lightweight signature to detect changes
+    // Build a lightweight signature to detect changes.
+    // Also bypass the early-return when _preview_index changes in test mode so the
+    // card responds to a different alert being selected even if active content is unchanged.
     const signature = active.map((a) => `${a.entity}:${a.message}:${a.priority}`).join("|");
-    if (signature === this._lastSignature && snoozedCount === this._snoozedCount) return;
+    const _previewChanged = testMode && this._config._preview_index != null
+      && this._config._preview_index !== this._lastAppliedPreviewIndex;
+    if (!_previewChanged && signature === this._lastSignature && snoozedCount === this._snoozedCount) return;
 
     // Record newly triggered alerts into history and play sound.
     // On first load: record history (so alerts already active on load appear in cronologia)
@@ -2210,6 +2218,23 @@ class AlertTickerCard extends LitElement {
       active = _ungrouped;
     }
     // --- end grouping pass ---
+
+    // In test mode: resolve _currentIndex from the FINAL post-grouping array.
+    // Running after the grouping pass ensures group:true alerts (which collapse
+    // N entities into 1 slide) don't shift positions and cause the wrong alert
+    // to display (#173).
+    if (testMode && this._config._preview_index != null) {
+      const configIdx = this._config._preview_index;
+      this._lastAppliedPreviewIndex = configIdx;
+      const target = (this._config.alerts || [])[configIdx];
+      const pi = target
+        ? active.findIndex(a => a._configIdx === configIdx || a._sourceAlert === target)
+        : -1;
+      if (pi >= 0 && pi !== this._currentIndex) {
+        this._animPhase = "";
+        this._currentIndex = pi;
+      }
+    }
 
     this._lastSignature = signature;
     this._activeAlerts = active;
@@ -2992,7 +3017,7 @@ class AlertTickerCard extends LitElement {
     let msg = alert.message || "";
     if (!msg.includes("{")) return msg;
 
-    // Pre-substitute {entity}/{state}/{name}/{device} BEFORE passing to HA's template engine,
+    // Pre-substitute {entity}/{state}/{name}/{device}/{area} BEFORE passing to HA's template engine,
     // so that patterns like {{ area_name('{entity}') }} receive the real entity ID.
     if ((msg.includes("{{") || msg.includes("{%")) && alert.entity && this._hass) {
       const es = this._hass.states[alert.entity];
@@ -3004,12 +3029,16 @@ class AlertTickerCard extends LitElement {
           .replace(/\{name\}/g, name)
           .replace(/\{entity\}/g, alert.entity);
       }
-      if (msg.includes("{device}")) {
+      if (msg.includes("{device}") || msg.includes("{area}")) {
         const entityEntry = this._hass.entities?.[alert.entity];
         const deviceId = entityEntry?.device_id;
         const device = deviceId ? this._hass.devices?.[deviceId] : null;
         const deviceName = device?.name_by_user || device?.name || alert.entity;
-        msg = msg.replace(/\{device\}/g, deviceName);
+        const areaId = entityEntry?.area_id || device?.area_id || null;
+        const areaName = areaId ? (this._hass.areas?.[areaId]?.name || "") : "";
+        msg = msg
+          .replace(/\{device\}/g, deviceName)
+          .replace(/\{area\}/g, areaName);
       }
     }
 
@@ -3033,8 +3062,8 @@ class AlertTickerCard extends LitElement {
       const { remainingStr } = this._getTimerData(alert);
       msg = msg.replace(/\{timer\}/g, remainingStr);
     }
-    // {state}, {name}, {entity}, {device} — live entity values (for messages without {{ }})
-    if (alert.entity && this._hass && (msg.includes("{state}") || msg.includes("{name}") || msg.includes("{entity}") || msg.includes("{device}"))) {
+    // {state}, {name}, {entity}, {device}, {area} — live entity values (for messages without {{ }})
+    if (alert.entity && this._hass && (msg.includes("{state}") || msg.includes("{name}") || msg.includes("{entity}") || msg.includes("{device}") || msg.includes("{area}"))) {
       const es = this._hass.states[alert.entity];
       if (es) {
         const translatedState = this._formatStateValue(es, alert.attribute);
@@ -3044,13 +3073,17 @@ class AlertTickerCard extends LitElement {
           .replace(/\{name\}/g, name)
           .replace(/\{entity\}/g, alert.entity);
       }
-      // {device} — resolved from the device registry (hass.entities + hass.devices)
-      if (msg.includes("{device}")) {
+      // {device} / {area} — resolved from the device registry (hass.entities + hass.devices + hass.areas)
+      if (msg.includes("{device}") || msg.includes("{area}")) {
         const entityEntry = this._hass.entities?.[alert.entity];
         const deviceId = entityEntry?.device_id;
         const device = deviceId ? this._hass.devices?.[deviceId] : null;
         const deviceName = device?.name_by_user || device?.name || alert.entity;
-        msg = msg.replace(/\{device\}/g, deviceName);
+        const areaId = entityEntry?.area_id || device?.area_id || null;
+        const areaName = areaId ? (this._hass.areas?.[areaId]?.name || "") : "";
+        msg = msg
+          .replace(/\{device\}/g, deviceName)
+          .replace(/\{area\}/g, areaName);
       }
     }
     return msg;
@@ -3793,6 +3826,20 @@ class AlertTickerCard extends LitElement {
         }));
         break;
       }
+      case "assist": {
+        this.dispatchEvent(new CustomEvent("show-dialog", {
+          bubbles: true, composed: true,
+          detail: {
+            dialogTag: "ha-voice-command-dialog",
+            dialogImport: () => Promise.resolve(),
+            dialogParams: {
+              pipeline_id: cfg.pipeline_id || "preferred",
+              start_listening: cfg.start_listening ?? false,
+            },
+          },
+        }));
+        break;
+      }
     }
   }
 
@@ -4029,6 +4076,9 @@ class AlertTickerCard extends LitElement {
     this._tmplCache.clear();
     // Unsubscribe weather forecast subscription and flip timer
     if (this._forecastUnsub) { try { this._forecastUnsub(); } catch (_) {} this._forecastUnsub = null; }
+    this._forecastEntity = null;
+    this._haStartedSetup = false;
+    if (this._haStartedUnsub) { try { this._haStartedUnsub(); } catch (_) {} this._haStartedUnsub = null; }
     this._stopWfFlipTimer();
     // Cancel all auto_dismiss / on_change / trigger_delay timers
     Object.values(this._autoDismissTimers).forEach(t => clearTimeout(t));
@@ -5686,7 +5736,7 @@ class AlertTickerCard extends LitElement {
           const wPu = wHasAction ? (e) => this._onPointerUp(e)  : null;
           const wPl = wHasAction ? ()  => this._cancelHold()    : null;
           return html`<div class="atc-card-root"><div class="${this._hostClass}"><div class="atc-inner-clip">
-            <div class="${wHasAction ? "atc-clickable" : ""}"
+            <div class="at-fold-wrapper${(this._config?.disable_animation || this._config?.clear_disable_animation) ? " atc-no-anim" : ""}${wHasAction ? " atc-clickable" : ""}"
               @pointerdown="${wPd}" @pointerup="${wPu}"
               @pointerleave="${wPl}" @pointercancel="${wPl}">${widget}</div>
           </div>${clearSnoozedPill}</div></div>`;
@@ -5715,7 +5765,7 @@ class AlertTickerCard extends LitElement {
           <div class="atc-card-root">
             <div class="${this._hostClass}">
               <div class="atc-inner-clip">
-                <div class="at-fold-wrapper${clearHasAction ? " atc-clickable" : ""}${this._config?.disable_animation ? " atc-no-anim" : ""}"
+                <div class="at-fold-wrapper${clearHasAction ? " atc-clickable" : ""}${(this._config?.disable_animation || this._config?.clear_disable_animation) ? " atc-no-anim" : ""}"
                   @pointerdown="${clearPd}" @pointerup="${clearPu}"
                   @pointerleave="${clearPl}" @pointercancel="${clearPl}">
                   ${this._renderForTheme(clearAlert.theme, clearAlert)}
@@ -5844,7 +5894,7 @@ class AlertTickerCard extends LitElement {
       <div class="atc-card-root">
         <div class="${this._hostClass}">
           <div class="atc-inner-clip${accentCls}" style="${accentSty}">
-            <div class="at-fold-wrapper ${this._animPhase}${hasInteraction ? " atc-clickable" : ""}${(current?.disable_animation || this._config?.disable_animation) ? " atc-no-anim" : ""}"
+            <div class="at-fold-wrapper ${this._animPhase}${hasInteraction ? " atc-clickable" : ""}${(current?.disable_animation || this._config?.disable_animation || (isWidgetSlide && this._config?.clear_disable_animation)) ? " atc-no-anim" : ""}"
               data-anim="${this._config.cycle_animation || "fold"}"
               @pointerdown="${pdHandler}" @pointerup="${puHandler}"
               @pointerleave="${plHandler}" @pointercancel="${plHandler}"
@@ -6853,7 +6903,15 @@ class AlertTickerCard extends LitElement {
       .at-fold-wrapper.atc-no-anim .w-splash,
       .at-fold-wrapper.atc-no-anim .w-hail-drop,
       .at-fold-wrapper.atc-no-anim .w-lightning-bolt,
-      .at-fold-wrapper.atc-no-anim .w-exceptional-particle  { animation-play-state: paused !important; }
+      .at-fold-wrapper.atc-no-anim .w-exceptional-particle,
+      .at-fold-wrapper.atc-no-anim .w-snowflake,
+      .at-fold-wrapper.atc-no-anim .w-shooting-star,
+      .at-fold-wrapper.atc-no-anim .sun-rays-wrap,
+      .at-fold-wrapper.atc-no-anim .sun-halo,
+      .at-fold-wrapper.atc-no-anim .sun-core,
+      .at-fold-wrapper.atc-no-anim .w-moon,
+      .at-fold-wrapper.atc-no-anim .w-star,
+      .at-fold-wrapper.atc-no-anim .w-cloud          { animation-play-state: paused !important; }
 
       /* -----------------------------------------------------------------------
        * TICKER — bigger font
@@ -8829,14 +8887,21 @@ class AlertTickerCard extends LitElement {
       }
       .atc-history-clear:hover { color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.4); }
       .atc-history-close {
-        font-size: 0.80rem;
-        background: transparent;
-        border: none;
-        color: rgba(255,255,255,0.5);
+        font-size: 0.82rem;
+        font-weight: 600;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.22);
+        border-radius: 6px;
+        color: rgba(255,255,255,0.85);
         cursor: pointer;
-        padding: 2px 4px;
+        padding: 4px 10px;
+        min-width: 36px;
+        min-height: 30px;
+        touch-action: manipulation;
+        line-height: 1.4;
       }
-      .atc-history-close:hover { color: rgba(255,255,255,0.9); }
+      .atc-history-close:hover,
+      .atc-history-close:active { background: rgba(255,255,255,0.18); color: #fff; }
       .atc-history-list {
         max-height: 220px;
         overflow-y: auto;
@@ -9738,7 +9803,14 @@ class AlertTickerCard extends LitElement {
         color: var(--primary-text-color, rgba(0,0,0,0.85)) !important;
       }
       .atc-ha-theme .atc-history-close {
-        color: var(--secondary-text-color, rgba(0,0,0,0.55)) !important;
+        background: rgba(0,0,0,0.05) !important;
+        border-color: var(--divider-color, rgba(0,0,0,0.18)) !important;
+        color: var(--secondary-text-color, rgba(0,0,0,0.7)) !important;
+      }
+      .atc-ha-theme .atc-history-close:hover,
+      .atc-ha-theme .atc-history-close:active {
+        background: rgba(0,0,0,0.1) !important;
+        color: var(--primary-text-color, rgba(0,0,0,0.9)) !important;
       }
       /* Snooze dropdown menu */
       .atc-ha-theme .atc-snooze-menu {
@@ -10943,11 +11015,13 @@ if (!customElements.get("alert-ticker-card")) {
 }
 
 window.customCards = window.customCards || [];
-if (!window.customCards.find((c) => c.type === "alert-ticker-card")) {
-  window.customCards.push({
-    type: "alert-ticker-card",
-    name: "AlertTicker Card",
-    description: "Display alerts based on entity states with 50 visual themes, 12 animations, snooze, numeric conditions, attribute triggers, AND/OR conditions, action buttons, and a full visual editor.",
-    preview: false,
-  });
-}
+const _atcIdx = window.customCards.findIndex((c) => c.type === "alert-ticker-card");
+const _atcEntry = {
+  type: "alert-ticker-card",
+  name: "AlertTicker Card",
+  description: "Display alerts based on entity states with 50 visual themes, 12 animations, snooze, numeric conditions, attribute triggers, AND/OR conditions, action buttons, and a full visual editor.",
+  preview: false,
+  version: CARD_VERSION,
+};
+if (_atcIdx === -1) window.customCards.push(_atcEntry);
+else window.customCards[_atcIdx] = _atcEntry;

@@ -49,12 +49,8 @@ devices:
     friendly_name: Pooja Room Motion Sensor
   '0x002446fffd09435b':
     friendly_name: Garage Door Lock
-  '0x0017880109196488':
-    friendly_name: Basement Stairs Multi Sensor
   '0x00124b00259092fb':
     friendly_name: Basement Zigbee Router
-  '0x0017880109197eb3':
-    friendly_name: Basement Multi Sensor
   '0x00158d0009108ee3':
     friendly_name: Rack Light Switch
   '0xdc8e95fffe3ed0cd':

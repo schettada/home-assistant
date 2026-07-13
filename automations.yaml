@@ -335,115 +335,6 @@
       device_id: abb44e139e83eb2414e59654c64ee273
     action: light.toggle
   mode: single
-- id: '1734902479753'
-  alias: Basement Lights
-  description: 'Controls basement lights based on door, motion, and occupancy. Door
-    open or motion detected: turn on light.basement group (stair + main). Door closed
-    + unoccupied: turn off stair light only. Door open 15+ min: turn off stair light
-    (person settled). No occupancy for 15 min: turn off light.basement group.'
-  triggers:
-  - entity_id:
-    - binary_sensor.basement_door
-    from:
-    - 'off'
-    id: open
-    to:
-    - 'on'
-    trigger: state
-  - entity_id:
-    - binary_sensor.basement_door
-    from:
-    - 'on'
-    id: close
-    to:
-    - 'off'
-    trigger: state
-  - entity_id:
-    - binary_sensor.basement_door
-    for:
-      hours: 0
-      minutes: 15
-      seconds: 0
-    from:
-    - 'off'
-    id: openlong
-    to:
-    - 'on'
-    trigger: state
-  - entity_id: binary_sensor.basement_motion_sensor
-    from:
-    - 'off'
-    id: motion
-    to:
-    - 'on'
-    trigger: state
-  - entity_id: binary_sensor.basement_multi_sensor_occupancy
-    for:
-      hours: 0
-      minutes: 15
-      seconds: 0
-    id: noone
-    to: 'off'
-    trigger: state
-  actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id: open
-      - condition: state
-        entity_id: light.basement
-        state: 'off'
-      sequence:
-      - action: light.turn_on
-        data: {}
-        target:
-          entity_id: light.basement
-    - conditions:
-      - condition: trigger
-        id: motion
-      - condition: state
-        entity_id: light.basement
-        state: 'off'
-      sequence:
-      - action: light.turn_on
-        data: {}
-        target:
-          entity_id: light.basement
-    - conditions:
-      - condition: trigger
-        id: close
-      - condition: state
-        entity_id: light.basement_stair_light
-        state: 'on'
-      - condition: state
-        entity_id: binary_sensor.basement_multi_sensor_occupancy
-        state: 'off'
-      sequence:
-      - action: light.turn_off
-        data: {}
-        target:
-          entity_id: light.basement_stair_light
-    - conditions:
-      - condition: trigger
-        id: openlong
-      - condition: state
-        entity_id: light.basement
-        state: 'on'
-      sequence:
-      - action: light.turn_off
-        data: {}
-        target:
-          entity_id: light.basement_stair_light
-    - conditions:
-      - condition: trigger
-        id:
-        - noone
-      sequence:
-      - action: light.turn_off
-        data: {}
-        target:
-          entity_id: light.basement
-  mode: restart
 - id: '1775093597448'
   alias: Pooja Room Lights
   description: Turns the Pooja Room light on when occupied, off after 2 minutes of
@@ -1320,3 +1211,65 @@
         target:
           entity_id: light.basement
   mode: restart
+- id: '1783858609304'
+  alias: HA Start/Stop v2
+  description: Notifies Sooraj when HA starts or shuts down. On startup, waits 90s
+    after the online notification then reloads known setup_retry-prone integrations
+    (Govee, UniFi) and sends a summary. Add entry IDs here when new integrations show
+    repeated setup_retry on boot.
+  triggers:
+  - event: start
+    id: hastart
+    trigger: homeassistant
+  - event: shutdown
+    id: hastop
+    trigger: homeassistant
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: hastart
+      sequence:
+      - delay:
+          seconds: 30
+      - action: notify.send_message
+        data:
+          message: Home Assistant started successfully at {{ now().strftime('%-I:%M
+            %p') }} on {{ now().strftime('%A, %B %-d') }}
+          title: ✅ CrashPad Online
+        target:
+          entity_id: notify.sj
+      - delay:
+          seconds: 90
+      - action: homeassistant.reload_config_entry
+        alias: Reload Govee Light Local
+        data:
+          entry_id: 01JPE38ND69BT0DTPQ78WM1XW7
+      - action: homeassistant.reload_config_entry
+        alias: Reload UniFi
+        data:
+          entry_id: 01K1XYYSPD4JP2MWYGVDVV6HSM
+      - delay:
+          seconds: 15
+      - action: notify.send_message
+        data:
+          message: "Reloaded on startup:\n\U0001F4A1 Govee Light Local: {{ states(integration_entities('govee_light_local')
+            | first) if integration_entities('govee_light_local') | first else 'no
+            entities' }}\n\U0001F310 UniFi: {{ states(integration_entities('unifi')
+            | first) if integration_entities('unifi') | first else 'no entities' }}"
+          title: "\U0001F504 Integration Retry Complete"
+        target:
+          entity_id: notify.sj
+    - conditions:
+      - condition: trigger
+        id: hastop
+      sequence:
+      - action: notify.send_message
+        data:
+          message: Home Assistant is shutting down at {{ now().strftime('%-I:%M %p')
+            }} on {{ now().strftime('%A, %B %-d') }}
+          title: ⚠️ CrashPad Offline
+        target:
+          entity_id: notify.sj
+  mode: single
