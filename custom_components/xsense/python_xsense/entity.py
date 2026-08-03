@@ -4,7 +4,18 @@ from .entity_map import entities
 from .mapping import bool_state, map_values
 
 
-_ONLINE_TIME_EXCLUDED_TYPES = {"XP0J-iA", "XS0R-iA", "STH0C"}
+_ONLINE_TIME_EXCLUDED_TYPES = {
+    "SC07-iA",
+    "XP0J-iA",
+    "XP0S-iA",
+    "XP0T-iA",
+    "XP0V-iA",
+    "XP0W-iA",
+    "XS0AA-iA",
+    "XS0AB-iA",
+    "XS0R-iA",
+    "STH0C",
+}
 _EXTENDED_OFFLINE_HOUR_TYPES = {"SWS0B", "XR0A-iR"}
 
 
@@ -97,8 +108,13 @@ class Entity:
         if isinstance(peak_data, dict):
             if "coPpmPeak" in peak_data:
                 data.setdefault("coPpmPeak", peak_data["coPpmPeak"])
+            if "radonPeak" in peak_data:
+                data.setdefault("radonPeak", peak_data["radonPeak"])
             if "time" in peak_data:
-                data.setdefault("coPpmPeakTime", peak_data["time"])
+                if "coPpmPeak" in peak_data:
+                    data.setdefault("coPpmPeakTime", peak_data["time"])
+                if "radonPeak" in peak_data:
+                    data.setdefault("radonPeakTime", peak_data["time"])
         for nested_key in ("lightShadowBean", "skp0aShadowBean"):
             nested_data = data.pop(nested_key, {})
             if isinstance(nested_data, dict):
@@ -141,6 +157,7 @@ _DASHED_THING_TYPES = {
     # XsDeviceAlarm.getWiFiThingName() handlers in the Android app.
     "SC06-WX",
     "SC07-WX",
+    "SC07-iA",
     "STH0C",
     "SWS0B",
     "XC04-WX",
@@ -150,8 +167,14 @@ _DASHED_THING_TYPES = {
     "XP0A-iR",
     "XP0H-iR",
     "XP0J-iA",
+    "XP0S-iA",
+    "XP0T-iA",
+    "XP0V-iA",
+    "XP0W-iA",
     "XR0A-iR",
     "XS0B-iR",
+    "XS0AA-iA",
+    "XS0AB-iA",
     "XS0R-iA",
 }
 
@@ -164,4 +187,5 @@ _SBS50_THING_TYPES = {
     "SK0Z-3S",
     "STH0B",
     "XC0C-MR",
+    "XS0X-MN",
 }

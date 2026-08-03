@@ -230,9 +230,9 @@ notify_v3:
 notify_mobile_v3:
   alias: Notify Mobile v3
   description: Sends push notifications to all available phones. When Quiet Mode is
-    on, only sends to Sooraj — Arleepta and Neeva are suppressed so they aren't woken.
-    Skips any phone whose companion sensor is unavailable. Add/remove phones here
-    only.
+    on, only sends to Sooraj — Arleepta and Neeva are suppressed. External notifications
+    (Yuvraj) only fire when input_boolean.external_notifications is on. Skips any
+    phone whose companion sensor is unavailable. Add/remove phones here only.
   fields:
     message:
       description: Notification body text
@@ -299,3 +299,19 @@ notify_mobile_v3:
         title: '{{ title | default(''CrashPad'') }}'
       target:
         entity_id: notify.neeva
+  - alias: Notify External — Yuvraj (only if external_notifications is on)
+    note: Requires input_boolean.external_notifications = on. Replace notify.yuvraj
+      with the real entity once Yuvraj installs the HA companion app.
+    if:
+    - condition: state
+      entity_id: input_boolean.external_notifications
+      state: 'on'
+    then:
+    - action: notify.send_message
+      data:
+        message: '{{ message }}'
+        title: '{{ title | default(''CrashPad'') }}'
+      target:
+        entity_id:
+        - notify.yuvaraj
+        - notify.yuvaraj_phone

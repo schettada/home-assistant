@@ -21,6 +21,7 @@ from .constant import (
     DreoACMode,
     DreoACFanMode,
     POWERON_KEY,
+    RGB_MODE_RANGE,
 )
 
 COOKING_MODES = [
@@ -164,6 +165,7 @@ SUPPORTED_MODEL_PREFIXES = {"DR-HTF", "DR-HAF", "DR-HAP", "DR-HPF", "DR-HCF", "W
 _MCU_HAF004S_OLD_REV = "SC95F8613B"
 _MCU_HTF007S_OLD_REV = ("CMS89F7518", "CMS89F7518/EUR", "CMS89F7518/USA")
 _MCU_HAP003S_AUTO_SILENT_REV = ("midea", "001")
+_MCU_HPF015S_NEG_TILT_REVS = ("SC95F8613B/GL",)
 
 
 def _haf004s_mcu_override(device) -> None:
@@ -212,6 +214,34 @@ def _hap003s_mcu_override(device) -> None:
     mcu_model = mcu_obj.get("state", "") if isinstance(mcu_obj, dict) else ""
     if mcu_model in _MCU_HAP003S_AUTO_SILENT_REV:
         device._auto_mode_uses_auto_silent = True  # pylint: disable=protected-access
+
+
+def _hap009s_override(device) -> None:
+    """Remap the "auto" mode command to "auto-regular" for DR-HAP009S air purifiers.
+
+    The DR-HAP009S rejects the plain "auto" mode command ("instruction validate failed",
+    error 500003) and requires "auto-regular" instead (issue #860).  The device reports
+    "auto-regular" back as its state, which PyDreoFanBase.preset_mode normalizes to "auto".
+    """
+    device._auto_mode_command_value = "auto-regular"  # pylint: disable=protected-access
+
+
+def _hpf015s_mcu_override(device) -> None:
+    """Widen vertical angle range to (-10, 90) for DR-HPF015S units with the SC95F8613B/GL MCU.
+
+    Newer Matter-capable hardware revisions using this chip can physically tilt below
+    horizontal (owner-verified).  The product page confirms a 100° vertical oscillation
+    range (-10° to 90°).  Other revisions keep the conservative (0, 90) default from the
+    device definition, since chips in the SC95F8613B family have variants that cannot
+    reach negative vertical angles.
+    """
+    if device.raw_state is None:
+        return
+    mixed = device.raw_state.get("data", {}).get("mixed", {})
+    mcu_obj = mixed.get("mcu_hardware_model", {})
+    mcu_model = mcu_obj.get("state", "") if isinstance(mcu_obj, dict) else ""
+    if mcu_model in _MCU_HPF015S_NEG_TILT_REVS:
+        device._vertical_angle_range = (-10, 90)  # pylint: disable=protected-access
 
 
 SUPPORTED_DEVICES = {
@@ -288,7 +318,7 @@ SUPPORTED_DEVICES = {
             ("sleep", 3),
             ("auto", 4),
         ],
-        device_ranges={SPEED_RANGE: (1, 12)},
+        device_ranges={SPEED_RANGE: (1, 12), "shakehorizonangle_range": (30, 150)},
     ),
     "DR-HTF518S": DreoDeviceDetails(
         device_type=DreoDeviceType.TOWER_FAN,
@@ -326,15 +356,16 @@ SUPPORTED_DEVICES = {
     # data that would allow auto-detection of preset modes for these devices.
     "DR-HPF008S": DreoDeviceDetails(
         device_type=DreoDeviceType.AIR_CIRCULATOR,
-        # Note: Fan preset_modes use tuple format (name, value) despite type annotation.
-        # This is required for fans that map preset names to numeric mode values.
         preset_modes=[("normal", 1), ("auto", 2), ("sleep", 3), ("natural", 4), ("turbo", 5)],
         device_ranges={SPEED_RANGE: (1, 9), VERTICAL_ANGLE_RANGE: (-30, 90), "atm_brightness_range": (1, 3)},
     ),
     "DR-HPF015S": DreoDeviceDetails(
         device_type=DreoDeviceType.AIR_CIRCULATOR,
         preset_modes=[("normal", 1), ("natural", 2), ("sleep", 3), ("auto", 4), ("turbo", 5), ("custom", 6)],
-        device_ranges={SPEED_RANGE: (1, 12), HORIZONTAL_ANGLE_RANGE: (-75, 75)},
+        # Conservative default: vertical range (0, 90).
+        # Newer revision (_MCU_HPF015S_NEG_TILT_REVS MCU): widened to (-10, 90) by _hpf015s_mcu_override.
+        device_ranges={SPEED_RANGE: (1, 12), HORIZONTAL_ANGLE_RANGE: (-75, 75), VERTICAL_ANGLE_RANGE: (0, 90)},
+        override_fn=_hpf015s_mcu_override,
     ),
     "DR-HPF017S": DreoDeviceDetails(
         device_type=DreoDeviceType.AIR_CIRCULATOR,
@@ -382,11 +413,13 @@ SUPPORTED_DEVICES = {
     "DR-HCF007S": DreoDeviceDetails(
         device_type=DreoDeviceType.CEILING_FAN,
         preset_modes=[("normal", 1), ("natural", 2), ("sleep", 3), ("reverse", 4)],
-        # HCF007S uses rgbpresetsel/rgbpresetnum for RGB control (like the HCF002S CFRGB variant).
+        # HCF007S uses rgbpresetsel/rgbpresetnum for RGB preset control.
         # The rgbeffectid field in device state is read-only metadata and does NOT respond
-        # to write commands; only RGBPRESETSEL_KEY commands actually change the LED ring.
-        # Direct RGB colour via ATMCOLOR_KEY is also not supported (no atmcolor in state).
-        device_ranges={SPEED_RANGE: (1, 12), "atm_brightness_range": (1, 100)},
+        # to write commands; only RGBPRESETSEL_KEY commands actually change the LED ring pattern.
+        # The device does NOT echo atmcolor back in state, but still accepts ATMCOLOR_KEY write
+        # commands for direct colour control.  supports_direct_rgb_color enables the HA colour
+        # picker via the atm_color_rgb_write capability path (write-only, no state echo).
+        device_ranges={SPEED_RANGE: (1, 12), "atm_brightness_range": (1, 100), "supports_direct_rgb_color": True},
     ),
     "DR-HCF521S": DreoDeviceDetails(device_type=DreoDeviceType.CEILING_FAN, device_ranges={SPEED_RANGE: (1, 12)}),
     # Air Purifiers
@@ -398,6 +431,16 @@ SUPPORTED_DEVICES = {
         # the device instance so PyDreoAirPurifier._send_command can remap the command value.
         # The original revision ("meidi" MCU, seriesName "Macro Max S") is left untouched.
         override_fn=_hap003s_mcu_override,
+    ),
+    # DR-HAP009S diagnostics currently report an empty controlsConf object, so speed range and
+    # preset modes cannot be auto-detected from the API metadata. Hardcode the known fan
+    # capabilities to keep the Home Assistant fan entity available.
+    "DR-HAP009S": DreoDeviceDetails(
+        device_type=DreoDeviceType.AIR_PURIFIER,
+        preset_modes=[("auto", "auto"), ("manual", "manual"), ("sleep", "sleep"), ("turbo", "turbo")],
+        device_ranges={SPEED_RANGE: (1, 4)},
+        # The device rejects the plain "auto" mode command and requires "auto-regular" (issue #860).
+        override_fn=_hap009s_override,
     ),
     # Heaters
     "DR-HSH017BS": DreoHeaterDeviceDetails(
@@ -533,6 +576,8 @@ SUPPORTED_DEVICES = {
     # DR-HEC006S is the TurboCool Misting Fan 516S.
     # controlsConf is empty so speed range and preset modes must be hardcoded.
     # DR-HEC006S has +/-75° oscillation range and the turbo-mode is 4
+    # DR-HEC006S supports rgbmode (0=humidity indicator, 1=fixed color, 2=breathing, 3=cycling),
+    # rgbcolor, and rgbth (humidity thresholds).  Brightness is low/mid/high.
     # Asymmetric horizontal oscillation is also supported with left/right angles
     "DR-HEC006S": DreoDeviceDetails(
         device_type=DreoDeviceType.EVAPORATIVE_COOLER,
@@ -542,7 +587,9 @@ SUPPORTED_DEVICES = {
             HORIZONTAL_ANGLE_RANGE: (-75, 75),
             "horizontal_osc_angle_left_range": (-75, 75),
             "horizontal_osc_angle_right_range": (-75, 75),
+            RGB_MODE_RANGE: (0, 3),
         },
+        ambient_light_levels=(0, 1, 2, 3),
     ),
     # DR-HEC005S is the TurboCool Misting Fan 765S.
     # It has 12 fan speeds and can expose an empty controlsConf.
