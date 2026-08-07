@@ -407,7 +407,7 @@
     - binary_sensor.walkout_door
     - binary_sensor.basement_door
     - binary_sensor.basement_window
-    - binary_sensor.deck_sliding_door
+    - binary_sensor.deck_door
     - binary_sensor.neeva_windows
     - binary_sensor.yard_gate
     from:
@@ -423,7 +423,7 @@
     - binary_sensor.walkout_door
     - binary_sensor.basement_door
     - binary_sensor.basement_window
-    - binary_sensor.deck_sliding_door
+    - binary_sensor.deck_door
     - binary_sensor.neeva_windows
     - binary_sensor.yard_gate
     from:
@@ -900,13 +900,15 @@
     explicit from: guards to prevent spurious notifications when the fireplace switch
     recovers from unavailable.'
   triggers:
-  - entity_id: switch.fireplace_fireplace
+  - entity_id:
+    - switch.fireplace
     from:
     - 'off'
     to:
     - 'on'
     trigger: state
-  - entity_id: switch.fireplace_fireplace
+  - entity_id:
+    - switch.fireplace
     from:
     - 'on'
     to:

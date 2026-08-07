@@ -12,15 +12,6 @@ homeassistant:
 
 default_config:
 
-http:
-  ssl_certificate: !secret ssl_crt
-  ssl_key: !secret ssl_key
-  ip_ban_enabled: true
-  login_attempts_threshold: 10
-  use_x_forwarded_for: true
-  trusted_proxies:
-    - 10.2.1.0/24
-
 frontend:
   themes: !include_dir_merge_named themes
 
