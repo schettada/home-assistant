@@ -1,5 +1,5 @@
 ﻿/**
- * AlertTicker Card v1.3.9.1
+ * AlertTicker Card v1.3.9.6
  * A Home Assistant custom Lovelace card to display alerts based on entity states.
  * Supports 50 visual themes with per-alert theme assignment, priority ordering,
  * fold animation cycling, snooze, numeric conditions, attribute triggers,
@@ -27,7 +27,7 @@ const css = LitElement.prototype.css ?? ((strings, ...values) => {
 // ---------------------------------------------------------------------------
 // Card version — declared early so getConfigElement() can reference it
 // ---------------------------------------------------------------------------
-const CARD_VERSION = "1.3.9.1";
+const CARD_VERSION = "1.3.9.5";
 
 // ---------------------------------------------------------------------------
 // Google Cast compatibility (#171)
@@ -267,6 +267,8 @@ const T = {
     snooze_reset: "Riattiva tutti",
     dismiss: "Rimuovi",
     alerts_snoozed: "avvisi sospesi",
+    alerts_dismissed: "avvisi ignorati",
+    dismiss_reset: "Ripristina tutti",
     history: "Cronologia",
     history_clear: "Svuota",
     history_empty: "Nessun evento registrato",
@@ -304,6 +306,8 @@ const T = {
     snooze_reset: "Resume all",
     dismiss: "Dismiss",
     alerts_snoozed: "alerts snoozed",
+    alerts_dismissed: "alerts dismissed",
+    dismiss_reset: "Restore all",
     history: "History",
     history_clear: "Clear",
     history_empty: "No events recorded yet",
@@ -341,6 +345,8 @@ const T = {
     snooze_reset: "Réactiver tout",
     dismiss: "Effacer",
     alerts_snoozed: "alertes suspendues",
+    alerts_dismissed: "alertes ignorées",
+    dismiss_reset: "Restaurer tout",
     history: "Historique",
     history_clear: "Effacer",
     history_empty: "Aucun événement enregistré",
@@ -378,6 +384,8 @@ const T = {
     snooze_reset: "Alle fortsetzen",
     dismiss: "Verwerfen",
     alerts_snoozed: "Warnungen pausiert",
+    alerts_dismissed: "Warnungen ignoriert",
+    dismiss_reset: "Alle wiederherstellen",
     history: "Verlauf",
     history_clear: "Leeren",
     history_empty: "Noch keine Ereignisse aufgezeichnet",
@@ -415,6 +423,8 @@ const T = {
     snooze_reset: "Alles hervatten",
     dismiss: "Verwijderen",
     alerts_snoozed: "meldingen gesluimerd",
+    alerts_dismissed: "meldingen genegeerd",
+    dismiss_reset: "Alles herstellen",
     history: "Geschiedenis",
     history_clear: "Wissen",
     history_empty: "Nog geen gebeurtenissen opgeslagen",
@@ -452,6 +462,8 @@ const T = {
     snooze_reset: "Bỏ tạm hoãn tất cả",
     dismiss: "Xóa bỏ",
     alerts_snoozed: "báo động đã tạm hoãn",
+    alerts_dismissed: "cảnh báo đã bỏ qua",
+    dismiss_reset: "Khôi phục tất cả",
     history: "Lịch sử",
     history_clear: "Xóa",
     history_empty: "Chưa có sự kiện nào",
@@ -489,6 +501,8 @@ const T = {
     snooze_reset: "Восстановить все",
     dismiss: "Сбросить",
     alerts_snoozed: "оповещений отложено",
+    alerts_dismissed: "оповещений отклонено",
+    dismiss_reset: "Восстановить все",
     history: "История",
     history_clear: "Очистить",
     history_empty: "Событий пока нет",
@@ -526,6 +540,8 @@ const T = {
     snooze_reset: "Genoptag alle",
     dismiss: "Afvis",
     alerts_snoozed: "alarmer udsat",
+    alerts_dismissed: "alarmer afvist",
+    dismiss_reset: "Gendan alle",
     history: "Historik",
     history_clear: "Ryd",
     history_empty: "Ingen hændelser registreret endnu",
@@ -563,6 +579,8 @@ const T = {
     snooze_reset: "Obnovit vše",
     dismiss: "Zamítnout",
     alerts_snoozed: "varování odložena",
+    alerts_dismissed: "varování zamítnuta",
+    dismiss_reset: "Obnovit vše",
     history: "Historie",
     history_clear: "Nic",
     history_empty: "Zatím žádné události",
@@ -600,6 +618,8 @@ const T = {
     snooze_reset: "Retomar todos",
     dismiss: "Descartar",
     alerts_snoozed: "alertas silenciados",
+    alerts_dismissed: "alertas dispensados",
+    dismiss_reset: "Restaurar todos",
     history: "Histórico",
     history_clear: "Limpar",
     history_empty: "Nenhum evento registrado ainda",
@@ -637,6 +657,8 @@ const T = {
     snooze_reset: "Reanudar todo",
     dismiss: "Descartar",
     alerts_snoozed: "alertas pospuestas",
+    alerts_dismissed: "alertas descartadas",
+    dismiss_reset: "Restaurar todo",
     history: "Historial",
     history_clear: "Borrar",
     history_empty: "No hay eventos registrados aún",
@@ -674,6 +696,8 @@ const T = {
     snooze_reset: "Tümünü sürdür",
     dismiss: "Kapat",
     alerts_snoozed: "uyarı ertelendi",
+    alerts_dismissed: "uyarı reddedildi",
+    dismiss_reset: "Tümünü geri yükle",
     history: "Geçmiş",
     history_clear: "Temizle",
     history_empty: "Henüz kaydedilmiş olay yok",
@@ -1638,6 +1662,7 @@ class AlertTickerCard extends LitElement {
       _animPhase: { type: String },
       _snoozeMenuOpen: { type: String },
       _snoozedCount: { type: Number },
+      _dismissedCount: { type: Number },
       _historyOpen: { type: Boolean },
       _touchButtonsActive: { type: Boolean },
       _weatherState: { type: String },
@@ -1667,7 +1692,9 @@ class AlertTickerCard extends LitElement {
     this._initialLoadDone = false; // prevents sound/history on first compute after init
     this._snoozeMenuOpen = null;
     this._snoozedCount = 0;
-    this._snoozed = new Map(); // snoozeKey → expiry timestamp
+    this._dismissedCount = 0;
+    this._snoozed    = new Map(); // snoozeKey → expiry timestamp
+    this._dismissed  = new Map(); // snoozeKey → last_changed when dismissed
     this._persistentLatched = new Set(); // snoozeKey → latched persistent alert
     this._expandedGroups = new Set(); // groupKey → expanded (shows individual slides)
     this._historyOpen = false;
@@ -1923,6 +1950,7 @@ class AlertTickerCard extends LitElement {
     }
 
     let snoozedCount = 0;
+    let dismissedCount = 0;
     const testMode = !!this._config.test_mode;
     let active = expandedAlerts.filter((alert) => {
       const entityState = this._hass.states[alert.entity];
@@ -1971,7 +1999,10 @@ class AlertTickerCard extends LitElement {
           const stateValue = (alert.attribute != null && alert.attribute !== "")
             ? String(this._resolveAttrPath(entityState.attributes, alert.attribute) ?? "")
             : entityState.state;
-          const primaryOk = this._matchesState(stateValue, alert);
+          // No state condition = always match (mirrors on_change guard at line 1948)
+          const primaryOk = (alert.state == null || alert.state === "")
+            ? true
+            : this._matchesState(stateValue, alert);
           const normalConds = _normConds(alert.conditions);
           if (normalConds.length > 0) {
             const logic = alert.conditions_logic || "and";
@@ -2073,6 +2104,7 @@ class AlertTickerCard extends LitElement {
           }
         }
         if (this._isSnoozed(alert)) { snoozedCount++; return false; }
+        if (this._isDismissed(alert)) { dismissedCount++; return false; }
       }
       return true;
     });
@@ -2086,7 +2118,7 @@ class AlertTickerCard extends LitElement {
     const signature = active.map((a) => `${a.entity}:${a.message}:${a.priority}`).join("|");
     const _previewChanged = testMode && this._config._preview_index != null
       && this._config._preview_index !== this._lastAppliedPreviewIndex;
-    if (!_previewChanged && signature === this._lastSignature && snoozedCount === this._snoozedCount) return;
+    if (!_previewChanged && signature === this._lastSignature && snoozedCount === this._snoozedCount && dismissedCount === this._dismissedCount) return;
 
     // Record newly triggered alerts into history and play sound.
     // On first load: record history (so alerts already active on load appear in cronologia)
@@ -2241,6 +2273,7 @@ class AlertTickerCard extends LitElement {
     this._lastSignature = signature;
     this._activeAlerts = active;
     this._snoozedCount = snoozedCount;
+    this._dismissedCount = dismissedCount;
 
     // Clamp index — don't blindly reset to 0 on every state update
     if (this._currentIndex >= active.length) {
@@ -2848,6 +2881,40 @@ class AlertTickerCard extends LitElement {
       return { progress, remainingStr, isActive: true, remainingSec };
     }
 
+    // Percentage sensor — unit_of_measurement: % with numeric state (e.g. battery, progress bars)
+    if (es.attributes.unit_of_measurement === "%") {
+      const pct = parseFloat(es.state);
+      if (isNaN(pct) || ["unavailable", "unknown", "none", ""].includes(es.state)) {
+        return { progress: -1, remainingStr: "--", isActive: false };
+      }
+      const clamped = Math.max(0, Math.min(100, pct));
+      return { progress: clamped / 100, remainingStr: `${Math.round(clamped)}%`, isActive: clamped > 0 };
+    }
+
+    // Remaining-time sensor — unit_of_measurement: "s" or "min" (e.g. appliance remaining time)
+    const _uom = es.attributes.unit_of_measurement;
+    if (_uom === "s" || _uom === "min") {
+      const raw = parseFloat(es.state);
+      if (isNaN(raw) || ["unavailable", "unknown", "none", ""].includes(es.state)) {
+        this._tsTimerTotals.delete(alert.entity);
+        return { progress: -1, remainingStr: "--:--", isActive: false };
+      }
+      const remainingSec = Math.max(0, Math.round(_uom === "min" ? raw * 60 : raw));
+      if (remainingSec === 0) {
+        this._tsTimerTotals.delete(alert.entity);
+        return { progress: -1, remainingStr: "00:00", isActive: false };
+      }
+      const stored = this._tsTimerTotals.get(alert.entity);
+      if (!stored || remainingSec > stored) this._tsTimerTotals.set(alert.entity, remainingSec);
+      const total = this._tsTimerTotals.get(alert.entity);
+      const progress = Math.min(1, remainingSec / total);
+      const h = Math.floor(remainingSec / 3600);
+      const m = Math.floor((remainingSec % 3600) / 60).toString().padStart(2, "0");
+      const s = (remainingSec % 60).toString().padStart(2, "0");
+      const remainingStr = h > 0 ? `${h}:${m}:${s}` : `${m}:${s}`;
+      return { progress, remainingStr, isActive: true, remainingSec };
+    }
+
     const isActive = es.state === "active";
     if (!isActive) return { progress: 0, remainingStr: "00:00", isActive: false };
     const finishesAt = es.attributes.finishes_at;
@@ -3221,6 +3288,51 @@ class AlertTickerCard extends LitElement {
     try {
       localStorage.setItem("atc-snooze", JSON.stringify(Object.fromEntries(this._snoozed)));
     } catch (_) {}
+  }
+
+  // ---- Dismiss helpers -------------------------------------------------------
+
+  /** Load dismiss state from localStorage */
+  _loadDismissed() {
+    try {
+      const raw = localStorage.getItem("atc-dismissed");
+      if (!raw) return;
+      this._dismissed = new Map(Object.entries(JSON.parse(raw)));
+    } catch (_) { this._dismissed = new Map(); }
+  }
+
+  /** Persist dismiss state to localStorage */
+  _saveDismissed() {
+    try {
+      localStorage.setItem("atc-dismissed", JSON.stringify(Object.fromEntries(this._dismissed)));
+    } catch (_) {}
+  }
+
+  /** Returns true if the alert was dismissed and its entity hasn't changed since.
+   *  Auto-clears stale entries when the entity's last_changed timestamp advances. */
+  _isDismissed(alert) {
+    if (!alert.entity) return false;
+    const es = this._hass && this._hass.states[alert.entity];
+    if (!es) return false;
+    const key = this._snoozeKey(alert);
+    const storedLsc = this._dismissed.get(key);
+    if (!storedLsc) return false;
+    if (storedLsc === es.last_changed) return true;
+    // Entity state changed since dismissal — auto-reset so alert reappears
+    this._dismissed.delete(key);
+    this._saveDismissed();
+    return false;
+  }
+
+  /** Dismiss the alert until its entity fires a new state_changed event */
+  _dismissAlert(alert) {
+    if (!alert || !alert.entity) return;
+    const es = this._hass && this._hass.states[alert.entity];
+    if (!es) return;
+    this._dismissed.set(this._snoozeKey(alert), es.last_changed);
+    this._saveDismissed();
+    this._lastSignature = "";
+    this._computeActiveAlerts();
   }
 
   // ---- Persistent alarm helpers ---------------------------------------------
@@ -3842,6 +3954,15 @@ class AlertTickerCard extends LitElement {
         }));
         break;
       }
+      case "dismiss": {
+        const target = this._activeAlerts && this._activeAlerts[this._currentIndex];
+        if (target) this._dismissAlert(target);
+        break;
+      }
+      case "undismiss": {
+        this._clearAllDismissed();
+        break;
+      }
     }
   }
 
@@ -3855,11 +3976,12 @@ class AlertTickerCard extends LitElement {
     // Capture pointer on the listener element (currentTarget = inner div) so pointerup
     // fires on the same element, not on the shadow host which would miss our handler.
     try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) {}
+    // On touch, prevent scroll-detection from firing pointercancel and stealing the
+    // gesture. Previously only guarded by holdCfg, but tap-only interactions (e.g.
+    // action: dismiss) are equally vulnerable — the browser can misread a short tap
+    // as a scroll start and replace pointerup with pointercancel (#187).
+    if (e.pointerType === 'touch') e.preventDefault();
     if (holdCfg && holdCfg.action && holdCfg.action !== "none") {
-      // On touch, prevent the browser scroll-detection from firing pointercancel
-      // before our 500 ms hold threshold — without this the gesture is silently
-      // hijacked on mobile and the hold never fires.
-      if (e.pointerType === 'touch') e.preventDefault();
       const _isTouch = e.pointerType === 'touch';
       this._holdTimer = setTimeout(() => {
         this._holdFired = true;
@@ -3994,6 +4116,13 @@ class AlertTickerCard extends LitElement {
     this._computeActiveAlerts();
   }
 
+  _clearAllDismissed() {
+    this._dismissed.clear();
+    this._saveDismissed();
+    this._lastSignature = "";
+    this._computeActiveAlerts();
+  }
+
   /** Manual navigation: dir = +1 (next) or -1 (prev). Resets cycle timer. */
   _navigateAlert(dir) {
     const len = this._activeAlerts.length;
@@ -4042,6 +4171,21 @@ class AlertTickerCard extends LitElement {
     `;
   }
 
+  /** Minimal bar shown when some alerts are dismissed */
+  _renderDismissedIndicator() {
+    return html`
+      <div class="at-card atc-dismissed-bar">
+        <div class="atc-dismissed-inner">
+          <span class="atc-dismissed-icon">🔕</span>
+          <span class="atc-dismissed-text">${this._dismissedCount} ${this._t("alerts_dismissed")}</span>
+          <button class="atc-dismissed-reset" @click="${() => this._clearAllDismissed()}">
+            ↩ ${this._t("dismiss_reset")}
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
   // ---- LitElement lifecycle ------------------------------------------------
 
   connectedCallback() {
@@ -4056,6 +4200,7 @@ class AlertTickerCard extends LitElement {
       _ATC_OVERLAY.register(this._cardId, this._config.alerts || [], this._config, this._lang, this);
     }
     this._loadSnooze();
+    this._loadDismissed();
     this._loadPersistent();
     this._loadHistory();
     this._startCycleTimer();
@@ -4106,6 +4251,7 @@ class AlertTickerCard extends LitElement {
     const isHidden = this._activeAlerts.length === 0 &&
                      !this._config?.show_when_clear &&
                      !(this._snoozedCount > 0 && this._config?.show_snooze_bar !== false) &&
+                     !(this._dismissedCount > 0 && this._config?.show_dismiss_bar !== false) &&
                      !this._config?.card_border &&
                      !isEditMode;
     // Use the HTML `hidden` attribute — hui-card observes it and hides the
@@ -4259,6 +4405,7 @@ class AlertTickerCard extends LitElement {
   /** Returns a "2/3" counter badge when there are multiple alerts, else empty */
   _renderCounter() {
     if (this._activeAlerts.length <= 1) return html``;
+    if (this._config?.show_counter === false) return html``;
     return html`
       <div class="alert-counter">
         ${this._currentIndex + 1}<span class="counter-sep">/</span>${this._activeAlerts.length}
@@ -4269,6 +4416,7 @@ class AlertTickerCard extends LitElement {
   /** Counter overlay for large_buttons mode — absolutely positioned above the button stack */
   _renderCounterOverlay() {
     if (this._activeAlerts.length <= 1) return html``;
+    if (this._config?.show_counter === false) return html``;
     return html`
       <div class="alert-counter-overlay">
         ${this._currentIndex + 1}<span class="counter-sep">/</span>${this._activeAlerts.length}
@@ -5262,8 +5410,12 @@ class AlertTickerCard extends LitElement {
             <span class="mu-np-label">${alert.badge_label || "NOW PLAYING"}</span>
           </div>
           <div class="mu-player-info">
-            <div class="mu-player-title">${title}</div>
-            ${artist ? html`<div class="mu-player-artist">${artist}</div>` : ""}
+            ${title.length > 22
+              ? html`<div class="mu-player-title mu-marquee-wrap"><span class="mu-marquee-inner" style="animation-duration:${Math.max(6, title.length * 0.28).toFixed(1)}s">${title}      ${title}</span></div>`
+              : html`<div class="mu-player-title">${title}</div>`}
+            ${artist ? (artist.length > 28
+              ? html`<div class="mu-player-artist mu-marquee-wrap"><span class="mu-marquee-inner" style="animation-duration:${Math.max(5, artist.length * 0.25).toFixed(1)}s">${artist}      ${artist}</span></div>`
+              : html`<div class="mu-player-artist">${artist}</div>`) : ""}
             ${(alert.entity_filter || alert.device_class) && alert.show_filter_name !== false
               ? html`<div class="mu-player-artist" style="opacity:0.6">${es.attributes.friendly_name || alert.entity}</div>`
               : ""}
@@ -5719,6 +5871,13 @@ class AlertTickerCard extends LitElement {
         return html`
           <div class="atc-card-root">
             <div class="${this._hostClass}">${this._renderSnoozedIndicator()}</div>
+          </div>`;
+      }
+      // Some alerts are dismissed — show a minimal indicator with restore button
+      if (this._dismissedCount > 0 && this._config.show_dismiss_bar !== false && !this._config.show_when_clear) {
+        return html`
+          <div class="atc-card-root">
+            <div class="${this._hostClass}">${this._renderDismissedIndicator()}</div>
           </div>`;
       }
       const clearSnoozedPill = (this._snoozedCount > 0 && this._config.show_snooze_bar !== false) ? html`
@@ -8326,6 +8485,9 @@ class AlertTickerCard extends LitElement {
         font-size: 0.78rem; color: rgba(255,255,255,0.52); margin-top: 1px;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       }
+      .mu-marquee-wrap { overflow: hidden; text-overflow: clip !important; }
+      .mu-marquee-inner { display: inline-block; white-space: nowrap; animation: mu-marquee linear infinite; }
+      @keyframes mu-marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
       .mu-player-controls { display: flex; align-items: center; gap: 8px; margin-top: 7px; }
       .mu-ctrl-btn {
         background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
@@ -8519,6 +8681,46 @@ class AlertTickerCard extends LitElement {
       }
       .atc-snooze-option:hover {
         background: rgba(255, 255, 255, 0.15);
+      }
+
+      /* -----------------------------------------------------------------------
+       * DISMISSED INDICATOR BAR (shown when some alerts are dismissed)
+       * --------------------------------------------------------------------- */
+      .atc-dismissed-bar {
+        background: rgba(40, 25, 10, 0.92);
+        border: 1px solid rgba(255, 160, 50, 0.15);
+      }
+      .atc-dismissed-inner {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        min-height: 36px;
+      }
+      .atc-dismissed-icon {
+        font-size: 1rem;
+        flex-shrink: 0;
+        opacity: 0.7;
+      }
+      .atc-dismissed-text {
+        flex: 1;
+        font-size: 0.80rem;
+        color: rgba(255, 160, 50, 0.60);
+        font-style: italic;
+        letter-spacing: 0.3px;
+      }
+      .atc-dismissed-reset {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 6px;
+        color: rgba(255, 255, 255, 0.70);
+        cursor: pointer;
+        font-size: 0.72rem;
+        padding: 3px 8px;
+        transition: background 0.2s;
+      }
+      .atc-dismissed-reset:hover {
+        background: rgba(255, 255, 255, 0.16);
       }
 
       /* -----------------------------------------------------------------------
