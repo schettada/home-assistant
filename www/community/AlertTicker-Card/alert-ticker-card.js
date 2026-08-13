@@ -1,5 +1,5 @@
 ﻿/**
- * AlertTicker Card v1.3.9.6
+ * AlertTicker Card v1.3.9.7
  * A Home Assistant custom Lovelace card to display alerts based on entity states.
  * Supports 50 visual themes with per-alert theme assignment, priority ordering,
  * fold animation cycling, snooze, numeric conditions, attribute triggers,
@@ -12,11 +12,25 @@
 // ---------------------------------------------------------------------------
 // LitElement bootstrap — resolves against the running HA instance
 // ---------------------------------------------------------------------------
-const LitElement = Object.getPrototypeOf(
-  customElements.get("ha-panel-lovelace") ||
-  customElements.get("hui-view") ||
-  customElements.get("ha-card")
-);
+// Guard: if HA custom elements aren't registered yet (cold first load race),
+// re-inject this script after ha-card is defined rather than crashing silently.
+const _atcBase = customElements.get("ha-panel-lovelace") ||
+                 customElements.get("hui-view") ||
+                 customElements.get("ha-card");
+if (!_atcBase) {
+  customElements.whenDefined("ha-card").then(() => {
+    if (!customElements.get("alert-ticker-card")) {
+      const _existing = document.querySelector('script[src*="alert-ticker-card.js"]');
+      if (_existing) {
+        const _s = document.createElement("script");
+        _s.src = _existing.src + (_existing.src.includes("?") ? "&" : "?") + "_atcr=" + Date.now();
+        document.head.appendChild(_s);
+      }
+    }
+  });
+  throw new Error("AlertTicker Card: HA not ready yet — will auto-retry once ha-card is defined.");
+}
+const LitElement = Object.getPrototypeOf(_atcBase);
 const html = LitElement.prototype.html;
 const css = LitElement.prototype.css ?? ((strings, ...values) => {
   let cssText = strings[0];

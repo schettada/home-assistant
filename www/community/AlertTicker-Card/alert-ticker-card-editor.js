@@ -1,5 +1,5 @@
 /**
- * AlertTicker Card Editor v1.3.9.6
+ * AlertTicker Card Editor v1.3.9.7
  * Visual editor for the AlertTicker Card custom Lovelace component.
  */
 
