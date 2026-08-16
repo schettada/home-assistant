@@ -1,5 +1,5 @@
 /**
- * AlertTicker Card Editor v1.3.9.7
+ * AlertTicker Card Editor v1.3.9.8
  * Visual editor for the AlertTicker Card custom Lovelace component.
  */
 
@@ -10,7 +10,7 @@ const html = LitElement.prototype.html;
 const css = LitElement.prototype.css;
 
 // Must match the version in alert-ticker-card.js
-const CARD_VERSION = "1.3.9.5";
+const CARD_VERSION = "1.3.9.8";
 
 // ---------------------------------------------------------------------------
 // Theme metadata — mirrors alert-ticker-card.js
@@ -984,6 +984,9 @@ const ET = {
     alert_icon_help: "Lascia vuoto per usare l'emoji del tema. Inserisci un'emoji personalizzata. Attiva 'Usa icona HA' per mostrare automaticamente l'icona MDI dell'entità (o sceglierne una con il selettore).",
     auto_icon_preview: "Icona automatica dall'entità",
     use_ha_icon: "Usa icona Home Assistant (mdi:)",
+    use_entity_picture: "Usa immagine entità come icona",
+    icon_image: "Immagine personalizzata (percorso o URL)",
+    icon_image_help: "Percorso /local/ o URL completo. Es: /local/icone/casa.png",
     icon_color: "Colore icona",
     icon_color_help: "Colore CSS: es. #ff0000, red, var(--error-color). Lascia vuoto per il colore del tema.",
     accent_color: "Colore bordo personalizzato",
@@ -1148,6 +1151,10 @@ const ET = {
     music_player_controls: "Controlli lettore musicale",
     music_player_controls_help: "Mostra play/pausa, precedente, successivo e muto con la copertina dell'album come sfondo. Funziona solo quando l'entità è un media_player.",
     music_player_color: "Colore accento",
+    music_show_art: "Mostra copertina album",
+    music_show_title: "Mostra titolo brano",
+    music_show_artist: "Mostra artista",
+    music_show_controls: "Mostra controlli di riproduzione",
   },
   en: {
     tab_general: "General",
@@ -1320,6 +1327,9 @@ const ET = {
     alert_icon_help: "Leave empty to use the theme emoji. Enter a custom emoji. Enable 'Use HA icon' to automatically show the entity's MDI icon from HA (or pick one with the selector).",
     auto_icon_preview: "Auto icon from entity",
     use_ha_icon: "Use Home Assistant icon (mdi:)",
+    use_entity_picture: "Use entity picture as icon",
+    icon_image: "Custom image (path or URL)",
+    icon_image_help: "/local/ path or full URL. E.g.: /local/icons/home.png",
     icon_color: "Icon color",
     icon_color_help: "CSS color: e.g. #ff0000, red, var(--error-color). Leave empty for theme default.",
     accent_color: "Custom accent color",
@@ -1484,6 +1494,10 @@ const ET = {
     music_player_controls: "Music player controls",
     music_player_controls_help: "Shows play/pause, previous, next and mute controls with album art as background. Only works when the entity is a media_player.",
     music_player_color: "Accent color",
+    music_show_art: "Show album art",
+    music_show_title: "Show track title",
+    music_show_artist: "Show artist",
+    music_show_controls: "Show playback controls",
   },
   fr: {
     tab_general: "Général",
@@ -1656,6 +1670,9 @@ const ET = {
     alert_icon_help: "Laisser vide pour utiliser l'emoji du thème. Saisir un emoji personnalisé. Activer 'Utiliser icône HA' pour afficher automatiquement l'icône MDI de l'entité (ou en choisir une).",
     auto_icon_preview: "Icône automatique depuis l'entité",
     use_ha_icon: "Utiliser une icône Home Assistant (mdi:)",
+    use_entity_picture: "Utiliser l'image de l'entité comme icône",
+    icon_image: "Image personnalisée (chemin ou URL)",
+    icon_image_help: "Chemin /local/ ou URL complète. Ex: /local/icons/home.png",
     icon_color: "Couleur de l'icône",
     icon_color_help: "Couleur CSS: ex. #ff0000, red, var(--error-color). Laisser vide pour la couleur du thème.",
     accent_color: "Couleur d'accentuation",
@@ -1820,6 +1837,10 @@ const ET = {
     music_player_controls: "Contrôles du lecteur musical",
     music_player_controls_help: "Affiche lecture/pause, précédent, suivant et sourdine avec la pochette d'album en fond. Fonctionne uniquement quand l'entité est un media_player.",
     music_player_color: "Couleur d'accentuation",
+    music_show_art: "Afficher la pochette d'album",
+    music_show_title: "Afficher le titre de la piste",
+    music_show_artist: "Afficher l'artiste",
+    music_show_controls: "Afficher les commandes de lecture",
   },
   de: {
     tab_general: "Allgemein",
@@ -1992,6 +2013,9 @@ const ET = {
     alert_icon_help: "Leer lassen für Theme-Emoji. Eigenes Emoji eingeben. 'HA-Symbol verwenden' aktivieren, um automatisch das MDI-Symbol der Entität anzuzeigen (oder eines auswählen).",
     auto_icon_preview: "Automatisches Symbol von Entität",
     use_ha_icon: "Home Assistant Symbol verwenden (mdi:)",
+    use_entity_picture: "Entitätsbild als Symbol verwenden",
+    icon_image: "Benutzerdefiniertes Bild (Pfad oder URL)",
+    icon_image_help: "/local/-Pfad oder vollständige URL. Z.B.: /local/icons/home.png",
     icon_color: "Symbolfarbe",
     icon_color_help: "CSS-Farbe: z.B. #ff0000, red, var(--error-color). Leer lassen für Themafarbe.",
     accent_color: "Akzentfarbe",
@@ -2156,6 +2180,10 @@ const ET = {
     music_player_controls: "Musikplayer-Steuerung",
     music_player_controls_help: "Zeigt Play/Pause, Vorheriges, Nächstes und Stumm mit Albumcover als Hintergrund. Funktioniert nur wenn die Entität ein media_player ist.",
     music_player_color: "Akzentfarbe",
+    music_show_art: "Albumcover anzeigen",
+    music_show_title: "Titel anzeigen",
+    music_show_artist: "Interpret anzeigen",
+    music_show_controls: "Wiedergabesteuerung anzeigen",
   },
   nl: {
     tab_general: "Algemeen",
@@ -2328,6 +2356,9 @@ const ET = {
     alert_icon_help: "Leeg laten voor thema-emoji. Eigen emoji invoeren. 'HA-pictogram gebruiken' inschakelen om automatisch het MDI-pictogram van de entiteit te tonen (of er een kiezen).",
     auto_icon_preview: "Automatisch pictogram van entiteit",
     use_ha_icon: "Home Assistant pictogram gebruiken (mdi:)",
+    use_entity_picture: "Entiteitsafbeelding als pictogram gebruiken",
+    icon_image: "Aangepaste afbeelding (pad of URL)",
+    icon_image_help: "/local/-pad of volledige URL. Bijv.: /local/icons/home.png",
     icon_color: "Pictogramkleur",
     icon_color_help: "CSS-kleur: bijv. #ff0000, red, var(--error-color). Leeg laten voor themakleur.",
     accent_color: "Accentkleur",
@@ -2492,6 +2523,10 @@ const ET = {
     music_player_controls: "Muziekspelerbesturingen",
     music_player_controls_help: "Toont afspelen/pauzeren, vorige, volgende en dempen met albumhoes als achtergrond. Werkt alleen wanneer de entiteit een media_player is.",
     music_player_color: "Accentkleur",
+    music_show_art: "Albumhoes tonen",
+    music_show_title: "Nummertitel tonen",
+    music_show_artist: "Artiest tonen",
+    music_show_controls: "Afspeelknoppen tonen",
   },
   vi: {
     tab_general: "Chung",
@@ -2664,6 +2699,9 @@ const ET = {
     alert_icon_help: "Để trống để dùng emoji chủ đề. Nhập emoji tùy chỉnh. Bật 'Dùng biểu tượng HA' để tự động hiển thị biểu tượng MDI của thực thể (hoặc chọn một biểu tượng).",
     auto_icon_preview: "Biểu tượng tự động từ thực thể",
     use_ha_icon: "Dùng biểu tượng Home Assistant (mdi:)",
+    use_entity_picture: "Dùng ảnh thực thể làm biểu tượng",
+    icon_image: "Ảnh tùy chỉnh (đường dẫn hoặc URL)",
+    icon_image_help: "Đường dẫn /local/ hoặc URL đầy đủ. VD: /local/icons/home.png",
     icon_color: "Màu biểu tượng",
     icon_color_help: "Màu CSS: ví dụ #ff0000, red, var(--error-color). Để trống để dùng màu theme.",
     accent_color: "Màu nhấn tùy chỉnh",
@@ -2828,6 +2866,10 @@ const ET = {
     music_player_controls: "Điều khiển trình phát nhạc",
     music_player_controls_help: "Hiển thị phát/tạm dừng, trước, tiếp theo và tắt tiếng với ảnh bìa album làm nền. Chỉ hoạt động khi thực thể là media_player.",
     music_player_color: "Màu nhấn",
+    music_show_art: "Hiển thị ảnh bïa",
+    music_show_title: "Hiển thị tiêu đề",
+    music_show_artist: "Hiển thị nghệ sĩ",
+    music_show_controls: "Hiển thị điều khiển phát",
   },
   ru: {
     tab_general: "Основное",
@@ -3000,6 +3042,9 @@ const ET = {
     alert_icon_help: "Оставьте пустым для эмодзи темы. Введите собственный эмодзи. Включите «Использовать иконку HA» для автоматического отображения MDI-иконки сущности (или выберите вручную).",
     auto_icon_preview: "Автоматическая иконка из сущности",
     use_ha_icon: "Использовать иконку Home Assistant (mdi:)",
+    use_entity_picture: "Использовать изображение объекта как иконку",
+    icon_image: "Пользовательское изображение (путь или URL)",
+    icon_image_help: "Путь /local/ или полный URL. Например: /local/icons/home.png",
     icon_color: "Цвет иконки",
     icon_color_help: "CSS цвет: например #ff0000, red, var(--error-color). Оставьте пустым для цвета темы.",
     accent_color: "Цвет акцента",
@@ -3164,6 +3209,10 @@ const ET = {
     music_player_controls: "Управление медиаплеером",
     music_player_controls_help: "Показывает воспроизведение/паузу, предыдущий, следующий и без звука с обложкой альбома на фоне. Работает только когда сущность является media_player.",
     music_player_color: "Цвет акцента",
+    music_show_art: "Показать обложку альбома",
+    music_show_title: "Показать название",
+    music_show_artist: "Показать исполнителя",
+    music_show_controls: "Показать элементы управления",
   },
   da: {
     tab_general: "Generelt",
@@ -3332,6 +3381,9 @@ const ET = {
     alert_icon_help: "Lad stå tomt for tema-emoji. Indtast en brugerdefineret emoji. Aktivér 'Brug HA-ikon' for automatisk at vise entitetens MDI-ikon (eller vælg et manuelt).",
     auto_icon_preview: "Automatisk ikon fra entitet",
     use_ha_icon: "Brug Home Assistant‑ikon (mdi:)",
+    use_entity_picture: "Brug enhedsbillede som ikon",
+    icon_image: "Brugerdefineret billede (sti eller URL)",
+    icon_image_help: "/local/-sti eller fuld URL. F.eks.: /local/icons/home.png",
     icon_color: "Ikonfarve",
     icon_color_help: "CSS‑farve: f.eks. #ff0000, red, var(--error-color). Lad stå tom for tema‑standard.",
     accent_color: "Accentfarve",
@@ -3500,6 +3552,10 @@ const ET = {
     music_player_controls: "Medieafspiller-kontroller",
     music_player_controls_help: "Viser afspil/pause, forrige, næste og lyd fra med albumcover som baggrund. Virker kun når entiteten er en media_player.",
     music_player_color: "Accentfarve",
+    music_show_art: "Vis albumcover",
+    music_show_title: "Vis sporets titel",
+    music_show_artist: "Vis kunstner",
+    music_show_controls: "Vis afspilningsknapper",
   },
   cs: {
     tab_general: "Obecné",
@@ -3672,6 +3728,9 @@ const ET = {
     alert_icon_help: "Ponechte prázdné pro použití emoji podle vzhledu nebo zadejte vlastní emoji. Povolte 'Použij ikonu HA' pro zobrazení MDI ikony z HA (nebo vyberte vlastní z výběru).",
     auto_icon_preview: "Ikona automaticky",
     use_ha_icon: "Použij ikonu HA (mdi:)",
+    use_entity_picture: "Použij obrázek entity jako ikonu",
+    icon_image: "Vlastní obrázek (cesta nebo URL)",
+    icon_image_help: "Cesta /local/ nebo plná URL. Např.: /local/icons/home.png",
     icon_color: "Barva ikony",
     icon_color_help: "CSS barva: např. #ff0000, červena, var(--error-color). Ponechte prázdné pro výchozí vzhled.",
     accent_color: "Barva přízvuku",
@@ -3840,6 +3899,10 @@ const ET = {
     music_player_controls: "Ovládání hudebního přehrávače",
     music_player_controls_help: "Zobrazí přehrát/pozastavit, předchozí, další a ztlumit s obalem alba jako pozadím. Funguje pouze když je entita media_player.",
     music_player_color: "Barva zvýraznění",
+    music_show_art: "Zobrazit obal alba",
+    music_show_title: "Zobrazit název skladby",
+    music_show_artist: "Zobrazit interpreta",
+    music_show_controls: "Zobrazit ovládání přehrávání",
   },
   pt: {
     tab_general: "Geral",
@@ -4012,6 +4075,9 @@ const ET = {
     alert_icon_help: "Deixe vazio para usar o emoji do tema. Insira um emoji personalizado. Ative 'Usar ícone HA' para mostrar automaticamente o ícone MDI da entidade (ou escolha um com o seletor).",
     auto_icon_preview: "Ícone automático da entidade",
     use_ha_icon: "Usar ícone do Home Assistant (mdi:)",
+    use_entity_picture: "Usar imagem da entidade como ícone",
+    icon_image: "Imagem personalizada (caminho ou URL)",
+    icon_image_help: "Caminho /local/ ou URL completa. Ex: /local/icons/home.png",
     icon_color: "Cor do ícone",
     icon_color_help: "Cor CSS: ex. #ff0000, red, var(--error-color). Deixe vazio para o padrão do tema.",
     accent_color: "Cor de destaque",
@@ -4176,6 +4242,10 @@ const ET = {
     music_player_controls: "Controles do player de música",
     music_player_controls_help: "Mostra play/pausa, anterior, próximo e mudo com arte do álbum como fundo. Funciona apenas quando a entidade é um media_player.",
     music_player_color: "Cor de destaque",
+    music_show_art: "Mostrar capa do álbum",
+    music_show_title: "Mostrar título da faixa",
+    music_show_artist: "Mostrar artista",
+    music_show_controls: "Mostrar controles de reprodução",
   },
   es: {
     tab_general: "General",
@@ -4348,6 +4418,9 @@ const ET = {
     alert_icon_help: "Deja vacío para usar el emoji del tema. Introduce un emoji personalizado. Activa 'Usar icono HA' para mostrar automáticamente el icono MDI de la entidad.",
     auto_icon_preview: "Icono automático de la entidad",
     use_ha_icon: "Usar icono de Home Assistant (mdi:)",
+    use_entity_picture: "Usar imagen de entidad como icono",
+    icon_image: "Imagen personalizada (ruta o URL)",
+    icon_image_help: "Ruta /local/ o URL completa. Ej: /local/icons/home.png",
     icon_color: "Color del icono",
     icon_color_help: "Color CSS: ej. #ff0000, red, var(--error-color). Deja vacío para el color del tema.",
     accent_color: "Color de acento",
@@ -4512,6 +4585,10 @@ const ET = {
     music_player_controls: "Controles del reproductor de música",
     music_player_controls_help: "Muestra reproducir/pausar, anterior, siguiente y silenciar con portada del álbum como fondo. Solo funciona cuando la entidad es un media_player.",
     music_player_color: "Color de acento",
+    music_show_art: "Mostrar portada del álbum",
+    music_show_title: "Mostrar título de la pista",
+    music_show_artist: "Mostrar artista",
+    music_show_controls: "Mostrar controles de reproducción",
   },
   tr: {
     tab_general: "Genel",
@@ -4684,6 +4761,9 @@ const ET = {
     alert_icon_help: "Tema emojisini kullanmak için boş bırakın. Özel emoji girin. HA'dan varlığın MDI ikonunu otomatik göstermek için 'HA ikonu kullan'ı etkinleştirin (veya seçiciyle seçin).",
     auto_icon_preview: "Varlıktan otomatik ikon",
     use_ha_icon: "Home Assistant ikonu kullan (mdi:)",
+    use_entity_picture: "Varlık resmini simge olarak kullan",
+    icon_image: "Özel resim (yol veya URL)",
+    icon_image_help: "/local/ yolu veya tam URL. Örn: /local/icons/home.png",
     icon_color: "İkon rengi",
     icon_color_help: "CSS rengi: örn. #ff0000, red, var(--error-color). Tema varsayılanı için boş bırak.",
     accent_color: "Vurgu rengi",
@@ -4848,6 +4928,10 @@ const ET = {
     music_player_controls: "Müzik çalar kontrolleri",
     music_player_controls_help: "Albüm kapağı arka planıyla oynat/duraklat, önceki, sonraki ve sessiz kontrollerini gösterir. Yalnızca varlık bir media_player olduğunda çalışır.",
     music_player_color: "Vurgu rengi",
+    music_show_art: "Albüm kapağını göster",
+    music_show_title: "Parça başlığını göster",
+    music_show_artist: "Sanatçıyı göster",
+    music_show_controls: "Oynatma kontrollerini göster",
   },
 };
 
@@ -6474,6 +6558,38 @@ class AlertTickerCardEditor extends LitElement {
                     placeholder="NOW PLAYING"
                     @change="${(e) => this._updateAlert(index, { badge_label: e.target.value.trim() || undefined })}"
                   ></ha-input>
+                  <div>
+                    <ha-formfield .label="${this._t("music_show_art")}">
+                      <ha-switch
+                        ?checked="${alert.music_show_art !== false}"
+                        @change="${(e) => this._updateAlert(index, { music_show_art: e.target.checked ? undefined : false })}"
+                      ></ha-switch>
+                    </ha-formfield>
+                  </div>
+                  <div>
+                    <ha-formfield .label="${this._t("music_show_title")}">
+                      <ha-switch
+                        ?checked="${alert.music_show_title !== false}"
+                        @change="${(e) => this._updateAlert(index, { music_show_title: e.target.checked ? undefined : false })}"
+                      ></ha-switch>
+                    </ha-formfield>
+                  </div>
+                  <div>
+                    <ha-formfield .label="${this._t("music_show_artist")}">
+                      <ha-switch
+                        ?checked="${alert.music_show_artist !== false}"
+                        @change="${(e) => this._updateAlert(index, { music_show_artist: e.target.checked ? undefined : false })}"
+                      ></ha-switch>
+                    </ha-formfield>
+                  </div>
+                  <div>
+                    <ha-formfield .label="${this._t("music_show_controls")}">
+                      <ha-switch
+                        ?checked="${alert.music_show_controls !== false}"
+                        @change="${(e) => this._updateAlert(index, { music_show_controls: e.target.checked ? undefined : false })}"
+                      ></ha-switch>
+                    </ha-formfield>
+                  </div>
                 ` : ""}
 
                 <!-- Group settings — visible only for filter-mode alerts -->
@@ -6711,6 +6827,31 @@ class AlertTickerCardEditor extends LitElement {
                       @change="${(e) => this._alertHaIconToggled(e.target.checked, index)}"
                     ></ha-switch>
                   </ha-formfield>
+                  <ha-formfield .label="${this._t("use_entity_picture")}">
+                    <ha-switch
+                      ?checked="${!!alert.use_entity_picture}"
+                      @change="${(e) => this._updateAlert(index, { use_entity_picture: e.target.checked || undefined })}"
+                    ></ha-switch>
+                  </ha-formfield>
+                  <ha-input
+                    .label="${this._t("icon_image")}"
+                    .value="${alert.icon_image || ""}"
+                    placeholder="/local/immagini/icona.png"
+                    @change="${(e) => this._updateAlert(index, { icon_image: e.target.value.trim() || undefined })}"
+                  ></ha-input>
+                  <div class="helper-text">${this._t("icon_image_help")}</div>
+                  ${(alert.icon_image || alert.use_entity_picture) ? html`
+                    <ha-input
+                      .label="${this._t("icon_size")}"
+                      .value="${alert.icon_size || ""}"
+                      placeholder="2rem"
+                      @change="${(e) => {
+                        const v = e.target.value.trim() || undefined;
+                        this._updateAlert(index, { icon_size: v });
+                      }}"
+                    ></ha-input>
+                    <div class="helper-text">${this._t("icon_size_help")}</div>
+                  ` : ""}
                   ${alert.use_ha_icon ? html`
                       <ha-icon-picker
                         .label="${this._t("alert_icon")}"

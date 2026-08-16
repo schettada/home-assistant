@@ -1,5 +1,5 @@
 ﻿/**
- * AlertTicker Card v1.3.9.7
+ * AlertTicker Card v1.3.9.8
  * A Home Assistant custom Lovelace card to display alerts based on entity states.
  * Supports 50 visual themes with per-alert theme assignment, priority ordering,
  * fold animation cycling, snooze, numeric conditions, attribute triggers,
@@ -41,7 +41,7 @@ const css = LitElement.prototype.css ?? ((strings, ...values) => {
 // ---------------------------------------------------------------------------
 // Card version — declared early so getConfigElement() can reference it
 // ---------------------------------------------------------------------------
-const CARD_VERSION = "1.3.9.5";
+const CARD_VERSION = "1.3.9.8";
 
 // ---------------------------------------------------------------------------
 // Google Cast compatibility (#171)
@@ -4323,6 +4323,22 @@ class AlertTickerCard extends LitElement {
     const sizeStyle = alert.icon_size ? `--mdc-icon-size: ${alert.icon_size};` : "";
     const colorStyle = (alert.icon_color ? `color: ${alert.icon_color};` : "") + sizeStyle;
 
+    // Static image path/URL as icon — icon_image: "/local/myimage.png"
+    if (alert.icon_image) {
+      const sz = alert.icon_size || "2rem";
+      return html`<img src="${alert.icon_image}" class="atc-entity-pic-icon" alt="" style="width:${sz};height:${sz};">`;
+    }
+
+    // Entity picture as icon — use_entity_picture: true reads entity_picture attribute
+    if (alert.use_entity_picture && alert.entity && this._hass) {
+      const pic = this._hass.states[alert.entity]?.attributes?.entity_picture;
+      if (pic) {
+        const url = pic.startsWith("http") ? pic : `${(this._hass.hassUrl ? this._hass.hassUrl("") : "").replace(/\/$/, "")}${pic}`;
+        const sz = alert.icon_size || "2rem";
+        return html`<img src="${url}" class="atc-entity-pic-icon" alt="" style="width:${sz};height:${sz};">`;
+      }
+    }
+
     // Theme animated MDI icon (door, window, fire…) — skipped when user explicitly enabled HA icon
     if (!alert.icon && !alert.use_ha_icon && themeMeta.mdiIcon) {
       return html`<div class="atc-icon-anim-wrap ${themeMeta.wrapClass || ""}"><div class="${themeMeta.animClass || ""}"><ha-icon icon="${themeMeta.mdiIcon}" class="atc-ha-icon" style="${colorStyle}"></ha-icon></div></div>`;
@@ -5409,9 +5425,13 @@ class AlertTickerCard extends LitElement {
     const accent = alert.music_player_color || '#e040fb';
     const call = (svc, extra = {}) =>
       this._hass.callService("media_player", svc, { entity_id: alert.entity, ...extra });
+    const _showArt      = alert.music_show_art      !== false;
+    const _showTitle    = alert.music_show_title    !== false;
+    const _showArtist   = alert.music_show_artist   !== false;
+    const _showControls = alert.music_show_controls !== false;
     return html`
       <div class="at-music at-music--player" style="--mu-accent:${accent}">
-        ${artUrl ? html`<div class="mu-art-bg" style="background-image:url('${artUrl}')"></div>` : ""}
+        ${(_showArt && artUrl) ? html`<div class="mu-art-bg" style="background-image:url('${artUrl}')"></div>` : ""}
         <div class="mu-art-overlay"></div>
         <div class="mu-player-body">
           <div class="mu-now-playing">
@@ -5424,16 +5444,17 @@ class AlertTickerCard extends LitElement {
             <span class="mu-np-label">${alert.badge_label || "NOW PLAYING"}</span>
           </div>
           <div class="mu-player-info">
-            ${title.length > 22
+            ${_showTitle ? (title.length > 22
               ? html`<div class="mu-player-title mu-marquee-wrap"><span class="mu-marquee-inner" style="animation-duration:${Math.max(6, title.length * 0.28).toFixed(1)}s">${title}      ${title}</span></div>`
-              : html`<div class="mu-player-title">${title}</div>`}
-            ${artist ? (artist.length > 28
+              : html`<div class="mu-player-title">${title}</div>`) : ""}
+            ${(_showArtist && artist) ? (artist.length > 28
               ? html`<div class="mu-player-artist mu-marquee-wrap"><span class="mu-marquee-inner" style="animation-duration:${Math.max(5, artist.length * 0.25).toFixed(1)}s">${artist}      ${artist}</span></div>`
               : html`<div class="mu-player-artist">${artist}</div>`) : ""}
             ${(alert.entity_filter || alert.device_class) && alert.show_filter_name !== false
               ? html`<div class="mu-player-artist" style="opacity:0.6">${es.attributes.friendly_name || alert.entity}</div>`
               : ""}
           </div>
+          ${_showControls ? html`
           <div class="mu-player-controls">
             <button class="mu-ctrl-btn"
               @pointerdown="${(e) => e.stopPropagation()}" @pointerup="${(e) => e.stopPropagation()}"
@@ -5462,9 +5483,9 @@ class AlertTickerCard extends LitElement {
               @input="${(e) => { e.target.style.background = `linear-gradient(to right, var(--mu-accent, #e040fb) ${e.target.value}%, rgba(255,255,255,0.15) ${e.target.value}%)`; }}"
               @change="${(e) => call('volume_set', { volume_level: parseFloat(e.target.value) / 100 })}"
             />
-          </div>
+          </div>` : ""}
         </div>
-        ${artUrl ? html`<img class="mu-art-thumb ${isPlaying ? 'mu-art-thumb--playing' : ''}" src="${artUrl}" alt="">` : ""}
+        ${(_showArt && artUrl) ? html`<img class="mu-art-thumb ${isPlaying ? 'mu-art-thumb--playing' : ''}" src="${artUrl}" alt="">` : ""}
         <div class="mu-player-right">${this._renderCounter()}</div>
         <div class="mu-accent-line"></div>
       </div>
@@ -6123,6 +6144,12 @@ class AlertTickerCard extends LitElement {
       /* -----------------------------------------------------------------------
        * HA ICON — when use_ha_icon is true
        * --------------------------------------------------------------------- */
+      .atc-entity-pic-icon {
+        width: 2rem; height: 2rem;
+        border-radius: 6px;
+        object-fit: contain;
+        flex-shrink: 0;
+      }
       .atc-ha-icon {
         display: flex;
         align-items: center;
