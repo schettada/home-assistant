@@ -812,12 +812,8 @@
   triggers:
   - entity_id:
     - sensor.apc_battery_charge
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
     below: 25
-    platform: numeric_state
+    trigger: numeric_state
   actions:
   - action: script.notify_critical_v1
     data:
