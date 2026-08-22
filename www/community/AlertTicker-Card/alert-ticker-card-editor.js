@@ -1,5 +1,5 @@
 /**
- * AlertTicker Card Editor v1.3.9.8
+ * AlertTicker Card Editor v1.3.9.9.1
  * Visual editor for the AlertTicker Card custom Lovelace component.
  */
 
@@ -10,7 +10,7 @@ const html = LitElement.prototype.html;
 const css = LitElement.prototype.css;
 
 // Must match the version in alert-ticker-card.js
-const CARD_VERSION = "1.3.9.8";
+const CARD_VERSION = "1.3.9.9.1";
 
 // ---------------------------------------------------------------------------
 // Theme metadata — mirrors alert-ticker-card.js
@@ -876,6 +876,10 @@ const ET = {
     section_cycling: "Ciclo & Animazione",
     section_snooze: "Snooze 💤",
     section_history: "Cronologia",
+    section_automation: "Automazione",
+    active_state_entity: "Entità stato attivo",
+    active_state_entity_help: "Scrive on/off su un input_boolean quando questo avviso si attiva o si azzera",
+    active_state_entity_warning: "⚠️ Funziona solo se la dashboard è sempre aperta nel browser (es. tablet fisso). Se la scheda viene chiusa, il booleano non viene aggiornato.",
     show_when_clear: "Mostra quando non ci sono avvisi",
     large_buttons: "Pulsanti grandi sempre visibili (💤 e 📋)",
     ha_theme: "Adatta al tema HA (compatibile con Mushroom e tutti i temi globali)",
@@ -1063,6 +1067,7 @@ const ET = {
     secondary_text_help: "Testo fisso mostrato sotto il messaggio. Supporta {state}, {name}, {entity}. Non richiede un'entità sensore.",
     show_filter_name: "Mostra nome entità (da entity_filter)",
     show_filter_state: "Mostra stato",
+    battery_trim_name: "Rimuovi suffisso «Battery» dal nome",
     secondary_attribute: "Attributo valore secondario",
     show_secondary_name: "Mostra nome entità affianco al valore",
     conditions_section: "Condizioni aggiuntive",
@@ -1155,6 +1160,10 @@ const ET = {
     music_show_title: "Mostra titolo brano",
     music_show_artist: "Mostra artista",
     music_show_controls: "Mostra controlli di riproduzione",
+    music_show_power: "Pulsante di spegnimento",
+    music_show_player_picker: "Selettore lettore",
+    music_compact_layout: "Layout compatto (metadati in alto a destra)",
+    music_compact_show_badge: "Badge NOW PLAYING (layout compatto)",
   },
   en: {
     tab_general: "General",
@@ -1219,6 +1228,10 @@ const ET = {
     section_cycling: "Cycling & Animation",
     section_snooze: "Snooze 💤",
     section_history: "History",
+    section_automation: "Automation",
+    active_state_entity: "Active state entity",
+    active_state_entity_help: "Writes on/off to an input_boolean when this specific alert becomes active or clears",
+    active_state_entity_warning: "⚠️ Only works while the browser tab with this dashboard is open (e.g. a fixed wall tablet). If the tab is closed, the boolean is not updated.",
     show_when_clear: "Show when no alerts are active",
     large_buttons: "Large always-visible buttons (💤 and 📋)",
     ha_theme: "Adapt to HA theme (compatible with Mushroom and all global themes)",
@@ -1406,6 +1419,7 @@ const ET = {
     secondary_text_help: "Fixed text shown below the message. Supports {state}, {name}, {entity}. No sensor entity required.",
     show_filter_name: "Show entity name (from entity_filter)",
     show_filter_state: "Show state",
+    battery_trim_name: "Strip «Battery» suffix from entity name",
     secondary_attribute: "Secondary value attribute",
     show_secondary_name: "Show entity name next to value",
     conditions_section: "Extra conditions",
@@ -1498,6 +1512,10 @@ const ET = {
     music_show_title: "Show track title",
     music_show_artist: "Show artist",
     music_show_controls: "Show playback controls",
+    music_show_power: "Power button",
+    music_show_player_picker: "Player selector",
+    music_compact_layout: "Compact layout (metadata top-right)",
+    music_compact_show_badge: "NOW PLAYING badge (compact layout)",
   },
   fr: {
     tab_general: "Général",
@@ -1562,6 +1580,10 @@ const ET = {
     section_cycling: "Cycle & Animation",
     section_snooze: "Snooze 💤",
     section_history: "Historique",
+    section_automation: "Automatisation",
+    active_state_entity: "Entité état actif",
+    active_state_entity_help: "Écrit on/off sur un input_boolean quand cette alerte s'active ou s'efface",
+    active_state_entity_warning: "⚠️ Fonctionne uniquement si l'onglet du navigateur est toujours ouvert (ex. tablette fixée). Si l'onglet est fermé, le booléen n'est pas mis à jour.",
     show_when_clear: "Afficher quand aucune alerte n'est active",
     large_buttons: "Grands boutons toujours visibles (💤 et 📋)",
     ha_theme: "Adapter au thème HA (compatible Mushroom et tous les thèmes globaux)",
@@ -1749,6 +1771,7 @@ const ET = {
     secondary_text_help: "Texte fixe affiché sous le message. Supporte {state}, {name}, {entity}. Aucune entité capteur requise.",
     show_filter_name: "Afficher le nom de l'entité (depuis entity_filter)",
     show_filter_state: "Afficher l'état",
+    battery_trim_name: "Supprimer le suffixe «Battery» du nom",
     secondary_attribute: "Attribut valeur secondaire",
     show_secondary_name: "Afficher le nom de l'entité à côté de la valeur",
     conditions_section: "Conditions supplémentaires",
@@ -1841,6 +1864,10 @@ const ET = {
     music_show_title: "Afficher le titre de la piste",
     music_show_artist: "Afficher l'artiste",
     music_show_controls: "Afficher les commandes de lecture",
+    music_show_power: "Bouton d'alimentation",
+    music_show_player_picker: "Sélecteur de lecteur",
+    music_compact_layout: "Mise en page compacte (métadonnées en haut à droite)",
+    music_compact_show_badge: "Badge EN COURS (mise en page compacte)",
   },
   de: {
     tab_general: "Allgemein",
@@ -1905,6 +1932,10 @@ const ET = {
     section_cycling: "Zyklus & Animation",
     section_snooze: "Schlummern 💤",
     section_history: "Verlauf",
+    section_automation: "Automatisierung",
+    active_state_entity: "Aktiver Status-Entität",
+    active_state_entity_help: "Schreibt on/off in einen input_boolean, wenn dieser Alarm aktiv wird oder sich leert",
+    active_state_entity_warning: "⚠️ Funktioniert nur, wenn der Browser-Tab mit diesem Dashboard geöffnet ist (z.B. festes Wandtablet). Wenn der Tab geschlossen wird, wird der Boolean nicht aktualisiert.",
     show_when_clear: "Anzeigen wenn keine Warnung aktiv",
     large_buttons: "Große, immer sichtbare Schaltflächen (💤 und 📋)",
     ha_theme: "An HA-Theme anpassen (kompatibel mit Mushroom und allen globalen Themes)",
@@ -2092,6 +2123,7 @@ const ET = {
     secondary_text_help: "Fester Text unter der Nachricht. Unterstützt {state}, {name}, {entity}. Kein Sensor-Entity erforderlich.",
     show_filter_name: "Entity-Name anzeigen (aus entity_filter)",
     show_filter_state: "Zustand anzeigen",
+    battery_trim_name: "«Battery»-Suffix aus dem Namen entfernen",
     secondary_attribute: "Sekundärwert-Attribut",
     show_secondary_name: "Entity-Name neben dem Wert anzeigen",
     conditions_section: "Zusätzliche Bedingungen",
@@ -2184,6 +2216,10 @@ const ET = {
     music_show_title: "Titel anzeigen",
     music_show_artist: "Interpret anzeigen",
     music_show_controls: "Wiedergabesteuerung anzeigen",
+    music_show_power: "Ausschalttaste",
+    music_show_player_picker: "Player-Auswahl",
+    music_compact_layout: "Kompaktes Layout (Metadaten oben rechts)",
+    music_compact_show_badge: "NOW PLAYING-Badge (Kompaktlayout)",
   },
   nl: {
     tab_general: "Algemeen",
@@ -2248,6 +2284,10 @@ const ET = {
     section_cycling: "Cyclus & Animatie",
     section_snooze: "Sluimer 💤",
     section_history: "Geschiedenis",
+    section_automation: "Automatisering",
+    active_state_entity: "Actieve status entiteit",
+    active_state_entity_help: "Schrijft on/off naar een input_boolean wanneer deze melding actief wordt of verdwijnt",
+    active_state_entity_warning: "⚠️ Werkt alleen als het browsertabblad met dit dashboard open is (bijv. vaste tablet). Als het tabblad gesloten is, wordt de boolean niet bijgewerkt.",
     show_when_clear: "Tonen wanneer geen meldingen actief zijn",
     large_buttons: "Grote, altijd zichtbare knoppen (💤 en 📋)",
     ha_theme: "Aanpassen aan HA-thema (compatibel met Mushroom en alle globale thema's)",
@@ -2435,6 +2475,7 @@ const ET = {
     secondary_text_help: "Vaste tekst onder het bericht. Ondersteunt {state}, {name}, {entity}. Geen sensor-entiteit vereist.",
     show_filter_name: "Entiteitsnaam weergeven (uit entity_filter)",
     show_filter_state: "Status weergeven",
+    battery_trim_name: "«Battery»-achtervoegsel uit naam verwijderen",
     secondary_attribute: "Secundaire waarde-attribuut",
     show_secondary_name: "Entiteitsnaam naast waarde weergeven",
     conditions_section: "Extra voorwaarden",
@@ -2527,6 +2568,10 @@ const ET = {
     music_show_title: "Nummertitel tonen",
     music_show_artist: "Artiest tonen",
     music_show_controls: "Afspeelknoppen tonen",
+    music_show_power: "Uitknop",
+    music_show_player_picker: "Spelerkeuze",
+    music_compact_layout: "Compact layout (metadata rechtsboven)",
+    music_compact_show_badge: "NOW PLAYING-badge (compact layout)",
   },
   vi: {
     tab_general: "Chung",
@@ -2591,6 +2636,10 @@ const ET = {
     section_cycling: "Chu kỳ & Hoạt ảnh",
     section_snooze: "Tạm hoãn 💤",
     section_history: "Lịch sử",
+    section_automation: "Tự động hóa",
+    active_state_entity: "Thực thể trạng thái hoạt động",
+    active_state_entity_help: "Ghi on/off vào input_boolean khi cảnh báo hoạt động hoặc xóa",
+    active_state_entity_warning: "⚠️ Chỉ hoạt động khi tab trình duyệt với dashboard này đang mở (vd. máy tính bảng cố định). Nếu tab bị đóng, boolean sẽ không được cập nhật.",
     show_when_clear: "Hiển thị khi không có báo động",
     large_buttons: "Nút lớn luôn hiển thị (💤 và 📋)",
     ha_theme: "Thích ứng với chủ đề HA (tương thích Mushroom và tất cả chủ đề toàn cục)",
@@ -2778,6 +2827,7 @@ const ET = {
     secondary_text_help: "Văn bản cố định hiển thị bên dưới thông báo. Hỗ trợ {state}, {name}, {entity}. Không cần thực thể cảm biến.",
     show_filter_name: "Hiển thị tên thực thể (từ entity_filter)",
     show_filter_state: "Hiển thị trạng thái",
+    battery_trim_name: "Xóa hậu tố «Battery» khỏi tên",
     secondary_attribute: "Thuộc tính giá trị phụ",
     show_secondary_name: "Hiển thị tên thực thể bên cạnh giá trị",
     conditions_section: "Điều kiện bổ sung",
@@ -2870,6 +2920,10 @@ const ET = {
     music_show_title: "Hiển thị tiêu đề",
     music_show_artist: "Hiển thị nghệ sĩ",
     music_show_controls: "Hiển thị điều khiển phát",
+    music_show_power: "Nút tắt nguồn",
+    music_show_player_picker: "Bộ chọn trình phát",
+    music_compact_layout: "Bố cục thu gọn (siêu dữ liệu góc trên bên phải)",
+    music_compact_show_badge: "Huy hiệu NOW PLAYING (bố cục thu gọn)",
   },
   ru: {
     tab_general: "Основное",
@@ -2934,6 +2988,10 @@ const ET = {
     section_cycling: "Цикл и анимация",
     section_snooze: "Отложить 💤",
     section_history: "История",
+    section_automation: "Автоматизация",
+    active_state_entity: "Объект активного состояния",
+    active_state_entity_help: "Записывает on/off в input_boolean при активации или сбросе оповещений",
+    active_state_entity_warning: "⚠️ Работает только пока вкладка браузера с этой панелью открыта (напр. настенный планшет). Если вкладка закрыта, булевый объект не обновляется.",
     show_when_clear: "Показывать при отсутствии оповещений",
     large_buttons: "Большие всегда видимые кнопки (💤 и 📋)",
     ha_theme: "Адаптация к теме HA (совместимо с Mushroom и всеми глобальными темами)",
@@ -3121,6 +3179,7 @@ const ET = {
     secondary_text_help: "Фиксированный текст под сообщением. Поддерживает {state}, {name}, {entity}. Не требует датчика.",
     show_filter_name: "Показывать имя объекта (из entity_filter)",
     show_filter_state: "Показывать состояние",
+    battery_trim_name: "Убрать суффикс «Battery» из имени",
     secondary_attribute: "Атрибут вторичного значения",
     show_secondary_name: "Показывать имя объекта рядом со значением",
     conditions_section: "Дополнительные условия",
@@ -3213,6 +3272,10 @@ const ET = {
     music_show_title: "Показать название",
     music_show_artist: "Показать исполнителя",
     music_show_controls: "Показать элементы управления",
+    music_show_power: "Кнопка питания",
+    music_show_player_picker: "Выбор плеера",
+    music_compact_layout: "Компактный режим (метаданные справа вверху)",
+    music_compact_show_badge: "Значок NOW PLAYING (компактный режим)",
   },
   da: {
     tab_general: "Generelt",
@@ -3277,6 +3340,10 @@ const ET = {
     section_cycling: "Rotation og animation",
     section_snooze: "Slumre 💤",
     section_history: "Historik",
+    section_automation: "Automatisering",
+    active_state_entity: "Aktiv tilstandsenhed",
+    active_state_entity_help: "Skriver on/off til en input_boolean, når advarsler aktiveres eller ryddes",
+    active_state_entity_warning: "⚠️ Virker kun, mens browser-fanen med dette dashboard er åben (f.eks. fast tablet). Hvis fanen lukkes, opdateres boolean ikke.",
     show_when_clear: "Vis når ingen advarsler er aktive",
     large_buttons: "Store altid‑synlige knapper (💤 og 📋)",
     ha_theme: "Tilpas til HA‑tema (kompatibelt med Mushroom og alle globale temaer)",
@@ -3460,6 +3527,7 @@ const ET = {
     secondary_text_help: "Fast tekst under beskeden. Understøtter {state}, {name}, {entity}. Ingen sensor‑enhed kræves.",
     show_filter_name: "Vis enheds‑navn (fra entity_filter)",
     show_filter_state: "Vis tilstand",
+    battery_trim_name: "Fjern «Battery»-suffiks fra navn",
     secondary_attribute: "Sekundær værdi‑attribut",
     show_secondary_name: "Vis enheds‑navn ved siden af værdien",
     conditions_section: "Ekstra betingelser",
@@ -3556,6 +3624,10 @@ const ET = {
     music_show_title: "Vis sporets titel",
     music_show_artist: "Vis kunstner",
     music_show_controls: "Vis afspilningsknapper",
+    music_show_power: "Slukknap",
+    music_show_player_picker: "Afspillervælger",
+    music_compact_layout: "Kompakt layout (metadata øverst til højre)",
+    music_compact_show_badge: "NOW PLAYING-badge (kompakt layout)",
   },
   cs: {
     tab_general: "Obecné",
@@ -3620,6 +3692,10 @@ const ET = {
     section_cycling: "Rotace & animace",
     section_snooze: "Odložit 💤",
     section_history: "Historie",
+    section_automation: "Automatizace",
+    active_state_entity: "Entita aktivního stavu",
+    active_state_entity_help: "Zapíše on/off do input_boolean, když se upozornění aktivují nebo vymažou",
+    active_state_entity_warning: "⚠️ Funguje pouze pokud je záložka prohlížeče s tímto dashboardem otevřená (např. pevný tablet). Pokud je záložka zavřená, boolean se neaktualizuje.",
     show_when_clear: "Zobrazit pokud není aktivní žádné varování",
     large_buttons: "Velká pohotovostní tlačítka (💤 a 📋)",
     ha_theme: "Přizpůsobit vzhledu HomeAssistenta (kompatibilní s Mushroom a globálními vzhledy)",
@@ -3807,6 +3883,7 @@ const ET = {
     secondary_text_help: "Pevný text zobrazený pod hlavní zprávou varování. Podporuje {state}, {name}, {entity}. Nevyžaduje žádnou další entitu.",
     show_filter_name: "Zobrazit jméno entity (podle entity_filter)",
     show_filter_state: "Zobrazit stav",
+    battery_trim_name: "Odebrat příponu «Battery» z názvu",
     secondary_attribute: "Hodnota sekundárního atributu",
     show_secondary_name: "Zobraz název entity vedle stavu",
     conditions_section: "Extra podmínky",
@@ -3903,6 +3980,10 @@ const ET = {
     music_show_title: "Zobrazit název skladby",
     music_show_artist: "Zobrazit interpreta",
     music_show_controls: "Zobrazit ovládání přehrávání",
+    music_show_power: "Tlačítko napájení",
+    music_show_player_picker: "Výběr přehrávače",
+    music_compact_layout: "Kompaktní rozložení (metadata vpravo nahoře)",
+    music_compact_show_badge: "Odznak NOW PLAYING (kompaktní rozložení)",
   },
   pt: {
     tab_general: "Geral",
@@ -3967,6 +4048,10 @@ const ET = {
     section_cycling: "Ciclo & Animação",
     section_snooze: "Silenciar 💤",
     section_history: "Histórico",
+    section_automation: "Automação",
+    active_state_entity: "Entidade de estado ativo",
+    active_state_entity_help: "Escreve on/off num input_boolean quando os alertas ficam ativos ou se limpam",
+    active_state_entity_warning: "⚠️ Funciona apenas enquanto a aba do navegador com este dashboard estiver aberta (ex. tablet fixo). Se a aba for fechada, o boolean não é atualizado.",
     show_when_clear: "Mostrar quando não há alertas ativos",
     large_buttons: "Botões grandes sempre visíveis (💤 e 📋)",
     ha_theme: "Adaptar ao tema do HA (compatível com Mushroom e todos os temas globais)",
@@ -4154,6 +4239,7 @@ const ET = {
     secondary_text_help: "Texto fixo mostrado abaixo da mensagem. Suporta {state}, {name}, {entity}. Não requer entidade sensor.",
     show_filter_name: "Mostrar nome da entidade (de entity_filter)",
     show_filter_state: "Mostrar estado",
+    battery_trim_name: "Remover sufixo «Battery» do nome",
     secondary_attribute: "Atributo de valor secundário",
     show_secondary_name: "Mostrar nome da entidade ao lado do valor",
     conditions_section: "Condições extras",
@@ -4246,6 +4332,10 @@ const ET = {
     music_show_title: "Mostrar título da faixa",
     music_show_artist: "Mostrar artista",
     music_show_controls: "Mostrar controles de reprodução",
+    music_show_power: "Botão de energia",
+    music_show_player_picker: "Seletor de player",
+    music_compact_layout: "Layout compacto (metadados no canto superior direito)",
+    music_compact_show_badge: "Badge NOW PLAYING (layout compacto)",
   },
   es: {
     tab_general: "General",
@@ -4310,6 +4400,10 @@ const ET = {
     section_cycling: "Ciclo y Animación",
     section_snooze: "Posponer 💤",
     section_history: "Historial",
+    section_automation: "Automatización",
+    active_state_entity: "Entidad de estado activo",
+    active_state_entity_help: "Escribe on/off en un input_boolean cuando las alertas se activan o se borran",
+    active_state_entity_warning: "⚠️ Solo funciona mientras la pestaña del navegador con este dashboard esté abierta (p.ej. tablet fija). Si se cierra, el booleano no se actualiza.",
     show_when_clear: "Mostrar cuando no hay alertas activas",
     large_buttons: "Botones grandes siempre visibles (💤 y 📋)",
     ha_theme: "Adaptar al tema HA (compatible con Mushroom y todos los temas globales)",
@@ -4497,6 +4591,7 @@ const ET = {
     secondary_text_help: "Texto fijo mostrado debajo del mensaje. Soporta {state}, {name}, {entity}. No requiere entidad sensor.",
     show_filter_name: "Mostrar nombre de la entidad (de entity_filter)",
     show_filter_state: "Mostrar estado",
+    battery_trim_name: "Eliminar sufijo «Battery» del nombre",
     secondary_attribute: "Atributo de valor secundario",
     show_secondary_name: "Mostrar nombre de la entidad junto al valor",
     conditions_section: "Condiciones adicionales",
@@ -4589,6 +4684,10 @@ const ET = {
     music_show_title: "Mostrar título de la pista",
     music_show_artist: "Mostrar artista",
     music_show_controls: "Mostrar controles de reproducción",
+    music_show_power: "Botón de apagado",
+    music_show_player_picker: "Selector de reproductor",
+    music_compact_layout: "Diseño compacto (metadatos arriba a la derecha)",
+    music_compact_show_badge: "Badge NOW PLAYING (diseño compacto)",
   },
   tr: {
     tab_general: "Genel",
@@ -4653,6 +4752,10 @@ const ET = {
     section_cycling: "Döngü & Animasyon",
     section_snooze: "Erteleme 💤",
     section_history: "Geçmiş",
+    section_automation: "Otomasyon",
+    active_state_entity: "Aktif durum varlığı",
+    active_state_entity_help: "Uyarılar aktif olduğunda veya temizlendiğinde input_boolean'a on/off yazar",
+    active_state_entity_warning: "⚠️ Yalnızca bu dashboard'un bulunduğu tarayıcı sekmesi açıkken çalışır (örn. sabit tablet). Sekme kapatılırsa boolean güncellenmez.",
     show_when_clear: "Aktif uyarı yokken göster",
     large_buttons: "Her zaman görünür büyük düğmeler (💤 ve 📋)",
     ha_theme: "HA temasına uyarla (Mushroom ve tüm global temalarla uyumlu)",
@@ -4840,6 +4943,7 @@ const ET = {
     secondary_text_help: "Mesajın altında gösterilen sabit metin. {state}, {name}, {entity} destekler. Sensör varlığı gerekmez.",
     show_filter_name: "Varlık adını göster (entity_filter'dan)",
     show_filter_state: "Durumu göster",
+    battery_trim_name: "«Battery» ekini addan kaldır",
     secondary_attribute: "İkincil değer niteliği",
     show_secondary_name: "Değerin yanında varlık adını göster",
     conditions_section: "Ekstra koşullar",
@@ -4932,6 +5036,10 @@ const ET = {
     music_show_title: "Parça başlığını göster",
     music_show_artist: "Sanatçıyı göster",
     music_show_controls: "Oynatma kontrollerini göster",
+    music_show_power: "Güç düğmesi",
+    music_show_player_picker: "Oynatıcı seçici",
+    music_compact_layout: "Kompakt düzen (meta veriler sağ üstte)",
+    music_compact_show_badge: "NOW PLAYING rozeti (kompakt düzen)",
   },
 };
 
@@ -5722,6 +5830,7 @@ class AlertTickerCardEditor extends LitElement {
         </div>
         <div class="helper-text">${this._t("history_max_events_help")}</div>
       </div>
+
     `;
   }
 
@@ -6517,6 +6626,14 @@ class AlertTickerCardEditor extends LitElement {
                       @change="${(e) => this._updateAlert(index, { show_filter_state: e.target.checked ? true : undefined })}"
                     ></ha-switch>
                   </ha-formfield>
+                  ${alert.theme === "battery" ? html`
+                    <ha-formfield .label="${this._t("battery_trim_name")}">
+                      <ha-switch
+                        ?checked="${!!alert.battery_trim_name}"
+                        @change="${(e) => this._updateAlert(index, { battery_trim_name: e.target.checked ? true : undefined })}"
+                      ></ha-switch>
+                    </ha-formfield>
+                  ` : ""}
                 ` : ""}
                 ` : ""}
 
@@ -6558,6 +6675,23 @@ class AlertTickerCardEditor extends LitElement {
                     placeholder="NOW PLAYING"
                     @change="${(e) => this._updateAlert(index, { badge_label: e.target.value.trim() || undefined })}"
                   ></ha-input>
+                  <div class="section-divider">${this._t("music_compact_layout")}</div>
+                  <div>
+                    <ha-formfield .label="${this._t("music_compact_layout")}">
+                      <ha-switch
+                        ?checked="${!!alert.music_compact_layout}"
+                        @change="${(e) => this._updateAlert(index, { music_compact_layout: e.target.checked || undefined })}"
+                      ></ha-switch>
+                    </ha-formfield>
+                    ${alert.music_compact_layout ? html`
+                    <ha-formfield .label="${this._t("music_compact_show_badge")}">
+                      <ha-switch
+                        ?checked="${alert.music_compact_show_badge !== false}"
+                        @change="${(e) => this._updateAlert(index, { music_compact_show_badge: e.target.checked ? undefined : false })}"
+                      ></ha-switch>
+                    </ha-formfield>` : ""}
+                  </div>
+                  <div class="section-divider">${this._t("music_player_controls")}</div>
                   <div>
                     <ha-formfield .label="${this._t("music_show_art")}">
                       <ha-switch
@@ -6587,6 +6721,22 @@ class AlertTickerCardEditor extends LitElement {
                       <ha-switch
                         ?checked="${alert.music_show_controls !== false}"
                         @change="${(e) => this._updateAlert(index, { music_show_controls: e.target.checked ? undefined : false })}"
+                      ></ha-switch>
+                    </ha-formfield>
+                  </div>
+                  <div>
+                    <ha-formfield .label="${this._t("music_show_power")}">
+                      <ha-switch
+                        ?checked="${!!alert.music_show_power}"
+                        @change="${(e) => this._updateAlert(index, { music_show_power: e.target.checked || undefined })}"
+                      ></ha-switch>
+                    </ha-formfield>
+                  </div>
+                  <div>
+                    <ha-formfield .label="${this._t("music_show_player_picker")}">
+                      <ha-switch
+                        ?checked="${!!alert.music_show_player_picker}"
+                        @change="${(e) => this._updateAlert(index, { music_show_player_picker: e.target.checked || undefined })}"
                       ></ha-switch>
                     </ha-formfield>
                   </div>
@@ -7332,6 +7482,21 @@ class AlertTickerCardEditor extends LitElement {
                 ${this._renderActionConfig(alert, index, "double_tap_action", this._t("double_tap_action_section"))}
                 ${this._renderActionConfig(alert, index, "hold_action",       this._t("hold_action_section"))}
                 ${this._renderActionConfig(alert, index, "snooze_action", this._t("snooze_action_section"))}
+
+                <!-- ── AUTOMATION ───────────────────────────────────────── -->
+                <div class="section-divider">🔗 ${this._t("section_automation")}</div>
+                <div class="form-row">
+                  <ha-entity-picker
+                    .hass="${this._hass}"
+                    .value="${alert.active_state_entity || ''}"
+                    .includeDomains="${['input_boolean']}"
+                    .label="${this._t('active_state_entity')}"
+                    allow-custom-entity
+                    @value-changed="${(e) => this._updateAlert(index, { active_state_entity: e.detail.value || undefined })}"
+                  ></ha-entity-picker>
+                  <div class="helper-text">${this._t("active_state_entity_help")}</div>
+                  <div class="helper-text" style="color:var(--warning-color,#f4a835);margin-top:4px">${this._t("active_state_entity_warning")}</div>
+                </div>
 
                 <!-- ── CARD OVERRIDE ────────────────────────────────────── -->
                 <div class="section-divider">🃏 ${this._t("card_override_section")}</div>

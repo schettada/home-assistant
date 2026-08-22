@@ -1,0 +1,1383 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.3.9.8.8] - 2026-08-19
+
+### Improved
+
+- **Music player — compact layout controls** ([#194](https://github.com/djdevil/AlertTicker-Card/discussions/194)) — playback and volume controls are now split into two separate groups: playback buttons (prev, play, next, mute) aligned left, volume buttons (🔉 🔊+) aligned right, with natural empty space between them for visual separation. Volume percentage removed to keep buttons round and consistent.
+
+### Fixed
+
+- **Compact layout — volume `+` button not clickable** — root cause identified: `atc-touch-zone` (the invisible right-side touch handle for showing snooze/history buttons) is rendered outside `atc-inner-clip` at `z-index: 5`, covering the right 22% of the card including the `+` button. Touch zone is now suppressed when in compact music player mode since dedicated playback buttons handle all interaction.
+- **Compact layout — overlays blocking clicks** — `mu-art-bg` and `mu-art-overlay` (position: absolute, full-card coverage) had `pointer-events: auto` by default, intercepting touches on the controls beneath them. Both now have `pointer-events: none`.
+- **Compact layout — touch events not stopped on volume buttons** — `touchstart`/`touchend` were not stopped on vol− / vol+ buttons, causing the card swipe handler to fire on tap. Both events now call `stopPropagation`.
+- **Editor — compact layout section** — `music_compact_layout` toggle and `music_compact_show_badge` sub-toggle moved to a dedicated section at the top of the music options, before show/hide toggles.
+- **Compact layout — volume number restored** — current volume level shown between vol− and vol+ buttons (no `%` suffix) for at-a-glance feedback.
+
+---
+
+## [1.3.9.8.7] - 2026-08-19
+
+### Added
+
+- **Music player — `music_compact_show_badge`** ([#194](https://github.com/djdevil/AlertTicker-Card/discussions/194)) — new toggle (default `true`) to show or hide the NOW PLAYING indicator in compact layout. Available in the visual editor when `music_compact_layout` is enabled.
+
+### Fixed
+
+- **Compact layout — controls z-index** — playback controls row now sits above the corner actions overlay (`z-index: 26`) so the `+` volume button is always clickable without reserving dead space on the right.
+
+---
+
+## [1.3.9.8.6] - 2026-08-19
+
+### Improved
+
+- **Music player — compact layout polish** ([#194](https://github.com/djdevil/AlertTicker-Card/discussions/194)) — three UX refinements to the compact mode introduced in v1.3.9.8.5:
+  - **Single-line scrolling metadata** — artist and title are joined into one marquee line (`Artist · Title`), saving vertical space. Filter entity name is appended when relevant.
+  - **Volume step buttons** — the slider is replaced with **−/vol%/+** tap buttons (±10% per tap) which are much easier to use on small touch screens.
+  - **NOW PLAYING indicator restored** — the equaliser animation and badge label return in a compact inline form above the metadata row.
+  - **Controls spread evenly** across the full card width (`justify-content: space-between`) instead of bunching to the left.
+
+---
+
+## [1.3.9.8.5] - 2026-08-19
+
+### Improved
+
+- **Music player — compact layout redesigned** ([#194](https://github.com/djdevil/AlertTicker-Card/discussions/194)) — the compact layout implementation has been redesigned for reliability on small/narrow screens:
+  - The album art thumbnail is hidden; the **cover art fills the full card background** (clean image, no blur — slightly darkened for text readability).
+  - A vertical gradient overlay (transparent top → dark bottom) keeps playback controls legible.
+  - Title and artist appear full-width above the controls.
+  - The **volume slider now spans the full card width** with no thumbnail competing for space.
+
+---
+
+## [1.3.9.8.4] - 2026-08-17
+
+### Fixed
+
+- **`=` (equals) condition not matching `input_number` helpers** ([#199](https://github.com/djdevil/AlertTicker-Card/issues/199)) — `input_number` entities store their state as a float string (e.g. `"5.0"`) while users typically type `5` as the trigger value, causing a string comparison mismatch. The `=` and `!=` operators now compare numerically when both sides parse as valid numbers, falling back to string comparison for non-numeric states. `>`, `<`, `>=`, `<=` were already using numeric comparison and are unaffected.
+
+### Added / Improved
+
+- **Battery theme UI improvements** ([#198](https://github.com/djdevil/AlertTicker-Card/discussions/198)) — three enhancements for the `battery` theme when used with `device_class` / `label_filter` entity groups:
+  - Battery level is now shown automatically on the right side of the card in a large, colour-coded number (green ≥ 40 %, yellow 20–39 %, red < 20 %). The inline state value is suppressed when the level is already visible on the right.
+  - Entity names are now truncated with an ellipsis instead of overflowing and hiding the level value.
+  - New option `battery_trim_name: true` — strips the trailing word "Battery" (case-insensitive) from entity friendly names to shorten long labels. Also available in the visual editor.
+
+- **Music player — compact layout** ([#194](https://github.com/djdevil/AlertTicker-Card/discussions/194)) — new option `music_compact_layout: true` for small/narrow displays. The album art thumbnail is hidden and the cover art fills the full card background (clean image, no blur). Title and artist appear above the playback controls; the volume slider has full width. Available in the visual editor.
+
+- **Music player — power button** ([#194](https://github.com/djdevil/AlertTicker-Card/discussions/194)) — new option `music_show_power: true` adds a small power icon in the bottom-right corner of the music player card. Tapping it calls `media_player.turn_off` on the active entity. Default `false` (opt-in). Available in the visual editor.
+
+- **Music player — player picker** ([#194](https://github.com/djdevil/AlertTicker-Card/discussions/194)) — new option `music_show_player_picker: true` adds a cast icon in the bottom-right corner. Tapping it opens a dropdown listing all available `media_player.*` entities; selecting one switches which player the card displays and controls for that session (resets on page reload). Active player highlighted with the accent colour. Available in the visual editor.
+
+---
+
+## [1.3.9.8.3] - 2026-08-15
+
+### Fixed
+
+- **Music player — blank space on the right when album art is hidden** ([#194](https://github.com/djdevil/AlertTicker-Card/discussions/194)) — when `music_show_art: false`, the area previously occupied by the album art thumbnail left dead space to the right of the volume slider. Fixed by adding the `at-music--no-art` modifier class which expands the player body, tightens the right counter padding, and forces the controls row to fill the full available width.
+
+---
+
+## [1.3.9.8.2] - 2026-08-15
+
+### Fixed
+
+- **Snooze menu flickering up/down when card is in the footer** ([#197](https://github.com/djdevil/AlertTicker-Card/issues/197)) — the position check introduced in v1.3.9.8.1 ran inside `updated()`, causing a render loop: adding the flip class triggered a new `updated()` call which rechecked the position and removed the class — cycling infinitely. Fixed by moving the check to `updateComplete.then()` inside `_toggleSnoozeMenu()` so it runs once after the menu is rendered and applies the class via direct DOM manipulation (which does not trigger a reactive re-render).
+
+---
+
+## [1.3.9.8.1] - 2026-08-15
+
+### Fixed
+
+- **Snooze menu clipped when card is in dashboard footer** ([#197](https://github.com/djdevil/AlertTicker-Card/issues/197)) — the snooze duration menu now auto-detects its position relative to the viewport: when the card is placed near the bottom of the screen (footer, wall panel, small display), the menu automatically opens upward instead of downward. No configuration needed.
+
+---
+
+## [1.3.9.8] - 2026-08-14
+
+### Added
+
+- **`use_entity_picture` — display entity picture as alert icon** ([#195](https://github.com/djdevil/AlertTicker-Card/issues/195)) — set `use_entity_picture: true` on any alert to replace the emoji/MDI icon with the entity's `entity_picture` attribute (the image HA shows in the state card). Useful for sensors that expose a picture — bin collection day, person location, camera thumbnails, etc. The image is fetched via the HA proxied URL and rendered as a small rounded square. `icon_size` controls the image dimensions (defaults to `2rem`). Available in the visual editor under the icon section.
+- **`icon_image` — static image path or URL as alert icon** — set `icon_image` to a `/local/` path or any full URL to use a custom image as the alert icon, without needing an entity that exposes `entity_picture`. Takes priority over `use_entity_picture` if both are set. `icon_size` controls the size (defaults to `2rem`). The size field appears automatically in the visual editor when `icon_image` or `use_entity_picture` is active.
+- **Music player — visibility toggles for compact dashboards** ([#194](https://github.com/djdevil/AlertTicker-Card/discussions/194)) — four new per-alert options let you show or hide individual parts of the music player UI. All default to `true` (visible); set any to `false` to hide: `music_show_art` (album artwork background and thumbnail), `music_show_title` (track title with marquee), `music_show_artist` (artist name), `music_show_controls` (previous / play-pause / next buttons). Useful when the music card is displayed on a small or narrow dashboard panel. All four toggles are available in the visual editor under the music player section.
+
+---
+
+## [1.3.9.7] - 2026-08-09
+
+### Fixed
+
+- **Card not appearing on first load — requires multiple page refreshes** — the LitElement bootstrap at the top of the script resolved `ha-panel-lovelace`, `hui-view`, and `ha-card` synchronously at parse time. On a cold first load, HA may not yet have registered any of those custom elements, causing `Object.getPrototypeOf(undefined)` to throw a silent `TypeError` that aborted the entire script — leaving the card unregistered. On subsequent refreshes the elements are already in the browser's custom element registry and the script succeeds. Fixed by adding a guard before the bootstrap: if none of the target elements are defined yet, the script registers a `customElements.whenDefined("ha-card")` callback that re-injects the card script as a new `<script>` tag once HA is ready, then throws to cleanly abort the current (broken) execution.
+
+---
+
+## [1.3.9.6] - 2026-08-05
+
+### Added
+
+- **Music player — scrolling title and artist for long text** ([#191](https://github.com/djdevil/AlertTicker-Card/issues/191)) — when the media title exceeds 22 characters (or the artist name exceeds 28), the text now scrolls horizontally with a seamless marquee animation instead of being truncated with `…`. The scroll speed scales automatically with text length. Short titles and artist names remain static as before.
+
+---
+
+## [1.3.9.5] - 2026-08-04
+
+### Added
+
+- **Timer themes support remaining-time sensors (`unit_of_measurement: "s"` or `"min"`)** ([#190](https://github.com/djdevil/AlertTicker-Card/issues/190)) — `countdown`, `hourglass`, `timer_pulse`, and `timer_ring` themes now work with sensors that report time remaining as a plain number (seconds or minutes), such as appliance remaining-time sensors. The card reads the numeric state, converts to seconds, tracks the first-observed value as the total duration, and calculates the progress bar fill from that baseline (identical to the `device_class: timestamp` approach). The time display shows `MM:SS` or `H:MM:SS`. When the sensor reaches 0, the timer shows as expired and the total resets so the next cycle starts fresh. In the visual editor, selecting a remaining-time sensor auto-suggests `countdown` as the default theme and shows only timer themes in the dropdown (same UX as `timer.*` entities).
+- **Dismiss bar — restore all dismissed alerts at once** ([#189](https://github.com/djdevil/AlertTicker-Card/issues/189)) — when all active alerts have been dismissed, an amber status bar now appears (mirroring the existing snooze bar) showing how many alerts are dismissed and offering a **Restore all** button that clears all dismissed states in one tap. The bar can be suppressed with `show_dismiss_bar: false`. A new `undismiss` action type is also available in any tap/hold/double-tap slot so you can bind the same reset to any alert or card area.
+
+---
+
+## [1.3.9.4] - 2026-08-03
+
+### Fixed
+
+- **Timer themes not visible in the visual editor for `%` sensors** ([#186](https://github.com/djdevil/AlertTicker-Card/discussions/186)) — The `_renderThemeSelect` helper built the full-theme dropdown from a `GROUPS` array that intentionally excluded the `timer` category (which was only injected when `timerOnly = true`, i.e. for `timer.*` entities). For any other entity type — including `%` sensors — the four timer themes (`countdown`, `hourglass`, `timer_pulse`, `timer_ring`) were simply absent from the dropdown. Fixed by always appending `TIMER_GROUP` to the full-theme list, making timer themes selectable for any entity. Additionally, selecting a `%` sensor in the editor now auto-suggests `countdown` as the default theme (matching the existing auto-suggestion behavior for `timer.*` and `device_class: timestamp` entities).
+
+---
+
+## [1.3.9.3] - 2026-08-03
+
+### Added
+
+- **`show_counter` — toggle the alert counter badge** ([#188](https://github.com/djdevil/AlertTicker-Card/discussions/188)) — new card-level option to show or hide the `1 / 3` pagination badge that appears when multiple alerts are active. Set `show_counter: false` to hide it; omit the key (default) to keep the current behavior. Available in the visual editor under the same section as the snooze and history toggles.
+
+### Fixed
+
+- **Alerts without a `state` condition never show** ([#186](https://github.com/djdevil/AlertTicker-Card/discussions/186)) — In the normal (non-`on_change`) evaluation path, `_matchesState` was called unconditionally even when no `state` was configured. With no state configured, `trigger` resolved to `"undefined"` — never matching any real entity state — so the alert silently stayed hidden. The `on_change` path already had a null/empty guard for this case (`if (alert.state != null && alert.state !== "")`); the normal path now applies the same guard: when `alert.state` is null, undefined, or empty, the primary state check is skipped and the alert shows for any entity state. Affects all timer-theme alerts (e.g. `countdown` on a `%` sensor) and any alert that omits a `state` field.
+- **Tap actions unreliable on mobile when no hold action is configured** ([#187](https://github.com/djdevil/AlertTicker-Card/discussions/187)) — `e.preventDefault()` on `pointerdown` was only called when a `hold_action` was configured. With tap-only interactions (e.g. `tap_action: {action: dismiss}`), the browser's scroll-detection could misinterpret a short tap as a scroll gesture and replace `pointerup` with `pointercancel`, silently dropping the action. Fixed by moving `e.preventDefault()` outside the hold-action guard so it applies to all touch interactions on interactive cards.
+
+---
+
+## [1.3.9.2] - 2026-07-24
+
+### Added
+
+- **Timer themes support percentage sensors** ([#186](https://github.com/djdevil/AlertTicker-Card/discussions/186)) — `countdown`, `hourglass`, `timer_pulse`, and `timer_ring` themes now work with any sensor whose `unit_of_measurement` is `%`. The progress bar reflects the sensor value directly (0 % = empty, 100 % = full) and the time display shows the current percentage (e.g. `75%`) instead of `MM:SS`. No configuration changes needed — just point the alert's `entity` at any `%` sensor and pick a timer theme.
+- **`dismiss` action — permanently acknowledge an alert until its entity fires again** ([#187](https://github.com/djdevil/AlertTicker-Card/discussions/187)) — new action type `dismiss` available in any tap/hold/double-tap slot. When triggered, the alert is hidden immediately and stays hidden until the entity's state changes again (i.e. the trigger fires a new event). On next state change the alert reappears automatically — no manual reset needed. Dismiss state persists across page reloads via localStorage. Useful for one-shot events like earthquake sensors, doorbell triggers, or any alert where the value stays unchanged after the event. Configure via `tap_action: {action: dismiss}` or any other action slot; also selectable in the visual editor.
+
+---
+
+## [1.3.9.1] - 2026-07-24
+
+### Fixed
+
+- **Weather + Forecast (alternating) renders small and centered in vertical mode** ([#185](https://github.com/djdevil/AlertTicker-Card/issues/185)) — In `vertical: true` mode, the CSS rule that flips alert theme cards to vertical stacking was unintentionally matching `atc-wf-wrap` (the CSS Grid container for the alternating widget). Applying `align-items: center !important` to a grid container overrides the default `align-self: stretch` on its children, collapsing the two slot divs to content height instead of filling the available space. Fixed by adding `:not(.atc-wf-wrap)` to the vertical rule selector, and adding dedicated `height: 100%` rules for the slot and panel elements in vertical mode. Individual `weather` and `forecast` modes were not affected.
+
+---
+
+## [1.3.9] - 2026-07-23
+
+### Fixed
+
+- **`device_class_exclude` documented but only `entity_filter_exclude` worked in code** ([#184](https://github.com/djdevil/AlertTicker-Card/issues/184)) — The README showed `device_class_exclude` as the key to exclude specific entity IDs from a `device_class`-based alert, but the code only checked `entity_filter_exclude`. Fixed by aliasing both keys (`entity_filter_exclude || device_class_exclude`) in all three places where exclusions are evaluated. Existing configs using either key now work correctly. The README example has also been updated to use `entity_filter_exclude` consistently.
+- **Countdown/timer theme badge ignores `show_badge` and `badge_label`** ([#183](https://github.com/djdevil/AlertTicker-Card/issues/183)) — Timer themes (`countdown`, `hourglass`, `timer_pulse`, `timer_ring`) hardcoded the badge to the translated "Running" / "Expired" strings and never checked the `show_badge` or `badge_label` config keys. Setting `show_badge: false` had no effect, and `badge_label` was silently ignored. Fixed by updating all four timer render methods to respect `show_badge: false` (hides the badge) and `badge_label` (overrides the default text). Both fields were already accessible in the visual editor and continue to work as documented for all other themes.
+
+---
+
+## [1.3.8] - 2026-07-11
+
+### Fixed
+
+- **Non-admin users flood HA log with "Refusing to allow … to subscribe to event homeassistant_started" / "Unauthorized" errors** ([#182](https://github.com/djdevil/AlertTicker-Card/issues/182)) — `homeassistant_started` is an admin-only event in Home Assistant. The subscription attempt added in v1.3.6.4 (to re-establish the weather forecast after an HA restart) always returned `Unauthorized` for non-admin users. Because the `.catch()` handler reset the setup flag on every failure, the card retried on every `set hass()` call — which fires every few seconds on any state change — producing thousands of paired error log entries within minutes. Fixed by adding a `hass.user?.is_admin === true` guard before the subscription attempt. Non-admin users never attempt the subscription, so no errors are generated. Admin users retain the full reconnection behavior. Non-admin users lose only the automatic re-subscription after an HA restart (a browser refresh after a restart still works normally).
+
+---
+
+## [1.3.7] - 2026-07-09
+
+### Fixed
+
+- **Test mode preview shows wrong alert when config has `group: true` alerts** ([#173](https://github.com/djdevil/AlertTicker-Card/issues/173)) — the test mode `findIndex` ran on the pre-grouping `active` array, then `_activeAlerts` was set to the post-grouping array after the grouping pass. Alerts with `group: true` collapse N entities into 1 slide, shifting positions for all subsequent alerts. The stored `_currentIndex` (pre-grouping) then pointed to the wrong entry in the post-grouping array. Fixed by moving the test mode index resolution to after the grouping pass so `_currentIndex` is always consistent with the final `_activeAlerts`. Priority-1 alerts appeared correct only because they sorted before the group entries and were unaffected by the position shift.
+
+### Added
+
+- **`assist` action for all tap/hold/snooze slots** ([#180](https://github.com/djdevil/AlertTicker-Card/discussions/180)) — new action type `assist` opens the Home Assistant voice assistant dialog directly from any action slot (`tap_action`, `hold_action`, `double_tap_action`, `snooze_action`, `clear_tap_action`, `clear_hold_action`, `clear_double_tap_action`, `group_tap_action`, `group_hold_action`). Supports two optional parameters: `pipeline_id` (ID of the voice pipeline to use; defaults to the HA-preferred pipeline when left empty) and `start_listening` (boolean; when `true`, the microphone opens immediately without requiring the user to tap the mic button). Both parameters are exposed in the visual editor for all action slots, with translations in all 12 supported languages.
+
+- **`{area}` placeholder in alert messages** ([#166](https://github.com/djdevil/AlertTicker-Card/discussions/166)) — new `{area}` token resolves to the HA area name assigned to the entity (or to its parent device as fallback). Works in `message`, `secondary_text`, `tts_message`, `push_notify_title`, `push_notify_message`, `group_expanded_message` and all other fields that support placeholders. The overlay notification engine also resolves `{area}` in the same way. Entity area assignment takes priority over device area assignment. If the entity has no area, the result is an empty string.
+
+---
+
+## [1.3.6.4] - 2026-07-09
+
+### Fixed
+
+- **Weather widget stops displaying after HA restart — revised fix** ([#181](https://github.com/djdevil/AlertTicker-Card/issues/181)) — the v1.3.6.2 fix tracked `hass.connection.socket` to detect WebSocket reconnects, but this property is not reliably accessible across HA versions and the fix had no effect. Replaced with a `homeassistant_started` event subscription (`hass.connection.subscribeEvents`). Unlike `subscribeMessage`, `subscribeEvents` auto-resubscribes after every WebSocket reconnect, so it survives the connection drop and fires exactly once when HA has fully restarted. The callback resets `_forecastEntity` and immediately re-establishes the `weather/subscribe_forecast` subscription, restoring the weather display without a page reload.
+
+---
+
+## [1.3.6.3] - 2026-07-09
+
+### Fixed
+
+- **`disable_animation` / `clear_disable_animation` not suppressing weather animations when `show_when_clear: true`** ([#172](https://github.com/djdevil/AlertTicker-Card/issues/172)) — the `show_when_clear` render path wrapped the weather widget in a plain `<div>` with no `at-fold-wrapper` class. Because all the `animation-play-state: paused` rules are scoped to `.at-fold-wrapper.atc-no-anim`, the class was never applied and animations continued regardless of the flag. Fixed by adding `at-fold-wrapper` (and the `atc-no-anim` guard) to that wrapper. The same missing check is also patched for the `show_widget_in_cycle` path, which now respects `clear_disable_animation` when the weather widget is the active slide.
+
+---
+
+## [1.3.6.2] - 2026-07-09
+
+### Fixed
+
+- **Weather widget stops displaying after HA restart** ([#181](https://github.com/djdevil/AlertTicker-Card/issues/181)) — after a Home Assistant restart, the `weather/subscribe_forecast` WebSocket subscription is killed server-side. The subscribe guard (`entity !== this._forecastEntity`) correctly skipped redundant re-subscriptions during normal operation but also blocked re-subscription after a reconnect, leaving the weather forecast permanently stale or blank until the browser was refreshed. Fixed with two changes: (1) `hass.connection.socket` is tracked — when it becomes a new object (new WebSocket after reconnect), `_forecastEntity` is reset to force a fresh subscription; (2) `_forecastEntity` is also reset in `disconnectedCallback` so that Lovelace card remounts (e.g. dashboard navigation) always trigger a clean re-subscription.
+
+- **`disable_animation` / `clear_disable_animation` still animating sun core, halo, shooting star, and snowflakes** ([#172](https://github.com/djdevil/AlertTicker-Card/issues/172)) — four weather elements were absent from the `animation-play-state: paused !important` rule: `.sun-core` (pulsing glow), `.sun-halo` (floating halo), `.w-shooting-star` (shooting star trail), and `.w-snowflake` (falling snowflakes). All four are now included, completing full animation suppression for the All Clear weather widget.
+
+---
+
+## [1.3.6] - 2026-07-09
+
+### Added
+
+- **`clear_disable_animation` option for weather widget** ([#172](https://github.com/djdevil/AlertTicker-Card/issues/172)) — new card-level flag `clear_disable_animation: true` suppresses all animations in the All Clear weather widget (sun rotation, cloud drift, stars, moon glow, and all weather condition effects) without touching alert animations. Available as a toggle in the visual editor under the weather badge style section (all 12 languages). The existing `disable_animation: true` flag also covers the widget, but this new option lets users silence only the weather animations while keeping alert effects active.
+
+### Fixed
+
+- **History close button invisible on mobile / HA app** ([#179](https://github.com/djdevil/AlertTicker-Card/issues/179)) — the `✕` close button existed but was rendered at 0.80 rem with 50 % opacity, no background and 2 px padding — effectively invisible and too small to tap on touch devices. With `ha_theme: true` and a light card the white text disappeared entirely. Restyled as a proper pill button with visible background, border, full-opacity text, `min-height: 30 px`, and `touch-action: manipulation`. The `ha_theme` override now also gives it a visible bordered style.
+
+- **Test mode showing wrong card when priority ≠ 1** ([#173](https://github.com/djdevil/AlertTicker-Card/issues/173)) — test mode preview resolved the correct alert once when `_preview_index` was first set, then cached the sorted-array position in `this._currentIndex`. When the alert's priority was changed in the editor the `active` array was re-sorted, but `this._currentIndex` still pointed to the old sorted position — showing a different alert. Fixed by removing the `lastAppliedPreviewIndex` guard so the preview always re-resolves the target alert's position in the current sorted array on every update. A position-unchanged guard (`pi !== this._currentIndex`) prevents redundant re-renders.
+
+- **`disable_animation` not suppressing weather clear-widget animations** ([#172](https://github.com/djdevil/AlertTicker-Card/issues/172)) — `disable_animation: true` paused weather condition elements (fog, rain, wind, etc.) but missed the main atmospheric elements rendered by `_renderWeatherBg`: rotating sun rays (`.sun-rays-wrap`), drifting clouds (`.w-cloud`), twinkling stars (`.w-star`), and glowing moon (`.w-moon`). These four selectors are now included in the `animation-play-state: paused !important` rule block.
+
+---
+
+## [1.3.5] - 2026-07-02
+
+### Fixed
+
+- **Vertical layout double height** ([#174](https://github.com/djdevil/AlertTicker-Card/issues/174)) — in `vertical: true` mode the card rendered at roughly twice its correct height, with an equal empty space below the content. Root cause: the `card_height` centering fix (#145) made `.atc-inner-clip` a flex column and gave `.at-fold-wrapper` `flex: 1`. In vertical mode the existing `height: 100%` chain on `.at-fold-wrapper` combined with `flex: 1` in the flex container creates a circular size dependency that the browser resolves by doubling the height. Fixed by resetting `.atc-inner-clip` to `display: block` inside `.atc-vertical`, reverting it to its pre-#145 block layout while leaving the flex centering active for all non-vertical cases.
+
+- **`state` array not respected in overlay watcher** ([#176](https://github.com/djdevil/AlertTicker-Card/issues/176)) — the overlay watcher's `_matchOp` helper did not handle `state` as an array, so `state: ["playing", "paused"]` (match any of multiple states) worked in the card render path but not in the cross-view overlay or filter-alert paths. Fixed by adding array support to `_matchOp`, consistent with the existing `_matchesState` method.
+
+- **Card blank when casting to Google Home** ([#171](https://github.com/djdevil/AlertTicker-Card/issues/171)) — the Google Cast runtime exposes `adoptedStyleSheets` on `ShadowRoot` (so Lit's feature-detection check passes), but the setter throws `"Failed to convert value to 'CSSStyleSheet'"` — a Cast runtime bug that prevents Lit from injecting its styles, leaving the card blank. Fixed by patching `ShadowRoot.prototype.adoptedStyleSheets` at load time with a try-catch fallback that injects equivalent `<style>` elements when the native setter fails.
+
+---
+
+## [1.3.4] - 2026-06-24
+
+### Fixed
+
+- **Weather badge alignment in cinematic style** ([#167](https://github.com/djdevil/AlertTicker-Card/issues/167)) — the high/low/humidity row (`atc-cw-badge-row-minmax`) was missing its base `display: flex; align-items: center` rule, causing it to render as a plain block element while all other rows were flex containers. In cinematic mode (horizontal badge layout) this produced a vertical misalignment after the humidity value. Fixed by adding the missing base rule.
+
+- **Editor "entities match" counter ignoring `label_filter` and `area_filter`** ([#170](https://github.com/djdevil/AlertTicker-Card/issues/170)) — the entity count shown in the editor preview for `device_class` and `entity_filter` (text) modes only applied its own filter, ignoring any active `label_filter` or `area_filter`. This caused inflated counts (e.g. "120 entities match" instead of the correct 5). The runtime was always correct; fixed by replicating the same combined filter logic in both editor counter paths.
+
+- **`conditions_logic: or` incorrectly including primary state check in the OR group** ([#168](https://github.com/djdevil/AlertTicker-Card/issues/168)) — when `conditions_logic: or` was set, the primary entity state match (`primaryOk`) was included in the OR group alongside the conditions, meaning the alert triggered if the entity matched its state OR any condition was true. The correct semantics are: the primary state match must always pass (AND), then the conditions among themselves use OR. Fixed in both the card render path and the overlay watcher path.
+
+---
+
+## [1.3.3] - 2026-05-10
+
+### Added
+
+- **`{entity}` placeholder in conditions** ([#163](https://github.com/djdevil/AlertTicker-Card/issues/163)) — condition blocks can now reference the matched entity dynamically using `entity: "{entity}"` (or `entity: "this.entity_id"`). This enables compound AND/OR logic on `entity_filter` alerts where the matched entity is not known at config time — e.g. test both `state == on` AND `attributes.notification_control == enabled` on every entity matched by a wildcard filter. The placeholder resolves to the expanded entity ID in both the card's rendering path and the overlay watcher.
+
+  ```yaml
+  alerts:
+    - entity_filter: "alert2.zigbee*"
+      state: "on"
+      conditions:
+        entity: "{entity}"
+        attribute: notification_control
+        operator: "="
+        state: enabled
+  ```
+
+- **Per-alert native HA card override** ([#159](https://github.com/djdevil/AlertTicker-Card/pull/159)) — new `card` property on each alert that replaces the themed rendering with any native HA card type (`tile`, `entity`, `button`, custom cards, etc.). The card's visibility evaluation, cycling logic, snooze, and history remain fully intact — only the visual content is swapped. Use `'this.entity_id'` as a placeholder to reference the matched entity in the card config, useful for `entity_filter` alerts that expand into multiple entities. Configured via a YAML editor in the visual editor under each alert's settings (available in all 12 languages). Implemented via an `AtcCardProxy` custom element that propagates `hass` updates and rebuilds only when the config changes.
+
+  ```yaml
+  alerts:
+    - entity: sensor.front_door
+      state: "on"
+      card:
+        type: tile
+        entity: this.entity_id
+        name: Front door
+  ```
+
+- **Per-alert and card-level animation disable** ([#157](https://github.com/djdevil/AlertTicker-Card/issues/157)) — new `disable_animation` flag available at both card level (silences all alerts) and per-alert level (silences a single alert). Suppresses all ambient looping animations: emergency pulsing glow, flashing icon, warning/calendar blink dot, neon scan line, matrix cursor blink, door/window icon swings, and all weather widget effects. Cycle transitions and ticker scrolling are unaffected. The per-alert flag overrides the global one. Configurable in the visual editor (all 12 languages) — card-level in the Cycling & Animation section, per-alert in each alert's settings.
+
+  ```yaml
+  # Card-level — disable all ambient animations
+  disable_animation: true
+
+  alerts:
+    # Per-alert — silence one noisy alert while others still animate
+    - entity: binary_sensor.front_door
+      theme: door
+      state: "on"
+      disable_animation: true
+  ```
+
+- **Per-alert overlay exclusion + global priority gate** ([#160](https://github.com/djdevil/AlertTicker-Card/issues/160)) — two new controls for the cross-view overlay system:
+  - `overlay: false` on any alert prevents that alert from ever appearing as a cross-view overlay banner, while still showing it normally in the ticker card.
+  - `overlay_min_priority` (global, `1`–`4`) sets a threshold: only alerts with a `priority` ≤ this value will trigger overlay banners. Defaults to no gate (all priorities pass). Both controls work together — `overlay: false` always wins. Configurable in the visual editor (all 12 languages).
+
+  ```yaml
+  # Global — only priority 1 and 2 alerts trigger overlay
+  overlay_min_priority: 2
+
+  alerts:
+    - entity: sensor.routine_info
+      state: "on"
+      overlay: false   # never overlay this alert
+    - entity: sensor.smoke
+      priority: 1
+      state: "on"      # this will overlay (priority 1 ≤ 2)
+  ```
+
+---
+
+### Fixed
+
+- **`card_height` not applying to the all-clear state** ([#145](https://github.com/djdevil/AlertTicker-Card/issues/145)) — `card_height` only applied to the active-alert render path, not to the "all clear" card. Fixed by wrapping the clear card in the same `atc-inner-clip` container. Content is now also vertically centered when `card_height` exceeds the natural content size.
+
+---
+
+## [1.3.2.6] - 2026-05-10
+
+### Fixed
+
+- **`card_background: true` not picking up the HA theme background** ([#129](https://github.com/djdevil/AlertTicker-Card/issues/129)) — setting `--atc-card-bg-override` to the string `var(--ha-card-background, ...)` caused the reference to remain unresolved inside the shadow DOM, so the background always fell back to the default `rgba(0,0,0,0.55)` regardless of the active HA theme. Fixed by reading the resolved value with `getComputedStyle(this)` on the host element, which participates in the light DOM cascade and sees all HA theme variables. The actual color value is stored as the override, so shadow DOM children receive the correct theme background.
+
+- **`TypeError: css is not a function`** ([#155](https://github.com/djdevil/AlertTicker-Card/issues/155)) — `LitElement.prototype.css` is `undefined` in certain HA builds or loading contexts, causing the card to crash on mount before rendering anything. Fixed by adding a standards-compliant fallback: if `LitElement.prototype.css` is not available, a `css` tagged-template function is constructed inline that produces a `CSSResult`-compatible object (`{ cssText, _$cssResult$: true }`) — the exact shape Lit's `static get styles()` expects.
+
+- **Overlay fires outside configured `time_range`** ([#153](https://github.com/djdevil/AlertTicker-Card/issues/153)) — the overlay watcher's `_evalAlert()` helper called `_evalVisibleTo()` but never `_evalTimeRange()`. As a result, cross-view overlay banners ignored `time_range` and appeared at any hour regardless of the configured window. Fixed by adding a `_evalTimeRange(a)` guard at the top of `_evalAlert()`, mirroring the check already present in the card's own `_computeActiveAlerts()`.
+
+- **`snooze_action` not fired when swiping to snooze** ([#146](https://github.com/djdevil/AlertTicker-Card/issues/146)) — the swipe-left gesture called `_snoozeAlert()` directly, skipping the `snooze_action` execution that the snooze button tap always performs. Fixed by firing `snooze_action` in the swipe path before calling `_snoozeAlert()`, giving swipe full parity with the button.
+
+---
+
+## [1.3.2.5] - 2026-05-09
+
+### Added
+
+- **Per-alert custom accent color** ([#143](https://github.com/djdevil/AlertTicker-Card/issues/143))
+
+- **`on_change` + `conditions` now work together correctly** ([#83](https://github.com/djdevil/AlertTicker-Card/issues/83)) — two related fixes:
+
+  1. **Primary state guard in `on_change` mode**: when `state` and `operator` are explicitly set alongside `on_change: true`, they now act as a current-state filter. The alert fires on any state change but is only shown while the entity is actually in the declared state. This prevents showing the alert on idle/paused/buffering transitions when only `playing` transitions are intended.
+
+  2. **Single-object `conditions` accepted**: `conditions` can now be written as either a list or a single inline object — previously a single object was silently ignored because `Array.isArray()` returned false.
+
+  ```yaml
+  # Now works: fires on track change, shows only while playing
+  alerts:
+    - entity: media_player.living_room_speaker
+      operator: "="
+      state: playing
+      on_change: true
+      conditions:
+        entity: media_player.all_speakers
+        operator: "="
+        state: playing
+      auto_dismiss_after: 15
+  ``` — new `color` property on each alert overrides the card's border and badge color for that specific alert, independent of its theme. Set any CSS color value (`#ff4500`, `orange`, `var(--error-color)`). Available as a color picker + text field in the visual editor (under the icon section of each alert). Leave empty to use the theme's default color.
+
+  ```yaml
+  alerts:
+    - entity: sensor.front_door
+      theme: door
+      color: "#ff4500"
+      message: "Front door open"
+  ```
+
+### Fixed
+
+- **Bottom border clipped on some themes (`emergency`, `prism`, others)** ([#141](https://github.com/djdevil/AlertTicker-Card/issues/141)) — themes that use an outer `border` (CSS `box-sizing: content-box`) rendered the border just outside the layout box. Sub-pixel rounding caused the bottom border to occasionally fall fractionally outside `.atc-inner-clip`'s `overflow: hidden` boundary and get clipped. Fixed by adding `transform: translateZ(0)` to `.atc-inner-clip`, which promotes it to a compositor layer that works on integer pixel boundaries, eliminating the sub-pixel artifact without any layout change.
+
+- **`{state}` placeholder not replaced in the `ticker` scrolling theme** ([#140](https://github.com/djdevil/AlertTicker-Card/issues/140)) — `_renderTicker` was rendering `a.message` raw instead of passing it through `_resolveMessage()`. All other themes already use `_resolveMessage`, which handles `{state}`, `{name}`, `{entity}`, `{device}`, `{timer}` substitution and full Jinja2 template resolution. Fixed by replacing `a.message` with `this._resolveMessage(a)` in the ticker item renderer.
+
+- **Snooze menu and history panel appear behind adjacent cards** ([#142](https://github.com/djdevil/AlertTicker-Card/issues/142)) — `isolation: isolate` (added in v1.3.2.4 to fix #127) trapped the menu's z-index inside the card's own stacking context. Fixed via a CSS class `atc-popup-open` toggled on `:host` while any popup is open: it overrides `isolation` to `auto` and adds `position: relative; z-index: 9999`, making the card element a stacking context root at z-index 9999 in the masonry/grid layout — above all sibling cards at z-index: auto. `isolation: isolate` is restored the moment the popup closes.
+
+---
+
+## [1.3.2.4] - 2026-05-08
+
+### Added
+
+- **All-clear icon customization** — three new options to match the all-clear card's icon to alert cards: `clear_icon` (emoji or `mdi:` icon), `clear_icon_size` (CSS size), `clear_icon_color` (CSS color). Enable with `clear_use_ha_icon: true` to unlock the icon picker and all three fields in the visual editor under the **All Clear** tab.
+
+  ```yaml
+  show_when_clear: true
+  clear_use_ha_icon: true
+  clear_icon: "mdi:check-circle-outline"
+  clear_icon_size: "2em"
+  clear_icon_color: "#4caf50"
+  ```
+
+- **2 new weather forecast themes** — purpose-built for weather and forecast alert cards:
+
+  | Theme | Category | Effect |
+  |-------|----------|--------|
+  | `storm` | ⚠️ Warning | Diagonal rain streaks sliding across the card + a double lightning flash that fires every ~3.5 s, shaking the icon on impact |
+  | `frost` | ℹ️ Info | Three layers of falling snowflake dots (radial-gradient tiled pattern) with a slow icy shimmer sweeping left-to-right |
+
+  ```yaml
+  alerts:
+    - entity: sensor.weather_alert
+      state: "storm"
+      theme: storm
+      message: "Thunderstorm approaching"
+    - entity: sensor.weather_alert
+      state: "snow"
+      theme: frost
+      message: "Snowfall expected tonight"
+  ```
+
+### Fixed
+
+- **`fire-dom-event` action not firing** — `_handleAction` was missing the `fire-dom-event` case, so browser_mod popups and other custom DOM events were silently ignored. Fixed by dispatching an `ll-custom` event with the full action config. Applies to all action slots: `tap_action`, `hold_action`, `double_tap_action`, `clear_tap_action`, `clear_hold_action`, `clear_double_tap_action`.
+
+- **Snooze / history / counter buttons appear above Bubble Card popups** ([#127](https://github.com/djdevil/AlertTicker-Card/issues/127)) — the `:host` shadow root was missing `isolation: isolate`, so its absolutely-positioned child elements participated in the global stacking context and rendered above external popup layers. Fixed by adding `isolation: isolate` to `:host`, which contains all internal z-indexes within the card's own stacking context.
+
+- **Turkish (TR) language support** ([#134](https://github.com/djdevil/AlertTicker-Card/issues/134)) — full translation contributed by [@yunusuztr](https://github.com/yunusuztr), covering all card runtime labels, visual editor UI, theme default messages, TTS prefixes, operator names, category group names, and overlay strings.
+
+- **[CRITICAL] All visual editor text inputs disappear after HA 2026.5 upgrade** ([#133](https://github.com/djdevil/AlertTicker-Card/issues/133)) — Home Assistant 2026.5 removed the `ha-textfield` component (Material Web Components). All text input fields in the card's visual editor were silently dropped as a result. Fixed by replacing every `ha-textfield` instance with the new `ha-input` component across `alert-ticker-card-editor.js`.
+
+- **Overlay banner fires on the same view where the card is already visible** ([#135](https://github.com/djdevil/AlertTicker-Card/issues/135)) — two related bugs in the cross-view overlay watcher: (1) When the user is on a dashboard where the ticker card is visible, the overlay banner could still appear for that card's own alerts. Fixed by checking the native `el.isConnected` DOM property alongside `el._mounted` to reliably detect visibility, and by auto-dismissing any active watcher overlay the moment its card reconnects to the DOM. (2) The overlay banner did not auto-dismiss when the triggering alert condition resolved; it always waited for the full `overlay_duration` timer. Fixed by tracking the currently-displayed watcher alert and calling `_hide()` on the next 2-second tick as soon as the alert goes inactive.
+
+---
+
+## [1.3.2.3] - 2026-05-04
+
+### Added
+
+- **8 new spectacular 3D themes** — one or two per alert category, designed for maximum visual impact with layered CSS animations and 3D transforms:
+
+  | Theme | Category | Effect |
+  |-------|----------|--------|
+  | `portal` | Critical | Counter-rotating crimson vortex using conic gradients — a dimensional portal tears open in the card |
+  | `void` | Critical | Black hole with a spinning purple accretion disk rendered in 3D perspective |
+  | `volt` | Warning | Electric discharge: horizontal scanlines + a lightning bolt flash every ~1.2 s |
+  | `nebula` | Warning | Three drifting gas clouds (purple, blue, teal) softly blurred and animated independently |
+  | `prism` | Info | A spectrum light sweep crosses the card with the icon cycling through rainbow drop-shadows |
+  | `arcade` | Info | Tron-style 3D perspective grid scrolling toward the viewer, monospace badge text |
+  | `diamond` | OK | Crystalline facet overlay + a specular shimmer that sweeps left-to-right, icon tumbles gently |
+  | `quantum` | OK | Two atomic orbital rings rotating in opposite directions in 3D perspective around a pulsing nucleus |
+
+  All themes are fully compatible with `ha_theme: true` — when the HA theme adaptation is active, decorative 3D layers fade to 15–20% opacity and badge colors follow HA semantic color variables.
+
+- **`icon_size` — per-alert icon size override** ([#128](https://github.com/djdevil/AlertTicker-Card/issues/128)) — new per-alert option that overrides the default icon size (`1.6em`) with any CSS value. Useful when different icon types (e.g. `mdi:battery` vs a thin state icon) have different visual weights at the same nominal size. Accepts any CSS length: `em`, `px`, `rem`. Configurable in the visual editor under the icon section.
+
+  ```yaml
+  alerts:
+    - device_class: battery
+      use_ha_icon: true
+      icon_size: "1.2em"    # shrink battery icon to match other alerts
+  ```
+
+- **HA theme card variables: `--ha-card-box-shadow` and `--ha-card-border-width`** ([#129](https://github.com/djdevil/AlertTicker-Card/issues/129)) — the card now fully respects all three standard Lovelace card CSS variables. `--ha-card-border-radius` was already supported; `--ha-card-box-shadow` is now applied to `:host` so any theme-defined shadow renders correctly; `--ha-card-border-width` and `--ha-card-border-color` are now used as the border source when `card_border` is not explicitly enabled, so theme-level border styling is applied automatically without requiring any per-card config.
+
+- **`card_background` — custom background / transparency** ([#130](https://github.com/djdevil/AlertTicker-Card/issues/130)) — new global toggle that overrides the alert theme's background with a custom color or the HA theme variable. When enabled without a value, uses `var(--ha-card-background)` automatically so the card blends with other dashboard cards. Accepts any CSS color for a fixed override (e.g. `rgba(0,0,0,0.5)`). Toggle and optional color field available in the visual editor under **Layout & Appearance**.
+
+  ```yaml
+  card_background: true                   # use --ha-card-background from HA theme
+  card_background: "rgba(20,20,30,0.7)"   # fixed semi-transparent color
+  ```
+
+- **Jinja2 templates in `navigation_path`** ([#126](https://github.com/djdevil/AlertTicker-Card/discussions/126)) — `tap_action.navigation_path` (and `hold_action`, `double_tap_action`) now resolves `{{ states('...') }}` and `{{ state_attr('...','...') }}` templates at tap time, enabling dynamic navigation targets based on entity state. The same mini-evaluator used for `message` fields is applied synchronously at the moment of the tap; if the template is too complex for the local evaluator, the raw string is used as fallback.
+
+  ```yaml
+  tap_action:
+    action: navigate
+    navigation_path: "{{ states('sensor.room_presence_dan_pop') }}"
+  ```
+
+### Fixed
+
+
+
+- **Music player cover art invisible with `ha_theme: true`** ([#119](https://github.com/djdevil/AlertTicker-Card/issues/119)) — the v1.3.2 fix restored the art in HA's default theme but broke under the "Adapt to HA theme" option. The `ha_theme` CSS block's blanket `[class$="-bg"] { opacity: 0.25 !important }` rule matched `.mu-art-bg`, dropping album art to 25% opacity. Fixed by adding `:not(.mu-art-bg)` and a specific `.atc-ha-theme .at-music--player { background: #0c0a14 !important }` override.
+
+- **Grouped alert snooze ignores `snooze_default_duration`** — clicking 💤 on a group slide always opened the duration picker menu even when `snooze_default_duration` was configured. Fixed by applying the same fixed-duration logic to the group code path so a single tap snoozes immediately.
+
+---
+
+## [1.3.2] - 2026-05-02
+
+### Added
+
+- **Clock widget color customization** ([#124](https://github.com/djdevil/AlertTicker-Card/issues/124)) — three new options for the `clock` display mode let you override the default colors without writing CSS:
+
+  | Option | Description |
+  |--------|-------------|
+  | `clear_clock_color` | CSS color for the clock digits (any CSS value: hex, rgb, named color) |
+  | `clear_clock_date_color` | CSS color for the date text below the time |
+  | `clear_clock_background` | CSS color/gradient for the card background (only applies in clock mode) |
+
+  All three are optional — omit any to keep the default style. Compatible with all clock styles (`aurora`, `gold`, `matrix`): the custom color takes precedence over the style's built-in palette. Color pickers for all three are available in the visual editor under **✅ All Clear → Custom colors**.
+
+  ```yaml
+  show_when_clear: true
+  clear_display_mode: clock
+  clear_clock_color: "#ffffff"
+  clear_clock_date_color: "rgba(255,255,255,0.5)"
+  clear_clock_background: "#1a0a2e"
+  ```
+
+- **Custom sensor overrides for the weather widget** ([#123](https://github.com/djdevil/AlertTicker-Card/issues/123)) — five new optional per-card options let you replace individual weather fields with readings from your own sensors, without creating a template `weather.*` entity:
+
+  | Option | Description |
+  |--------|-------------|
+  | `clear_weather_temperature_entity` | Override current temperature with a local sensor |
+  | `clear_weather_humidity_entity` | Override humidity with a local sensor |
+  | `clear_weather_temp_high_entity` | Override today's high temperature with a sensor |
+  | `clear_weather_temp_low_entity` | Override today's low temperature with a sensor |
+  | `clear_weather_aqi_entity` | Add air quality / PM2.5 reading from a sensor (new badge slot) |
+
+  All five are optional and independent — set only the ones you need. The weather entity (`clear_weather_entity`) remains required for the condition icon, animation background, and forecast grid. Today's high/low are automatically sourced from forecast data (when using `weather_forecast` or `forecast` mode) if no sensor override is set.
+
+  The five pickers appear in the visual editor under **✅ All Clear → Custom sensors** whenever a weather entity is configured.
+
+  ```yaml
+  show_when_clear: true
+  clear_display_mode: weather_forecast
+  clear_weather_entity: weather.home
+  clear_weather_temperature_entity: sensor.local_temperature
+  clear_weather_humidity_entity: sensor.local_humidity
+  clear_weather_temp_high_entity: sensor.today_max_temp
+  clear_weather_temp_low_entity: sensor.today_min_temp
+  clear_weather_aqi_entity: sensor.pm25
+  ```
+
+### Fixed
+
+- **`{%`-only Jinja2 templates not rendered in overlay** — messages built exclusively with `{%...%}` control-flow blocks (no `{{...}}` expressions) were displayed raw in the overlay banner instead of being rendered. `_evalTemplate` checked only for unresolved `{{` at the end of evaluation; since `{%` blocks left no `{{` behind, the function returned the raw template string and the WebSocket render path was never reached. Fixed by including `{%` in the residual-syntax guard, so any template containing `{%` correctly falls through to HA's server-side renderer.
+
+- **Humidity hidden in stage weather theme** — the humidity value was placed inside `.atc-cw-badge-row2`, which the stage style suppresses with `display:none`. Moved humidity to `.atc-cw-badge-row-minmax` (alongside today's high/low and AQI) so it is visible in all themes including stage.
+
+- **Live camera stream cropped in overlay banner** — the `<ha-camera-stream>` element inside the overlay toast was clipped by a `max-height: 180px` rule that cut off the bottom of the video. Additionally, `overflow: hidden` applied directly to the custom element had no effect on its shadow DOM content, so the border-radius clip did not work as intended. Fixed by wrapping the stream in a `<div>` container that handles `border-radius`, `overflow: hidden`, and `line-height: 0`; the stream itself now expands freely to its natural aspect ratio (16:9, 4:3, or any camera resolution) with no artificial height cap.
+
+- **Camera snapshot dimensions inconsistent in overlay** — the static snapshot image (`<img>`) inside the overlay toast was not wrapped the same way as the live stream fix above, so it could overflow or lose its border-radius on certain aspect ratios. Applied the same `<div>` wrapper pattern: `border-radius`, `overflow: hidden`, `line-height: 0`, full-width `<img>` with `display: block`. The snapshot now renders with the same proportional sizing as the live stream.
+
+- **Camera stream audio continues after overlay dismissal** — when the overlay was hidden (e.g. after `auto_dismiss_after` expired or the user closed it), the `<ha-camera-stream>` element remained in the DOM with `display: none`, keeping the WebRTC/HLS audio track alive in the background. Fixed by removing the stream element from the DOM in `_hide()` before hiding the overlay container, which triggers `disconnectedCallback` on the element and correctly stops all media tracks.
+
+- **`clear_clock_background` ignored on `aurora`, `gold`, and `matrix` clock styles** — the custom background color set via `clear_clock_background` had no visible effect when using these three styles. Root cause: the style-specific CSS rules (`.atc-ck-style--aurora`, `--gold`, `--matrix`) applied hardcoded `background` values that overrode the `var(--atc-ck-bg)` property at the same specificity. Fixed by wrapping each hardcoded value in `var(--atc-ck-bg, <hardcoded>)`, so the user-defined background takes precedence when set, and the default gradient/color is used otherwise.
+
+- **Weather high/low temperatures missing in plain `weather` mode** — today's minimum and maximum temperatures were only populated when using `weather_forecast` or `forecast` display modes, because `_subscribeForecast` was only invoked for those modes. Users on `weather` mode (no weekly forecast grid) saw empty high/low badges even when their weather integration supports forecast data. Fixed by calling `_subscribeForecast` for `weather` mode as well, so the high/low values are always populated from the daily forecast when available.
+
+- **History panel shows raw Jinja2 for complex templates** — history entries recorded from `message` fields containing multi-statement Jinja2 (e.g. `{% set x = ... %}{% if ... %}...{% endif %}`) sometimes appeared as the unresolved template string instead of the rendered value. Root cause: the async WebSocket render subscription used a 500 ms cancel timer; for templates that required several round-trips or involved slow integrations, the timer fired before HA returned the rendered result and the subscription was torn down with no result patched in. Fixed by replacing the cancel timer with a `done` flag pattern and extending the abort timeout to 5 s, ensuring the result is always captured if HA responds within a reasonable window.
+
+- **History recorded during visual editor preview** — every config change made in the Lovelace editor triggered a live render cycle that called `_recordHistory`, logging phantom "alerts" from incomplete or test configurations. Fixed by adding an `_isEditMode()` guard (shadow-DOM walk to detect the HA edit-mode host) around the history recording block, so no entries are written while the dashboard is in edit mode.
+
+- **Manual navigation resets to first alert in test mode** ([#113](https://github.com/djdevil/AlertTicker-Card/issues/113)) — after the v1.3.1 flicker fix, clicking the `‹` / `›` arrow buttons to browse between alerts in test mode always snapped back to the first alert (index 0) on the very next HA state update. Root cause: `_computeActiveAlerts` evaluated `_preview_index` on *every* `set hass()` call; since `_preview_index` remained pointing to alert #0, any manual navigation away from it was immediately overridden. Fixed by tracking the last applied preview index (`_lastAppliedPreviewIndex`) and only jumping when the editor actually changes the preview selection — not on every state update.
+
+- **`state: "{{ }}"` trigger templates intermittently cleared** — alerts using a Jinja2 template as their trigger condition (e.g. `state: "{{ states('input_number.threshold') }}"`) could briefly disappear from the active list between HA state updates. Root cause: `_syncTemplates` only kept message/secondary-text subscriptions alive; trigger-condition subscriptions were cancelled and their cache deleted on every `set hass()` call. When `_matchesState` ran without a cached result, the mini-evaluator fallback could return the wrong value, making the alert appear inactive for one render cycle. Fixed by including `alert.state` templates in the subscription keep-alive set.
+
+- **Music player cover art disappears in HA light themes** ([#119](https://github.com/djdevil/AlertTicker-Card/issues/119)) — the album art background (`.mu-art-bg`) is `position: absolute` and must be contained within the player card. Without `position: relative` on the player container, the browser resolved the containing block from a higher DOM ancestor — which in HA's dark theme happened to be the card wrapper (coincidentally correct), but in HA's light theme resolved to a different ancestor, causing the art layer to be positioned outside the visible area or clipped away. Fixed by adding `position: relative; overflow: hidden` to `.at-music--player`. Also added an explicit dark base color (`background: #0c0a14`) so the card always renders correctly even when the art is still loading or fails to load.
+
+- **Test mode preview does not work when alerts use non-existent entities** — when a YAML config was pasted directly into the editor containing entities that do not exist in the current HA instance, all alerts were filtered out of the active list (entity state lookup returns `undefined` → filtered). This made the preview jump mechanism (`_preview_index`) unable to navigate to any alert, since it can only jump to alerts present in the active array. Fixed by allowing all alerts through the entity-existence check when `test_mode` is active, so any configured alert can be previewed regardless of whether its entity exists in HA.
+
+- **Grouped alert snooze ignores `snooze_default_duration`** — when multiple alerts were grouped into a single group slide and `snooze_default_duration` was configured, clicking the 💤 button on the group always opened the duration picker menu instead of immediately snoozing for the configured duration. Root cause: `_renderSnoozeButton` had a separate code path for group slides (`alert._isGroup`) that always rendered the menu, bypassing the `fixedDuration` check used for individual alerts. Fixed by applying the same logic to the group path: if `snooze_default_duration` is set, the button directly calls `_snoozeGroup(alert, duration)` with a single tap; the menu is only shown when no default duration is configured.
+
+---
+
+## [1.3.1] - 2026-04-28
+
+### Added
+
+- **`show_history_button` / `show_snooze_button` — hide action buttons** ([#118](https://github.com/djdevil/AlertTicker-Card/discussions/118)) — new global options (default `true`) that completely remove the history (📋) and snooze (💤) buttons from the card. Useful for minimal layouts or dashboards where these features are not needed.
+  ```yaml
+  show_history_button: false
+  show_snooze_button: false
+  ```
+
+- **`secondary_value_align: right` — move secondary value to the right column** ([#118](https://github.com/djdevil/AlertTicker-Card/discussions/118)) — new **per-alert** option that repositions the secondary value (from `secondary_text`, `secondary_entity`, or `{timer}`) to the right side of the card on the same row as the title, instead of below it. Each alert can independently use a different layout. The counter slot is hidden when this option is active.
+  ```yaml
+  alerts:
+    - entity: sensor.co2_ppm
+      message: "CO₂ level critical"
+      secondary_entity: sensor.co2_ppm
+      secondary_value_align: right
+  ```
+
+- **`history_message` — custom label for history entries** ([#114](https://github.com/djdevil/AlertTicker-Card/issues/114)) — new per-alert option that overrides what gets recorded in the history log. Useful when `message` is a complex Jinja2 template that produces verbose or meaningless log entries. Supports `{name}`, `{state}`, `{entity}` placeholders and `{{ }}` templates like any other message field. When not set, the history records the main `message` as before (non-breaking).
+  ```yaml
+  alerts:
+    - entity: sensor.power_meter
+      state: "> 3000"
+      message: "{{ state_attr('sensor.power_meter','current_power') | round(0) }} W · {{ now().strftime('%H:%M') }}"
+      history_message: "High power usage detected"
+  ```
+
+- **Live camera stream in overlay** — new per-alert toggle `camera_live: true` that shows a `<ha-camera-stream>` live feed inside the overlay banner instead of a static snapshot. Requires a camera with HLS/WebRTC stream support. Falls back gracefully to snapshot when disabled. Configurable in the visual editor (📷→📹 camera section, visible only when a camera entity is selected).
+
+- **Camera as alert card background** — new per-alert toggle `camera_in_card: true` that shows the configured camera (snapshot or live stream) as a blurred background layer inside the alert card slide itself, visible on every rotation — not just when the overlay fires. Works with all 41 themes. Configurable in the visual editor alongside the existing camera controls.
+
+### Fixed
+
+- **Music player: `badge_label` ignored, always shows "NOW PLAYING"** ([#110](https://github.com/djdevil/AlertTicker-Card/issues/110)) — when `show_player_controls: true`, the badge line in the player card was hardcoded to `"NOW PLAYING"`, ignoring any `badge_label` set in the config. Fixed by rendering `alert.badge_label` when present, falling back to `"NOW PLAYING"`.
+
+- **Music player: entity/room name not shown for `entity_filter` alerts** ([#110](https://github.com/djdevil/AlertTicker-Card/issues/110)) — when multiple media players were matched via `entity_filter` or `device_class`, the player card rendered no indication of which room/speaker was playing, because `_renderMusicPlayer` has its own template that bypasses `_renderSecondaryValue`. Fixed by rendering the matched entity's friendly name as a subtitle below the artist line for filter-mode alerts, respecting the existing `show_filter_name: false` opt-out.
+
+- **Timer secondary text invisible on HA light themes** ([#117](https://github.com/djdevil/AlertTicker-Card/issues/117)) — the secondary text (entity name, state, custom `secondary_text`) was white on white when the card was used with a light HA theme and `ha_theme` adaptation was disabled. Root cause: `.atc-secondary-value` has a hardcoded `rgba(255,255,255,0.85)` color — correct for all 40+ themes that use fixed dark gradient backgrounds, but wrong for the two timer themes (`at-timer-pulse`, `at-timer-ring`) which use `var(--card-background-color)` as background (white on light themes). Fixed by adding a scoped CSS override for the timer containers that uses `var(--primary-text-color)` instead, which adapts correctly to both light and dark HA themes.
+
+- **Card flickers when `message` contains a `{{ }}` template with `{name}` / `{entity}` / `{state}` placeholders** ([#113](https://github.com/djdevil/AlertTicker-Card/issues/113)) — when a message like `Garage door {{ '{name}'|replace('Garage Door State ','') }} is open` was used, the card continuously flickered between the raw template string and the resolved value on every HA state update. Root cause: `_resolveMessage` pre-substitutes `{name}` (and similar placeholders) into the template before sending it to HA's WebSocket renderer, producing a different cache key than the raw `alert.message` string. `_syncTemplates` (called on every `set hass()`) treated this pre-substituted subscription as stale and deleted it from `_tmplCache`, so the next render found no cache entry, showed the raw `{{ }}` expression, re-subscribed, and flickered when the WS response arrived — repeating on every update. Fixed by preserving any subscription that already has a cached WS result, so only genuinely unused subscriptions (no cache entry, not in current config) are cleaned up.
+
+- **`auto_dismiss_after` not dismissing the alert** ([#112](https://github.com/djdevil/AlertTicker-Card/issues/112)) — after the dismiss timer expired, the alert remained visible until HA happened to push another state update. Root cause: the timer callback called `this.requestUpdate()`, which triggers a LitElement re-render using the already-stale `this._activeAlerts` — `_computeActiveAlerts()` was never re-invoked, so the dismissed key was never actually removed from the rendered list. Fixed by replacing `this.requestUpdate()` with `this._computeActiveAlerts()` in the timer callback, which recomputes the active list (excluding the dismissed key) and then calls `requestUpdate()` internally. Same stale-render fix applied to the `trigger_delay` timer callback, which had the symmetric problem of the alert not appearing immediately when the delay elapsed.
+
+- **`trigger_delay` fires early when conditions involve multiple entities** ([#107](https://github.com/djdevil/AlertTicker-Card/issues/107)) — when an alert used both a primary entity and one or more `conditions`, the delay timer used only the primary entity's `last_changed` to compute elapsed time. If the primary entity had been in its trigger state for longer than `trigger_delay` (e.g. a smart plug ON for 1 hour), the alert fired immediately the moment the last condition became true (e.g. an occupancy sensor turning off after 10 min), instead of waiting the remaining delay. Root cause: `elapsed` was derived from `entityState.last_changed` alone, ignoring condition entities. Fixed by computing elapsed time from `Math.max(last_changed)` across the primary entity and all condition entities — i.e. from when the *last* entity changed in a way that made all conditions simultaneously true. Fix applied to both the card-side render gate (`_triggerDelayTimers`) and the overlay watcher (`_ovDelayTimers`).
+
+- **Music player cover art not displaying when HA returns a local URL** ([#105](https://github.com/djdevil/AlertTicker-Card/issues/105), [#119](https://github.com/djdevil/AlertTicker-Card/issues/119)) — album art was blank when Home Assistant served the cover image via `entity_picture_local` (a server-relative path) instead of `entity_picture` (the full absolute URL). Root cause: `_renderMusicPlayer` only read `entity_picture`, so any setup where HA resolves the image locally — common with Spotify, local media sources, and the Companion App on iOS — received an empty string and rendered no artwork. Fixed by reading `entity_picture_local` first and falling back to `entity_picture`.
+
+---
+
+## [1.3] - 2026-04-28
+
+### Added
+
+- **Mobile push notifications** — new per-alert option `push_notify: true` that sends a mobile push notification via a HA `notify.*` service when the alert activates. Configurable in the visual editor (📱 Push Notifications section, per alert): service selector, optional Jinja2 title and message fields (both fall back to the alert badge label / message when empty). A global master toggle `push_notify_enabled` (default on) allows disabling all push notifications at once without touching individual alerts. Available in all 11 supported languages.
+
+- **Weather/clock widget visible when all alerts are snoozed** ([#106](https://github.com/djdevil/AlertTicker-Card/issues/106)) — when `show_when_clear: true` is configured, the clear widget (weather, clock, forecast) now correctly appears even when all active alerts are snoozed. Previously the snooze indicator bar was returned early, blocking the clear widget entirely. The snooze counter pill remains visible overlaid on the widget.
+
+- **Music player MDI icons** ([#105](https://github.com/djdevil/AlertTicker-Card/issues/105)) — all music player control buttons (play/pause, previous, next, mute) now use `<ha-icon mdi:...>` instead of emoji characters, ensuring correct rendering in the HA Companion App on all platforms.
+
+- **Snooze menu: 1 week and 1 month options** ([#100](https://github.com/djdevil/AlertTicker-Card/discussions/100)) — the snooze duration menu now includes two additional options: **1 week** (168 h) and **1 month** (720 h), available in all 10 supported languages. Useful for low-priority alerts such as battery warnings on devices that last months before needing replacement.
+
+- **`group_tap_action` and `group_hold_action`** ([#103](https://github.com/djdevil/AlertTicker-Card/issues/103)) — new per-alert options that configure the tap and hold gesture on the collapsed group header. By default (when not set) the group tap continues to expand/collapse the group as before (non-breaking). When set, the configured action is executed instead. Both actions are configurable in the visual editor (Group section, visible only for filter-mode alerts).
+  ```yaml
+  alerts:
+    - entity_filter: "update.*"
+      group: true
+      group_message: "🐳 {count} aggiornamenti"
+      group_tap_action:
+        action: navigate
+        navigation_path: /update
+      group_hold_action:
+        action: url
+        url_path: http://portainer.local
+  ```
+
+- **`group_secondary_text`** ([#103](https://github.com/djdevil/AlertTicker-Card/issues/103)) — new per-alert option that sets a custom secondary line on the collapsed group slide, replacing the auto-generated entity-name list. Supports `{count}`, `{names}` placeholders and Jinja2 templates. Configurable in the visual editor.
+  ```yaml
+  group_secondary_text: "Tocca per gestire · {count} in attesa"
+  ```
+
+### Fixed
+
+- **`trigger_delay` resets to zero when the dashboard is reopened** ([#88](https://github.com/djdevil/AlertTicker-Card/issues/88#issuecomment-4329551563)) — if an entity had already been in the trigger state for longer than `trigger_delay` before the card was loaded (e.g. a window left open for hours before opening the dashboard), the card started the delay timer from scratch, showing "All Clear" for another full `trigger_delay` seconds instead of firing immediately. Root cause: the timer always started at `trigger_delay * 1000` ms with no reference to how long the entity had been in that state. Fixed by reading `entity.last_changed` at timer start, subtracting the already-elapsed time, and using only the remaining duration. If the entity has been in trigger state for longer than `trigger_delay`, the alert activates immediately. Fix applied to both the card-side render gate (`_triggerDelayTimers`) and the overlay watcher (`_ovDelayTimers`).
+
+- **Music player control buttons unresponsive on desktop when `tap_action` is configured** ([#105](https://github.com/djdevil/AlertTicker-Card/issues/105)) — play/pause, previous, next, and mute buttons, as well as the volume slider, did not respond to clicks when the alert had a `tap_action` or `double_tap_action` configured. Root cause: the card's `_onPointerDown` handler on the outer container fired first when any inner element was pressed, then `_onPointerUp` called `e.preventDefault()` which suppressed the synthetic `click` event before it could reach the button. Fixed by adding `@pointerdown` and `@pointerup` `stopPropagation` to every interactive element inside `_renderMusicPlayer`, preventing card-level pointer handlers from intercepting button interactions.
+
+- **Music player blurred cover art not rendering on iOS** ([#105](https://github.com/djdevil/AlertTicker-Card/issues/105)) — the blurred background (`mu-art-bg`) and the spinning vinyl thumbnail were invisible on iOS Safari. Root cause: `inset: 0` shorthand is not fully supported in iOS Safari older than 15.4; `filter` on a `position: absolute` element inside `overflow: hidden` requires the `-webkit-filter` prefix for older WebKit versions and `will-change: transform` to force a separate GPU compositing layer. Fixed by replacing `inset: 0` with explicit `top/left/right/bottom: 0`, adding `-webkit-filter` alongside `filter`, and adding `will-change: transform` to both the background and the thumbnail.
+
+- **Music player cover art too dark on desktop** ([#105](https://github.com/djdevil/AlertTicker-Card/issues/105)) — the blurred album-art background used `brightness(0.4)`, making the overall card appear too dark. Increased to `brightness(0.55)` for a better visual balance.
+
+- **Overlay fires only for the first matching entity in filter-mode alerts** — when a `device_class`, `entity_filter`, `label_filter`, or `area_filter` alert had multiple entities simultaneously satisfying the condition (e.g. 3 batteries below 20%), only the first entity in iteration order ever triggered the overlay banner. All others were silently blocked because `newBases` tracked the alert by index only, and the dedup key was the same for all entities of the same filter alert. Fixed with `_filterNotified` (per-entity tracking per filter alert) and `_findAllFilterMatches` (returns all matching entities, not just the first). The overlay now fires one banner per entity, one per watcher tick (2 s apart), with correct per-entity messages. When an entity recovers (leaves the matched set), it is removed from `_filterNotified` so it can re-fire if its condition becomes active again.
+
+- **`hold_action: url` on desktop** — `window.open("_blank")` called from inside the 500 ms `setTimeout` callback loses user-activation status, causing popup blockers to silently discard the new tab. Fixed by storing the URL in `_pendingHoldUrl` when the hold fires for a mouse/desktop gesture and opening it from `pointerup` instead, which is a direct user-interaction event and is never blocked.
+
+- **`hold_action: url` on mobile/touch** — after a long-press, iOS/Safari sends `pointercancel` instead of `pointerup` (WKWebView limitation), so the deferred `_pendingHoldUrl` path was never reached and the URL never opened. Fixed by opening the URL with `window.location.href` directly from the hold timer for touch gestures, which navigates in-app without requiring user-activation. Note: opening an external URL in a new Safari tab from a hold gesture is a [known WKWebView platform limitation](https://github.com/home-assistant/frontend/issues/18474) that affects all Lovelace cards; use `tap_action: url` on iOS if you need a new Safari window.
+
+- **Jinja2 `{% if %}` / `{% else %}` block tags not evaluated in any template field** ([#102](https://github.com/djdevil/AlertTicker-Card/issues/102)) — `message`, `secondary_text`, `group_message`, `group_expanded_message`, and overlay messages that contained only Jinja2 block tags (`{% if %}`, `{% else %}`, `{% endif %}`, etc.) without any `{{ }}` expression were rendered verbatim. Root cause: every template-detection gate checked `includes("{{")` only. Fixed by also checking `includes("{%")` at all detection points: `_resolveMsgAsync`, `_resolveMessage`, `_syncTemplates` (all 4 template fields), group-message WS path, history async patch, overlay filter-mode message path, overlay `secondary_text` path, and trigger state resolution. The `{% if %}` / `{% else %}` blocks now correctly trigger WebSocket server-side rendering; the `{{ "" }}` workaround is no longer needed.
+
+---
+
+## [1.2.8] - 2026-04-26
+
+
+
+- **`tts_notify_type` — Alexa group/multiroom announce support** ([#97](https://github.com/djdevil/AlertTicker-Card/issues/97)) — new per-alert and global option that sets the `type` field sent to the notify service. Use `announce` for Alexa speaker groups or multiroom setups; the default `tts` continues to work for individual devices as before. Configurable in the visual editor: once a notify service is selected in the alert's TTS section, a second dropdown appears immediately below it.
+  ```yaml
+  tts: true
+  tts_notify_service: alexa_media_zona_giorno
+  tts_notify_type: announce   # default: tts
+  ```
+
+### Fixed
+
+- **Group alerts config error on enable** — `active` was declared `const` in `_computeActiveAlerts` but reassigned in the grouping pass, causing a `TypeError` the moment grouping was activated. Changed to `let`.
+
+- **Clock and date not shown on first render** — `_clockTime` and `_clockDate` were initialized as empty strings and only populated after the first `setInterval` tick (up to 1 second later), causing the clock to briefly show `00:00:00` or nothing on mount. Fixed by calling the clock update synchronously inside `_startTimerTick()` before the interval starts, so the correct time is shown immediately.
+
+
+
+---
+
+## [1.2.7] - 2026-04-25
+
+### Added
+
+- **Persistent alerts (`persistent: true`)** — a new per-alert flag that keeps the alert card visible even after the sensor returns to its idle state. Once the condition becomes active the alert latches until the user explicitly dismisses it. The 💤 snooze button is replaced with a small **✕ Dismiss** button, styled differently from snooze to signal the different action. Swiping left also dismisses a persistent alert. The latch is stored in `localStorage` per browser so the card survives page reloads. All layouts supported: standard, `large_buttons`, vertical, and vertical + large_buttons. Available in the visual editor under the alert's timing section.
+  ```yaml
+  alerts:
+    - entity: binary_sensor.smoke_detector
+      state: "on"
+      persistent: true      # stays visible until ✕ is tapped
+      message: "Smoke detected!"
+      theme: fire
+  ```
+
+- **Configurable weather/forecast alternation interval (`weather_forecast_interval`)** — when using `clear_display_mode: weather_forecast`, the panel now alternates at a user-defined interval instead of the hardcoded 5 seconds. Set any value from 1 to 60 seconds. The card always completes a full weather + forecast cycle before advancing to the next alert when `show_widget_in_cycle: true`. Configurable in the visual editor (All Clear tab → interval field visible when `weather_forecast` mode is selected). Default: `5`. Translated in all 10 supported languages.
+  ```yaml
+  clear_display_mode: weather_forecast
+  weather_forecast_interval: 10   # seconds per panel, default 5
+  ```
+
+### Fixed
+
+- **Hold action not firing on mobile** ([#95](https://github.com/djdevil/AlertTicker-Card/issues/95)) — on touch devices, the browser fires a `pointercancel` event as soon as it takes over the touch gesture for scrolling, silently cancelling the hold timer before it expires. Fixed by calling `e.preventDefault()` in `_onPointerDown` when a hold action is configured for that alert, preventing the browser from hijacking the touch event. Standard tap, double-tap and swipe remain unaffected.
+
+---
+
+## [1.2.6] - 2026-04-25
+
+### Added
+
+- **Music player mode (`show_player_controls`)** — when the alert entity is a `media_player.*` and `show_player_controls: true` is enabled, the `music` theme switches to a full graphical player UI: blurred album art fills the background with a directional gradient overlay, a spinning vinyl thumbnail is shown on the right (rotates only when playing), animated equalizer bars pulse next to the "NOW PLAYING" label, and glassmorphism buttons provide ⏮ previous, ⏸/▶ play-pause, ⏭ next, 🔇/🔊 mute toggle, and a live volume slider. All colors use the `--mu-accent` CSS custom property so the entire UI follows the chosen accent color. Incompatible editor fields (message, icon, badge, secondary entity) are automatically hidden when player mode is active.
+  ```yaml
+  alerts:
+    - entity: media_player.spotify_davide
+      theme: music
+      show_player_controls: true
+      music_player_color: "#e040fb"   # optional, default purple
+  ```
+
+  
+- **Forecast & Weather+Forecast widgets (`clear_display_mode: forecast` / `weather_forecast`)** — two new clear-state display modes. `forecast` fills the card with a full 7-day weather forecast: each day shows a weather emoji, high/low temperatures (color-coded by range), a date label, and a precipitation probability bar for days ≥20%; today's column is elevated with a frosted glass effect, a floating emoji animation, and an accent glow line. `weather_forecast` alternates every 5 seconds between the current weather view (icon, temperature, condition, wind/humidity, date and clock) and the 7-day grid using a smooth fade+slide transition. Both modes share the same `clear_weather_entity`, are compatible with all weather styles and `show_widget_in_cycle: true`, and render day labels via `Intl.DateTimeFormat` for automatic locale-correct output in all 11 supported languages. Data is fetched via the HA WebSocket `weather/subscribe_forecast` API (HA 2023.9+). When used in the alert cycle the card always shows both the weather panel and the forecast panel in full before advancing to the next alert.
+
+  ```yaml
+  clear_display_mode: weather_forecast   # or: forecast
+  clear_weather_entity: weather.home
+  show_when_clear: true
+  ```
+
+- **Tap / double-tap / hold actions on clear widget** ([#93](https://github.com/djdevil/AlertTicker-Card/issues/93)) — the existing `clear_tap_action`, `clear_double_tap_action`, and `clear_hold_action` settings now work for all clear display modes (clock, weather, weather+clock, forecast, weather+forecast), both when the widget is the only thing shown (`show_when_clear: true`) and when it appears as a slide in the alert cycle (`show_widget_in_cycle: true`). Previously, actions only fired on the plain text "all-clear" message card. Configure in the visual editor under the same tap/hold sections already present.
+
+- **`device_class: timestamp` sensor support for timer themes** ([#94](https://github.com/djdevil/AlertTicker-Card/issues/94)) — timer themes (`countdown`, `hourglass`, `timer_pulse`, `timer_ring`) now work directly with any sensor whose `device_class` is `timestamp` (state = ISO datetime of expiry). The card reads the state as the finish time and shows a live countdown, updating every second. Since the total duration is unknown the progress bar/ring shows empty with a neutral blue accent instead of the red/orange/green scale used for `timer.*` entities. Useful for Alexa Media Player timer sensors, washing machine end-time sensors, and similar integrations.
+  ```yaml
+  alerts:
+    - entity: sensor.kitchen_echo_pop_next_timer
+      theme: countdown
+      operator: "!="
+      state: "unknown"
+      conditions:
+        - entity: sensor.kitchen_echo_pop_next_timer
+          operator: "!="
+          state: "unavailable"
+        - entity: sensor.kitchen_echo_pop_next_timer
+          operator: "!="
+          state: "none"
+      conditions_logic: and
+      message: "⏱ Kitchen timer: {timer}"
+  ```
+  The visual editor auto-detects timestamp sensors, switches to timer-only themes, and pre-fills all three idle-state conditions (`unknown`, `unavailable`, `none`) automatically. A `timer.*` helper entity remains the better choice when a progress bar is needed, since only timer entities expose the total duration.
+
+- **12-hour clock format (`clear_clock_12h`)** ([#93](https://github.com/djdevil/AlertTicker-Card/issues/93)) — new toggle for clock-based clear display modes (`clock`, `weather_clock`, `weather_forecast`). When enabled the time is shown as `3:45:22 PM` instead of `15:45:22`. Configurable via a switch in the visual editor (shown alongside the existing "Show date" toggle), translated in all 11 supported languages.
+
+- **`music` theme** — new info-category theme with dark purple/magenta color scheme. Four musical notes (♪ ♫ ♩ ♬) float upward with staggered timing; the icon pulses with a bright magenta drop-shadow glow. Fully integrated with the visual editor, all TTS languages, and HA theme compatibility. Default message translated in all 11 supported languages.
+
+
+
+- **Accent color picker for music player (`music_player_color`)** — a native color swatch picker + hex text field in the editor lets you choose any accent color for the player UI (buttons, glow, equalizer bars, vinyl ring, accent line). All player CSS uses `var(--mu-accent)` and `color-mix()` so the entire UI updates with a single value. Default `#e040fb` (purple). Translated label in all 11 supported languages.
+
+- **Volume slider in music player** — an `<input type="range">` slider appears to the right of the mute button in the player controls row. The filled-track gradient updates in real time while dragging (`@input`) and sends `media_player.volume_set` to HA on release (`@change`). Becomes semi-transparent when the player is muted. Thumb and track follow the accent color.
+
+- **Auto-theme to `music` when selecting a `media_player` entity** — in the visual editor, picking a `media_player.*` entity automatically sets the theme to `music`, the state condition to `playing`, and enables `show_player_controls`. Switching back to a non-media-player entity reverts the theme to `emergency`.
+
+- **Auto-theme for `timer.*` filter mode** — in filter/multi-entity mode, typing a `timer.*` pattern in the entity filter field now automatically switches the theme to `countdown` (the same auto-theme logic that already worked for single-entity mode). Implemented via a new `_alertFilterChanged` editor method that mirrors `_alertEntityChanged`. Switching back to a non-timer filter reverts to `emergency`.
+
+- **Spanish language support (`es`)** — all card runtime strings, weather condition labels, editor UI labels, TTS prefix messages, and per-theme default messages are now available in Spanish. The language is detected automatically from the HA `language` setting.
+
+### Fixed
+
+- **Music player accent color not applied to card border and animations** — the base `.at-music` CSS rules for border, `muGlow` box-shadow, `muPulse` drop-shadow, and `.mu-badge` text color used hardcoded `rgba(224,64,251,…)` values instead of `var(--mu-accent)`. Since `.at-music--player` inherits from `.at-music`, these elements remained purple regardless of the chosen accent color. All hardcoded values replaced with `var(--mu-accent, #e040fb)` and `color-mix()`.
+
+- **`split` weather style missing from editor when `weather_forecast` mode is selected** — the style picker hid the "Split" option when `clear_display_mode` was `weather_forecast`, but the style works correctly in that mode (the split layout shows weather + clock on the first panel, then alternates with the 7-day forecast). The exclusion condition has been removed so `split` is selectable in all weather modes.
+
+---
+
+## [1.2.5] - 2026-04-24
+
+### Added
+
+- **`label_filter` and `area_filter` — HA label and area filtering** ([#92](https://github.com/djdevil/AlertTicker-Card/issues/92)) — two new optional filter fields for `entity_filter`-style alerts. `label_filter` matches entities that carry a specific HA label (uses entity registry); `area_filter` matches entities assigned to a specific HA area (checks entity area first, then device area as fallback). Both accept a single value or an array (OR logic within the filter, AND logic between filters). Fully configurable in the visual editor via native `ha-selector` pickers with 9-language translations.
+  ```yaml
+  alerts:
+    - device_class: battery
+      label_filter: controller        # only "controller"-labelled devices
+      area_filter: [living_room, kitchen]  # in any of these areas
+      operator: "<"
+      state: "20"
+      message: "{name} battery low ({state}%)"
+  ```
+
+- **`trigger_delay` — state duration before alert activates** ([#88](https://github.com/djdevil/AlertTicker-Card/issues/88)) — new per-alert option that works like HA automation's `for:` field: the alert only becomes visible if its condition has been continuously true for at least N seconds. If the condition goes false before the delay elapses the timer is cancelled and the alert never fires. Fully configurable in the visual editor (timing section) with translated help text in all 9 languages.
+  ```yaml
+  alerts:
+    - entity: binary_sensor.door
+      operator: "="
+      state: "on"
+      trigger_delay: 300   # only alert if door has been open for 5+ minutes
+  ```
+
+- **New theme: `light`** — warm incandescent bulb glow for smart home light entity alerts. Features a conical light beam expanding from the icon, a pulsing warm-yellow drop-shadow flare on the bulb (🔆), and a gently breathing box-shadow on the card. Category `info`, compatible with `ha_theme`. Translated default message in all 10 supported languages.
+
+- **Portuguese (pt-BR) translation** ([#90](https://github.com/djdevil/AlertTicker-Card/issues/90)) — full Brazilian Portuguese translation contributed by [@Bsector](https://github.com/Bsector). All runtime strings (card labels, snooze, history, weather states, timer, test mode), all visual editor labels and help texts, all 46 theme default messages, and the theme category group names are now available in Portuguese. Activated automatically when HA's language is set to `pt-BR` or `pt`.
+
+### Fixed
+
+- **Theme card backgrounds and borders not rendering** — all themed alert cards (`alarm`, `emergency`, `fire`, `lightning`, `neon`, and all others) were rendered as `<ha-card>` custom elements. The `ha-card` shadow DOM applies its own `background` from inside, overriding any CSS background, border or box-shadow applied from outside the shadow boundary. This made every theme card display with the HA default card background, with no custom background color, border, or glow effects. Fixed by rendering all theme cards as `<div>` elements instead, so CSS applies directly without shadow DOM interference. All vertical mode and large-buttons CSS selectors updated accordingly.
+
+- **Overlay banner: `secondary_text` Jinja2 templates now fully resolved** — `secondary_text` containing `{{ }}` expressions was still using synchronous `_evalTemplate` with `…` fallback for complex patterns. It now uses the same async WebSocket `render_template` engine as the main message. Both message and secondary text are resolved in parallel via `Promise.all` before the banner is shown. ([#70](https://github.com/djdevil/AlertTicker-Card/issues/70))
+
+- **Overlay keeps firing after an alert is deleted from config** — the overlay watcher tracks active alerts by array index. When an alert was removed the remaining alerts shifted positions, causing the watcher's stale index set to miss them and re-fire already-notified alerts on the next tick. `register()` now detects when the alerts array has structurally changed and resets the watcher state (forcing a clean re-baseline with no spurious banners).
+
+- **`trigger_delay` respected by overlay watcher** — the overlay evaluation is independent of the card instance when the card is not mounted, so it was firing the banner immediately regardless of `trigger_delay`. The overlay now maintains its own `_ovDelayTimers` / `_ovDelayActive` state and applies the same delay logic as the card.
+
+- **Chromecast / cast environment: card fails with "Configuration error"** ([#89](https://github.com/djdevil/AlertTicker-Card/issues/89)) — on cast the script resolves `LitElement` from already-registered HA elements (`ha-panel-lovelace`, `hui-view`). In the cast browser these may not yet be registered when the card script executes, causing `Object.getPrototypeOf(undefined)` to throw and the entire script to fail silently. Added `ha-card` as a third fallback — a core HA element that is reliably available even in the cast environment.
+
+- **`conditions_logic: or` now correctly includes the primary condition in the OR pool** ([#87](https://github.com/djdevil/AlertTicker-Card/issues/87)) — previously the primary operator/state acted as a mandatory gate even when `conditions_logic: or` was set, so `(primary AND (cond1 OR cond2))` was evaluated instead of `(primary OR cond1 OR cond2)`. Both `_evalAlert` (overlay) and `_computeActiveAlerts` fixed.
+
+- **History log now scoped per card instance** ([#86](https://github.com/djdevil/AlertTicker-Card/issues/86)) — the history was stored under a single shared `localStorage` key (`atc-history`), so when multiple card instances were on the same page the last one to initialize would overwrite every other card's log. Each instance now gets its own key derived from its sorted entity IDs (e.g. `atc-history-sensor.battery|sensor.ink`), keeping histories completely independent.
+
+- **Split weather style divider line removed** — the vertical separator between the weather and clock panels in the `split` clear widget style has been removed for a cleaner look.
+
+- **Clear widget rounded corners and card-mod compatibility** ([#84](https://github.com/djdevil/AlertTicker-Card/issues/84)) — the card was hardcoding `--ha-card-border-radius: 10px` which prevented the HA theme value and card-mod overrides from applying. Removed the hardcoded value. All inner containers (`atc-card-root`, `atc-inner-clip`) now use `var(--ha-card-border-radius, 12px)` directly so the correct value flows through the shadow DOM. Added `:host { overflow: hidden; border-radius: var(--ha-card-border-radius, 12px) }` so content clips correctly to the rounded corners at the host level, matching the behavior expected by card-mod and HA's native "Show card border" option.
+
+---
+
+## [1.2.4] - 2026-04-23
+
+### Fixed
+
+- **Jinja2 templates shown raw in alert history** — when an alert with `{{ }}` templates first became active, the history entry was written before the WebSocket template result arrived, storing the raw template string (e.g. `{% set elev = ... %}`). The entry is now created immediately with a best-effort fallback, then patched with the fully resolved text once HA's `render_template` responds (~50–150 ms). The history panel and localStorage are updated automatically.
+
+---
+
+## [1.2.3] - 2026-04-23
+
+### Fixed
+
+- **Full Jinja2 support in overlay banner** — the overlay watcher now resolves any Jinja2 template expression via HA's WebSocket `render_template` API. Simple patterns (`{{ state_attr(...) }}`, `{{ states(...) }}`) are evaluated synchronously from `hass.states` with no delay; complex expressions (filters, math, `now()`, `{% if %}` blocks, etc.) are sent to the HA template engine and resolved before the banner is shown. Fallback to plain text on timeout (3 s) or error. Previously all `{{ }}` expressions were unconditionally replaced with `…`.
+
+- **Snooze menu clipped by card boundary** — removed `overflow: hidden` from `.atc-card-root` (added in 1.2.2 to fix cinematic overflow). The clip is now applied via `atc-inner-clip` (already `overflow: hidden; position: relative`) which wraps the clear widget in every render path. The snooze dropdown can now extend beyond the card edge as intended.
+
+- **Cinematic clear widget potentially overflowing** — clear widget render path now wraps the widget in `atc-inner-clip`, consistent with alert render paths. `overflow: visible` override on `.atc-cw-style--cinematic` removed; clipping is handled at the `atc-inner-clip` level.
+
+---
+
+## [1.2.2] - 2026-04-22
+
+### Added
+
+
+- **Text-to-Speech (TTS) announcements** — new per-alert `tts: true` toggle makes HA read the alert message aloud when it becomes active. Global default speaker (`tts_entity`, `media_player` domain) and TTS engine (`tts_engine`, auto-detected if not set) are configurable in the General tab. For Alexa, Google Home via notify, or mobile push: set `tts_notify_service` to any `notify.*` service (populated via a dropdown from all available notify services). Per-alert overrides for speaker, engine, notify service, and a custom `tts_message` are available in each alert's configuration panel. A global master toggle (`tts_enabled`) in the General tab disables all TTS at once without losing individual alert settings. When no `tts_message` is set, the card generates a natural-language sentence from a built-in dictionary (9 languages) based on the alert's theme category — e.g. "Allarme critico: Sensore fumo cucina" for a `critical` theme alert in Italian. 
+
+
+- **Date show/hide + position for clear widget** — new `clear_clock_show_date` toggle to enable or disable the date display in clock and weather+clock modes. When enabled, `clear_clock_date_position` allows choosing whether the date appears `above` or `below` the time. Configurable in the editor (All Clear tab). All 8 languages translated. ([#73](https://github.com/djdevil/AlertTicker-Card/issues/73))
+
+- **Card visible in dashboard edit mode** — when Home Assistant UI is in edit mode, the card now stays visible (placeholder shown) even if no alerts are active and "show when clear" is off. Consistent with the existing `card_border` behaviour. ([#71](https://github.com/djdevil/AlertTicker-Card/issues/71))
+
+- **Invisible touch zone for mobile** — replaces the previous first-tap interception model. A 22%-wide invisible zone on the right side of the card (min 56 px) toggles the action buttons (snooze / history / nav arrows) on tap and auto-dismisses after 4 seconds. Never interferes with `tap_action`, `hold_action`, or `double_tap_action`. ([#70](https://github.com/djdevil/AlertTicker-Card/issues/70))
+
+- **6 new visual themes for the clear widget:**
+  - *Clock-only* — `aurora` (animated northern-lights background, green glow), `gold` (warm golden hue, thin weight digits), `matrix` (black background, monospace green digits with scanline glow)
+  - *Weather badge layout* — `stage` (large centered clock on top; weather compacted into a single horizontal frosted pill below), `split` (card divided into two equal full-height panels — left: weather icon + temperature, right: clock), `cinematic` (animated weather background fills the entire card; all info condensed into a transparent caption bar pinned to the bottom)
+  - Selectable in the editor (All Clear tab) via dedicated *Clock style* and *Weather badge style* selects; clock style is shown only for clock-only mode. All 8 languages translated.
+
+- **Czech (CS) language support** — full translation of all card labels, editor UI strings, theme default messages, operator names, overlay notification strings, and weather conditions into Czech, contributed by [@feixm1](https://github.com/feixm1). ([#74](https://github.com/djdevil/AlertTicker-Card/pull/74))
+
+- **Weather/time as slide in alert cycle** — new `show_widget_in_cycle` option inserts the configured clear widget (clock / weather / weather+clock) as an extra slide in the alert rotation, using the same fold/slide/fade animation as alerts. The toggle appears in the editor (Cycling & Animation section) only when `clear_display_mode` is already configured. All 8 languages translated. ([#73](https://github.com/djdevil/AlertTicker-Card/issues/73) comment by @No-DNS)
+
+- **`device_class` filter for alerts** — new `device_class` field auto-discovers all entities with a given HA device class (e.g. `smoke`, `battery`, `motion`) and creates one individual alert per matched entity. Includes the same include/exclude panel as `entity_filter`. Mutually exclusive with `entity_filter`. All 9 languages translated. ([#80](https://github.com/djdevil/AlertTicker-Card/issues/80))
+
+- **Jinja2 templates in `state` field** — the `state` comparison value now supports `{{ }}` HA templates (e.g. `{{ states('input_number.global_threshold') }}`), allowing thresholds to be driven by helper entities. Uses the same dual-engine as the `message` field. All 9 languages updated in editor hint. ([#78](https://github.com/djdevil/AlertTicker-Card/issues/78))
+
+- **Overlay banner scale** — new `overlay_scale` option (`1`, `1.5`, `2`, `3`) enlarges the overlay banner's text, icon and spacing proportionally for better visibility from a distance. Max-width grows with the scale while staying within the viewport. Selectable in the editor (Overlay section). All 9 languages translated. ([#81](https://github.com/djdevil/AlertTicker-Card/issues/81))
+
+- **Custom icon namespace support** — any icon namespace is now accepted (e.g. `hue:ceiling-adore-flush`, `phu:`, `cil:`), not just `mdi:` and `hass:`. The check is now a generic regex `/^[\w-]+:/` that passes any `namespace:icon-name` string to `<ha-icon>`, which handles all icon sets registered via `extra_module_url`. ([#82](https://github.com/djdevil/AlertTicker-Card/issues/82))
+
+
+
+- **⭐ GitHub star prompt in editor footer** — a styled button now appears in the editor footer inviting users to star the repository on GitHub. Translated in all 9 languages.
+
+- **Camera snapshot in overlay banner** — new per-alert `camera_entity` field attaches a live snapshot from any HA camera to the overlay toast. When set, the toast restructures into a column layout: the icon/badge/message row stays at the top, and the camera image is displayed below it. The image height scales proportionally with `overlay_scale` so it is never cropped when the banner is enlarged.
+
+### Fixed
+
+- **Overlay banner blocked on cross-view navigation** — `if (reg.disconnected) continue` in `_ATC_OVERLAY._tick()` prevented the overlay from firing when the user was on a view other than the one containing the card. Guard removed; the `disconnected` flag is still used exclusively for `register()` deduplication/cleanup.
+
+- **Overlay showing raw Jinja2 template code** — `{% if %}` / `{% for %}` control blocks were not stripped from the message, only `{{ }}` expressions. Added regex stripping for both patterns; when the resolved message is empty after stripping the card falls back to `badge_label`, the entity's `friendly_name`, or the entity ID. ([#70](https://github.com/djdevil/AlertTicker-Card/issues/70))
+
+- **Editor fields not updating after YAML paste** — icon, badge_label, and tap_action fields retained stale values when the configuration was changed externally (e.g. by pasting raw YAML). Root cause: MWC components (`ha-textfield`, `ha-service-control`) ignore `.value` property updates after first render. Fixed by closing and reopening the alert panel via `updateComplete.then()` whenever the underlying alert object changes from outside the editor.
+
+- **Alert icon rendered as text in editor list** — when an alert had an `mdi:` icon, the editor list showed the raw string (e.g. `mdi:floor-lamp`) instead of the icon glyph. Removed an erroneous `use_ha_icon &&` guard; all `mdi:` / `hass:` icons are now always rendered as `<ha-icon>`.
+
+- **Date and time side-by-side in weather+clock mode** — date and time appeared horizontally instead of stacking vertically. Added `flex-direction: column` to `.atc-cw-badge--clock`.
+
+- **Clock style selector visible in weather+clock mode** — the style select was inside the shared `clock || weather_clock` conditional block. Moved into its own `=== 'clock'` block so it only appears when clock-only mode is selected.
+
+- **`{entity}` / `{state}` placeholders not resolved inside HA templates** — when `message` contained both `{entity}` and `{{ }}` blocks (e.g. `{{ area_name('{entity}') }}`), plain placeholders were substituted *after* the template was sent to HA's engine, so HA received the literal string `{entity}` instead of the real entity ID. Placeholders are now resolved before the WebSocket subscription is created. ([#76](https://github.com/djdevil/AlertTicker-Card/issues/76))
+
+- **`entity_filter` wildcard not anchored** — patterns like `sensor.*battery` matched entities containing "battery" *anywhere* (e.g. `sensor.device_battery_type`) because the generated regex was unanchored. Regex is now wrapped in `^…$` so the pattern must match the full entity ID, consistent with standard glob behaviour. ([#77](https://github.com/djdevil/AlertTicker-Card/issues/77))
+
+- **`on_change` alerts ignoring `conditions`** — when `on_change: true` was set together with a `conditions` block, the conditions were never evaluated: the alert fired on every state change regardless of the condition result. Conditions are now evaluated inside the `on_change` branch (respecting `conditions_logic: and/or`) before the alert is shown. ([#83](https://github.com/djdevil/AlertTicker-Card/issues/83))
+
+- **Cinematic weather theme layout** — clock/date now pinned top-left, weather conditions bottom-left, wind row re-enabled. Content no longer overflows outside the card boundary (`overflow: hidden` moved to `.atc-card-root`).
+
+---
+
+## [1.2.1] - 2026-04-21
+
+### Fixed
+
+- **Overlay watcher stopped on view navigation** — when navigating away from the view containing the card, both cards received `disconnectedCallback()` causing the watcher interval to be cleared. Overlay banners would never fire on any other view. Root cause was introduced in v1.2.0 by a misguided optimization; reverted. The watcher now stays alive for the page session once started.
+- **Overlay continued firing after card deletion** — `_tick` was not checking `reg.disconnected`, so deleted cards kept triggering banners. Added `if (reg.disconnected) continue` guard.
+- **History panel right side clipped in `large_buttons` mode** — `padding-right: 88px` was applied to all `ha-card` elements including the history panel. Fixed with `:not(.atc-history-card)` selector.
+- **Large buttons flickering during fold animation** — buttons stayed visible while card content animated, appearing to float. Buttons now fneade out during animation via `atc-animating` host class and reappear when animation completes.
+- **Right nav arrow (▶) overlapping snooze button in `large_buttons` mode** — arrow pushed to `right: 84px` to clear both circular buttons.
+- **Nav arrow and counter mispositioned in `vertical` + `large_buttons` mode** — arrow reverts to `right: 3px` (large buttons are top-right, not center-right); counter moves to bottom-right.
+
+---
+
+## [1.2.0] - 2026-04-19
+
+### Added
+
+- **Global overlay / toast notification** — new `overlay_mode` option that shows a floating banner **anywhere on the dashboard** when a new alert triggers, regardless of which view or tab is currently open. A smart visibility check suppresses the banner when the card itself is already visible on screen (no redundant notification). A lightweight independent watcher (`setInterval` 2 s) reads entity states directly from the always-present `<home-assistant>` element, so the overlay fires even when the card's view is not mounted. Dedup mechanism prevents double-firing on both same-view and cross-view paths. Configurable via the visual editor: position (`top` / `center` / `bottom`), auto-dismiss duration in seconds (0 = manual close only). All 7 languages translated. Falls back silently if anything fails.
+
+- **Overlay banner center position** — new `center` option for `overlay_position` displays the banner in the middle of the screen with a pop-in scale animation instead of the slide-from-top used by the `top` position.
+
+- **Dedicated Overlay tab in editor** — overlay notification settings moved from the General tab into their own **🔔 Overlay** tab between General and Alerts, with an "ON" badge on the tab when active, for faster discovery and cleaner layout.
+- **`card_border` toggle** — simple on/off switch that shows the standard Home Assistant border (`--ha-card-border-width` / `--ha-card-border-color`) around the card at all times, solving the discoverability problem of the hover-only edit border. Default: off. Configurable via the editor under 🖼️ Layout & Appearance. ([#56](https://github.com/djdevil/AlertTicker-Card/issues/56))
+
+- **Placeholder frame when no alerts are active** — when `card_border` is enabled and no alerts are active (and "Show when clear" is off), the card now renders a subtle dashed-border placeholder with a 🔔 icon and "AlertTicker Card" label instead of being completely invisible. Makes the card discoverable and editable for new users who have just added it. Without `card_border`, the original collapse-the-grid-slot behaviour (issue [#50](https://github.com/djdevil/AlertTicker-Card/issues/50)) is preserved. ([#56](https://github.com/djdevil/AlertTicker-Card/issues/56))
+
+- **Animated `door` and `window` themes** — the `door` theme now renders an animated `mdi:door-open` icon that pivots on its hinge (CSS `perspective rotateY`) to simulate a door swinging open and closed. New `window` theme added with `mdi:window-open-variant` and a top-pivot swing animation (`rotateX`). Both run automatically when the theme is selected — no `use_ha_icon` setting needed. Custom icons and `icon_color` still fully supported. ([#59](https://github.com/djdevil/AlertTicker-Card/issues/59))
+
+- **Per-alert `visible_to` filter** — each alert can now be restricted to specific HA users without needing separate cards or conditional visibility wrappers. Accepts `admin` (admins only), `non_admin` (non-admin users only), a single user display-name string, or a list of names. Omit the field (or leave it empty) to show the alert to everyone. Works for both the card display and the overlay banner. Fully configurable in the editor under a dedicated 👤 User Visibility section per alert. ([#58](https://github.com/djdevil/AlertTicker-Card/issues/58))
+
+- **Manual alert navigation (◀ ▶ buttons + swipe)** — when 2 or more alerts are active, `◀` and `▶` buttons appear on the left/right edges of the card on hover (and on first touch on mobile). Clicking them immediately jumps to the previous/next alert and resets the auto-cycle timer so it counts from zero. On mobile, left/right swipe also navigates (swipe left = next, swipe right = prev). If `swipe_to_snooze: true` is enabled, left swipe keeps its existing snooze behaviour and only right swipe navigates. The swipe gesture is now always registered regardless of `swipe_to_snooze`. ([#65](https://github.com/djdevil/AlertTicker-Card/issues/65))
+
+- **Per-alert `time_range` filter** — each alert can now be restricted to a specific time window using `from` and `to` fields (format `HH:MM`). Supports midnight crossing (e.g. `22:00`–`06:00`). When both fields are empty the alert is always active. The card re-evaluates the condition automatically at each minute boundary so alerts appear and disappear on time without any entity state change. Configurable via the editor under a dedicated 🕐 section per alert. All 8 languages translated. ([#61](https://github.com/djdevil/AlertTicker-Card/issues/61))
+
+- **Per-alert `name` label** — optional `name` field on each alert that replaces the generic "Alert N: entity" header in the editor panel with a descriptive custom name (e.g. "Motion sensors floor 1"). The entity ID is shown as a subtitle when a name is set. Purely an editor UI label — does not affect the card display. Configurable as the first field in the alert panel. All 8 languages translated. ([#64](https://github.com/djdevil/AlertTicker-Card/issues/64))
+
+- **Auto-icon from HA entity** — when no `icon` is set on an alert, the card now automatically uses the entity's icon from Home Assistant (entity registry override or `attributes.icon`). Any `mdi:` / `hass:` icon is rendered as a native `<ha-icon>` element and respects `icon_color`. Particularly useful with `entity_filter` alerts (e.g. multiple trash sensors) where each entity already has a distinct icon in HA — no manual `icon` field needed per alert. Falls back to the theme emoji or 🔔 if the entity has no icon. ([#62](https://github.com/djdevil/AlertTicker-Card/issues/62))
+
+- **Danish (DA) language support** — full translation of all card labels, editor UI strings, theme default messages, operator names, and overlay notification strings into Danish, contributed by [@kgn3400](https://github.com/kgn3400). ([#57](https://github.com/djdevil/AlertTicker-Card/pull/57))
+
+- **Clear widget — animated weather & clock display** — when `show_when_clear` is enabled, a new `clear_display_mode` option replaces the static all-clear message with a live display. Modes: `message` (default, unchanged), `clock` (digital clock updated every second), `weather` (animated weather background + condition + temperature + wind speed + humidity), `weather_clock` (weather + clock together). Weather backgrounds include full particle animations for sun, stars/moon/aurora, clouds, fog, wind, rain, snow, hail, lightning, and exceptional. Content is shown in frosted-glass corner badges (weather info top-left, clock top-right) so the animated sky stays fully visible. Configure the weather entity via a `ha-entity-picker` filtered to `weather.*` in the editor. Placeholder shown if no entity is selected. All 8 languages translated. ([#63](https://github.com/djdevil/AlertTicker-Card/issues/63))
+
+- **Editor hub redesign** — the hub (main menu) is completely redesigned: an Alerts tile spans the full width at the top; a welcome/description text appears between the header and tiles; each tile shows a short description label in 8 languages; a new 🖼️ Layout & Appearance tile is extracted from the General tile (ha_theme, vertical, text_align, large_buttons, card_height, card_border) so the two concerns are cleanly separated; the hub shows a header with the card title + version badge and a footer with author credit, a Buy-Me-a-Coffee badge, and a GitHub issues link.
+
+### Fixed
+
+- **Snooze menu closes on tap outside** — previously the snooze duration menu could only be dismissed by tapping the 💤 button again, which was awkward especially on mobile. Now a `pointerdown` listener is registered on `document` (capture phase) when the menu opens and uses `composedPath()` to detect taps outside the menu wrapper across the shadow DOM boundary — closing the menu immediately on any outside interaction. The listener self-removes on close and is also cleaned up in `disconnectedCallback` to prevent memory leaks.
+
+- **Tap/hold/double-tap actions blocked on first touch on mobile** — on touch devices the snooze and history buttons are hidden until the card is hovered (CSS `:hover`), but mobile browsers simulate hover on the first tap. This caused the first tap that revealed the buttons to simultaneously fire `tap_action` or start the hold timer. Fixed with a two-step touch model: the first touch on a card that has actions activates a `atc-touch-active` state (revealing buttons) without firing any action; subsequent touches behave normally. The active state auto-resets after 3 seconds of inactivity.
+
+- **`tap_action: toggle` silently did nothing** — `_handleAction` was missing the `toggle` case entirely. Added `homeassistant.toggle` service call with entity resolution from `cfg.entity` falling back to the current alert's entity.
+
+- **`setPointerCapture` on shadow host broke `pointerup` handler** — `this.setPointerCapture(e.pointerId)` captured pointer events to the custom element host, so subsequent `pointerup` events were dispatched to the host rather than the inner div where `_onPointerUp` was registered. Changed to `e.currentTarget.setPointerCapture(e.pointerId)` to capture on the actual listener element.
+
+- **`more-info` action ignored `entity` field** — `_handleAction` for `more-info` only checked `cfg.entity_id`, but the standard YAML key is `entity`. Now checks `cfg.entity` first, then `cfg.entity_id`, then falls back to the current alert's entity.
+
+- **Snooze menu clipped by card container** — the snooze duration menu was cut off or hidden behind adjacent dashboard cards. Root cause: `overflow: hidden` on the outermost card wrapper also clipped absolutely-positioned overlays (snooze menu, history button). Fixed by introducing an inner `.atc-inner-clip` wrapper that clips only the content area, leaving the snooze menu free to extend beyond the card's visual boundary. ([#60](https://github.com/djdevil/AlertTicker-Card/issues/60))
+
+- **Tap bleed-through on `navigate` actions** — using `double_tap_action` or `hold_action` with `action: navigate` could inadvertently trigger an element on the newly loaded view at the same screen coordinates (ghost click). Fixed by: (1) calling `setPointerCapture()` in `pointerdown` to anchor the pointer event stream to the card element; (2) calling `preventDefault()` on `pointerup` to suppress the browser's synthetic `click` event; (3) temporarily disabling pointer events on the document for 350 ms after a hold-navigate fires, covering the window between the hold firing and the user lifting their finger. ([#45](https://github.com/djdevil/AlertTicker-Card/issues/45))
+
+- **Inconsistent card height across themes** — different themes (fire, rain, confetti, door, etc.) rendered at slightly different heights due to varying internal padding and icon sizes. All themes now share a common `min-height: 68 px` on the `ha-card` wrapper, ensuring a uniform baseline height across every theme. Cards with `card_height` set are unaffected (explicit height takes precedence).
+
+---
+
+## [1.1.22] - 2026-04-19
+
+### Added
+
+- **Russian (RU) language support** — full translation of all card labels and editor UI strings into Russian, contributed by community member [@edwardtich1](https://github.com/edwardtich1). Covers all themes, operators, action types, snooze, history, and every editor field including `{device}`, `card_height`, `contains`/`not_contains`, and `double_tap_action`. ([#53](https://github.com/djdevil/AlertTicker-Card/issues/53))
+
+---
+
+## [1.1.21] - 2026-04-18
+
+### Added
+
+- **`card_height` config option** — sets a fixed height (in px) on the card, preventing layout shifts when cycling between alerts of different sizes or text lengths. Content is vertically centered and clipped symmetrically if it exceeds the set height. Leave unset for automatic height. Configurable via the editor under 🖼️ Layout & Appearance. ([#52](https://github.com/djdevil/AlertTicker-Card/issues/52))
+
+### Fixed
+
+- **Alert sound silent on iOS / iPad HA companion app** — iOS Safari suspends `AudioContext` until a user gesture. Added `ctx.resume()` before tone generation, which unlocks the context when it was previously warmed by any prior interaction (e.g. a tap on the dashboard). Note: on a completely fresh page load with zero interaction, iOS will still block audio — this is an OS-level restriction. ([#51](https://github.com/djdevil/AlertTicker-Card/issues/51))
+
+---
+
+## [1.1.20] - 2026-04-18
+
+### Added
+
+- **`{device}` message placeholder** — resolves the HA device name for the alert's entity directly from the device registry (`hass.devices`), with no WebSocket template subscription required. Eliminates flickering when using `device_name()` Jinja2 templates across many entities. Use `{device}` alongside `{name}`, `{state}`, and `{entity}` in the message field. ([#47](https://github.com/djdevil/AlertTicker-Card/issues/47))
+
+---
+
+## [1.1.19] - 2026-04-18
+
+### Fixed
+
+- **Empty space in sections/grid dashboard when card is hidden** — previous attempts (`display: none` on element and parent) were not enough for HA's CSS grid sections layout. Now uses `toggleAttribute("hidden")` on the host element, which `hui-card` observes to collapse the grid slot entirely — the same technique used by HA's own conditional-card fix (frontend PR #20117). `display: none` is kept as a fallback for older HA versions. ([#50](https://github.com/djdevil/AlertTicker-Card/issues/50))
+
+---
+
+## [1.1.18] - 2026-04-18
+
+### Added
+
+- **`contains` / `not_contains` operators** — substring matching for state and attribute values (case-insensitive). Available on both the main alert condition and additional conditions. Useful for filtering out placeholder values like "none", "unavailable", or ad markers. ([#39](https://github.com/djdevil/AlertTicker-Card/issues/39))
+
+### Fixed
+
+- **Residual gap in masonry/grid layout when card is hidden** — hiding only the custom element itself was not enough; the HA card wrapper (`hui-card`) still held its grid slot. Now both the element and its parent wrapper are set to `display: none`, fully removing the card from the layout with no gap. ([#50](https://github.com/djdevil/AlertTicker-Card/issues/50))
+
+---
+
+## [1.1.17] - 2026-04-18
+
+### Fixed
+
+- **Empty space when card is hidden** — when there are no active alerts and `show_when_clear` is off, the card now sets `display: none` on the host element so it takes up zero space in the dashboard layout. Previously the card returned an empty template but still occupied a small amount of vertical space, pushing other cards downward. ([#50](https://github.com/djdevil/AlertTicker-Card/issues/50))
+
+---
+
+## [1.1.16] - 2026-04-18
+
+### Added
+
+- **`double_tap_action`** — double-tap gesture on any alert card fires a separate action (navigate, call-service, more-info, url). When a `double_tap_action` is configured, a single tap waits 300 ms before firing to distinguish the two gestures. Configurable in the visual editor alongside tap/hold actions. ([#45](https://github.com/djdevil/AlertTicker-Card/issues/45))
+- **`clear_double_tap_action`** — same double-tap support for the "all clear" card. Appears in the editor under the ✅ All clear card section. ([#45](https://github.com/djdevil/AlertTicker-Card/issues/45))
+
+---
+
+## [1.1.15] - 2026-04-18
+
+### Added
+
+- **`clear_badge_label` config option** — customize the badge text on the "all clear" card (default: "Resolved"). Configurable via editor under the clear message/theme fields. ([#46](https://github.com/djdevil/AlertTicker-Card/issues/46))
+- **`clear_tap_action` / `clear_hold_action`** — tap and hold actions for the "all clear" card. Supports navigate, call-service, more-info, url. Configurable via editor. ([#45](https://github.com/djdevil/AlertTicker-Card/issues/45))
+- **`on_change` monitors attribute changes** — when `attribute` is set on an alert with `on_change: true`, the trigger fires on attribute value changes instead of entity state changes. Useful for detecting track changes on media players. ([#39](https://github.com/djdevil/AlertTicker-Card/issues/39))
+
+### Improved
+
+- **General settings tab reorganized** — settings are now grouped into labeled sections with emoji headers: ✅ All clear card (moved to top), 🖼️ Layout & Appearance, 🔄 Cycling & Animation, 💤 Snooze, 📋 History. The "all clear" section with its subfields now appears at the very top for easier discovery. ([#41](https://github.com/djdevil/AlertTicker-Card/issues/41))
+- **`on_change` label clarified** — editor label now reads "Trigger on ANY state change (ignores conditions)" to make it clear conditions are bypassed when this is enabled.
+- **Conditions hidden when `on_change` active** — the operator/state condition fields are hidden while `on_change` is enabled, avoiding confusion since they have no effect in that mode. ([#41](https://github.com/djdevil/AlertTicker-Card/issues/41))
+
+---
+
+## [1.1.14] - 2026-04-17
+
+### Fixed
+
+- **Test mode preview not switching to the selected alert** — the alert match used object reference (`===`) which always failed because expanded alerts are spread copies. Fixed by matching on `_configIdx` instead. ([#43](https://github.com/djdevil/AlertTicker-Card/issues/43))
+- **Alert counter ("2/3") invisible in HA theme light mode** — counter had hardcoded white color. Now uses `var(--secondary-text-color)` when `ha_theme` is active. ([#44](https://github.com/djdevil/AlertTicker-Card/issues/44))
+- **`on_change` now detects attribute changes** — when `attribute` is set on an alert with `on_change: true`, the trigger fires when that attribute value changes (not just the entity state). Enables use cases like "notify when track title changes on a media player". ([#39](https://github.com/djdevil/AlertTicker-Card/issues/39))
+
+---
+
+## [1.1.13] - 2026-04-16
+
+### Added
+
+- **`auto_dismiss_after` shown for all alerts** — moved from on_change-only to always visible in the editor, after the conditions section. Works for both `on_change` and normal condition-based alerts.
+- **`text_align: center` card option** — centers the message text in all themes. Useful when using the "Panel (1 card)" dashboard layout where the card is very wide and text appears left-aligned. Toggle available in the card editor under the vertical layout setting. ([#41](https://github.com/djdevil/AlertTicker-Card/issues/41))
+
+---
+
+## [1.1.12] - 2026-04-16
+
+### Fixed
+
+- **`on_change` alert disappeared after 30 seconds even without `auto_dismiss_after`** — the dismiss timer now starts only when `auto_dismiss_after` is explicitly set. Without it, an `on_change` alert stays visible until the next state change. ([#39](https://github.com/djdevil/AlertTicker-Card/issues/39))
+
+---
+
+## [1.1.11] - 2026-04-16
+
+### Added
+
+- **`on_change: true` — trigger on state change** — when enabled the alert fires whenever the monitored entity's state changes to any value, regardless of the `operator`/`state` fields. Useful for showing a transient notification when a media track changes, a door opens, motion is detected, etc. The alert stays visible until the next state change (or until `auto_dismiss_after` expires). ([#39](https://github.com/djdevil/AlertTicker-Card/issues/39))
+- **`auto_dismiss_after: N` — auto-hide after N seconds** — works on any alert type. For `on_change` alerts: the alert disappears after N seconds (default 30 if not set). For normal condition-based alerts: the alert auto-hides N seconds after the condition first becomes true; the timer resets if the condition goes false and becomes true again. Both fields are configurable in the visual editor with full 6-language support. ([#39](https://github.com/djdevil/AlertTicker-Card/issues/39))
+- **MDI icon invisible in HA light mode even with `ha_theme` off** — `.atc-ha-icon` used `color: inherit` which in HA light mode resolved to a dark colour from the HA global stylesheet, invisible against the card's dark background. Now defaults to `rgba(255,255,255,0.9)` so it is always visible on dark-background themes. `ha_theme` overrides it to `--primary-text-color`; `icon_color` inline style takes precedence over both. ([#37](https://github.com/djdevil/AlertTicker-Card/issues/37))
+- **Secondary entity value text invisible in HA light mode** — `.atc-secondary-value` had no explicit colour, inheriting dark text from HA's global stylesheet in light mode. Now defaults to `rgba(255,255,255,0.85)`. `ha_theme` overrides it to `--secondary-text-color`. ([#37](https://github.com/djdevil/AlertTicker-Card/issues/37))
+
+---
+
+## [1.1.10] - 2026-04-16
+
+### Fixed
+
+- **`ha_theme` broken in HA light mode** — all UI chrome elements used hardcoded dark-mode colours (`rgba(255,255,255,…)`) that became invisible on a light card background. Fixed with `var()` overrides scoped to `.atc-ha-theme` for: MDI icon colour, history panel ✕ and Clear buttons, snooze dropdown menu (background, labels, options), snoozed-all indicator bar and text, snoozed-all reset button, and snoozed pill. All elements now use HA CSS variables (`--primary-text-color`, `--secondary-text-color`, `--divider-color`, `--card-background-color`, `--secondary-background-color`) so they adapt correctly to any HA theme in both light and dark mode. ([#37](https://github.com/djdevil/AlertTicker-Card/issues/37))
+
+
+---
+
+## [1.1.9] - 2026-04-16
+
+### Added
+
+- **`icon_color` — custom colour for MDI icons** — when `use_ha_icon: true` is set, an optional `icon_color` field lets you specify any CSS color value (`#ff0000`, `red`, `var(--error-color)`, etc.) to override the icon's default theme colour. The visual editor shows a native colour picker swatch alongside a text field (for CSS variables and named colours) that appears automatically when the HA icon toggle is enabled. ([#35](https://github.com/djdevil/AlertTicker-Card/issues/35))
+
+### Fixed
+
+- **MDI icon colour glow/streak on some themes** — themes like `caution` apply a `filter: drop-shadow` to their icon container for an emoji glow effect. When an MDI `ha-icon` (SVG path) was used instead, the coloured glow radiated visibly below the icon as a streak. The fix no longer relies on the CSS `:has()` selector (limited browser/WebView support); instead, `updated()` stamps the class `atc-has-mdi-icon` directly onto the icon container via JavaScript, then CSS removes `background`, `border-color`, `box-shadow`, and `filter` on that element. Covers all 40 themes and both `-icon` and `-icon-wrap` class patterns. ([#32](https://github.com/djdevil/AlertTicker-Card/issues/32))
+- **`radar` theme layout broken in vertical mode** — the sonar display (`.rd-display`) and counter (`.rd-right`) were both `position: absolute` anchored to the right edge of the card. In vertical mode they overlapped the centred content. The sonar display is now hidden in vertical mode; the counter reverts to normal flow positioning; and the content's `padding-right: 86px` (reserved for the sonar circle) is reset to zero. ([#32](https://github.com/djdevil/AlertTicker-Card/issues/32))
+- **`lightning` theme decorative bolt overlapping in vertical mode** — the large decorative ⚡ element (`.lt-bolt`) was absolutely positioned at the right edge. Hidden in vertical mode. ([#32](https://github.com/djdevil/AlertTicker-Card/issues/32))
+
+---
+
+## [1.1.8.1] - 2026-04-15
+
+### Fixed
+
+- **`vertical` mode card not filling grid cell when enlarged** — the card host element now sets `height: 100%` via `updated()` and the height propagates through `.atc-vertical`, `.at-fold-wrapper`, and `ha-card` so the card fully fills the HA grid cell when the row height is increased. ([#32](https://github.com/djdevil/AlertTicker-Card/issues/32))
+- **MDI icon background not transparent in vertical and other layouts** — icon-wrap elements containing an `ha-icon` (MDI) now get `background: transparent` and `border-color: transparent` applied automatically via `:has(.atc-ha-icon)`, preventing the coloured circle from clipping the card background. ([#32](https://github.com/djdevil/AlertTicker-Card/issues/32))
+
+---
+
+## [1.1.8] - 2026-04-15
+
+### Added
+
+- **`ha_theme` option — HA global theme adaptation** — when `ha_theme: true` is set, the card adapts its colors to the active Home Assistant theme. Card backgrounds use `--card-background-color`, text uses `--primary-text-color`, and badge/border accents use the semantic HA color variables (`--error-color`, `--warning-color`, `--success-color`, `--info-color`). Compatible with any HA theme including Mushroom, Material, iOS, and custom themes. All 40 visual themes retain their unique animations and layouts — only the color palette adapts. Toggle available in the visual editor. ([#33](https://github.com/djdevil/AlertTicker-Card/issues/33))
+- **`vertical: true` option — vertical layout for all themes** — stacks icon on top, badge + message + secondary text centered below. Works with all 40 themes via a single CSS class override. The Ticker theme keeps its horizontal scrolling behaviour. Toggle available in the visual editor. ([#32](https://github.com/djdevil/AlertTicker-Card/issues/32))
+- **`swipe_to_snooze` option — left-swipe gesture to snooze on mobile** — when `swipe_to_snooze: true` is set, swiping left on the card silently snoozes the current alert using the configured duration (or 1h as default). Works independently of `tap_action` and `hold_action`, resolving the conflict between tap interactions and snooze access on touch screens. Toggle available in the visual editor. ([#34](https://github.com/djdevil/AlertTicker-Card/issues/34))
+
+### Fixed
+
+- **Theme description labels were Italian-only in the visual editor** — the parenthetical descriptions in the theme dropdown (e.g. "Red button", "Amber border", "Progress bar") are now translated into all 6 supported languages (IT, EN, FR, DE, NL, VI). Category group headings in the dropdown are also fully localised.
+- **`large_buttons` + `vertical` layout conflict** — when both options were active together, the always-visible buttons were vertically centred on the right side of a tall card. They now anchor to the top-right corner to avoid overlapping the centred content.
+- **`vertical` and `ha_theme` not applied to "All Clear" and snoozed-indicator banners** — the early-return render paths for `show_when_clear` and the snoozed-all indicator bypassed the `atc-snooze-host` wrapper, so neither `atc-vertical` nor `atc-ha-theme` classes were applied. Both paths now share the same `_hostClass` getter as the main render path.
+- **`disconnectedCallback` conflict** — a duplicate method definition introduced in v1.1.7 caused `_stopTimerTick()` to never be called when the card was removed from the page. Merged the template subscription cleanup into the single existing `disconnectedCallback`.
+- **`large_buttons` mode content overlap** — with `large_buttons: true`, the always-visible 💤 and 📋 buttons were overlapping the alert message text in some themes. All theme cards now get `padding-right: 88px` in this mode, ensuring the message remains fully readable. ([#34](https://github.com/djdevil/AlertTicker-Card/issues/34))
+
+---
+
+## [1.1.7] - 2026-04-13
+
+### Added
+
+- **Full HA template support in `message` and `secondary_text`** — fields containing `{{ }}` are now rendered server-side by Home Assistant via the WebSocket `render_template` API. This means any Jinja2 syntax that works in HA automations and templates works here too: `{{ states('sensor.x') }}`, `{{ state_attr('entity','attr') }}`, `{% if %}...{% endif %}`, `{{ now() }}`, `| round()`, `| int`, etc. Templates update live whenever the underlying entities change. A lightweight client-side fallback (`states()`, `state_attr()`, `is_state()` with common filters) is shown immediately while the WebSocket response is pending.
+
+### Fixed
+
+- **`secondary_entity` silently showed nothing when the entity ID was wrong** — the card now shows a subtle `⚠ entity.id` warning in amber so the user knows the entity was not found instead of seeing a blank space.
+
+---
+
+## [1.1.6] - 2026-04-06
+
+### Fixed
+
+- **Preview jumps back to first alert when editing a field** — two root causes, both fixed:
+  1. **Spurious `ha-service-control` events on edit panel open**: `_initializing` was only set on the editor's first `connectedCallback`. When the user opened an alert that has a `call-service` action, new `ha-service-control` components mounted and fired spurious `value-changed` events (confirmed HA bug: `oldValue` is `undefined` on `willUpdate`). Fixed by re-setting `_initializing = true` (two microtask ticks) every time a new alert panel is opened in `_editAlert`.
+  2. **`_preview_index` not re-sent on field changes**: `_updateAlert` now re-attaches `_preview_index` to every dispatch when test mode is active and the edited alert is the currently previewed one.
+- **History showed only message without entity context** — `_recordHistory` now also saves the entity's friendly name, its formatted/translated state, and the secondary entity name + state. The history view renders them as additional lines below the message.
+- **`timer_ring` theme: snooze and history buttons overlapping the ring SVG in `large_buttons` mode** — the two circular buttons were positioned absolutely at `right: 8px` / `right: 46px`, covering the ring entirely. Fixed by adding `padding-right: 90px` to `.at-timer-ring` when `large_buttons` is active.
+
+### Changed
+
+- **Theme and priority moved to top of alert edit form** — shown as a compact side-by-side row at the very top of the edit panel, before all other sections, so the visual result is immediately visible in the card preview without scrolling.
+
+---
+
+## [1.1.5] - 2026-04-06
+
+### Fixed
+
+- **`_preview_index` broken for `entity_filter` alerts** — when an alert uses `entity_filter`, the card expands it into multiple concrete alert objects (one per matched entity). These new objects have a different reference than the original config alert, so `active.findIndex(a => a === target)` always returned `-1`, leaving the preview stuck on the first alert regardless of which row was clicked in the editor. Fixed by storing a `_sourceAlert` reference on every expanded alert and checking `a === target || a._sourceAlert === target` during the preview lookup.
+
+---
+
+## [1.1.4] - 2026-04-06
+
+### Fixed
+
+- **Alert not recorded in history on page load** — if an alert was already active when the card loaded (e.g. an automation already `off`), `_initialLoadDone` was `false` on the first `_computeActiveAlerts` call, causing history recording to be skipped entirely. Since the entity state didn't change afterwards, the signature dedup prevented any subsequent recording. Fixed by recording history on first load too, with a 5-minute deduplication window per entity to avoid duplicate entries on page reload. Sound playback is still suppressed on first load.
+
+---
+
+## [1.1.3] - 2026-04-06
+
+### Added
+
+- **`show_filter_state`** — new toggle in the editor (visible when `entity_filter` is set). When enabled, shows the translated/formatted entity state next to the entity name in the card's secondary line (e.g. "Bathroom Radar Sensor  On").
+- **`show_secondary_name`** — new toggle in the editor (visible when `secondary_entity` is set). When enabled, shows the entity's friendly name next to the value (e.g. "Living Room Temperature  22.5 °C").
+
+### Fixed
+
+- **`{state}` now shows the translated/formatted value** — previously `{state}` substituted the raw HA state string (e.g. `"on"`, `"off"`, `"2"`). Now uses `hass.formatEntityState()` and `hass.formatEntityAttributeValue()` (available from HA 2023.3) to return the localized string (e.g. `"On"`, `"Off"`, `"22.5 °C"`). Falls back to the raw value on older HA versions. Applies to regular messages, `entity_filter` expansion, and `secondary_entity`.
+- **Notification counter correctly positioned in `large_buttons` mode** — the "X/Y" counter is now shown as an overlay at `top: 5px; right: 7px` (top-right corner), always visible and never outside the card. Theme `*-right` columns are fully hidden to prevent layout shift.
+
+### Changed
+
+- **Removed 📍 icon before entity name in filters** — when `entity_filter` + `show_filter_name` is active, the pin icon has been removed. Text is now larger (`0.92rem`, weight `600`, no italic).
+- **`secondary_entity` now uses translated state** — same system as `{state}`, uses `formatEntityState()` / `formatEntityAttributeValue()`. Text is now larger (`0.92rem`, weight `500`).
+- **`large_buttons` are now circular and side by side** — two 30×30px circles centered vertically on the right side, showing only the icon (💤 / 📋). No text, no overlap with card content.
+- **Notification counter larger** — the "2/3" badge increased from `0.62rem` to `0.85rem` for better visibility (normal mode).
+
+---
+
+## [1.1.2] - 2026-04-06
+
+### Fixed
+
+- **Editor preview opened the wrong alert** — root cause: `ha-service-control.willUpdate` always fires `value-changed` on first render (HA bug: `oldValue` is `undefined`), triggering a `_fireConfig` → `config-changed` → `setConfig` → re-render loop that corrupted expansion state. Fixed with:
+  - **New "edit panel" architecture** — the edit panel is separate from the alert list and driven by a single `_editingIndex: Number`, impossible to corrupt via LitElement or HA re-renders.
+  - **`_initializing` flag** — silences all `ha-service-control` `value-changed` events during the first render burst (two microtask ticks).
+  - **`setConfig` preserves alert object references** — JSON deduplication to avoid unnecessary re-renders.
+- **`_preview_index` pointed to the wrong alert** — the card was applying `_preview_index` against the priority-sorted array instead of the config array. Fixed using `active.findIndex(a => a === target)` to resolve position via object reference.
+- **`_preview_index` and `_preview_anim` permanently saved to YAML** — `_fireConfig` was dispatching these transient editor fields to HA which saved them to the user's config, corrupting JSON deduplication. Fixed by stripping them in `setConfig` via destructuring.
+
+---
+
+## [1.1.1] - 2026-04-06
+
+### Added
+
+- **9 new themes to align all categories** — closes [#22](https://github.com/djdevil/AlertTicker-Card/issues/22). All main categories now have 9 themes each (previously critical and style had 9, while warning/info/ok had only 6):
+  - **Warning:** `smoke` 🌫️ (drifting grey puffs), `wind` 💨 (fast horizontal streaks), `leak` 💧 (blue drip animation)
+  - **Info:** `cloud` ☁️ (soft floating pulse), `satellite` 📡 (radiating signal waves), `tips` 💡 (amber lightbulb glow)
+  - **Ok:** `sunrise` 🌅 (warm golden rising light), `plant` 🌱 (green growing pulse), `lock` 🔒 (deep blue secure pulse)
+- Default messages for all 9 new themes in all 6 supported languages (it, en, fr, de, nl, vi)
+
+---
+
+## [1.1.0] - 2026-04-03
+
+### Added
+
+- **Message placeholders in any alert** — `{state}`, `{name}`, `{entity}` now work in the `message` field of any alert that has an entity set, not just `entity_filter` alerts. ([#11](https://github.com/djdevil/AlertTicker-Card/issues/11))
+- **Nested attribute dot-notation** — `attribute` and `secondary_attribute` now accept dot-notation paths for deeply nested HA attributes (e.g. `activity.0.forecast`, `weather.temperature`). ([#7](https://github.com/djdevil/AlertTicker-Card/issues/7))
+- **Wildcard `*` in `entity_filter`** — glob-style wildcards are now supported in filter patterns (e.g. `sensor.battery_*_level`). ([#16](https://github.com/djdevil/AlertTicker-Card/issues/16))
+- **"Invert selection" button in filter preview** — one click to exclude all currently matched entities and include all previously excluded ones. ([#16](https://github.com/djdevil/AlertTicker-Card/issues/16))
+- **`secondary_text`** — static text shown as a second line below the alert message. Supports `{state}`, `{name}`, `{entity}` placeholders. Does not require a secondary entity. ([#14](https://github.com/djdevil/AlertTicker-Card/issues/14))
+- **`show_filter_name: false`** — hides the entity friendly name automatically shown below the message when using `entity_filter`. ([#14](https://github.com/djdevil/AlertTicker-Card/issues/14))
+- **`show_badge` / `badge_label`** — per-alert toggle to hide the category badge, or replace its text with a custom label. ([#13](https://github.com/djdevil/AlertTicker-Card/issues/13))
+- **`show_snooze_bar: false`** — global option to hide the amber snooze reactivation bar and pill. ([#15](https://github.com/djdevil/AlertTicker-Card/issues/15))
+- **`large_buttons: true`** — always-visible 💤 and 📋 buttons on the right side of the card (no hover required). ([#23](https://github.com/djdevil/AlertTicker-Card/issues/23))
+- **Per-alert `snooze_duration`** — override the global snooze setting for any individual alert. ([#17](https://github.com/djdevil/AlertTicker-Card/issues/17))
+- **Per-alert sound notifications** — `sound: true` plays an auto-generated tone when the alert becomes active. Tone varies by category. `sound_url` accepts a custom `.mp3` / `.wav` URL. Uses the Web Audio API. ([#20](https://github.com/djdevil/AlertTicker-Card/issues/20))
+- **Test mode** (`test_mode: true`) — forces all configured alerts to display as active regardless of entity state. A yellow banner is shown on the card as a reminder. ([#21](https://github.com/djdevil/AlertTicker-Card/issues/21))
+- **Native `ha-icon-picker` in editor** — the icon field becomes a native HA icon picker component when `use_ha_icon` is enabled. ([#18](https://github.com/djdevil/AlertTicker-Card/issues/18))
+- **Native `ha-service-control` in editor** — the `call-service` action block now uses the native HA service control component. ([#19](https://github.com/djdevil/AlertTicker-Card/issues/19))
+- **Animation preview in editor** — changing the transition animation dropdown immediately plays a one-shot preview of the selected animation.
+
+### Fixed
+
+- History entries displayed raw `{state}` placeholder text instead of the resolved entity state value.
+- Sound replayed for already-active alerts after a card reload triggered by editor config changes.
+
+---
+
+## [1.0.5] - 2026-03-31
+
+### Added
+
+- **`secondary_entity` / `secondary_attribute`** — display a live entity value as a second line below the alert message. ([#7](https://github.com/djdevil/AlertTicker-Card/issues/7))
+- **`tap_action` / `hold_action`** — standard Lovelace card interactions per alert. Tap and hold (500 ms) can independently trigger `call-service`, `navigate`, `more-info`, or `url`. ([#6](https://github.com/djdevil/AlertTicker-Card/issues/6))
+- **`use_ha_icon` toggle** — per-alert switch to use a native Home Assistant `mdi:` icon instead of an emoji.
+- **`snooze_default_duration`** (General tab) — fixed duration for the 💤 button or "Menu" (default).
+- **`snooze_action`** — Lovelace action executed when the 💤 button is tapped, in addition to snoozing. ([#8](https://github.com/djdevil/AlertTicker-Card/issues/8))
+- **Alert history** — a 📋 button opens a history view showing every alert that became active, with date and time. Includes a "Clear" button. Stored in `localStorage`. ([#5](https://github.com/djdevil/AlertTicker-Card/issues/5))
+- **`entity_filter`** — text-based entity filter that expands one alert config into one alert per matched entity. Supports `{name}`, `{entity}`, `{state}` placeholders. ([#10](https://github.com/djdevil/AlertTicker-Card/issues/10))
+- **`entity_filter_exclude`** — list of entity IDs to exclude from a filter match.
+- **Entity filter preview in editor** — live match counter with expandable entity list. Each entity can be clicked to exclude/re-include it.
+- **4 dedicated Timer themes** — `countdown`, `hourglass`, `timer_pulse`, `timer_ring`. All update every second using `finishes_at`. ([#9](https://github.com/djdevil/AlertTicker-Card/issues/9))
+- **`{timer}` placeholder** — displays the live countdown (`mm:ss` or `h:mm:ss`) in the alert message.
+- **Auto-fill message** — the message field is automatically pre-filled with the entity's `friendly_name` when selecting an entity if the message is still empty.
+- **Timer entity auto-config** — when a `timer.*` entity is selected: `state` is set to `active`, theme switches to `countdown`, and the `{timer}` placeholder hint appears.
+- **Vietnamese language** (`vi`) — full translation. ([#12](https://github.com/djdevil/AlertTicker-Card/pull/12))
+
+### Fixed
+
+- The 📋 history button remained visible while history was open.
+- Cycle animation continued playing while history view was open.
+- Editor showed `mdi:home` as raw text when `use_ha_icon` was enabled.
+
+---
+
+## [1.0.3] - 2026-03-29
+
+### Added
+
+- **5 new spectacular themes** (total now 22): `nuclear` ☢️, `radar` 🎯, `hologram` 🔷, `heartbeat` 💓, `retro` 📺.
+- **Font size increase** for all 22 themes: badge labels `0.65→0.72rem`, message text `0.90→0.98rem`, critical themes `0.95→1.05rem`.
+- **Numeric / comparison conditions** — `operator` accepts `=`, `!=`, `>`, `<`, `>=`, `<=`. Enables numeric sensors (e.g. `humidity < 40`, `co2 > 1000`).
+- **Snooze / suspend alert** — a 💤 button appears on hover. Clicking opens a duration menu (1h / 4h / 8h / 24h). Persisted in `localStorage`.
+- **Dutch language** (`nl`). ([#3](https://github.com/djdevil/AlertTicker-Card/issues/3))
+- **Snoozed indicator + reset button** — when all matching alerts are snoozed the card shows a minimal bar "💤 N alerts snoozed" with a **↩ Resume all** button.
+
+### Fixed
+
+- **Counter / alert number invisible** — `backdrop-filter: blur(4px)` on the snooze button was blurring the counter behind it even at `opacity: 0`. Removed `backdrop-filter`; added `pointer-events: none` to the snooze wrap.
+- **Editor closes when changing priority** ([#1](https://github.com/djdevil/AlertTicker-Card/issues/1)) — the `closed` event from `ha-select` bubbled up to HA's `mwc-dialog`, closing the editor. Fixed with `@closed="${(e) => e.stopPropagation()}"`.
+- **State value hint in editor** ([#2](https://github.com/djdevil/AlertTicker-Card/issues/2)) — the state field now shows the entity's actual current HA state value below the input.
+
+---
+
+## [1.0.1] - 2026-03-29
+
+### Fixed
+
+- **Cycling animation** — the fold animation played but always returned to the first alert. The timer is now started once on `connectedCallback` and never restarted by entity state updates.
+
+---
+
+## [1.0.0] - 2026-03-28
+
+### Added
+
+#### Themes — 17 visual themes grouped by category
+
+- **Critical** — `emergency` 🚨 · `fire` 🔥 · `alarm` 🔴 · `lightning` 🌩️
+- **Warning** — `warning` ⚠️ · `caution` 🟡
+- **Info** — `info` ℹ️ · `notification` 🔔 · `aurora` 🌌
+- **OK / All Clear** — `success` ✅ · `check` 🟢 · `confetti` 🎉
+- **Style** — `ticker` 📰 · `neon` ⚡ · `glass` 🔮 · `matrix` 💻 · `minimal` 📋
+
+#### Per-alert theme system
+
+- Each alert has its own `theme` field — no global theme
+- Selecting a theme automatically sets the matching icon
+- Changing theme also updates the default message if it hasn't been customized
+
+#### Priority system
+
+- Alerts sorted by priority: `1`=Critical → `4`=Low
+- Highest-priority alert always shown first
+- Counter indicator (e.g. `2/3`) when multiple alerts are active
+
+#### Auto-cycle with fold animation
+
+- Configurable cycle interval (default 5s)
+- 3D page-turn (fold) transition between active alerts
+- `ticker` theme shows all alerts scrolling simultaneously instead of cycling
+
+#### Visual editor — two tabs
+
+- **General tab**: cycle interval, show-when-clear toggle, clear message and clear theme
+- **Alerts tab**: entity picker, trigger state, priority (1–4), message, theme, icon override
+- Move up / move down reordering
+- Expand / collapse per alert
+
+#### Languages — 4 languages auto-detected from HA settings
+
+- Italian (`it`), English (`en`), French (`fr`), German (`de`)
+
+#### HACS compatibility
+
+- Dynamic editor import via `import.meta.url` with cache-bust version tag
+- `hui-glance-card.getConfigElement()` pattern to force-load `ha-entity-picker`
+
+#### Other
+
+- `set hass()` uses entity-state signature comparison to skip unnecessary re-renders
+- Show-when-clear: optional all-clear card with configurable message and OK theme
+- Custom icon override per alert

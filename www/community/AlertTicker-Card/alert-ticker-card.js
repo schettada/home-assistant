@@ -1,5 +1,5 @@
 ﻿/**
- * AlertTicker Card v1.3.9.8
+ * AlertTicker Card v1.3.9.9.1
  * A Home Assistant custom Lovelace card to display alerts based on entity states.
  * Supports 50 visual themes with per-alert theme assignment, priority ordering,
  * fold animation cycling, snooze, numeric conditions, attribute triggers,
@@ -41,7 +41,7 @@ const css = LitElement.prototype.css ?? ((strings, ...values) => {
 // ---------------------------------------------------------------------------
 // Card version — declared early so getConfigElement() can reference it
 // ---------------------------------------------------------------------------
-const CARD_VERSION = "1.3.9.8";
+const CARD_VERSION = "1.3.9.9.1";
 
 // ---------------------------------------------------------------------------
 // Google Cast compatibility (#171)
@@ -1086,8 +1086,16 @@ const _ATC_OVERLAY = (() => {
     if (Array.isArray(trigger)) return trigger.map(String).includes(String(actual));
     const n = parseFloat(actual), t = parseFloat(trigger);
     switch (op) {
-      case "=": case "==": return String(actual) === String(trigger);
-      case "!=":           return String(actual) !== String(trigger);
+      case "=": case "==": {
+        const na = parseFloat(actual), nt = parseFloat(trigger);
+        if (!isNaN(na) && !isNaN(nt)) return na === nt;
+        return String(actual) === String(trigger);
+      }
+      case "!=": {
+        const na = parseFloat(actual), nt = parseFloat(trigger);
+        if (!isNaN(na) && !isNaN(nt)) return na !== nt;
+        return String(actual) !== String(trigger);
+      }
       case ">":            return !isNaN(n) && !isNaN(t) && n > t;
       case "<":            return !isNaN(n) && !isNaN(t) && n < t;
       case ">=":           return !isNaN(n) && !isNaN(t) && n >= t;
@@ -1687,6 +1695,9 @@ class AlertTickerCard extends LitElement {
       _wfShowForecast: { type: Boolean },
       _clockTime: { type: String },
       _clockDate: { type: String },
+      _musicPickerOpen: { type: String },
+      _musicEntityOverride: { type: Object },
+      _musicVinylMode: { type: Object },
     };
   }
 
@@ -1705,6 +1716,10 @@ class AlertTickerCard extends LitElement {
     this._animPhase = "";
     this._initialLoadDone = false; // prevents sound/history on first compute after init
     this._snoozeMenuOpen = null;
+    this._musicPickerOpen = null;
+    this._musicEntityOverride = {};
+    this._musicVinylMode = {};
+    this._lastActiveState = {};
     this._snoozedCount = 0;
     this._dismissedCount = 0;
     this._snoozed    = new Map(); // snoozeKey → expiry timestamp
@@ -2288,6 +2303,19 @@ class AlertTickerCard extends LitElement {
     this._activeAlerts = active;
     this._snoozedCount = snoozedCount;
     this._dismissedCount = dismissedCount;
+
+    // Per-alert active_state_entity sync — call input_boolean only when state crosses active/inactive
+    const activeIdxSet = new Set(active.map((a) => a._configIdx));
+    (this._config?.alerts || []).forEach((alertCfg, idx) => {
+      if (!alertCfg.active_state_entity) return;
+      const isNowActive = activeIdxSet.has(idx);
+      if (this._lastActiveState[idx] !== isNowActive) {
+        this._lastActiveState[idx] = isNowActive;
+        this._hass.callService('input_boolean', isNowActive ? 'turn_on' : 'turn_off', {
+          entity_id: alertCfg.active_state_entity,
+        });
+      }
+    });
 
     // Clamp index — don't blindly reset to 0 on every state update
     if (this._currentIndex >= active.length) {
@@ -3242,9 +3270,13 @@ class AlertTickerCard extends LitElement {
     const triggerStr = String(trigger);
 
     if (operator === "=" || operator === "==") {
+      const na = parseFloat(entityStateValue), nt = parseFloat(triggerStr);
+      if (!isNaN(na) && !isNaN(nt)) return na === nt;
       return entityStateValue === triggerStr;
     }
     if (operator === "!=") {
+      const na = parseFloat(entityStateValue), nt = parseFloat(triggerStr);
+      if (!isNaN(na) && !isNaN(nt)) return na !== nt;
       return entityStateValue !== triggerStr;
     }
 
@@ -3644,7 +3676,20 @@ class AlertTickerCard extends LitElement {
   _toggleSnoozeMenu(alert) {
     const key = this._snoozeKey(alert);
     this._snoozeMenuOpen = this._snoozeMenuOpen === key ? null : key;
-    if (this._snoozeMenuOpen) this._bindSnoozeOutsideClick();
+    if (this._snoozeMenuOpen) {
+      this._bindSnoozeOutsideClick();
+      this._positionSnoozeMenu();
+    }
+  }
+
+  /** Flip snooze menu upward if it would overflow the viewport bottom (runs once after render) */
+  _positionSnoozeMenu() {
+    this.updateComplete.then(() => {
+      const menu = this.shadowRoot?.querySelector(".atc-snooze-menu");
+      if (!menu) return;
+      const rect = menu.getBoundingClientRect();
+      menu.classList.toggle("atc-snooze-menu-up", rect.bottom > window.innerHeight - 8);
+    });
   }
 
   /** Close snooze menu when user taps/clicks anywhere outside it */
@@ -3766,7 +3811,7 @@ class AlertTickerCard extends LitElement {
             @click="${(e) => {
               e.stopPropagation();
               this._snoozeMenuOpen = this._snoozeMenuOpen === alert._groupKey ? null : alert._groupKey;
-              if (this._snoozeMenuOpen) this._bindSnoozeOutsideClick();
+              if (this._snoozeMenuOpen) { this._bindSnoozeOutsideClick(); this._positionSnoozeMenu(); }
               this.requestUpdate();
             }}"
           >💤</button>
@@ -4275,7 +4320,7 @@ class AlertTickerCard extends LitElement {
     this.style.display = isHidden ? "none" : "";
     // Bug #142: toggle CSS class that lifts this element above adjacent cards
     // while any popup is open (see :host(.atc-popup-open) in styles).
-    this.classList.toggle('atc-popup-open', !!(this._snoozeMenuOpen || this._historyOpen));
+    this.classList.toggle('atc-popup-open', !!(this._snoozeMenuOpen || this._historyOpen || this._musicPickerOpen));
     this.style.height = this._config?.vertical ? "100%" : "";
     // Fixed card height — prevents layout shifts when cycling between alerts
     const cardHeight = this._config?.card_height;
@@ -4417,9 +4462,17 @@ class AlertTickerCard extends LitElement {
           const name = alert.show_secondary_name
             ? (es.attributes.friendly_name || alert.secondary_entity)
             : null;
-          lines.push(html`<div class="atc-secondary-value atc-secondary-entity-line">
-            ${name ? html`<span class="atc-secondary-entity-name">${name}</span> ` : ""}${val}
-          </div>`);
+          const _svText = name ? (name + " " + val) : val;
+          if (_svText.length > 28) {
+            const _svDur = Math.max(6, _svText.length * 0.22).toFixed(1);
+            lines.push(html`<div class="atc-secondary-value atc-secondary-entity-line atc-sv-marquee-wrap">
+              <span class="atc-sv-marquee-inner" style="animation-duration:${_svDur}s">${_svText}���${_svText}</span>
+            </div>`);
+          } else {
+            lines.push(html`<div class="atc-secondary-value atc-secondary-entity-line">
+              ${name ? html`<span class="atc-secondary-entity-name">${name}</span> ` : ""}${val}
+            </div>`);
+          }
         }
       } else if (this._hass) {
         // Entity not found — show a subtle warning so the user can correct the ID
@@ -5020,15 +5073,43 @@ class AlertTickerCard extends LitElement {
     if (!alert) return html``;
     const icon = this._getIcon(alert);
     const label = this._getCategoryLabel(alert);
+    const es = this._hass?.states[alert.entity];
+    const levelRaw = es ? parseFloat(es.state) : NaN;
+    const levelPct = !isNaN(levelRaw) && levelRaw >= 0 && levelRaw <= 100 ? Math.round(levelRaw) : null;
+    const levelColor = levelPct === null ? "#fff8e1"
+      : levelPct < 20 ? "#f44336"
+      : levelPct < 40 ? "#ffa726"
+      : "#66bb6a";
+    const showLevel = levelPct !== null;
+
+    // For filter-expanded battery alerts: optionally strip "Battery" suffix and
+    // suppress inline state (already shown prominently on the right).
+    let secondaryEl;
+    const trimName = alert.battery_trim_name === true;
+    if (es && (alert.entity_filter || alert.device_class) && alert.show_filter_name !== false) {
+      let name = es.attributes?.friendly_name || alert.entity;
+      if (trimName) name = name.replace(/\s*battery\s*$/i, "").trim();
+      const stateStr = alert.show_filter_state && !showLevel
+        ? this._formatStateValue(es, alert.attribute || null) : null;
+      secondaryEl = html`<div class="atc-secondary-value atc-filter-label">
+        ${name}${stateStr ? html` <span class="atc-filter-state">${stateStr}</span>` : ""}
+      </div>`;
+    } else {
+      secondaryEl = this._renderSecondaryValue(alert);
+    }
+
     return html`
       <div class="at-battery">
         <div class="bt-drain"></div>
         <div class="bt-icon">${icon}</div>
         <div class="bt-content">
           <div class="bt-badge">${label}</div>
-          <div class="bt-title">${this._resolveMessage(alert)}</div>${this._renderSecondaryValue(alert)}
+          <div class="bt-title">${this._resolveMessage(alert)}</div>${secondaryEl}
         </div>
-        <div class="bt-right">${this._renderCounter()}</div>
+        <div class="bt-right">
+          ${showLevel ? html`<div class="bt-level" style="color:${levelColor}">${levelPct}%</div>` : ""}
+          ${this._renderCounter()}
+        </div>
       </div>
     `;
   }
@@ -5411,7 +5492,10 @@ class AlertTickerCard extends LitElement {
   }
 
   /** MUSIC PLAYER — album art background with playback controls */
-  _renderMusicPlayer(alert, es) {
+  _renderMusicPlayer(alert, _esOrig) {
+    const _alertKey = alert.entity || alert._groupKey || "";
+    const _overrideId = this._musicEntityOverride[_alertKey];
+    const es = (_overrideId && this._hass?.states[_overrideId]) ? this._hass.states[_overrideId] : _esOrig;
     const art = es.attributes.entity_picture_local || es.attributes.entity_picture || "";
     const title = es.attributes.media_title || this._resolveMessage(alert);
     const artist = es.attributes.media_artist || "";
@@ -5423,17 +5507,21 @@ class AlertTickerCard extends LitElement {
       ? (art.startsWith("http") ? art : `${(this._hass.hassUrl ? this._hass.hassUrl("") : "").replace(/\/$/, "")}${art}`)
       : "";
     const accent = alert.music_player_color || '#e040fb';
+    const _activeEntityId = _overrideId || alert.entity;
     const call = (svc, extra = {}) =>
-      this._hass.callService("media_player", svc, { entity_id: alert.entity, ...extra });
+      this._hass.callService("media_player", svc, { entity_id: _activeEntityId, ...extra });
     const _showArt      = alert.music_show_art      !== false;
     const _showTitle    = alert.music_show_title    !== false;
     const _showArtist   = alert.music_show_artist   !== false;
     const _showControls = alert.music_show_controls !== false;
+    const _showPower    = alert.music_show_power    === true;
+    const _compact      = alert.music_compact_layout === true;
     return html`
-      <div class="at-music at-music--player" style="--mu-accent:${accent}">
-        ${(_showArt && artUrl) ? html`<div class="mu-art-bg" style="background-image:url('${artUrl}')"></div>` : ""}
+      <div class="at-music at-music--player${!_showArt ? ' at-music--no-art' : ''}${_compact ? ' at-music--compact' : ''}" style="--mu-accent:${accent}">
+        ${(artUrl && (_showArt || _compact)) ? html`<div class="mu-art-bg" style="background-image:url('${artUrl}')"></div>` : ""}
         <div class="mu-art-overlay"></div>
         <div class="mu-player-body">
+          ${(_compact && alert.music_compact_show_badge === false) ? "" : html`
           <div class="mu-now-playing">
             ${isPlaying ? html`
               <div class="mu-eq">
@@ -5442,19 +5530,69 @@ class AlertTickerCard extends LitElement {
                 <span class="mu-eq-bar"></span>
               </div>` : html`<span class="mu-pause-dot">◼</span>`}
             <span class="mu-np-label">${alert.badge_label || "NOW PLAYING"}</span>
-          </div>
+          </div>`}
           <div class="mu-player-info">
-            ${_showTitle ? (title.length > 22
-              ? html`<div class="mu-player-title mu-marquee-wrap"><span class="mu-marquee-inner" style="animation-duration:${Math.max(6, title.length * 0.28).toFixed(1)}s">${title}      ${title}</span></div>`
-              : html`<div class="mu-player-title">${title}</div>`) : ""}
-            ${(_showArtist && artist) ? (artist.length > 28
-              ? html`<div class="mu-player-artist mu-marquee-wrap"><span class="mu-marquee-inner" style="animation-duration:${Math.max(5, artist.length * 0.25).toFixed(1)}s">${artist}      ${artist}</span></div>`
-              : html`<div class="mu-player-artist">${artist}</div>`) : ""}
-            ${(alert.entity_filter || alert.device_class) && alert.show_filter_name !== false
-              ? html`<div class="mu-player-artist" style="opacity:0.6">${es.attributes.friendly_name || alert.entity}</div>`
-              : ""}
+            ${_compact ? (() => {
+              const _parts = [
+                (_showArtist && artist) ? artist : null,
+                _showTitle ? title : null,
+                ((alert.entity_filter || alert.device_class) && alert.show_filter_name !== false)
+                  ? (es.attributes.friendly_name || alert.entity) : null
+              ].filter(Boolean);
+              const _meta = _parts.join(' · ');
+              return _meta ? html`<div class="mu-compact-meta mu-marquee-wrap"><span class="mu-marquee-inner" style="animation-duration:${Math.max(8, _meta.length * 0.22).toFixed(1)}s">${_meta}      ${_meta}</span></div>` : "";
+            })() : html`
+              ${_showTitle ? (title.length > 22
+                ? html`<div class="mu-player-title mu-marquee-wrap"><span class="mu-marquee-inner" style="animation-duration:${Math.max(6, title.length * 0.28).toFixed(1)}s">${title}      ${title}</span></div>`
+                : html`<div class="mu-player-title">${title}</div>`) : ""}
+              ${(_showArtist && artist) ? (artist.length > 28
+                ? html`<div class="mu-player-artist mu-marquee-wrap"><span class="mu-marquee-inner" style="animation-duration:${Math.max(5, artist.length * 0.25).toFixed(1)}s">${artist}      ${artist}</span></div>`
+                : html`<div class="mu-player-artist">${artist}</div>`) : ""}
+              ${(alert.entity_filter || alert.device_class) && alert.show_filter_name !== false
+                ? html`<div class="mu-player-artist" style="opacity:0.6">${es.attributes.friendly_name || alert.entity}</div>`
+                : ""}
+            `}
           </div>
-          ${_showControls ? html`
+          ${_showControls ? (_compact ? html`
+          <div class="mu-player-controls">
+            <div class="mu-play-group">
+              <button class="mu-ctrl-btn"
+                @pointerdown="${(e) => e.stopPropagation()}" @pointerup="${(e) => e.stopPropagation()}"
+                @click="${() => call('media_previous_track')}">
+                <ha-icon icon="mdi:skip-previous" style="--mdc-icon-size:18px"></ha-icon>
+              </button>
+              <button class="mu-ctrl-btn mu-ctrl-btn--play"
+                @pointerdown="${(e) => e.stopPropagation()}" @pointerup="${(e) => e.stopPropagation()}"
+                @click="${() => call('media_play_pause')}">
+                <ha-icon icon="${isPlaying ? 'mdi:pause' : 'mdi:play'}" style="--mdc-icon-size:22px"></ha-icon>
+              </button>
+              <button class="mu-ctrl-btn"
+                @pointerdown="${(e) => e.stopPropagation()}" @pointerup="${(e) => e.stopPropagation()}"
+                @click="${() => call('media_next_track')}">
+                <ha-icon icon="mdi:skip-next" style="--mdc-icon-size:18px"></ha-icon>
+              </button>
+              <button class="mu-ctrl-btn ${isMuted ? 'mu-ctrl-btn--active' : ''}"
+                @pointerdown="${(e) => e.stopPropagation()}" @pointerup="${(e) => e.stopPropagation()}"
+                @click="${() => call('volume_mute', { is_volume_muted: !isMuted })}">
+                <ha-icon icon="${isMuted ? 'mdi:volume-off' : 'mdi:volume-high'}" style="--mdc-icon-size:18px"></ha-icon>
+              </button>
+            </div>
+            <div class="mu-vol-group">
+              <button class="mu-ctrl-btn mu-vol-step-btn"
+                @pointerdown="${(e) => e.stopPropagation()}" @pointerup="${(e) => e.stopPropagation()}"
+                @touchstart="${(e) => e.stopPropagation()}" @touchend="${(e) => e.stopPropagation()}"
+                @click="${() => call('volume_set', { volume_level: Math.max(0, vol - 10) / 100 })}">
+                <ha-icon icon="mdi:volume-minus" style="--mdc-icon-size:18px"></ha-icon>
+              </button>
+              <span class="mu-vol-num">${isMuted ? '\u2014' : vol}</span>
+              <button class="mu-ctrl-btn mu-vol-step-btn"
+                @pointerdown="${(e) => e.stopPropagation()}" @pointerup="${(e) => e.stopPropagation()}"
+                @touchstart="${(e) => e.stopPropagation()}" @touchend="${(e) => e.stopPropagation()}"
+                @click="${() => call('volume_set', { volume_level: Math.min(100, vol + 10) / 100 })}">
+                <ha-icon icon="mdi:volume-plus" style="--mdc-icon-size:18px"></ha-icon>
+              </button>
+            </div>
+          </div>` : html`
           <div class="mu-player-controls">
             <button class="mu-ctrl-btn"
               @pointerdown="${(e) => e.stopPropagation()}" @pointerup="${(e) => e.stopPropagation()}"
@@ -5483,13 +5621,100 @@ class AlertTickerCard extends LitElement {
               @input="${(e) => { e.target.style.background = `linear-gradient(to right, var(--mu-accent, #e040fb) ${e.target.value}%, rgba(255,255,255,0.15) ${e.target.value}%)`; }}"
               @change="${(e) => call('volume_set', { volume_level: parseFloat(e.target.value) / 100 })}"
             />
-          </div>` : ""}
+          </div>`) : ""}
         </div>
-        ${(_showArt && artUrl) ? html`<img class="mu-art-thumb ${isPlaying ? 'mu-art-thumb--playing' : ''}" src="${artUrl}" alt="">` : ""}
+        ${(_showArt && artUrl) ? (
+          this._musicVinylMode[_alertKey]
+            ? html`<div class="mu-art-vinyl ${isPlaying ? 'mu-art-vinyl--playing' : 'mu-art-vinyl--paused'}"
+                @pointerdown="${(e) => e.stopPropagation()}" @pointerup="${(e) => e.stopPropagation()}"
+                @touchstart="${(e) => e.stopPropagation()}" @touchend="${(e) => e.stopPropagation()}"
+                @click="${(e) => { e.stopPropagation(); this._toggleVinyl(_alertKey); }}">
+                <div class="mu-vinyl-label" style="background-image:url('${artUrl}')"></div>
+              </div>`
+            : html`<img class="mu-art-thumb ${isPlaying ? 'mu-art-thumb--playing' : ''}"
+                src="${artUrl}" alt="" style="cursor:pointer"
+                @pointerdown="${(e) => e.stopPropagation()}" @pointerup="${(e) => e.stopPropagation()}"
+                @touchstart="${(e) => e.stopPropagation()}" @touchend="${(e) => e.stopPropagation()}"
+                @click="${(e) => { e.stopPropagation(); this._toggleVinyl(_alertKey); }}">`
+        ) : ""}
         <div class="mu-player-right">${this._renderCounter()}</div>
         <div class="mu-accent-line"></div>
       </div>
     `;
+  }
+
+  /** Corner actions overlay for music player — rendered at atc-snooze-host level */
+  _renderMusicCornerActions(alert) {
+    if (!alert || alert.theme !== "music" || !alert.show_player_controls) return "";
+    const _alertKey = alert.entity || alert._groupKey || "";
+    const _overrideId = this._musicEntityOverride[_alertKey];
+    const _activeEntityId = _overrideId || alert.entity;
+    const es = this._hass?.states[_activeEntityId];
+    // Only show power button when the entity actually supports turn_off (supported_features bit 256)
+    const _canPowerOff = !!((es?.attributes?.supported_features ?? 0) & 256);
+    const _showPower  = alert.music_show_power === true && _canPowerOff;
+    const _showPicker = !!alert.music_show_player_picker;
+    if (!_showPower && !_showPicker) return "";
+    const callPower = () => this._hass.callService("media_player", "turn_off", { entity_id: _activeEntityId });
+    return html`
+      <div class="mu-corner-actions">
+        ${_showPicker ? html`
+          <div class="mu-picker-wrap">
+            <button class="mu-corner-btn"
+              title="Change player"
+              @pointerdown="${(e) => e.stopPropagation()}" @pointerup="${(e) => e.stopPropagation()}"
+              @click="${(e) => { e.stopPropagation(); this._toggleMusicPicker(_alertKey); }}">
+              <ha-icon icon="mdi:cast" style="--mdc-icon-size:11px"></ha-icon>
+            </button>
+            ${this._musicPickerOpen === _alertKey ? html`
+              <div class="mu-picker-menu">
+                ${Object.values(this._hass.states)
+                  .filter(s => s.entity_id.startsWith("media_player.") && s.state !== "unavailable")
+                  .sort((a, b) => (a.attributes.friendly_name || a.entity_id).localeCompare(b.attributes.friendly_name || b.entity_id))
+                  .map(s => html`
+                    <button class="mu-picker-option ${s.entity_id === _activeEntityId ? 'mu-picker-option--active' : ''}"
+                      @click="${(e) => { e.stopPropagation(); this._selectMusicPlayer(_alertKey, s.entity_id); }}">
+                      ${s.attributes.friendly_name || s.entity_id}
+                    </button>
+                  `)}
+              </div>` : ""}
+          </div>` : ""}
+        ${_showPower ? html`
+          <button class="mu-corner-btn mu-corner-btn--power"
+            title="Turn off"
+            @pointerdown="${(e) => e.stopPropagation()}" @pointerup="${(e) => e.stopPropagation()}"
+            @click="${(e) => { e.stopPropagation(); callPower(); }}">
+            <ha-icon icon="mdi:power" style="--mdc-icon-size:11px"></ha-icon>
+          </button>` : ""}
+      </div>`;
+  }
+
+  _toggleMusicPicker(key) {
+    this._musicPickerOpen = this._musicPickerOpen === key ? null : key;
+    if (this._musicPickerOpen) {
+      const handler = (e) => {
+        if (!e.composedPath().some(el => el.classList?.contains("mu-picker-wrap"))) {
+          this._musicPickerOpen = null;
+          document.removeEventListener("pointerdown", handler, true);
+        }
+      };
+      document.addEventListener("pointerdown", handler, true);
+      this.updateComplete.then(() => {
+        const menu = this.shadowRoot?.querySelector(".mu-picker-menu");
+        if (!menu) return;
+        const rect = menu.getBoundingClientRect();
+        menu.classList.toggle("mu-picker-menu-down", rect.bottom > window.innerHeight - 8);
+      });
+    }
+  }
+
+  _selectMusicPlayer(alertKey, entityId) {
+    this._musicEntityOverride = { ...this._musicEntityOverride, [alertKey]: entityId };
+    this._musicPickerOpen = null;
+  }
+
+  _toggleVinyl(key) {
+    this._musicVinylMode = { ...this._musicVinylMode, [key]: !this._musicVinylMode[key] };
   }
 
   /**
@@ -6063,7 +6288,7 @@ class AlertTickerCard extends LitElement {
     const swipeStart = (e) => this._onSwipeStart(e);
     const swipeEnd   = (e) => this._onSwipeEnd(e);
     const navButtons   = this._renderNavButtons();
-    const touchHandle  = this._renderTouchZone();
+    const touchHandle  = (current?.theme === 'music' && current?.show_player_controls) ? "" : this._renderTouchZone();
 
     const counterOverlay = this._config.large_buttons ? this._renderCounterOverlay() : "";
 
@@ -6081,7 +6306,7 @@ class AlertTickerCard extends LitElement {
                 @pointerleave="${plHandler}" @pointercancel="${plHandler}"
                 @touchstart="${swipeStart}" @touchend="${swipeEnd}">${inner}</div>
             </div>
-            ${snoozeBtn}${groupBackBtn}${historyBtn}${snoozedPill}${counterOverlay}${navButtons}${touchHandle}
+            ${snoozeBtn}${groupBackBtn}${this._renderMusicCornerActions(current)}${historyBtn}${snoozedPill}${counterOverlay}${navButtons}${touchHandle}
           </div>
           ${testModeBanner}
         </div>`;
@@ -6096,7 +6321,7 @@ class AlertTickerCard extends LitElement {
               @pointerleave="${plHandler}" @pointercancel="${plHandler}"
               @touchstart="${swipeStart}" @touchend="${swipeEnd}">${inner}</div>
           </div>
-          ${snoozeBtn}${groupBackBtn}${historyBtn}${snoozedPill}${counterOverlay}${navButtons}${touchHandle}
+          ${snoozeBtn}${groupBackBtn}${this._renderMusicCornerActions(current)}${historyBtn}${snoozedPill}${counterOverlay}${navButtons}${touchHandle}
         </div>
         ${testModeBanner}
       </div>
@@ -6256,6 +6481,9 @@ class AlertTickerCard extends LitElement {
         font-weight: 600;
         opacity: 0.85;
       }
+      .atc-sv-marquee-wrap { overflow: hidden; white-space: nowrap; text-overflow: clip; }
+      .atc-sv-marquee-inner { display: inline-block; white-space: nowrap; animation: atc-sv-scroll linear infinite; }
+      @keyframes atc-sv-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
       .atc-secondary-missing {
         font-size: 0.72rem;
         opacity: 0.5;
@@ -7786,9 +8014,11 @@ class AlertTickerCard extends LitElement {
         animation: btBlink 1.2s ease-in-out infinite;
       }
       .bt-content { flex: 1; min-width: 0; position: relative; }
-      .bt-right   { flex-shrink: 0; position: relative; }
+      .bt-right   { flex-shrink: 0; position: relative; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
       .bt-badge { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #ff8f00; margin-bottom: 3px; }
-      .bt-title { font-weight: 600; color: #fff8e1; }
+      .bt-title { font-weight: 600; color: #fff8e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .bt-level { font-size: 1.5rem; font-weight: 700; line-height: 1; text-align: right; }
+      .at-battery .atc-secondary-value { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
       /* -----------------------------------------------------------------------
        * DOOR — swinging door icon + light ray, warning
@@ -8492,10 +8722,12 @@ class AlertTickerCard extends LitElement {
         -webkit-filter: blur(14px) brightness(0.55) saturate(1.5);
         filter: blur(14px) brightness(0.55) saturate(1.5);
         transform: scale(1.1); will-change: transform;
+        pointer-events: none;
       }
       .mu-art-overlay {
         position: absolute; top: 0; left: 0; right: 0; bottom: 0;
         background: linear-gradient(90deg, rgba(12,0,22,0.93) 0%, rgba(12,0,22,0.62) 52%, rgba(12,0,22,0.12) 100%);
+        pointer-events: none;
       }
       .mu-player-body {
         position: relative; flex: 1; display: flex;
@@ -8530,6 +8762,27 @@ class AlertTickerCard extends LitElement {
       .mu-marquee-inner { display: inline-block; white-space: nowrap; animation: mu-marquee linear infinite; }
       @keyframes mu-marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
       .mu-player-controls { display: flex; align-items: center; gap: 8px; margin-top: 7px; }
+      .at-music--no-art .mu-player-body { padding-right: 8px; }
+      .at-music--no-art .mu-player-right { padding: 8px 10px 8px 0; }
+      .at-music--no-art .mu-player-controls { width: 100%; }
+      .at-music--no-art .mu-vol-slider { min-width: 80px; }
+      /* --- Compact layout: title/artist above controls, thumb scaled --- */
+      .at-music--compact .mu-player-body {
+        display: flex; flex-direction: column; justify-content: center; gap: 4px;
+      }
+      .at-music--compact .mu-now-playing { flex-direction: row; align-items: center; gap: 5px; margin-bottom: 2px; }
+      .at-music--compact .mu-np-label { font-size: 0.58rem; letter-spacing: 0.06em; }
+      .at-music--compact .mu-eq { transform: scale(0.8); transform-origin: left center; }
+      .at-music--compact .mu-player-info { order: 1; min-width: 0; }
+      .at-music--compact .mu-player-controls { order: 2; margin-top: 0; width: 100%; justify-content: space-between; position: relative; z-index: 26; }
+      .mu-play-group { display: flex; align-items: center; gap: 8px; }
+      .mu-vol-group { display: flex; align-items: center; gap: 8px; }
+      .mu-vol-step-btn { width: 34px; height: 34px; flex-shrink: 0; }
+      .mu-vol-num { font-size: 0.72rem; font-weight: 700; color: rgba(255,255,255,0.75); min-width: 22px; text-align: center; letter-spacing: -0.5px; }
+      .mu-compact-meta { font-size: 0.82rem; color: rgba(255,255,255,0.88); font-weight: 600; }
+      .at-music--compact .mu-art-thumb { display: none; }
+      .at-music--compact .mu-art-bg { -webkit-filter: brightness(0.42) saturate(1.2); filter: brightness(0.42) saturate(1.2); transform: none; }
+      .at-music--compact .mu-art-overlay { background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%); }
       .mu-ctrl-btn {
         background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
         border-radius: 50%; width: 34px; height: 34px; cursor: pointer;
@@ -8555,6 +8808,46 @@ class AlertTickerCard extends LitElement {
       .mu-ctrl-btn--active {
         background: color-mix(in srgb, var(--mu-accent, #e040fb) 38%, transparent);
         border-color: var(--mu-accent, #e040fb); color: var(--mu-accent, #e040fb);
+      }
+      .mu-corner-actions {
+        position: absolute; bottom: 10px; right: 10px;
+        display: flex; align-items: center; gap: 4px; z-index: 25;
+        pointer-events: none;
+      }
+      .mu-corner-btn, .mu-picker-option, .mu-picker-menu { pointer-events: auto; }
+      .mu-corner-btn {
+        background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 50%; width: 18px; height: 18px;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; color: rgba(255,255,255,0.5);
+        transition: background 0.15s, color 0.15s;
+        padding: 0;
+      }
+      .mu-corner-btn:hover { background: rgba(255,255,255,0.14); color: rgba(255,255,255,0.9); }
+      .mu-corner-btn--power { color: rgba(255,80,80,0.65); border-color: rgba(255,80,80,0.25); }
+      .mu-corner-btn--power:hover { background: rgba(255,60,60,0.18); color: #ff5050; }
+      .mu-picker-wrap { position: relative; }
+      .mu-picker-menu {
+        position: absolute; bottom: 24px; right: 0;
+        background: #1a1a2e; border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 10px; padding: 6px; z-index: 20;
+        display: flex; flex-direction: column; gap: 2px;
+        min-width: 200px; max-width: 300px; max-height: 220px;
+        overflow-y: auto;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      }
+      .mu-picker-menu-down { bottom: auto; top: 24px; }
+      .mu-picker-option {
+        background: rgba(255,255,255,0.05); border: none; border-radius: 6px;
+        color: rgba(255,255,255,0.85); padding: 7px 12px; cursor: pointer;
+        text-align: left; font-size: 0.8rem; white-space: normal;
+        word-break: break-word;
+        transition: background 0.15s;
+      }
+      .mu-picker-option:hover { background: rgba(255,255,255,0.12); }
+      .mu-picker-option--active {
+        color: var(--mu-accent, #e040fb);
+        background: color-mix(in srgb, var(--mu-accent, #e040fb) 15%, transparent);
       }
       .mu-vol-slider {
         flex: 1; min-width: 40px; height: 4px;
@@ -8592,6 +8885,49 @@ class AlertTickerCard extends LitElement {
                     0 4px 22px rgba(0,0,0,0.55);
       }
       @keyframes muSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      /* ---- Vinyl record mode -------------------------------------------- */
+      .mu-art-vinyl {
+        position: relative; flex-shrink: 0; cursor: pointer;
+        width: 82px; height: 82px; border-radius: 50%;
+        background: radial-gradient(circle, #1c1c1c 0%, #0a0a0a 100%);
+        margin: auto 14px auto 0;
+        box-shadow:
+          inset 0 0 0 3px rgba(255,255,255,0.04),
+          inset 0 0 0 7px #0a0a0a,
+          inset 0 0 0 9px rgba(255,255,255,0.03),
+          inset 0 0 0 14px #0a0a0a,
+          inset 0 0 0 16px rgba(255,255,255,0.025),
+          inset 0 0 0 21px #0a0a0a,
+          inset 0 0 0 23px rgba(255,255,255,0.02),
+          inset 0 0 0 28px #0a0a0a,
+          inset 0 0 0 30px rgba(255,255,255,0.015),
+          inset 0 0 0 35px #0a0a0a,
+          0 0 0 2px color-mix(in srgb, var(--mu-accent, #e040fb) 45%, transparent),
+          0 0 28px color-mix(in srgb, var(--mu-accent, #e040fb) 40%, transparent),
+          0 4px 22px rgba(0,0,0,0.7);
+        animation: muVinylAppear 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
+      }
+      .mu-art-vinyl--playing { animation: muVinylAppear 0.45s cubic-bezier(0.34,1.56,0.64,1) both, muSpin 10s linear 0.45s infinite; }
+      .mu-art-vinyl--paused  { animation: muVinylAppear 0.45s cubic-bezier(0.34,1.56,0.64,1) both; }
+      @keyframes muVinylAppear {
+        from { opacity: 0; transform: scale(0.55) rotate(-180deg); }
+        to   { opacity: 1; transform: scale(1) rotate(0deg); }
+      }
+      .mu-vinyl-label {
+        position: absolute; top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: 30px; height: 30px; border-radius: 50%;
+        background-size: cover; background-position: center;
+        background-color: #222;
+        box-shadow: 0 0 0 1px rgba(255,255,255,0.15), 0 0 8px rgba(0,0,0,0.6);
+      }
+      .mu-vinyl-label::after {
+        content: ''; position: absolute; top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: 5px; height: 5px; border-radius: 50%;
+        background: #0a0a0a;
+        box-shadow: 0 0 0 1px rgba(255,255,255,0.25);
+      }
       .mu-accent-line {
         position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
         background: linear-gradient(90deg, transparent 0%,
@@ -8621,7 +8957,7 @@ class AlertTickerCard extends LitElement {
         position: absolute;
         top: 7px;
         right: 7px;
-        z-index: 20;
+        z-index: 30;
         pointer-events: none; /* invisible until card is hovered */
       }
       .atc-snooze-host:hover .atc-snooze-wrap,
@@ -8699,6 +9035,10 @@ class AlertTickerCard extends LitElement {
         gap: 3px;
         min-width: 110px;
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      }
+      .atc-snooze-menu-up {
+        top: auto;
+        bottom: 32px;
       }
       .atc-snooze-label {
         font-size: 0.65rem;
