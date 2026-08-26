@@ -1,5 +1,5 @@
 ﻿/**
- * AlertTicker Card v1.3.9.9.1
+ * AlertTicker Card v1.3.9.9.4
  * A Home Assistant custom Lovelace card to display alerts based on entity states.
  * Supports 50 visual themes with per-alert theme assignment, priority ordering,
  * fold animation cycling, snooze, numeric conditions, attribute triggers,
@@ -41,7 +41,7 @@ const css = LitElement.prototype.css ?? ((strings, ...values) => {
 // ---------------------------------------------------------------------------
 // Card version — declared early so getConfigElement() can reference it
 // ---------------------------------------------------------------------------
-const CARD_VERSION = "1.3.9.9.1";
+const CARD_VERSION = "1.3.9.9.4";
 
 // ---------------------------------------------------------------------------
 // Google Cast compatibility (#171)
@@ -1725,6 +1725,7 @@ class AlertTickerCard extends LitElement {
     this._snoozed    = new Map(); // snoozeKey → expiry timestamp
     this._dismissed  = new Map(); // snoozeKey → last_changed when dismissed
     this._persistentLatched = new Set(); // snoozeKey → latched persistent alert
+    this._triggerStates = new Map();     // snoozeKey → { state, attribute_state, ts } — snapshot at fire time
     this._expandedGroups = new Set(); // groupKey → expanded (shows individual slides)
     this._historyOpen = false;
     this._history = []; // { ts, message, theme, icon, entity }
@@ -2157,8 +2158,26 @@ class AlertTickerCard extends LitElement {
       const prevKeys = new Set(this._activeAlerts.map((a) => this._snoozeKey(a)));
       const now = Date.now();
       let _overlayShown = false;
+      let _triggerStatesChanged = false;
       active.forEach((alert) => {
-        if (!prevKeys.has(this._snoozeKey(alert))) {
+        const key = this._snoozeKey(alert);
+        if (!prevKeys.has(key)) {
+          // Capture trigger state snapshot BEFORE recording history / TTS / push,
+          // so those consumers can already substitute {trigger_state}/{trigger_time}
+          // via _resolveMessage.
+          if (alert.entity && this._hass && !this._triggerStates.has(key)) {
+            const es = this._hass.states[alert.entity];
+            if (es) {
+              this._triggerStates.set(key, {
+                state: es.state,
+                attribute_state: alert.attribute
+                  ? String(this._resolveAttrPath(es.attributes, alert.attribute) ?? "")
+                  : null,
+                ts: Date.now(),
+              });
+              _triggerStatesChanged = true;
+            }
+          }
           if (!this._initialLoadDone) {
             // First load — record only if not already recorded recently (reload dedup)
             const recentlySeen = this._history.some(
@@ -2182,6 +2201,15 @@ class AlertTickerCard extends LitElement {
           }
         }
       });
+      // Cleanup: drop trigger snapshots for alerts that are no longer active
+      const _activeKeys = new Set(active.map((a) => this._snoozeKey(a)));
+      for (const k of this._triggerStates.keys()) {
+        if (!_activeKeys.has(k)) {
+          this._triggerStates.delete(k);
+          _triggerStatesChanged = true;
+        }
+      }
+      if (_triggerStatesChanged) this._saveTriggerStates();
     }
     this._initialLoadDone = true;
 
@@ -3173,6 +3201,17 @@ class AlertTickerCard extends LitElement {
       const { remainingStr } = this._getTimerData(alert);
       msg = msg.replace(/\{timer\}/g, remainingStr);
     }
+    // {trigger_state}/{trigger_attribute}/{trigger_time} — state snapshot at the moment
+    // the alert first fired. Useful for persistent alerts (#204): the sensor may return
+    // to normal but the message still shows what actually triggered it.
+    if (msg.includes("{trigger_state}") || msg.includes("{trigger_attribute}") || msg.includes("{trigger_time}")) {
+      const key = this._snoozeKey(alert);
+      const snap = this._triggerStates.get(key);
+      msg = msg
+        .replace(/\{trigger_state\}/g, snap?.state ?? (alert.entity ? (this._hass?.states[alert.entity]?.state ?? "") : ""))
+        .replace(/\{trigger_attribute\}/g, snap?.attribute_state ?? "")
+        .replace(/\{trigger_time\}/g, snap?.ts ? new Date(snap.ts).toLocaleTimeString(this._lang || undefined) : "");
+    }
     // {state}, {name}, {entity}, {device}, {area} — live entity values (for messages without {{ }})
     if (alert.entity && this._hass && (msg.includes("{state}") || msg.includes("{name}") || msg.includes("{entity}") || msg.includes("{device}") || msg.includes("{area}"))) {
       const es = this._hass.states[alert.entity];
@@ -3399,6 +3438,28 @@ class AlertTickerCard extends LitElement {
     } catch (_) {}
   }
 
+  // ---- Trigger-state snapshot helpers ---------------------------------------
+  // Records the entity state at the moment an alert first became active, so the
+  // {trigger_state} placeholder can reference it even after the entity state
+  // changes (useful for persistent alerts that stay visible while the sensor
+  // returns to normal).
+
+  _loadTriggerStates() {
+    try {
+      const raw = localStorage.getItem("atc-trigger-states");
+      if (!raw) return;
+      this._triggerStates = new Map(Object.entries(JSON.parse(raw)));
+    } catch (_) {
+      this._triggerStates = new Map();
+    }
+  }
+
+  _saveTriggerStates() {
+    try {
+      localStorage.setItem("atc-trigger-states", JSON.stringify(Object.fromEntries(this._triggerStates)));
+    } catch (_) {}
+  }
+
   _dismissPersistent(alert) {
     this._persistentLatched.delete(this._snoozeKey(alert));
     this._savePersistent();
@@ -3567,12 +3628,36 @@ class AlertTickerCard extends LitElement {
       ? this._resolveMessage({ ...alert, message: alert.push_notify_message })
       : this._resolveMessage(alert);
     if (!message) return;
+    // Optional extra payload — actions, sound, critical, attachments, etc.
+    // Passed through as-is to the notify service (see #207). String values
+    // are shallow-scanned for {state}/{{...}} template patterns so users can
+    // include dynamic values inside actions without extra config.
+    const data = this._resolvePushNotifyData(alert.push_notify_data, alert);
     try {
       this._hass.callService("notify", notifyService, {
         ...(title ? { title } : {}),
         message,
+        ...(data ? { data } : {}),
       });
     } catch (_) {}
+  }
+
+  /** Deep-clones push_notify_data and resolves message-style placeholders inside string values. */
+  _resolvePushNotifyData(data, alert) {
+    if (data == null || typeof data !== "object") return null;
+    const walk = (v) => {
+      if (typeof v === "string") {
+        return v.includes("{") ? this._resolveMessage({ ...alert, message: v }) : v;
+      }
+      if (Array.isArray(v)) return v.map(walk);
+      if (v && typeof v === "object") {
+        const out = {};
+        for (const k of Object.keys(v)) out[k] = walk(v[k]);
+        return out;
+      }
+      return v;
+    };
+    return walk(data);
   }
 
   _playAlertSound(alert) {
@@ -4261,6 +4346,7 @@ class AlertTickerCard extends LitElement {
     this._loadSnooze();
     this._loadDismissed();
     this._loadPersistent();
+    this._loadTriggerStates();
     this._loadHistory();
     this._startCycleTimer();
     this._startTimerTick();
@@ -4330,6 +4416,7 @@ class AlertTickerCard extends LitElement {
     this.style.setProperty("--atc-card-outline", this._config?.card_border
       ? "1px solid var(--ha-card-border-color, var(--divider-color, rgba(255,255,255,0.25)))"
       : "var(--ha-card-border-width, 0px) solid var(--ha-card-border-color, transparent)");
+    this.style.setProperty("--atc-severity-border-width", this._config?.severity_border === false ? "0px" : "");
     const bg = this._config?.card_background;
     if (bg && bg !== false) {
       let bgValue;
@@ -10180,7 +10267,7 @@ class AlertTickerCard extends LitElement {
       .atc-ha-theme .at-motion,
       .atc-ha-theme .at-intruder,
       .atc-ha-theme .at-toxic {
-        border: 1px solid var(--error-color, #e53935) !important;
+        border: var(--atc-severity-border-width, 1px) solid var(--error-color, #e53935) !important;
       }
       .atc-ha-theme .at-emergency [class$="-badge"],
       .atc-ha-theme .at-alarm     [class$="-badge"],
@@ -10204,7 +10291,7 @@ class AlertTickerCard extends LitElement {
       .atc-ha-theme .at-smoke,
       .atc-ha-theme .at-wind,
       .atc-ha-theme .at-leak {
-        border: 1px solid var(--warning-color, #ff9800) !important;
+        border: var(--atc-severity-border-width, 1px) solid var(--warning-color, #ff9800) !important;
       }
       .atc-ha-theme .at-warning     [class$="-badge"],
       .atc-ha-theme .at-caution     [class$="-badge"],
@@ -10239,7 +10326,7 @@ class AlertTickerCard extends LitElement {
       .atc-ha-theme .at-cyberpunk,
       .atc-ha-theme .at-vapor,
       .atc-ha-theme .at-ticker {
-        border: 1px solid var(--info-color, var(--primary-color, #2196f3)) !important;
+        border: var(--atc-severity-border-width, 1px) solid var(--info-color, var(--primary-color, #2196f3)) !important;
       }
       .atc-ha-theme .at-info         [class$="-badge"],
       .atc-ha-theme .at-notification [class$="-badge"],
@@ -10273,7 +10360,7 @@ class AlertTickerCard extends LitElement {
       .atc-ha-theme .at-sunrise,
       .atc-ha-theme .at-plant,
       .atc-ha-theme .at-lock {
-        border: 1px solid var(--success-color, #43a047) !important;
+        border: var(--atc-severity-border-width, 1px) solid var(--success-color, #43a047) !important;
       }
       .atc-ha-theme .at-success  [class$="-badge"],
       .atc-ha-theme .at-check    [class$="-badge"],
@@ -10289,7 +10376,7 @@ class AlertTickerCard extends LitElement {
       /* ── 3D Spectacular — critical ── */
       .atc-ha-theme .at-portal,
       .atc-ha-theme .at-void {
-        border: 1px solid var(--error-color, #f44336) !important;
+        border: var(--atc-severity-border-width, 1px) solid var(--error-color, #f44336) !important;
       }
       .atc-ha-theme .at-portal [class$="-badge"],
       .atc-ha-theme .at-void   [class$="-badge"] {
@@ -10304,7 +10391,7 @@ class AlertTickerCard extends LitElement {
       /* ── 3D Spectacular — warning ── */
       .atc-ha-theme .at-volt,
       .atc-ha-theme .at-nebula {
-        border: 1px solid var(--warning-color, #ff9800) !important;
+        border: var(--atc-severity-border-width, 1px) solid var(--warning-color, #ff9800) !important;
       }
       .atc-ha-theme .at-volt   [class$="-badge"],
       .atc-ha-theme .at-nebula [class$="-badge"] {
@@ -10317,7 +10404,7 @@ class AlertTickerCard extends LitElement {
       /* ── 3D Spectacular — info ── */
       .atc-ha-theme .at-prism,
       .atc-ha-theme .at-arcade {
-        border: 1px solid var(--info-color, var(--primary-color, #2196f3)) !important;
+        border: var(--atc-severity-border-width, 1px) solid var(--info-color, var(--primary-color, #2196f3)) !important;
       }
       .atc-ha-theme .at-prism  [class$="-badge"] {
         background: var(--info-color, var(--primary-color, #2196f3)) !important;
@@ -10334,7 +10421,7 @@ class AlertTickerCard extends LitElement {
       /* ── 3D Spectacular — ok ── */
       .atc-ha-theme .at-diamond,
       .atc-ha-theme .at-quantum {
-        border: 1px solid var(--success-color, #43a047) !important;
+        border: var(--atc-severity-border-width, 1px) solid var(--success-color, #43a047) !important;
       }
       .atc-ha-theme .at-diamond [class$="-badge"],
       .atc-ha-theme .at-quantum [class$="-badge"] {
@@ -10351,7 +10438,7 @@ class AlertTickerCard extends LitElement {
       .atc-ha-theme .at-timer-pulse,
       .atc-ha-theme .at-timer-ring {
         background: var(--card-background-color, #1c1c2e) !important;
-        border: 1px solid var(--divider-color, rgba(0,0,0,0.12)) !important;
+        border: var(--atc-severity-border-width, 1px) solid var(--divider-color, rgba(0,0,0,0.12)) !important;
       }
 
       /* ── Decorative elements reset ── */

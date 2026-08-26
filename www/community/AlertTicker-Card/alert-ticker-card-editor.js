@@ -1,5 +1,5 @@
 /**
- * AlertTicker Card Editor v1.3.9.9.1
+ * AlertTicker Card Editor v1.3.9.9.4
  * Visual editor for the AlertTicker Card custom Lovelace component.
  */
 
@@ -10,7 +10,7 @@ const html = LitElement.prototype.html;
 const css = LitElement.prototype.css;
 
 // Must match the version in alert-ticker-card.js
-const CARD_VERSION = "1.3.9.9.1";
+const CARD_VERSION = "1.3.9.9.4";
 
 // ---------------------------------------------------------------------------
 // Theme metadata — mirrors alert-ticker-card.js
@@ -943,12 +943,15 @@ const ET = {
     section_push_notify: "📱 Notifiche push",
     push_notify_master_toggle: "Abilita notifiche push mobile",
     push_notify_master_toggle_help: "Interruttore master. Se disattivato, nessun avviso invia una notifica push, anche se abilitato sul singolo avviso.",
+    client_side_warning: "⚠️ Funziona solo se una dashboard HA è aperta nel browser (desktop, tablet fisso o app Companion in primo piano). Per alert critici 24/7 usa un'automazione HA server-side.",
     alert_push_notify: "Invia notifica push mobile",
     alert_push_notify_help: "Quando l'avviso si attiva, invia una notifica push tramite il servizio notify selezionato.",
     alert_push_notify_title: "Titolo notifica (Jinja2)",
     alert_push_notify_title_help: "Titolo inviato nella notifica push. Se vuoto, usa l'etichetta badge dell'avviso.",
     alert_push_notify_message: "Messaggio notifica (Jinja2)",
     alert_push_notify_message_help: "Messaggio inviato nella notifica push. Se vuoto, usa il messaggio dell'avviso.",
+    alert_push_notify_data: "Payload data (YAML)",
+    alert_push_notify_data_help: "Payload aggiuntivo passato al servizio notify sotto la chiave data — abilita azioni, suoni personalizzati, alert critici (bypass DND), tag, gruppi. Le stringhe supportano i placeholder {state}/{{ ... }}.",
     alert_push_notify_service: "Servizio notify",
     alert_camera_entity: "Camera nell'overlay",
     alert_camera_entity_help: "Quando l'avviso scatta, mostra questa camera nel banner overlay. Visibile solo nell'overlay, non nella card.",
@@ -1242,6 +1245,8 @@ const ET = {
     card_height_help: "Locks the height to prevent layout shifts when alerts change. Leave empty for automatic height.",
     card_border: "Show card border & name",
     card_border_help: "Adds the standard Home Assistant border around the card. When no alerts are active, shows a placeholder with the card name instead of hiding completely.",
+    severity_border: "Show severity border",
+    severity_border_help: "Draws a 1px colored border around each alert matching its severity (critical/warning/info/OK). Turn off to keep badge/icon color coding without the border. Width is themeable via --atc-severity-border-width.",
     card_background: "Custom background / transparency",
     card_background_help: "Enable to use the HA theme variable (--ha-card-background). Enter a custom CSS value to use a fixed color, e.g. rgba(0,0,0,0.5).",
     show_snooze_bar: "Show snooze reactivation bar 💤",
@@ -1295,12 +1300,15 @@ const ET = {
     section_push_notify: "📱 Push Notifications",
     push_notify_master_toggle: "Enable mobile push notifications",
     push_notify_master_toggle_help: "Master switch. When off, no alert sends a push notification, even if enabled per alert.",
+    client_side_warning: "⚠️ Funktioniert nur, wenn ein HA-Dashboard in einem Browser geöffnet ist (Desktop, Wandtablet oder Companion-App im Vordergrund). Für kritische 24/7-Alarme eine serverseitige HA-Automatisierung verwenden.",
     alert_push_notify: "Send mobile push notification",
     alert_push_notify_help: "When this alert activates, sends a push notification via the selected notify service.",
     alert_push_notify_title: "Notification title (Jinja2)",
     alert_push_notify_title_help: "Title sent in the push notification. Leave empty to use the alert badge label.",
     alert_push_notify_message: "Notification message (Jinja2)",
     alert_push_notify_message_help: "Message sent in the push notification. Leave empty to use the alert message.",
+    alert_push_notify_data: "Payload data (YAML)",
+    alert_push_notify_data_help: "Extra payload passed through to the notify service under the data key — enables actions, custom sounds, critical alerts (bypass DND), tag, grouping. String values support {state}/{{ ... }} placeholders.",
     alert_push_notify_service: "Notify service",
     alert_camera_entity: "Camera in overlay",
     alert_camera_entity_help: "When the alert triggers, shows this camera in the overlay banner. Only visible in the overlay, not in the card.",
@@ -1647,12 +1655,15 @@ const ET = {
     section_push_notify: "📱 Notifications push",
     push_notify_master_toggle: "Activer les notifications push mobiles",
     push_notify_master_toggle_help: "Interrupteur principal. Si désactivé, aucune alerte n'envoie de notification push, même si activé sur chaque alerte.",
+    client_side_warning: "⚠️ Fonctionne uniquement si un tableau de bord HA est ouvert dans un navigateur (bureau, tablette murale, app Companion au premier plan). Pour les alertes critiques 24/7, utilisez une automatisation HA côté serveur.",
     alert_push_notify: "Envoyer une notification push mobile",
     alert_push_notify_help: "Quand cette alerte se déclenche, envoie une notification push via le service notify sélectionné.",
     alert_push_notify_title: "Titre de la notification (Jinja2)",
     alert_push_notify_title_help: "Titre envoyé dans la notification push. Laisser vide pour utiliser le label badge de l'alerte.",
     alert_push_notify_message: "Message de la notification (Jinja2)",
     alert_push_notify_message_help: "Message envoyé dans la notification push. Laisser vide pour utiliser le message de l'alerte.",
+    alert_push_notify_data: "Payload data (YAML)",
+    alert_push_notify_data_help: "Extra payload passed through to the notify service under the data key — enables actions, custom sounds, critical alerts (bypass DND), tag, grouping. String values support {state}/{{ ... }} placeholders.",
     alert_push_notify_service: "Service notify",
     alert_camera_entity: "Caméra dans l'overlay",
     alert_camera_entity_help: "Quand l'alerte se déclenche, affiche cette caméra dans le banner overlay. Visible uniquement dans l'overlay, pas dans la carte.",
@@ -1999,12 +2010,15 @@ const ET = {
     section_push_notify: "📱 Push-Benachrichtigungen",
     push_notify_master_toggle: "Mobile Push-Benachrichtigungen aktivieren",
     push_notify_master_toggle_help: "Hauptschalter. Wenn deaktiviert, sendet keine Warnung eine Push-Benachrichtigung, auch wenn für einzelne Warnungen aktiviert.",
+    client_side_warning: "⚠️ Werkt alleen als een HA-dashboard open is in een browser (desktop, vaste tablet, of Companion-app op de voorgrond). Voor kritieke 24/7 meldingen gebruik een server-side HA-automatisering.",
     alert_push_notify: "Mobile Push-Benachrichtigung senden",
     alert_push_notify_help: "Wenn diese Warnung aktiv wird, sendet eine Push-Benachrichtigung über den ausgewählten Notify-Dienst.",
     alert_push_notify_title: "Benachrichtigungstitel (Jinja2)",
     alert_push_notify_title_help: "Titel in der Push-Benachrichtigung. Leer lassen für das Standard-Badge-Label der Warnung.",
     alert_push_notify_message: "Benachrichtigungsnachricht (Jinja2)",
     alert_push_notify_message_help: "Nachricht in der Push-Benachrichtigung. Leer lassen für die Warnungsnachricht.",
+    alert_push_notify_data: "Payload data (YAML)",
+    alert_push_notify_data_help: "Extra payload passed through to the notify service under the data key — enables actions, custom sounds, critical alerts (bypass DND), tag, grouping. String values support {state}/{{ ... }} placeholders.",
     alert_push_notify_service: "Notify-Dienst",
     alert_camera_entity: "Kamera im Overlay",
     alert_camera_entity_help: "Wenn die Warnung ausgelöst wird, zeigt diese Kamera im Overlay-Banner. Nur im Overlay sichtbar, nicht in der Karte.",
@@ -2351,12 +2365,15 @@ const ET = {
     section_push_notify: "📱 Push-meldingen",
     push_notify_master_toggle: "Mobiele push-meldingen inschakelen",
     push_notify_master_toggle_help: "Hoofdschakelaar. Als uitgeschakeld, stuurt geen melding een push-notificatie, ook als het per melding is ingeschakeld.",
+    client_side_warning: "⚠️ Chỉ hoạt động khi một bảng điều khiển HA đang mở trong trình duyệt. Đối với cảnh báo quan trọng 24/7, sử dụng tự động hóa HA phía máy chủ.",
     alert_push_notify: "Mobiele push-melding versturen",
     alert_push_notify_help: "Wanneer deze melding activeert, stuurt een push-melding via de geselecteerde notify-service.",
     alert_push_notify_title: "Meldingstitel (Jinja2)",
     alert_push_notify_title_help: "Titel in de push-melding. Leeg laten voor het standaard badge-label van de melding.",
     alert_push_notify_message: "Meldingsbericht (Jinja2)",
     alert_push_notify_message_help: "Bericht in de push-melding. Leeg laten voor het meldingsbericht.",
+    alert_push_notify_data: "Payload data (YAML)",
+    alert_push_notify_data_help: "Extra payload passed through to the notify service under the data key — enables actions, custom sounds, critical alerts (bypass DND), tag, grouping. String values support {state}/{{ ... }} placeholders.",
     alert_push_notify_service: "Notify-service",
     alert_camera_entity: "Camera in overlay",
     alert_camera_entity_help: "Wanneer de melding activeert, toont deze camera in de overlay banner. Alleen zichtbaar in de overlay, niet in de kaart.",
@@ -2703,12 +2720,15 @@ const ET = {
     section_push_notify: "📱 Thông báo đẩy",
     push_notify_master_toggle: "Bật thông báo đẩy di động",
     push_notify_master_toggle_help: "Công tắc chính. Khi tắt, không có báo động nào gửi thông báo đẩy, ngay cả khi được bật cho từng báo động.",
+    client_side_warning: "⚠️ Работает только пока панель HA открыта в браузере. Для критических уведомлений 24/7 используйте серверную автоматизацию HA.",
     alert_push_notify: "Gửi thông báo đẩy di động",
     alert_push_notify_help: "Khi báo động này kích hoạt, gửi thông báo đẩy qua dịch vụ notify đã chọn.",
     alert_push_notify_title: "Tiêu đề thông báo (Jinja2)",
     alert_push_notify_title_help: "Tiêu đề gửi trong thông báo đẩy. Để trống để dùng nhãn huy hiệu của báo động.",
     alert_push_notify_message: "Nội dung thông báo (Jinja2)",
     alert_push_notify_message_help: "Nội dung gửi trong thông báo đẩy. Để trống để dùng thông điệp báo động.",
+    alert_push_notify_data: "Payload data (YAML)",
+    alert_push_notify_data_help: "Extra payload passed through to the notify service under the data key — enables actions, custom sounds, critical alerts (bypass DND), tag, grouping. String values support {state}/{{ ... }} placeholders.",
     alert_push_notify_service: "Dịch vụ notify",
     alert_camera_entity: "Camera trong overlay",
     alert_camera_entity_help: "Khi báo động kích hoạt, hiển thị camera này trong banner overlay. Chỉ hiện trong overlay, không trong card.",
@@ -3055,12 +3075,15 @@ const ET = {
     section_push_notify: "📱 Push-уведомления",
     push_notify_master_toggle: "Включить мобильные push-уведомления",
     push_notify_master_toggle_help: "Главный переключатель. Когда выключен, ни одно оповещение не отправляет push-уведомление, даже если включено для отдельных оповещений.",
+    client_side_warning: "⚠️ Virker kun, mens et HA-dashboard er åbent i en browser. Til kritiske 24/7-advarsler brug en HA-automatisering på serversiden.",
     alert_push_notify: "Отправить мобильное push-уведомление",
     alert_push_notify_help: "Когда это оповещение активируется, отправляет push-уведомление через выбранный notify-сервис.",
     alert_push_notify_title: "Заголовок уведомления (Jinja2)",
     alert_push_notify_title_help: "Заголовок push-уведомления. Оставьте пустым для использования метки значка оповещения.",
     alert_push_notify_message: "Сообщение уведомления (Jinja2)",
     alert_push_notify_message_help: "Сообщение push-уведомления. Оставьте пустым для использования сообщения оповещения.",
+    alert_push_notify_data: "Payload data (YAML)",
+    alert_push_notify_data_help: "Extra payload passed through to the notify service under the data key — enables actions, custom sounds, critical alerts (bypass DND), tag, grouping. String values support {state}/{{ ... }} placeholders.",
     alert_push_notify_service: "Notify-сервис",
     alert_camera_entity: "Камера в оверлее",
     alert_camera_entity_help: "При срабатывании оповещения показывает эту камеру в баннере оверлея. Видно только в оверлее, не в карточке.",
@@ -3403,12 +3426,15 @@ const ET = {
     section_push_notify: "📱 Push-notifikationer",
     push_notify_master_toggle: "Aktivér mobile push-notifikationer",
     push_notify_master_toggle_help: "Hovedkontakt. Når slået fra, sender ingen advarsel en push-notifikation, selv hvis aktiveret på individuelle advarsler.",
+    client_side_warning: "⚠️ Funguje pouze pokud je HA dashboard otevřený v prohlížeči. Pro kritická upozornění 24/7 použijte serverovou HA automatizaci.",
     alert_push_notify: "Send mobil push-notifikation",
     alert_push_notify_help: "Når denne advarsel aktiveres, sendes en push-notifikation via den valgte notify-tjeneste.",
     alert_push_notify_title: "Notifikationstitel (Jinja2)",
     alert_push_notify_title_help: "Titel sendt i push-notifikationen. Efterlad tom for at bruge advarslens badge-label.",
     alert_push_notify_message: "Notifikationsbesked (Jinja2)",
     alert_push_notify_message_help: "Besked sendt i push-notifikationen. Efterlad tom for at bruge advarslens besked.",
+    alert_push_notify_data: "Payload data (YAML)",
+    alert_push_notify_data_help: "Extra payload passed through to the notify service under the data key — enables actions, custom sounds, critical alerts (bypass DND), tag, grouping. String values support {state}/{{ ... }} placeholders.",
     alert_push_notify_service: "Notify-tjeneste",
     alert_camera_entity: "Kamera i overlay",
     alert_camera_entity_help: "Når advarslen udløses, vises dette kamera i overlay-banneret. Kun synligt i overlay, ikke i kortet.",
@@ -3759,12 +3785,15 @@ const ET = {
     section_push_notify: "📱 Push notifikace",
     push_notify_master_toggle: "Povolit mobilní push notifikace",
     push_notify_master_toggle_help: "Hlavní přepínač. Když je vypnutý, žádné varování neposílá push notifikaci, i když je povoleno pro jednotlivá varování.",
+    client_side_warning: "⚠️ Funciona apenas enquanto um painel HA estiver aberto num navegador. Para alertas críticos 24/7, use uma automação HA server-side.",
     alert_push_notify: "Odeslat mobilní push notifikaci",
     alert_push_notify_help: "Když se toto varování aktivuje, odešle push notifikaci přes vybranou notify službu.",
     alert_push_notify_title: "Název notifikace (Jinja2)",
     alert_push_notify_title_help: "Název odeslaný v push notifikaci. Nechte prázdné pro použití badge štítku varování.",
     alert_push_notify_message: "Zpráva notifikace (Jinja2)",
     alert_push_notify_message_help: "Zpráva odeslaná v push notifikaci. Nechte prázdné pro použití zprávy varování.",
+    alert_push_notify_data: "Payload data (YAML)",
+    alert_push_notify_data_help: "Extra payload passed through to the notify service under the data key — enables actions, custom sounds, critical alerts (bypass DND), tag, grouping. String values support {state}/{{ ... }} placeholders.",
     alert_push_notify_service: "Notify služba",
     alert_camera_entity: "Kamera v overlay",
     alert_camera_entity_help: "Když se varování aktivuje, zobrazí tuto kameru v overlay banneru. Viditelné pouze v overlay, ne v kartě.",
@@ -4115,12 +4144,15 @@ const ET = {
     section_push_notify: "📱 Notificações push",
     push_notify_master_toggle: "Habilitar notificações push móveis",
     push_notify_master_toggle_help: "Interruptor principal. Quando desligado, nenhum alerta envia uma notificação push, mesmo que habilitado em alertas individuais.",
+    client_side_warning: "⚠️ Funciona solo mientras un panel de HA esté abierto en un navegador. Para alertas críticas 24/7, usa una automatización de HA en el servidor.",
     alert_push_notify: "Enviar notificação push móvel",
     alert_push_notify_help: "Quando este alerta for ativado, envia uma notificação push via o serviço notify selecionado.",
     alert_push_notify_title: "Título da notificação (Jinja2)",
     alert_push_notify_title_help: "Título enviado na notificação push. Deixe vazio para usar o rótulo badge do alerta.",
     alert_push_notify_message: "Mensagem da notificação (Jinja2)",
     alert_push_notify_message_help: "Mensagem enviada na notificação push. Deixe vazio para usar a mensagem do alerta.",
+    alert_push_notify_data: "Payload data (YAML)",
+    alert_push_notify_data_help: "Extra payload passed through to the notify service under the data key — enables actions, custom sounds, critical alerts (bypass DND), tag, grouping. String values support {state}/{{ ... }} placeholders.",
     alert_push_notify_service: "Serviço notify",
     alert_camera_entity: "Câmera no overlay",
     alert_camera_entity_help: "Quando o alerta disparar, mostra esta câmera no banner overlay. Visível apenas no overlay, não no card.",
@@ -4467,12 +4499,15 @@ const ET = {
     section_push_notify: "📱 Notificaciones push",
     push_notify_master_toggle: "Activar notificaciones push móviles",
     push_notify_master_toggle_help: "Interruptor principal. Cuando está desactivado, ninguna alerta envía una notificación push, incluso si está activado en alertas individuales.",
+    client_side_warning: "⚠️ Yalnızca bir HA panosu tarayıcıda açıkken çalışır. 7/24 kritik uyarılar için sunucu tarafında HA otomasyonu kullanın.",
     alert_push_notify: "Enviar notificación push móvil",
     alert_push_notify_help: "Cuando esta alerta se activa, envía una notificación push a través del servicio notify seleccionado.",
     alert_push_notify_title: "Título de la notificación (Jinja2)",
     alert_push_notify_title_help: "Título enviado en la notificación push. Dejar vacío para usar la etiqueta badge de la alerta.",
     alert_push_notify_message: "Mensaje de la notificación (Jinja2)",
     alert_push_notify_message_help: "Mensaje enviado en la notificación push. Dejar vacío para usar el mensaje de la alerta.",
+    alert_push_notify_data: "Payload data (YAML)",
+    alert_push_notify_data_help: "Extra payload passed through to the notify service under the data key — enables actions, custom sounds, critical alerts (bypass DND), tag, grouping. String values support {state}/{{ ... }} placeholders.",
     alert_push_notify_service: "Servicio notify",
     alert_camera_entity: "Cámara en overlay",
     alert_camera_entity_help: "Cuando la alerta se activa, muestra esta cámara en el banner overlay. Solo visible en el overlay, no en la tarjeta.",
@@ -4819,12 +4854,15 @@ const ET = {
     section_push_notify: "📱 Anlık Bildirimler",
     push_notify_master_toggle: "Mobil anlık bildirimleri etkinleştir",
     push_notify_master_toggle_help: "Ana anahtar. Kapalıyken, uyarı başına etkin olsa bile hiçbir uyarı anlık bildirim göndermez.",
+    client_side_warning: "⚠️ Works only while an HA dashboard is open in a browser (desktop, wall tablet, or Companion app in the foreground). For 24/7 critical alerts, use a server-side HA automation.",
     alert_push_notify: "Mobil anlık bildirim gönder",
     alert_push_notify_help: "Bu uyarı etkinleştiğinde, seçilen notify servisi aracılığıyla anlık bildirim gönderir.",
     alert_push_notify_title: "Bildirim başlığı (Jinja2)",
     alert_push_notify_title_help: "Anlık bildirimde gönderilen başlık. Uyarı rozet etiketini kullanmak için boş bırak.",
     alert_push_notify_message: "Bildirim mesajı (Jinja2)",
     alert_push_notify_message_help: "Anlık bildirimde gönderilen mesaj. Uyarı mesajını kullanmak için boş bırak.",
+    alert_push_notify_data: "Payload data (YAML)",
+    alert_push_notify_data_help: "Extra payload passed through to the notify service under the data key — enables actions, custom sounds, critical alerts (bypass DND), tag, grouping. String values support {state}/{{ ... }} placeholders.",
     alert_push_notify_service: "Notify servisi",
     alert_camera_entity: "Overlay'de kamera",
     alert_camera_entity_help: "Uyarı tetiklendiğinde, bu kamerayı overlay banner'da gösterir. Yalnızca overlay'de görünür, kart içinde değil.",
@@ -5619,6 +5657,16 @@ class AlertTickerCardEditor extends LitElement {
       </div>
       <div class="form-row">
         <div class="toggle-row">
+          <span>${this._t("severity_border")}</span>
+          <ha-switch
+            .checked="${cfg.severity_border !== false}"
+            @change="${(e) => this._fireConfig({ ...this._config, severity_border: e.target.checked ? undefined : false })}"
+          ></ha-switch>
+        </div>
+        <div class="helper-text">${this._t("severity_border_help")}</div>
+      </div>
+      <div class="form-row">
+        <div class="toggle-row">
           <span>${this._t("card_background")}</span>
           <ha-switch
             .checked="${!!cfg.card_background}"
@@ -5800,6 +5848,7 @@ class AlertTickerCardEditor extends LitElement {
           ></ha-switch>
         </div>
         <div class="helper-text">${this._t("tts_master_toggle_help")}</div>
+        <div class="helper-text" style="color:var(--warning-color,#f4a835);margin-top:4px">${this._t("client_side_warning")}</div>
       </div>
 
       <!-- ── PUSH NOTIFY MASTER ─────────────────────────────────────────── -->
@@ -5813,6 +5862,7 @@ class AlertTickerCardEditor extends LitElement {
           ></ha-switch>
         </div>
         <div class="helper-text">${this._t("push_notify_master_toggle_help")}</div>
+        <div class="helper-text" style="color:var(--warning-color,#f4a835);margin-top:4px">${this._t("client_side_warning")}</div>
       </div>
 
       <!-- ── HISTORY ───────────────────────────────────────────────────── -->
@@ -7242,6 +7292,9 @@ class AlertTickerCardEditor extends LitElement {
                     ></ha-switch>
                   </div>
                   <div class="helper-text">${this._t("alert_tts_help")}</div>
+                  ${alert.tts ? html`
+                    <div class="helper-text" style="color:var(--warning-color,#f4a835);margin-top:4px">${this._t("client_side_warning")}</div>
+                  ` : ""}
                 </div>
                 ${alert.tts ? html`
                   <div class="form-row">
@@ -7311,6 +7364,9 @@ class AlertTickerCardEditor extends LitElement {
                     ></ha-switch>
                   </div>
                   <div class="helper-text">${this._t("alert_push_notify_help")}</div>
+                  ${alert.push_notify ? html`
+                    <div class="helper-text" style="color:var(--warning-color,#f4a835);margin-top:4px">${this._t("client_side_warning")}</div>
+                  ` : ""}
                 </div>
                 ${alert.push_notify ? html`
                   <div class="form-row">
@@ -7341,6 +7397,19 @@ class AlertTickerCardEditor extends LitElement {
                         `)}
                       </select>
                     </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="helper-text" style="margin-bottom:6px">${this._t("alert_push_notify_data_help")}</div>
+                    <ha-yaml-editor
+                      .label="${this._t('alert_push_notify_data')}"
+                      .value="${alert.push_notify_data || {}}"
+                      @value-changed="${(e) => {
+                        const v = e.detail.value;
+                        this._updateAlert(index, {
+                          push_notify_data: (v && typeof v === 'object' && Object.keys(v).length) ? v : undefined
+                        });
+                      }}"
+                    ></ha-yaml-editor>
                   </div>
                 ` : ""}
 
