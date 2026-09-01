@@ -1271,3 +1271,67 @@
         target:
           entity_id: notify.sj
   mode: single
+- id: '1788224775941'
+  alias: Auto Arm Security v3
+  description: 'Locks the garage door and arms the alarm in away mode when both Sooraj
+    and Arleepta are away. Two independent state triggers — one per person — each
+    with a 5-minute for: duration. Whichever person leaves last fires the automation
+    once they have been away for 5 solid minutes, provided the other person is also
+    not_home at that moment. GPS flickers on one person only reset that person''s
+    individual clock; the other person''s clock keeps running independently. Only
+    fires if alarm is currently disarmed.'
+  triggers:
+  - entity_id: person.sooraj_chettada
+    for:
+      minutes: 5
+    id: sooraj_away
+    to: not_home
+    trigger: state
+  - entity_id: person.arleepta
+    for:
+      minutes: 5
+    id: arleepta_away
+    to: not_home
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: person.sooraj_chettada
+    state: not_home
+  - condition: state
+    entity_id: person.arleepta
+    state: not_home
+  - condition: state
+    entity_id: alarm_control_panel.home
+    state: disarmed
+  actions:
+  - action: lock.lock
+    alias: Lock garage door
+    target:
+      entity_id: lock.garage_door_lock
+  - action: alarmo.arm
+    alias: Arm alarm in away mode
+    data:
+      code: '1985'
+      entity_id: alarm_control_panel.home
+      force: true
+      mode: away
+      skip_delay: true
+  mode: single
+- id: '1788225022376'
+  alias: Sump Pump Cycle
+  description: Every 2 hours, opens valve.sump_pump for 2 minutes then closes it.
+    Mode single so if a run is still in progress when the next trigger fires it is
+    skipped rather than queued.
+  triggers:
+  - hours: /2
+    trigger: time_pattern
+  actions:
+  - action: valve.open_valve
+    target:
+      entity_id: valve.sump_pump
+  - delay:
+      minutes: 2
+  - action: valve.close_valve
+    target:
+      entity_id: valve.sump_pump
+  mode: single

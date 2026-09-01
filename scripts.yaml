@@ -91,10 +91,7 @@ notify_critical_v1:
         data:
           message: '{{ message }}'
           target:
-          - media_player.loft_echo_dot
-          - media_player.great_room_echo_show
-          - media_player.loft_speakers
-          - media_player.bedroom
+          - media_player.all_alexa
 notify_audio_v3:
   alias: Notify Audio v3
   description: Plays Alexa TTS or sound alerts. Suppressed when Guest Mode OR Quiet
@@ -146,10 +143,7 @@ notify_audio_v3:
         data:
           message: '{{ message }}'
           target:
-          - media_player.loft_echo_dot
-          - media_player.great_room_echo_show
-          - media_player.loft_speakers
-          - media_player.bedroom
+          - media_player.all_alexa
 notify_v3:
   alias: Notify v3
   description: 'Master notification dispatcher. Normal notifications go to phones

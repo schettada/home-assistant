@@ -20,7 +20,7 @@ logger:
 
 recorder:
   db_url: !secret mysql
-  purge_keep_days: 15
+  purge_keep_days: 7
   exclude:
     domains:
       - automation
