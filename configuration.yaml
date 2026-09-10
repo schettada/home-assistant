@@ -21,18 +21,6 @@ logger:
 recorder:
   db_url: !secret mysql
   purge_keep_days: 7
-  exclude:
-    domains:
-      - automation
-      - group
-      - climate
-      - camera
-      - remote
-      - sun
-      - weather
-      - update
-      - image
-      - image_processing
 
 automation: !include automations.yaml
 scene: !include scenes.yaml

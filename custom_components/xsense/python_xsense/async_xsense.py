@@ -7,7 +7,7 @@ from typing import Any, Dict
 import aiohttp
 
 from .aws_signer import AWSSigner
-from .base import XSenseBase, shadow_update_body
+from .base import XSenseBase, _apply_sbs50_force_arm_prompt, shadow_update_body
 from .entity import Entity
 from .entity_map import EntityType
 from .exceptions import SessionExpired, APIFailure, XSenseError
@@ -187,7 +187,7 @@ def is_camera_entity(entity: Entity) -> bool:
     """Return if an entity came from the APK camera sources."""
     return (
         getattr(entity, "entity_type", None) == EntityType.CAMERA
-        or entity.type in CAMERA_TYPES
+        or getattr(entity, "type", None) in CAMERA_TYPES
     )
 
 
@@ -207,8 +207,15 @@ def _camera_addx_serial(camera: Entity) -> str:
 def _camera_addx_serial_candidates(camera: Entity) -> list[str]:
     """Return APK camera identifiers in ADDX preference order."""
     data = getattr(camera, "data", {}) or {}
+    ticket = data.get("cameraWebrtcTicket")
+    if not isinstance(ticket, dict):
+        ticket = {}
     result: list[str] = []
     for value in (
+        data.get("addxAccessSerialNumber"),
+        ticket.get("serialNumber"),
+        data.get("addxRealSerialNumber"),
+        ticket.get("realCxSerialNumber"),
         data.get("addxSerialNumber"),
         getattr(camera, "entity_id", None),
         getattr(camera, "sn", None),
@@ -219,6 +226,22 @@ def _camera_addx_serial_candidates(camera: Entity) -> list[str]:
         if serial not in result:
             result.append(serial)
     return result or [""]
+
+
+def camera_addx_serial(camera: Entity) -> str:
+    """Return the APK ADDX serial used for account-level camera APIs."""
+    return _camera_addx_serial(camera)
+
+
+def camera_matches_identifier(camera: Entity, identifier: Any) -> bool:
+    """Return whether an APK event identifier belongs to this camera."""
+    normalized = _normalized_camera_serial(identifier)
+    if normalized is None:
+        return False
+    return any(
+        _normalized_camera_serial(candidate) == normalized
+        for candidate in _camera_addx_serial_candidates(camera)
+    )
 
 
 def _is_addx_device_no_access(error: Exception) -> bool:
@@ -528,6 +551,7 @@ class AsyncXSense(XSenseBase):
         start_timestamp: int,
         end_timestamp: int,
         *,
+        house: House | None = None,
         start: int = 0,
         limit: int = 20,
     ) -> dict:
@@ -543,6 +567,7 @@ class AsyncXSense(XSenseBase):
             serialNumber=serials,
             tags=[],
             marked=0,
+            **({"_house": house} if house is not None else {}),
             **{"from": start},
         )
         LOGGER.debug(
@@ -551,12 +576,139 @@ class AsyncXSense(XSenseBase):
         )
         return data if isinstance(data, dict) else {}
 
+    async def get_camera_event_history_for_cameras(
+        self,
+        cameras: list[Entity],
+        start_timestamp: int,
+        end_timestamp: int,
+        *,
+        start: int = 0,
+        limit: int = 20,
+    ) -> dict:
+        """Return camera records through each camera's APK ADDX Home context."""
+        requests: list[tuple[Entity, House | None, list[str]]] = []
+        seen_cameras: set[str] = set()
+        for camera in cameras:
+            serials = [
+                serial
+                for serial in _camera_addx_serial_candidates(camera)
+                if serial
+            ]
+            if not serials:
+                continue
+            camera_key = _normalized_camera_serial(serials[0]) or serials[0]
+            if camera_key in seen_cameras:
+                continue
+            seen_cameras.add(camera_key)
+            requests.append((camera, self._camera_addx_house(camera), serials))
+
+        records: list[dict[str, Any]] = []
+        first_error: APIFailure | None = None
+        successful_requests = 0
+        for camera, house, serials in requests:
+            camera_request_succeeded = False
+            accepted_serial = None
+            for serial_index, serial in enumerate(serials):
+                try:
+                    history = await self.get_camera_event_history(
+                        [serial],
+                        start_timestamp,
+                        end_timestamp,
+                        house=house,
+                        start=start,
+                        limit=limit,
+                    )
+                except APIFailure as err:
+                    if first_error is None:
+                        first_error = err
+                    LOGGER.debug(
+                        "X-Sense camera record history unavailable: %s",
+                        {
+                            "identity_index": serial_index,
+                            "identity_count": len(serials),
+                            "error_type": type(err).__name__,
+                        },
+                    )
+                    continue
+
+                camera_request_succeeded = True
+                data = (
+                    history.get("data")
+                    if isinstance(history.get("data"), dict)
+                    else history
+                )
+                group_records = data.get("list") if isinstance(data, dict) else None
+                if not isinstance(group_records, list) or not group_records:
+                    continue
+
+                accepted_serial = serial
+                records.extend(
+                    record for record in group_records if isinstance(record, dict)
+                )
+                break
+
+            if accepted_serial is None:
+                for serial_index, serial in enumerate(serials):
+                    try:
+                        history = await self.get_camera_event_record_history(
+                            [serial],
+                            start_timestamp,
+                            end_timestamp,
+                            house=house,
+                            start=start,
+                            limit=limit,
+                        )
+                    except APIFailure as err:
+                        if first_error is None:
+                            first_error = err
+                        LOGGER.debug(
+                            "X-Sense camera event-library history unavailable: %s",
+                            {
+                                "identity_index": serial_index,
+                                "identity_count": len(serials),
+                                "error_type": type(err).__name__,
+                            },
+                        )
+                        continue
+
+                    camera_request_succeeded = True
+                    data = (
+                        history.get("data")
+                        if isinstance(history.get("data"), dict)
+                        else history
+                    )
+                    group_records = data.get("list") if isinstance(data, dict) else None
+                    if not isinstance(group_records, list) or not group_records:
+                        continue
+
+                    accepted_serial = serial
+                    records.extend(
+                        record for record in group_records if isinstance(record, dict)
+                    )
+                    break
+
+            if accepted_serial is not None:
+                camera.set_data(
+                    {
+                        "addxAccessSerialNumber": accepted_serial,
+                        "addxSerialNumber": accepted_serial,
+                    }
+                )
+
+            if camera_request_succeeded:
+                successful_requests += 1
+
+        if successful_requests == 0 and first_error is not None:
+            raise first_error
+        return {"list": records, "total": len(records)}
+
     async def get_camera_event_record_history(
         self,
         serial_numbers: list[str],
         start_timestamp: int,
         end_timestamp: int,
         *,
+        house: House | None = None,
         start: int = 0,
         limit: int = 20,
         tags: list[str] | None = None,
@@ -592,7 +744,11 @@ class AsyncXSense(XSenseBase):
         if serial_number_to_activity_zone:
             payload["serialNumberToActivityZone"] = serial_number_to_activity_zone
 
-        data = await self.addx_call("/library/newselectlibrary/event", **payload)
+        data = await self.addx_call(
+            "/library/newselectlibrary/event",
+            **({"_house": house} if house is not None else {}),
+            **payload,
+        )
         LOGGER.debug(
             "X-Sense camera event record history response: %s",
             _debug_data_shape(data),
@@ -966,6 +1122,11 @@ class AsyncXSense(XSenseBase):
     def _camera_addx_house(self, camera: Entity) -> House | None:
         """Return a House on the ADDX node that discovered this camera."""
         data = getattr(camera, "data", {}) or {}
+        addx_house_id = data.get("addxHouseId")
+        if addx_house_id not in (None, ""):
+            for house in self.houses.values():
+                if str(house.house_id) == str(addx_house_id):
+                    return house
         node_type = data.get("addxNodeType")
         if node_type:
             for house in self.houses.values():
@@ -1493,7 +1654,12 @@ class AsyncXSense(XSenseBase):
                     serialNumber=serial,
                     verifyDormancyStatus=True,
                 )
-                camera.set_data({"addxSerialNumber": serial})
+                camera.set_data(
+                    {
+                        "addxAccessSerialNumber": serial,
+                        "addxSerialNumber": serial,
+                    }
+                )
                 break
             except APIFailure as err:
                 last_error = err
@@ -1511,8 +1677,16 @@ class AsyncXSense(XSenseBase):
             raise last_error
         if isinstance(data, dict):
             data = dict(data)
-            data["serialNumber"] = _camera_addx_serial(camera)
-            camera.set_data({"cameraWebrtcTicket": data})
+            accepted_serial = _camera_addx_serial(camera)
+            data["serialNumber"] = accepted_serial
+            camera_data = {
+                "addxAccessSerialNumber": accepted_serial,
+                "cameraWebrtcTicket": data,
+            }
+            real_serial = data.get("realCxSerialNumber")
+            if real_serial not in (None, ""):
+                camera_data["addxRealSerialNumber"] = str(real_serial)
+            camera.set_data(camera_data)
             return data
         return None
 
@@ -1652,7 +1826,17 @@ class AsyncXSense(XSenseBase):
             return
 
         if "reported" in res.get("state", {}):
-            station.set_alarm_data(res["state"]["reported"])
+            reported = res["state"]["reported"].copy()
+            _apply_sbs50_force_arm_prompt(station, reported)
+            station.set_alarm_data(
+                {
+                    key: value
+                    for key, value in reported.items()
+                    if key not in {"forceReason", "safeModeAim"}
+                }
+            )
+            if "safeMode" in reported:
+                self.apply_safe_mode(station, reported["safeMode"])
 
     async def get_station_state(self, station: Station):
         for page in _station_info_shadow_names(station):
@@ -2678,6 +2862,7 @@ def _camera_data(data: Dict) -> Dict:
 
     return {
         "activatedTime": data.get("activatedTime"),
+        "addxHouseId": data.get("houseId"),
         "addxLocationId": data.get("locationId"),
         "addxNodeType": data.get("addxNodeType"),
         "addxSerialNumber": data.get("serialNumber"),

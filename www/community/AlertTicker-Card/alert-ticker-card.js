@@ -1,5 +1,5 @@
-﻿/**
- * AlertTicker Card v1.3.9.9.4
+/**
+ * AlertTicker Card v1.3.9.9.8
  * A Home Assistant custom Lovelace card to display alerts based on entity states.
  * Supports 50 visual themes with per-alert theme assignment, priority ordering,
  * fold animation cycling, snooze, numeric conditions, attribute triggers,
@@ -41,7 +41,7 @@ const css = LitElement.prototype.css ?? ((strings, ...values) => {
 // ---------------------------------------------------------------------------
 // Card version — declared early so getConfigElement() can reference it
 // ---------------------------------------------------------------------------
-const CARD_VERSION = "1.3.9.9.4";
+const CARD_VERSION = "1.3.9.9.8";
 
 // ---------------------------------------------------------------------------
 // Google Cast compatibility (#171)
@@ -95,6 +95,7 @@ const THEME_META = {
   radar:        { icon: "🎯", category: "warning",  color: "#64ffda", bg: "linear-gradient(135deg,#001a00,#002e1a)" },
   temperature:  { icon: "🌡️", category: "warning",  color: "#ff6d00", bg: "linear-gradient(135deg,#1a0800,#3d1500)" },
   battery:      { icon: "🔋", category: "warning",  color: "#ffca28", bg: "linear-gradient(135deg,#1a1400,#2e2200)" },
+  battery3d:    { icon: "🔋", category: "warning",  color: "#4caf50", bg: "linear-gradient(135deg,#0a1a0a,#1a2e1a)" },
   door:         { icon: "🚪", mdiIcon: "mdi:door-open",            animClass: "atc-icon-swing",   wrapClass: "atc-icon-wrap-h", category: "warning",  color: "#ffab40", bg: "linear-gradient(135deg,#1a1000,#2e1c00)" },
   window:       { icon: "🪟", mdiIcon: "mdi:window-open-variant", animClass: "atc-icon-swing-v", wrapClass: "atc-icon-wrap-v", category: "warning",  color: "#80d8ff", bg: "linear-gradient(135deg,#001a2e,#00294d)" },
   smoke:        { icon: "🌫️", category: "warning",  color: "#b0bec5", bg: "linear-gradient(135deg,#1a1a1a,#2e2e2e)" },
@@ -1726,6 +1727,8 @@ class AlertTickerCard extends LitElement {
     this._dismissed  = new Map(); // snoozeKey → last_changed when dismissed
     this._persistentLatched = new Set(); // snoozeKey → latched persistent alert
     this._triggerStates = new Map();     // snoozeKey → { state, attribute_state, ts } — snapshot at fire time
+    this._syncUnsubPromise = null;       // WebSocket subscription handle for alertticker_sync events
+    this._deviceId = Math.random().toString(36).slice(2) + Date.now().toString(36); // per-tab unique ID (issue #210)
     this._expandedGroups = new Set(); // groupKey → expanded (shows individual slides)
     this._historyOpen = false;
     this._history = []; // { ts, message, theme, icon, entity }
@@ -2444,13 +2447,17 @@ class AlertTickerCard extends LitElement {
     if ((this._config?.show_when_clear || this._config?.show_widget_in_cycle) &&
         (clearMode === "clock" || clearMode === "weather_clock" || clearMode === "weather_forecast")) {
       const n = new Date();
+      const showSeconds = this._config?.clear_clock_show_seconds !== false;
+      const mm = String(n.getMinutes()).padStart(2, '0');
+      const ss = String(n.getSeconds()).padStart(2, '0');
       if (this._config?.clear_clock_12h) {
         const h = n.getHours();
         const h12 = h % 12 || 12;
         const ampm = h < 12 ? "AM" : "PM";
-        this._clockTime = `${h12}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')} ${ampm}`;
+        this._clockTime = showSeconds ? `${h12}:${mm}:${ss} ${ampm}` : `${h12}:${mm} ${ampm}`;
       } else {
-        this._clockTime = `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;
+        const hh = String(n.getHours()).padStart(2, '0');
+        this._clockTime = showSeconds ? `${hh}:${mm}:${ss}` : `${hh}:${mm}`;
       }
       const lang = this._hass?.language || 'en';
       this._clockDate = n.toLocaleDateString(lang, { weekday: 'long', day: 'numeric', month: 'long' });
@@ -2859,7 +2866,7 @@ class AlertTickerCard extends LitElement {
           <div class="atc-ck-glow"></div>
           <div class="atc-ck-content">
             ${showDate && datePos === "above" && this._clockDate ? html`<div class="atc-ck-date">${this._clockDate}</div>` : ""}
-            <div class="atc-ck-time">${this._clockTime || "00:00:00"}</div>
+            <div class="atc-ck-time">${this._clockTime || "00:00"}</div>
             ${showDate && datePos !== "above" && this._clockDate ? html`<div class="atc-ck-date">${this._clockDate}</div>` : ""}
           </div>
         </div>`;
@@ -2901,7 +2908,7 @@ class AlertTickerCard extends LitElement {
             ${(mode === "weather_clock" || mode === "weather_forecast") ? html`
             <div class="atc-cw-badge atc-cw-badge--clock">
               ${showDate && (this._config.clear_clock_date_position === "above") && this._clockDate ? html`<span class="atc-cw-clock-date">${this._clockDate}</span>` : ""}
-              <span class="atc-cw-clock">${this._clockTime || "00:00:00"}</span>
+              <span class="atc-cw-clock">${this._clockTime || "00:00"}</span>
               ${showDate && (this._config.clear_clock_date_position !== "above") && this._clockDate ? html`<span class="atc-cw-clock-date">${this._clockDate}</span>` : ""}
             </div>` : ""}
           </div>
@@ -3414,8 +3421,10 @@ class AlertTickerCard extends LitElement {
     if (!alert || !alert.entity) return;
     const es = this._hass && this._hass.states[alert.entity];
     if (!es) return;
-    this._dismissed.set(this._snoozeKey(alert), es.last_changed);
+    const key = this._snoozeKey(alert);
+    this._dismissed.set(key, es.last_changed);
     this._saveDismissed();
+    this._fireSyncEvent("dismiss", { key, lsc: es.last_changed });
     this._lastSignature = "";
     this._computeActiveAlerts();
   }
@@ -3461,13 +3470,116 @@ class AlertTickerCard extends LitElement {
   }
 
   _dismissPersistent(alert) {
-    this._persistentLatched.delete(this._snoozeKey(alert));
+    const key = this._snoozeKey(alert);
+    this._persistentLatched.delete(key);
     this._savePersistent();
+    this._fireSyncEvent("persistent_dismiss", { key });
     this._snoozeMenuOpen = null;
     // Use a sentinel that won't match "" (empty active list) so _computeActiveAlerts
     // doesn't early-return when the dismissed alert was the only one active.
     this._lastSignature = "__dismiss__";
     this._computeActiveAlerts();
+  }
+
+  // ---- Cross-device sync (issue #210) ---------------------------------------
+  // Snooze/dismiss/persistent state is stored in localStorage, which is
+  // per-browser/per-device. When the user has multiple displays (wall panels,
+  // laptops, mobiles) an ack on one device wouldn't propagate to the others.
+  // We use HA's WebSocket event bus to broadcast state changes to all
+  // connected instances in real time. Events include a deviceId so a card
+  // never processes its own broadcast.
+
+  _subscribeSyncEvents() {
+    if (!this._hass?.connection) return;
+    // HA restricts subscribe_events on custom event types to admin/owner users only.
+    // For non-admin users, silently skip — they get local-only snooze/dismiss
+    // (identical to pre-1.3.9.9.5 behaviour, no regression). Fix for #214.
+    if (!this._hass.user?.is_admin) return;
+    // Cancel any previous subscription to avoid duplicates on reconnect
+    this._unsubscribeSyncEvents();
+    try {
+      this._syncUnsubPromise = this._hass.connection.subscribeEvents(
+        (event) => this._handleSyncEvent(event),
+        "alertticker_sync"
+      );
+    } catch (_) {}
+  }
+
+  _unsubscribeSyncEvents() {
+    if (!this._syncUnsubPromise) return;
+    Promise.resolve(this._syncUnsubPromise)
+      .then((unsub) => { try { unsub && unsub(); } catch (_) {} })
+      .catch(() => {});
+    this._syncUnsubPromise = null;
+  }
+
+  /** Fire an ack broadcast for other card instances on other devices. */
+  _fireSyncEvent(action, payload = {}) {
+    if (!this._hass?.connection) return;
+    // Same admin-only restriction as _subscribeSyncEvents applies to fire_event.
+    // Non-admin users would trigger "Unauthorized" errors in HA logs (#214).
+    if (!this._hass.user?.is_admin) return;
+    try {
+      this._hass.callWS({
+        type: "fire_event",
+        event_type: "alertticker_sync",
+        event_data: {
+          deviceId: this._deviceId,
+          action,
+          ...payload,
+        },
+      }).catch(() => {}); // silent on permission errors
+    } catch (_) {}
+  }
+
+  /** Apply an incoming ack from another device. */
+  _handleSyncEvent(event) {
+    const data = event?.data;
+    if (!data || !data.action) return;
+    if (data.deviceId === this._deviceId) return; // ignore self-echo
+
+    let changed = false;
+    switch (data.action) {
+      case "snooze":
+        if (data.key && data.expiry) {
+          this._snoozed.set(data.key, data.expiry);
+          this._saveSnooze();
+          changed = true;
+        }
+        break;
+      case "unsnooze":
+        if (data.key && this._snoozed.has(data.key)) {
+          this._snoozed.delete(data.key);
+          this._saveSnooze();
+          changed = true;
+        }
+        break;
+      case "dismiss":
+        if (data.key && data.lsc) {
+          this._dismissed.set(data.key, data.lsc);
+          this._saveDismissed();
+          changed = true;
+        }
+        break;
+      case "undismiss_all":
+        if (this._dismissed.size > 0) {
+          this._dismissed.clear();
+          this._saveDismissed();
+          changed = true;
+        }
+        break;
+      case "persistent_dismiss":
+        if (data.key && this._persistentLatched.has(data.key)) {
+          this._persistentLatched.delete(data.key);
+          this._savePersistent();
+          changed = true;
+        }
+        break;
+    }
+    if (changed) {
+      this._lastSignature = "__sync__";
+      this._computeActiveAlerts();
+    }
   }
 
   // ---- History helpers ------------------------------------------------------
@@ -3744,8 +3856,10 @@ class AlertTickerCard extends LitElement {
    */
   _snoozeAlert(alert, durationH) {
     const expiry = Date.now() + durationH * 3_600_000;
-    this._snoozed.set(this._snoozeKey(alert), expiry);
+    const key = this._snoozeKey(alert);
+    this._snoozed.set(key, expiry);
     this._saveSnooze();
+    this._fireSyncEvent("snooze", { key, expiry });
     this._snoozeMenuOpen = null;
     // Re-check at expiry so the alert reappears without needing an entity update
     setTimeout(() => {
@@ -4029,6 +4143,24 @@ class AlertTickerCard extends LitElement {
   _handleAction(cfg) {
     if (!cfg || !cfg.action || cfg.action === "none") return;
     if (cfg.action === "_expand_group") { this._expandGroup(this._current); return; }
+
+    // Confirmation (issue #211) — HA-native `confirmation` field support.
+    // Accepts either `confirmation: true` (default text) or the full object
+    // form `confirmation: { text: "...", exemptions: [{ user: "id" }] }`.
+    if (cfg.confirmation) {
+      const conf = cfg.confirmation;
+      const isObj = typeof conf === "object";
+      const currentUserId = this._hass?.user?.id;
+      const isExempt = isObj && Array.isArray(conf.exemptions)
+        && conf.exemptions.some((e) => e && e.user === currentUserId);
+      if (!isExempt) {
+        const text = (isObj && conf.text)
+          ? conf.text
+          : "Are you sure you want to execute this action?";
+        if (!window.confirm(text)) return;
+      }
+    }
+
     switch (cfg.action) {
       case "call-service": {
         if (!cfg.service || !this._hass) return;
@@ -4263,6 +4395,7 @@ class AlertTickerCard extends LitElement {
   _clearAllDismissed() {
     this._dismissed.clear();
     this._saveDismissed();
+    this._fireSyncEvent("undismiss_all");
     this._lastSignature = "";
     this._computeActiveAlerts();
   }
@@ -4348,6 +4481,7 @@ class AlertTickerCard extends LitElement {
     this._loadPersistent();
     this._loadTriggerStates();
     this._loadHistory();
+    this._subscribeSyncEvents();
     this._startCycleTimer();
     this._startTimerTick();
   }
@@ -4362,6 +4496,8 @@ class AlertTickerCard extends LitElement {
       this._snoozeOutsideHandler = null;
     }
     clearTimeout(this._touchButtonsTimer);
+    // Unsubscribe cross-device sync event stream
+    this._unsubscribeSyncEvents();
     // Unsubscribe all render_template WebSocket subscriptions
     for (const unsub of this._tmplUnsubs.values()) { try { unsub(); } catch (_) {} }
     this._tmplUnsubs.clear();
@@ -4417,6 +4553,11 @@ class AlertTickerCard extends LitElement {
       ? "1px solid var(--ha-card-border-color, var(--divider-color, rgba(255,255,255,0.25)))"
       : "var(--ha-card-border-width, 0px) solid var(--ha-card-border-color, transparent)");
     this.style.setProperty("--atc-severity-border-width", this._config?.severity_border === false ? "0px" : "");
+    // Font scaling for HD / 4K / wall-panel displays (#forum feedback from Ricardo).
+    // Uses CSS `zoom` to proportionally enlarge text + icons + padding together.
+    // Default 1 (no scaling); typical use case is 1.3-2 for large screens.
+    const fontScale = parseFloat(this._config?.font_scale) || 1;
+    this.style.setProperty("--atc-zoom", fontScale > 0.5 && fontScale <= 4 ? String(fontScale) : "1");
     const bg = this._config?.card_background;
     if (bg && bg !== false) {
       let bgValue;
@@ -4553,7 +4694,7 @@ class AlertTickerCard extends LitElement {
           if (_svText.length > 28) {
             const _svDur = Math.max(6, _svText.length * 0.22).toFixed(1);
             lines.push(html`<div class="atc-secondary-value atc-secondary-entity-line atc-sv-marquee-wrap">
-              <span class="atc-sv-marquee-inner" style="animation-duration:${_svDur}s">${_svText}���${_svText}</span>
+              <span class="atc-sv-marquee-inner" style="animation-duration:${_svDur}s">${_svText}   ${_svText}</span>
             </div>`);
           } else {
             lines.push(html`<div class="atc-secondary-value atc-secondary-entity-line">
@@ -5195,6 +5336,63 @@ class AlertTickerCard extends LitElement {
         </div>
         <div class="bt-right">
           ${showLevel ? html`<div class="bt-level" style="color:${levelColor}">${levelPct}%</div>` : ""}
+          ${this._renderCounter()}
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * battery3d theme — CSS battery icon with fill + horizontal progress bar.
+   * Dynamic color based on level (<20% red, 21-60% orange, >60% green).
+   * Optional `charging_entity` config (binary_sensor) shows a ⚡ lightning
+   * badge and switches the color to cyan while charging.
+   */
+  _renderBattery3d(alert) {
+    if (!alert) return html``;
+    const label = this._getCategoryLabel(alert);
+    const es = this._hass?.states[alert.entity];
+    const levelRaw = es ? parseFloat(es.state) : NaN;
+    const hasLevel = !isNaN(levelRaw) && levelRaw >= 0 && levelRaw <= 100;
+    const levelPct = hasLevel ? Math.round(levelRaw) : 0;
+
+    // Charging entity (optional binary_sensor)
+    const chargeEntityId = alert.charging_entity;
+    const chargeEs = chargeEntityId ? this._hass?.states[chargeEntityId] : null;
+    const isCharging = chargeEs && (chargeEs.state === 'on' || chargeEs.state === 'charging');
+
+    // Color logic — charging overrides level
+    let color, colorLight;
+    if (isCharging) {
+      color = '#00e5ff'; colorLight = '#84ffff';
+    } else if (levelPct <= 20) {
+      color = '#f44336'; colorLight = '#ff7961';
+    } else if (levelPct <= 60) {
+      color = '#ff9800'; colorLight = '#ffc947';
+    } else {
+      color = '#4caf50'; colorLight = '#80e27e';
+    }
+
+    const secondaryEl = this._renderSecondaryValue(alert);
+
+    return html`
+      <div class="at-battery3d" style="--b3d-color:${color};--b3d-color-light:${colorLight};--b3d-level:${levelPct}%">
+        <div class="b3d-icon">
+          <div class="b3d-fill"></div>
+          ${isCharging ? html`<div class="b3d-bolt">⚡</div>` : ""}
+        </div>
+        <div class="b3d-content">
+          <div class="b3d-badge">${label}${isCharging ? html` <span class="b3d-charging">⚡ Charging</span>` : ""}</div>
+          <div class="b3d-title">${this._resolveMessage(alert)}</div>
+          ${secondaryEl}
+          ${hasLevel ? html`
+            <div class="b3d-progress">
+              <div class="b3d-progress-fill"></div>
+            </div>
+          ` : ""}
+        </div>
+        <div class="b3d-right">
+          ${hasLevel ? html`<div class="b3d-level">${levelPct}<span class="b3d-percent">%</span></div>` : ""}
           ${this._renderCounter()}
         </div>
       </div>
@@ -6155,6 +6353,7 @@ class AlertTickerCard extends LitElement {
       case "toxic":        return this._renderToxic(alert);
       case "temperature":  return this._renderTemperature(alert);
       case "battery":      return this._renderBattery(alert);
+      case "battery3d":    return this._renderBattery3d(alert);
       case "door":         return this._renderDoor(alert);
       case "window":       return this._renderWindow(alert);
       case "presence":     return this._renderPresence(alert);
@@ -6427,6 +6626,10 @@ class AlertTickerCard extends LitElement {
         border-radius: var(--ha-card-border-radius, 12px);
         box-shadow: var(--ha-card-box-shadow, none);
         isolation: isolate;
+        /* font_scale — proportional zoom for HD/4K/wall-panel displays.
+         * Uses the CSS zoom property which affects layout box, so bumping this
+         * may require increasing grid_options.rows to give the card more space. */
+        zoom: var(--atc-zoom, 1);
       }
       /* While any popup is open: lift this element above adjacent cards.
        * isolation:auto removes the isolated stacking context so position+z-index
@@ -8108,6 +8311,88 @@ class AlertTickerCard extends LitElement {
       .at-battery .atc-secondary-value { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
       /* -----------------------------------------------------------------------
+       * BATTERY3D — CSS battery icon + horizontal progress bar, dynamic color,
+       * optional charging bolt. All colors driven by --b3d-color CSS var.
+       * --------------------------------------------------------------------- */
+      .at-battery3d {
+        display: flex; align-items: center; gap: 16px; padding: 14px 18px;
+        background: linear-gradient(135deg, #0a1210, #101c19);
+        border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;
+        position: relative;
+      }
+      .b3d-icon {
+        position: relative; flex-shrink: 0;
+        width: 56px; height: 28px;
+        border: 2px solid var(--b3d-color, #4caf50);
+        border-radius: 5px;
+        padding: 2px;
+        box-shadow: 0 0 12px color-mix(in srgb, var(--b3d-color, #4caf50) 40%, transparent),
+                    inset 0 0 6px rgba(0,0,0,0.4);
+        transition: border-color 0.4s ease, box-shadow 0.4s ease;
+      }
+      .b3d-icon::after {
+        /* battery positive terminal nub */
+        content: ''; position: absolute; right: -6px; top: 7px;
+        width: 4px; height: 10px;
+        background: var(--b3d-color, #4caf50);
+        border-radius: 0 3px 3px 0;
+        box-shadow: 0 0 6px color-mix(in srgb, var(--b3d-color, #4caf50) 60%, transparent);
+        transition: background 0.4s ease;
+      }
+      .b3d-fill {
+        height: 100%; width: var(--b3d-level, 0%);
+        background: linear-gradient(90deg, var(--b3d-color, #4caf50), var(--b3d-color-light, #80e27e));
+        border-radius: 2px;
+        box-shadow: 0 0 8px color-mix(in srgb, var(--b3d-color, #4caf50) 60%, transparent);
+        transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s ease;
+      }
+      .b3d-bolt {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        font-size: 1.1rem; line-height: 1; z-index: 2;
+        text-shadow: 0 0 8px #00e5ff, 0 0 4px #fff;
+        animation: b3dBolt 1.4s ease-in-out infinite;
+      }
+      @keyframes b3dBolt {
+        0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        50%      { opacity: 0.55; transform: translate(-50%, -50%) scale(1.2); }
+      }
+      .b3d-content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+      .b3d-right { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+      .b3d-badge {
+        font-size: 0.65rem; font-weight: 700; letter-spacing: 2px;
+        text-transform: uppercase; color: var(--b3d-color, #4caf50);
+      }
+      .b3d-charging {
+        margin-left: 6px; padding: 1px 6px; border-radius: 3px;
+        background: rgba(0, 229, 255, 0.15); color: #00e5ff;
+        font-size: 0.6rem; letter-spacing: 1.5px;
+      }
+      .b3d-title {
+        font-weight: 600; color: #fff; font-size: 0.95rem;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .b3d-progress {
+        position: relative; width: 100%; height: 6px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 3px; overflow: hidden;
+        margin-top: 6px;
+      }
+      .b3d-progress-fill {
+        height: 100%; width: var(--b3d-level, 0%);
+        background: linear-gradient(90deg, var(--b3d-color, #4caf50), var(--b3d-color-light, #80e27e));
+        border-radius: 3px;
+        box-shadow: 0 0 8px color-mix(in srgb, var(--b3d-color, #4caf50) 60%, transparent);
+        transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s ease;
+      }
+      .b3d-level {
+        font-size: 1.7rem; font-weight: 700; line-height: 1;
+        color: var(--b3d-color, #4caf50);
+        text-shadow: 0 0 12px color-mix(in srgb, var(--b3d-color, #4caf50) 50%, transparent);
+      }
+      .b3d-percent { font-size: 0.9rem; opacity: 0.7; margin-left: 1px; }
+      .at-battery3d .atc-secondary-value { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.82rem; color: rgba(255,255,255,0.6); }
+
+      /* -----------------------------------------------------------------------
        * DOOR — swinging door icon + light ray, warning
        * --------------------------------------------------------------------- */
       .at-door {
@@ -9420,13 +9705,22 @@ class AlertTickerCard extends LitElement {
       .atc-large-buttons .atc-history-btn::after {
         content: none;
       }
-      /* Hide all floating buttons during card transition animation */
+      /* Hide all floating buttons during card transition animation.
+       * Uses visibility:hidden in addition to opacity so hover states / touch-active
+       * / :hover selectors can't accidentally reveal the buttons mid-cycle when
+       * groups are expanded and multiple slides animate rapidly (issue reported by
+       * user: snooze/history/nav flashed on every cycle in grouped alerts). */
       .atc-animating .atc-snooze-wrap,
+      .atc-animating .atc-snooze-btn,
       .atc-animating .atc-history-btn,
-      .atc-animating .atc-nav-btn {
+      .atc-animating .atc-nav-btn,
+      .atc-animating .atc-group-back-btn,
+      .atc-animating .atc-snoozed-pill,
+      .atc-animating .atc-counter-overlay {
         opacity: 0 !important;
         pointer-events: none !important;
-        transition: opacity 0.15s ease;
+        visibility: hidden !important;
+        transition: none !important;
       }
       /* Nav arrow: push right arrow past both large buttons (history at 46+30=76px) */
       .atc-large-buttons .atc-nav-next {
