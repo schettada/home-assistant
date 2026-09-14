@@ -161,7 +161,7 @@ class XSenseBase:
                 AuthParameters=auth_params
             )
         except ClientError as e:
-            raise AuthFailed(self._parse_client_error(e)) from e
+            self._raise_cognito_error(e)
         except BotoCoreError as e:
             raise APIFailure(f'Cognito connection failed: {e}') from e
 
@@ -187,11 +187,18 @@ class XSenseBase:
             self.access_token_expiry = datetime.now(timezone.utc) + timedelta(seconds=auth_result['ExpiresIn'])
 
         except ClientError as e:
-            raise AuthFailed(self._parse_client_error(e)) from e
+            self._raise_cognito_error(e)
         except BotoCoreError as e:
             raise APIFailure(f'Cognito connection failed: {e}') from e
 
     _cognito_login = sync_login
+
+    def _raise_cognito_error(self, error: ClientError) -> None:
+        """Only credential failures should send Home Assistant into reauth."""
+        code = error.response.get("Error", {}).get("Code")
+        if code in {"NotAuthorizedException", "UserNotFoundException", "UserNotConfirmedException", "PasswordResetRequiredException"}:
+            raise AuthFailed(self._parse_client_error(error)) from error
+        raise APIFailure(self._parse_client_error(error)) from error
 
     def restore_session(self, username, access_token, refresh_token, id_token):
         self.username = username
@@ -366,7 +373,7 @@ class XSenseBase:
         if 'ExpiresIn' in data:
             self.access_token_expiry = datetime.now(timezone.utc) + timedelta(seconds=data['ExpiresIn'])
 
-    def parse_get_state(self, station: Station, data: Dict):
+    def parse_get_state(self, station: Station, data: Dict, *, mode_result: str | None = None):
         if isinstance(data, list):
             station_data = {}
             children = data
@@ -381,7 +388,14 @@ class XSenseBase:
 
         _normalize_apk_alarm_status(station_data)
         has_alarm_status = 'alarmStatus' in station_data or 'a' in station_data
-        _apply_sbs50_force_arm_prompt(station, station_data)
+        if mode_result == "confirmation":
+            # modeconfirm is a bypass request, not a report of the armed mode.
+            station_data.pop("safeMode", None)
+            _apply_sbs50_mode_result(station, station_data)
+        else:
+            station_data.pop("forceReason", None)
+            if mode_result == "mode":
+                station.set_alarm_data({"forceReason": None, "exitDelay": None})
         if station_data:
             station.set_data(station_data)
         if 'safeMode' in station_data:
@@ -562,64 +576,19 @@ def _child_state_identifiers(child_key, child_state) -> tuple[str, ...]:
     return tuple(result)
 
 
-def _apply_sbs50_force_arm_prompt(station: Station, station_data: Dict) -> None:
-    """Track the APK bypass confirmation prompt for SBS50 arm requests."""
-    current_alarm_data = getattr(station, "alarm_data", {}) or {}
-    reported_mode = station_data.get("safeMode")
-    requested_mode = current_alarm_data.get("requestedSafeMode")
-    request_completed = reported_mode in ("Home", "Away") and (
-        reported_mode == requested_mode
-    )
-    if request_completed:
-        station.set_alarm_data(
-            {
-                "forceReason": None,
-                "safeModeAim": None,
-                "requestedSafeMode": None,
-                "exitDelay": None,
-            }
-        )
+def _apply_sbs50_mode_result(station: Station, station_data: Dict) -> None:
+    """Retain the SBS50 mode result for the active alarm-panel request."""
+    if "forceReason" not in station_data:
+        if "safeMode" in station_data:
+            station.set_alarm_data({"forceReason": None, "exitDelay": None})
         return
 
-    prompt = _sbs50_force_arm_prompt(
-        station_data,
-        requested_mode=requested_mode,
+    station.set_alarm_data(
+        {
+            "forceReason": station_data.get("forceReason") or None,
+            "exitDelay": station_data.get("exitDelay"),
+        }
     )
-    if prompt is not None:
-        station.set_alarm_data(prompt)
-        return
-
-    force_reason_reported = "forceReason" in station_data
-    if force_reason_reported:
-        station.set_alarm_data(
-            {
-                "forceReason": None,
-                "safeModeAim": None,
-                "requestedSafeMode": None,
-                "exitDelay": None,
-            }
-        )
-
-
-def _sbs50_force_arm_prompt(
-    station_data: Dict, *, requested_mode: str | None = None
-) -> Dict | None:
-    if requested_mode not in ("Home", "Away"):
-        return None
-
-    if "forceReason" in station_data:
-        force_reason = station_data.get("forceReason")
-        if force_reason:
-            return {
-                "forceReason": force_reason,
-                "safeModeAim": requested_mode
-                or station_data.get("safeModeAim")
-                or station_data.get("safeMode"),
-                "requestedSafeMode": requested_mode,
-                "exitDelay": station_data.get("exitDelay"),
-            }
-
-    return None
 
 
 def _apply_group_light_state(station: Station, station_data: Dict, children) -> bool:

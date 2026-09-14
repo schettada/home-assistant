@@ -18,6 +18,7 @@ from homeassistant.helpers import config_validation as cv, entity_platform
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_call_later
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.helpers.translation import async_get_translations
 
 from .const import DOMAIN, MANUFACTURER
 from .coordinator import XSenseDataUpdateCoordinator
@@ -44,7 +45,11 @@ TRIGGER_SOS_SERVICE = "trigger_sos"
 CANCEL_SOS_SERVICE = "cancel_sos"
 CANCEL_ALARM_SERVICE = "cancel_alarm"
 SET_SOS_SOUND_SERVICE = "set_sos_sound"
-FORCE_ARM_SCHEMA = {vol.Required("mode"): vol.In(("Home", "Away"))}
+FORCE_ARM_SCHEMA = {
+    vol.Required("mode"): vol.All(
+        vol.In(("Home", "Away", "home", "away")), str.capitalize
+    )
+}
 SET_SOS_SOUND_SCHEMA = {vol.Required("audible"): cv.boolean}
 
 
@@ -174,13 +179,20 @@ class XSenseAlarmControlPanel(
             "manufacturer": MANUFACTURER,
             "model": _device_info_str(station.type),
         }
+        self._bound_station = station
         self._safemode: str | None = None
+        self._active_normal_arm_mode: str | None = None
         self._pending_force_arm_mode: str | None = None
+        self._pending_force_arm_data: dict | None = None
         self._cancel_arm_request_timeout = None
+        self._force_arm_translations: dict[str, str] = {}
 
     @property
     def _station(self):
         """Return the current station object from coordinator data."""
+        incoming = getattr(self.coordinator, "_alarm_mode_station", None)
+        if incoming is not None and incoming.entity_id == self._station_id:
+            return incoming
         return coordinator_stations(self.coordinator).get(self._station_id)
 
     @property
@@ -204,7 +216,7 @@ class XSenseAlarmControlPanel(
         if station is None:
             return None
 
-        mode = pending_force_arm_mode(station)
+        mode = self._pending_force_arm_mode
         if mode is None:
             return None
 
@@ -223,19 +235,72 @@ class XSenseAlarmControlPanel(
         """Handle updated coordinator data."""
         station = self._station
         if station is None:
+            self._bound_station = None
             self._safemode = None
+            self._active_normal_arm_mode = None
+            self._pending_force_arm_mode = None
+            self._pending_force_arm_data = None
             self._async_cancel_arm_request_timeout()
             self._async_clear_force_arm_notification()
             self.async_write_ha_state()
             return
 
-        pending_mode = pending_force_arm_mode(station)
+        station_replaced = station is not self._bound_station
+        self._bound_station = station
+        result = getattr(station, "_xsense_mode_result", {})
+        if self._active_normal_arm_mode is not None:
+            station.set_alarm_data(
+                {"requestedSafeMode": self._active_normal_arm_mode}
+            )
+        previous_pending_mode = self._pending_force_arm_mode
+        pending_mode = previous_pending_mode
         alarm_data = getattr(station, "alarm_data", {}) or {}
-        if pending_mode is not None or not alarm_data.get("requestedSafeMode"):
-            self._async_cancel_arm_request_timeout()
-        if pending_mode != self._pending_force_arm_mode:
+        force_reason = alarm_data.get("forceReason")
+        if self._active_normal_arm_mode is not None:
+            requested_mode = self._active_normal_arm_mode
+            if result.get("kind") == "mode":
+                # APK Y1/Q completes with the actual mode, even a different one.
+                self._async_clear_arm_request(station)
+                pending_mode = None
+            elif (
+                result.get("kind") == "confirmation"
+                and isinstance(result.get("forceReason"), list)
+                and result["forceReason"]
+            ):
+                pending_mode = requested_mode
+                station.set_alarm_data(
+                    {
+                        "forceReason": result["forceReason"],
+                        "exitDelay": result.get("exitDelay"),
+                        "requestedSafeMode": requested_mode,
+                        "safeModeAim": None,
+                    }
+                )
+                self._active_normal_arm_mode = None
+                self._async_cancel_arm_request_timeout()
+        elif previous_pending_mode is not None and self._pending_force_arm_data:
+            # Keep the already-open confirmation available if discovery swaps
+            # the Station object. No new prompt is inferred from refresh data.
+            if station_replaced or not force_reason:
+                station.set_alarm_data(self._pending_force_arm_data)
+            pending_mode = previous_pending_mode
+        else:
+            pending_mode = None
+            if force_reason:
+                # The APK ignores mode results when no request listener is active.
+                station.set_alarm_data({"forceReason": None, "exitDelay": None})
+
+        if pending_mode is not None and previous_pending_mode is None:
+            alarm_data = getattr(station, "alarm_data", {}) or {}
+            self._pending_force_arm_data = {
+                "forceReason": alarm_data.get("forceReason"),
+                "requestedSafeMode": pending_mode,
+                "exitDelay": alarm_data.get("exitDelay"),
+            }
+        if pending_mode != previous_pending_mode:
             self._pending_force_arm_mode = pending_mode
             if pending_mode is None:
+                self._pending_force_arm_data = None
                 self._async_clear_force_arm_notification()
             else:
                 self._async_create_force_arm_notification(station, pending_mode)
@@ -258,16 +323,26 @@ class XSenseAlarmControlPanel(
     @callback
     def _async_create_force_arm_notification(self, station, safe_mode: str) -> None:
         """Create/update the HA notification for an SBS50 bypass prompt."""
-        button_name = f"Force Arm {safe_mode}"
+        translations = self._force_arm_translations
+        service_prefix = f"component.{DOMAIN}.services.force_arm"
+        mode = translations.get(
+            f"component.{DOMAIN}.selector.force_arm_mode.options.{safe_mode.lower()}",
+            safe_mode,
+        )
+        button_name = f"{translations.get(service_prefix + '.name', 'Force Arm')} {mode}"
         action_url = self._force_arm_url(safe_mode)
+        description = translations.get(service_prefix + ".description")
         persistent_notification.async_create(
             self.hass,
             (
+                f"{description}\n\n"
+                f"[**{button_name}**]({action_url})"
+                if description else
                 "One or more sensors are open.\n\n"
                 f"[**{button_name}**]({action_url})\n\n"
                 "Select the link to confirm the pending X-Sense arm request."
             ),
-            title="X-Sense arm blocked",
+            title=translations.get(service_prefix + ".name", "X-Sense arm blocked"),
             notification_id=self._force_arm_notification_id,
         )
         LOGGER.debug(
@@ -300,6 +375,16 @@ class XSenseAlarmControlPanel(
 
     async def async_added_to_hass(self) -> None:
         """Subscribe to coordinator updates and read initial state."""
+        # Persistent notifications are shared, so use HA's configured language.
+        for category in ("services", "selector"):
+            try:
+                self._force_arm_translations.update(
+                    await async_get_translations(
+                        self.hass, self.hass.config.language, category, {DOMAIN}
+                    )
+                )
+            except Exception:  # Translation loading must not block alarm entities.
+                LOGGER.warning("Could not load X-Sense %s translations", category)
         await super().async_added_to_hass()
         self._handle_coordinator_update()
 
@@ -327,7 +412,7 @@ class XSenseAlarmControlPanel(
         if station is None:
             raise xsense_error("station_unavailable")
 
-        pending_mode = pending_force_arm_mode(station)
+        pending_mode = self._pending_force_arm_mode
         if pending_mode != mode:
             raise xsense_error("force_arm_not_pending", mode=mode)
 
@@ -383,7 +468,9 @@ class XSenseAlarmControlPanel(
     @callback
     def _async_clear_arm_request(self, station) -> None:
         """Clear local state for an APK-style mode request."""
+        had_pending_prompt = self._pending_force_arm_mode is not None
         self._async_cancel_arm_request_timeout()
+        self._active_normal_arm_mode = None
         station.set_alarm_data(
             {
                 "forceReason": None,
@@ -393,7 +480,11 @@ class XSenseAlarmControlPanel(
             }
         )
         self._pending_force_arm_mode = None
+        self._pending_force_arm_data = None
         self._async_clear_force_arm_notification()
+        if had_pending_prompt:
+            # Coordinator entities are not automatically refreshed after actions.
+            self.async_write_ha_state()
 
     @callback
     def _async_cancel_arm_request_timeout(self) -> None:
@@ -409,8 +500,7 @@ class XSenseAlarmControlPanel(
         station = self._station
         if station is None:
             return
-        alarm_data = getattr(station, "alarm_data", {}) or {}
-        if not alarm_data.get("requestedSafeMode") or alarm_data.get("forceReason"):
+        if self._active_normal_arm_mode is None:
             return
         LOGGER.debug("Station %s arm request timed out", station.sn)
         self._async_clear_arm_request(station)
@@ -443,20 +533,24 @@ class XSenseAlarmControlPanel(
         api = coordinator.xsense
 
         if safe_mode in ("Home", "Away") and force_arm == "0":
-            current_mode = getattr(station, "alarm_mode", None)
+            if self._active_normal_arm_mode is not None:
+                LOGGER.debug(
+                    "Station %s ignored overlapping safeMode request %s while %s is pending",
+                    station.sn,
+                    safe_mode,
+                    self._active_normal_arm_mode,
+                )
+                return
+            # Match the APK's current reported mode, not a prior alarm snapshot.
+            current_mode = getattr(station, "safe_mode", None)
+            if current_mode is None:
+                current_mode = station.data.get("safeMode")
             if current_mode == safe_mode:
                 self._async_clear_arm_request(station)
                 return
-            station.set_alarm_data(
-                {
-                    "forceReason": None,
-                    "safeModeAim": None,
-                    "requestedSafeMode": safe_mode,
-                    "exitDelay": None,
-                }
-            )
-            self._pending_force_arm_mode = None
-            self._async_clear_force_arm_notification()
+            self._async_clear_arm_request(station)
+            self._active_normal_arm_mode = safe_mode
+            station.set_alarm_data({"requestedSafeMode": safe_mode})
             self._async_start_arm_request_timeout()
         elif safe_mode == "Disarmed":
             self._async_clear_arm_request(station)

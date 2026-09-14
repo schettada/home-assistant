@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "デバイスはすでに構成されています",
       "reauth_successful": "再認証に成功しました",
-      "reconfigure_successful": "再構成は成功しました"
+      "reconfigure_successful": "再構成は成功しました",
+      "unique_id_mismatch": "このエントリーと同じX-Senseアカウントでサインインしてください。"
     },
     "error": {
       "cannot_connect": "接続に失敗しました",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "録画メディアの同期により、Home Assistant メディアの下にカメラ クリップがキャッシュされるため、X-Sense 録画サイドバー、メディア ブラウザ、およびモバイル通知で録画をすばやく開くことができます。録画を開いたときにのみキャッシュするには、オフのままにしておきます。最近の録音をバックグラウンドで準備できるようにするには、これを有効にします。",
+        "description": "既定は再生のみで、完全なクリップを保存せず、再生時に Home Assistant 経由で録画をプロキシします。設定した保存日数とサイズ制限に従って Home Assistant のメディアにクリップを保存するには、ローカル録画を保持を選択します。バックグラウンド同期は保持モードでのみ動作します。",
         "data": {
           "recording_media_sync_enabled": "記録メディアの同期",
           "recording_media_sync_hours": "バックグラウンド同期間隔",
           "recording_media_storage_path": "録画キャッシュフォルダー",
           "recording_notification_quality": "通知記録の品質",
           "recording_media_days_order": "収録日順",
-          "recording_media_clips_order": "録音クリップの順序"
+          "recording_media_clips_order": "録音クリップの順序",
+          "recording_cache_retention_days": "録画キャッシュの保持",
+          "recording_cache_max_size_mb": "最大録画キャッシュサイズ",
+          "recording_cache_mode": "録画の保存モード"
         },
         "data_description": {
-          "recording_media_sync_enabled": "最近の録音を自動的にキャッシュします。これによりストレージ容量が使用され、カメラがより頻繁にスリープ状態になる可能性があります。",
+          "recording_media_sync_enabled": "最近の録画を自動的にキャッシュします。ストレージ容量を使用し、カメラをスリープから復帰させる頻度が高くなる可能性があります。",
           "recording_media_sync_hours": "通常のバックグラウンドキャッチアップ同期を実行する頻度。同期が有効になっている場合、最近の録音は数分ごとにチェックされます。",
           "recording_media_storage_path": "/media の下のフォルダーを使用します。新しいキャッシュされたビデオとサムネイルはここに保存されます。",
-          "recording_notification_quality": "モバイル通知に X-Sense の直接/高解像度クリップ URL を優先するには、HD を選択します。利用可能な場合は、SD を選択して、カメラ再生キャプチャ パスを使用します。",
+          "recording_notification_quality": "HD は高解像度の録画 URL を優先します。SD は X-Sense が提供する場合に標準解像度の URL を優先します。",
           "recording_media_days_order": "録画ビューアに新しい日と古い日のどちらを最初に表示するかを選択します。",
-          "recording_media_clips_order": "新しいクリップと古いクリップのどちらを毎日最初に表示するかを選択します。"
+          "recording_media_clips_order": "新しいクリップと古いクリップのどちらを毎日最初に表示するかを選択します。",
+          "recording_cache_retention_days": "この日数が経過したら、ローカルにキャッシュされた録画を削除します。 X-Sense クラウドと SD カードの記録は変更されません。",
+          "recording_cache_max_size_mb": "最大ローカル キャッシュ サイズ (MB 単位)。制限に達すると、最も最近に視聴されていない録画が最初に削除されます。",
+          "recording_cache_mode": "再生のみでは、完全なクリップを保存せず、必要に応じて HLS メディアを Home Assistant 経由でプロキシします。保持モードでは、以下の制限に従ってローカルコピーを保存します。"
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "記録キャッシュ フォルダーが `{old_path}` から `{new_path}` に変更されます。キャッシュされた既存のビデオとサムネイルは自動的に移動されません。キャッシュされた古い録画を引き続き使用できるようにするには、まず既存の `videos` フォルダーと `thumbs` フォルダーを移動します。"
+        "description": "記録キャッシュ フォルダーが `{old_path}` から `{new_path}` に変更されます。キャッシュされた既存のビデオとサムネイルは自動的に移動されません。キャッシュされた古い録画を引き続き使用できるようにするには、まず既存の `hls`, `videos` フォルダーと `thumbs` フォルダーを移動します。"
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "メールボックススケジュールがアクティブです"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "AC電源切断"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "電池の寿命"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "寿命終了"
       },
       "armed": {
-        "name": "Armed"
+        "name": "警戒中"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "動きを検知"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "USB充電中"
       },
       "charging": {
-        "name": "Charging"
+        "name": "充電中"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "スリープ中"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "取付ブラケットが外れています"
       },
       "activated": {
-        "name": "Activated"
+        "name": "アクティブ化された"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "警報訓練中"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "警報作動中"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "デバイス発の警報"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "デバイステスト中"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "デバイスのサイレント状態"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "警報音"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "アプリ通知"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "スケジュール通知"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "水漏れ警報"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "水漏れ警報消音中"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "温度警報"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "温度警報消音中"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "デバイスのタイムゾーン有効"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "デバイスのタイムゾーン正常"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "ミュート"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "スリープ解除"
       }
     },
     "event": {
@@ -188,7 +195,7 @@
           "normal": "ノーマル",
           "low_battery": "バッテリー残量低下",
           "malfunction": "故障",
-          "end_of_life": "生産終了"
+          "end_of_life": "寿命終了"
         }
       },
       "alarm_vol": {
@@ -254,139 +261,139 @@
         "name": "ピークラドンレベル時間"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "電池残量"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi 信号強度"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi 信号強度"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "カメラ状態コード"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "ファームウェアバージョン"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "カメラのファームウェア状態"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Wi-Fi名 (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Wi-Fiチャンネル"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "MACアドレス"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "SDカードの状態"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "SDカードの総容量"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "SDカードの使用容量"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "カメラ有効化時刻"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "カメラ切断時刻"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "カメラのサムネイル時刻"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "カメラのスリープ解除時刻"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "カメラのスリープメッセージ"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "デバイスのタイムゾーン"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "煙感知器のモデル種別"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "CO警報規格"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "確認の種類"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "PIR間隔"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "センサー感度"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "消音時刻"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "温度警報の消音時刻"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "水漏れ警報の消音時刻"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "短期CO警告"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "短期CO警告レベル"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "長期CO警告"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "長期CO警告レベル"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "警報発生"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "警報発生元"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "再警報"
       },
       "time": {
-        "name": "Report Time"
+        "name": "報告時刻"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "UTC時刻"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "デバイスのテスト時間"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "デバイスのタイムゾーン"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "音声で知らせる場所"
       },
       "location": {
-        "name": "Location"
+        "name": "場所"
       },
       "color": {
-        "name": "Color"
+        "name": "色"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "照明イベント"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "デバイスの種類"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "報告されたデバイスの種類"
       },
       "category": {
-        "name": "Category"
+        "name": "カテゴリ"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "セキュリティモード"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "待機時の明るさ"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "アラーム音量"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "声の大きさ"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "スピーカー音量"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "警報継続時間"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "暗視感度"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "泣き声検知感度"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "録画の待機間隔"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "機械式チャイムの継続時間"
       }
     },
     "select": {
@@ -519,251 +526,266 @@
         "name": "アプリはオンタイムで"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "言語"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "録画解像度"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "検出感度",
+        "state": {
+          "high": "高",
+          "medium": "中",
+          "low": "低",
+          "auto": "自動"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "動画の長さ"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "ちらつき周波数"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "既定のコーデック"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "動体追跡"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "暗視モード"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "クラウド録画の待機間隔"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "ドアベル音"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "自動電源オンの電池残量"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "LEDインジケーター"
       },
       "light_power": {
-        "name": "Light"
+        "name": "照明"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "警報有効"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "継続警報"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "メールリマインダー"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "短い通知音有効"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "リマインダー有効"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "リマインダー音有効"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "待機照明有効"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR有効"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "周囲光検知有効"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "操作音有効"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "警告有効"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "動体検知"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "人物検知"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "動画を録画"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "自動暗視"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "状態LED"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "カメラ警報"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "画像を回転"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "ちらつき防止"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "泣き声検知"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "録画の待機間隔"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "デバイス通話"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "機械式チャイム"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "動体追跡"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "音声音量"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "ライブ音声"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "録画音声"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "自動電源オン"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "白色ライト"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "取り外し時に警報"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "スリープモード"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "AI通知：人物"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "AI通知：ペット"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "AI通知：車両進入"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "AI通知：車両退出"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "AI通知：駐車車両"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "AI通知：荷物あり"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "AI通知：荷物配達"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "AI通知：荷物回収"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "AI通知：その他"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "AIアシスタント：人物"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "AIアシスタント：ペット"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "AIアシスタント：車両"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "AIアシスタント：荷物"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "警報"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "X-Senseステーションは利用できなくなりました"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "X-Senseエンティティは利用できなくなりました"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "X-Sense MQTTが接続されていません"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "X-Senseのセキュリティモードコマンドを配信できませんでした"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "{mode}モードでX-Senseの強制警戒設定は保留されていません"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "X-Senseの録画待機間隔が有効かどうか不明です"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option}はX-Senseでサポートされていない選択肢です"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "X-Senseの選択値を書き込めません"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "X-Senseのラドンしきい値が無効です"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "X-Senseの範囲設定に対となる値がありません"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "X-Senseの最小値は最大値を超えることができません"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Senseの{service}には照明電源スイッチが必要です"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Senseの{service}にはSBS50ステーションが必要です"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "X-Senseの{service}のIDがありません"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "X-Senseのスケジュール時刻はHH:MMまたはHHMM形式で指定してください"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "X-Senseのスケジュール時刻が範囲外です"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "X-Senseのスケジュールには少なくとも1つの曜日が必要です"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "X-Senseのスケジュールの曜日は1〜7で指定してください"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Senseの{field}には少なくとも1つのIDが必要です"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "購読を2回解除することはできません"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "トピックは文字列で指定してください"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "MQTTとの通信エラー: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "{failed}件の録画をキャッシュできませんでした。{downloaded}件の録画をダウンロードしました。"
+    },
+    "force_arm_invalid_link": {
+      "message": "このX-Sense強制警戒設定リンクは無効です。"
+    },
+    "force_arm_request_failed": {
+      "message": "X-Senseの強制警戒設定要求に失敗しました。"
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "昇順",
+        "descending": "降順"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "昇順",
+        "descending": "降順"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "再生のみ",
+        "retained": "ローカル録画を保持"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "在宅",
+        "away": "外出"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "name": "強制警戒設定",
+      "description": "開いているセンサーによってブロックされた、保留中の在宅または外出モードの警戒設定要求を確認します。開いているセンサーは無視されます。",
+      "fields": {
+        "mode": {
+          "name": "警戒モード"
+        }
+      }
+    },
+    "force_arm_now": {
+      "name": "今すぐ強制警戒設定",
+      "description": "確認を求めずに開いているセンサーを無視し、在宅または外出モードで直ちに警戒を設定します。",
+      "fields": {
+        "mode": {
+          "name": "警戒モード"
+        }
+      }
+    },
+    "trigger_sos": {
+      "name": "SOSアラームを作動",
+      "description": "SBS50のSOSアラームを直ちに作動させます。"
+    },
+    "cancel_sos": {
+      "name": "SOSアラームを停止",
+      "description": "作動中のSBS50のSOSアラームを停止します。"
+    },
+    "cancel_alarm": {
+      "name": "作動中のアラームを停止",
+      "description": "作動中のSBS50のセンサーアラームを停止します。"
+    },
+    "set_sos_sound": {
+      "name": "SOS音を設定",
+      "description": "SOSでライトの点滅のみを使用するか、ブザーも鳴らすかを選択します。",
+      "fields": {
+        "audible": {
+          "name": "音が鳴るSOSアラーム"
+        }
+      }
+    },
+    "refresh_recordings": {
+      "name": "録画一覧を更新",
+      "description": "サイドバーとメディアブラウザーで使用するカメラの録画インデックスを更新します。",
+      "fields": {
+        "entry_id": {
+          "name": "設定エントリーID",
+          "description": "すべてのX-Senseアカウントに適用するには空欄にしてください。"
+        }
+      }
+    },
+    "cache_recordings": {
+      "name": "録画をキャッシュ",
+      "description": "ローカルに保持するためにカメラの録画をダウンロードします。「ローカル録画を保持」モードが必要です。",
+      "fields": {
+        "entry_id": {
+          "name": "設定エントリーID",
+          "description": "すべてのX-Senseアカウントに適用するには空欄にしてください。"
+        }
+      }
+    },
+    "clear_recordings_cache": {
+      "name": "録画キャッシュを消去",
+      "description": "ローカルの録画インデックス、動画、サムネイルを削除します。クラウドとSDカードの録画は変更されません。",
+      "fields": {
+        "entry_id": {
+          "name": "設定エントリーID",
+          "description": "すべてのX-Senseアカウントに適用するには空欄にしてください。"
+        }
+      }
+    },
+    "query_light_schedules": {
+      "name": "ライトのスケジュールを取得",
+      "description": "ライトのスケジュールを取得します。SBS50のライト電源スイッチを対象にしてください。"
+    },
+    "create_light_schedule": {
+      "name": "ライトのスケジュールを作成",
+      "description": "ライトのスケジュールを作成します。SBS50のライト電源スイッチを対象にしてください。",
+      "fields": {
+        "name": {
+          "name": "表示名"
+        },
+        "start_time": {
+          "name": "開始時刻 (HH:MM または HHMM)"
+        },
+        "end_time": {
+          "name": "終了時刻 (HH:MM または HHMM)"
+        },
+        "week_days": {
+          "name": "曜日 (1 = 日曜日、7 = 土曜日)"
+        },
+        "enabled": {
+          "name": "有効状態"
+        },
+        "time_zone": {
+          "name": "タイムゾーン"
+        }
+      }
+    },
+    "update_light_schedule": {
+      "name": "ライトのスケジュールを更新",
+      "description": "ライトのスケジュールを更新します。SBS50のライト電源スイッチを対象にしてください。",
+      "fields": {
+        "schedule_id": {
+          "name": "スケジュール識別子"
+        },
+        "start_time": {
+          "name": "開始時刻 (HH:MM または HHMM)"
+        },
+        "end_time": {
+          "name": "終了時刻 (HH:MM または HHMM)"
+        },
+        "week_days": {
+          "name": "曜日 (1 = 日曜日、7 = 土曜日)"
+        },
+        "enabled": {
+          "name": "有効状態"
+        },
+        "time_zone": {
+          "name": "タイムゾーン"
+        }
+      }
+    },
+    "rename_light_schedule": {
+      "name": "ライトのスケジュール名を変更",
+      "description": "ライトのスケジュール名を変更します。SBS50のライト電源スイッチを対象にしてください。",
+      "fields": {
+        "schedule_id": {
+          "name": "スケジュール識別子"
+        },
+        "name": {
+          "name": "表示名"
+        }
+      }
+    },
+    "delete_light_schedule": {
+      "name": "ライトのスケジュールを削除",
+      "description": "ライトのスケジュールを削除します。SBS50のライト電源スイッチを対象にしてください。",
+      "fields": {
+        "schedule_id": {
+          "name": "スケジュール識別子"
+        }
+      }
+    },
+    "query_light_groups": {
+      "name": "ライトグループを取得",
+      "description": "ライトグループを取得します。SBS50のライト電源スイッチを対象にしてください。"
+    },
+    "create_light_group": {
+      "name": "ライトグループを作成",
+      "description": "ライトグループを作成します。SBS50のライト電源スイッチを対象にしてください。",
+      "fields": {
+        "name": {
+          "name": "表示名"
+        }
+      }
+    },
+    "rename_light_group": {
+      "name": "ライトグループ名を変更",
+      "description": "ライトグループ名を変更します。SBS50のライト電源スイッチを対象にしてください。",
+      "fields": {
+        "group_id": {
+          "name": "グループ識別子"
+        },
+        "name": {
+          "name": "表示名"
+        }
+      }
+    },
+    "update_light_group_timer": {
+      "name": "ライトグループのタイマーを更新",
+      "description": "ライトグループのタイマーを更新します。SBS50のライト電源スイッチを対象にしてください。",
+      "fields": {
+        "group_id": {
+          "name": "グループ識別子"
+        },
+        "timer": {
+          "name": "タイマーの種類 (pirTime または appTime)"
+        },
+        "value": {
+          "name": "タイマーの値"
+        }
+      }
+    },
+    "bind_light_group": {
+      "name": "ライトグループを関連付け",
+      "description": "ライトグループを関連付けます。SBS50のライト電源スイッチを対象にしてください。",
+      "fields": {
+        "name": {
+          "name": "表示名"
+        },
+        "device_ids": {
+          "name": "デバイス識別子"
+        }
+      }
+    },
+    "delete_light_group": {
+      "name": "ライトグループを削除",
+      "description": "ライトグループを削除します。SBS50のライト電源スイッチを対象にしてください。",
+      "fields": {
+        "group_id": {
+          "name": "グループ識別子"
+        }
+      }
+    },
+    "remove_light_group_devices": {
+      "name": "ライトグループからデバイスを削除",
+      "description": "ライトグループからデバイスを削除します。SBS50のライト電源スイッチを対象にしてください。",
+      "fields": {
+        "device_ids": {
+          "name": "デバイス識別子"
+        }
+      }
+    },
+    "set_light_group_power": {
+      "name": "ライトグループの電源を設定",
+      "description": "ライトグループの電源を設定します。SBS50のライト電源スイッチを対象にしてください。",
+      "fields": {
+        "group_id": {
+          "name": "グループ識別子"
+        },
+        "device_ids": {
+          "name": "デバイスのシリアル番号"
+        },
+        "enabled": {
+          "name": "有効状態"
+        }
+      }
+    }
+  },
+  "issues": {}
 }

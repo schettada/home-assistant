@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "تم تكوين الجهاز بالفعل",
       "reauth_successful": "تمت إعادة المصادقة بنجاح",
-      "reconfigure_successful": "تمت إعادة التشكيل بنجاح"
+      "reconfigure_successful": "تمت إعادة التشكيل بنجاح",
+      "unique_id_mismatch": "سجّل الدخول باستخدام حساب X-Sense نفسه المرتبط بهذا الإدخال."
     },
     "error": {
       "cannot_connect": "فشل الاتصال",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "تقوم مزامنة الوسائط المسجلة بتخزين مقاطع الكاميرا مؤقتًا ضمن وسائط Home Assistant حتى يتمكن الشريط الجانبي للتسجيلات X-Sense ومتصفح الوسائط وإشعارات الهاتف المحمول من فتح التسجيلات بسرعة. اتركه للتخزين المؤقت للتسجيلات فقط عند فتحها. قم بتمكينه للحفاظ على التسجيلات الحديثة جاهزة في الخلفية.",
+        "description": "وضع التشغيل فقط هو الافتراضي، ويمرر التسجيلات عبر Home Assistant أثناء تشغيلها دون الاحتفاظ بالمقاطع كاملة. اختر الاحتفاظ بالتسجيلات محليًا لحفظ المقاطع ضمن وسائط Home Assistant وفق حدود العمر والحجم المحددة. تعمل المزامنة في الخلفية فقط في وضع الاحتفاظ.",
         "data": {
           "recording_media_sync_enabled": "تسجيل مزامنة الوسائط",
           "recording_media_sync_hours": "الفاصل الزمني لمزامنة الخلفية",
           "recording_media_storage_path": "تسجيل مجلد ذاكرة التخزين المؤقت",
           "recording_notification_quality": "جودة تسجيل الإخطار",
           "recording_media_days_order": "تسجيل ترتيب اليوم",
-          "recording_media_clips_order": "تسجيل ترتيب المقطع"
+          "recording_media_clips_order": "تسجيل ترتيب المقطع",
+          "recording_cache_retention_days": "تسجيل الاحتفاظ بذاكرة التخزين المؤقت",
+          "recording_cache_max_size_mb": "الحد الأقصى لحجم ذاكرة التخزين المؤقت للتسجيل",
+          "recording_cache_mode": "وضع تخزين التسجيلات"
         },
         "data_description": {
           "recording_media_sync_enabled": "تخزين التسجيلات الأخيرة تلقائيًا. يستخدم هذا مساحة تخزين وقد يقوم بتنشيط الكاميرات في كثير من الأحيان.",
           "recording_media_sync_hours": "عدد المرات التي يجب أن يتم فيها تشغيل مزامنة اللحاق بالخلفية العادية. يتم فحص التسجيلات الحديثة كل دقيقتين عند تمكين المزامنة.",
           "recording_media_storage_path": "استخدم مجلدًا ضمن /media. يتم تخزين مقاطع الفيديو والصور المصغرة الجديدة المخزنة مؤقتًا هنا.",
-          "recording_notification_quality": "اختر HD لتفضيل عناوين URL المباشرة/عالية الدقة لمقاطع X-Sense لإشعارات الهاتف المحمول. اختر SD لاستخدام مسار التقاط تشغيل الكاميرا عندما يكون ذلك متاحًا.",
+          "recording_notification_quality": "يفضل HD روابط التسجيلات ذات الدقة الأعلى. ويفضل SD روابط الدقة القياسية عندما يوفرها X-Sense.",
           "recording_media_days_order": "اختر ما إذا كانت الأيام الأحدث أو الأقدم ستظهر أولاً في عارض التسجيلات.",
-          "recording_media_clips_order": "اختر ما إذا كانت المقاطع الأحدث أو الأقدم ستظهر أولاً خلال كل يوم."
+          "recording_media_clips_order": "اختر ما إذا كانت المقاطع الأحدث أو الأقدم ستظهر أولاً خلال كل يوم.",
+          "recording_cache_retention_days": "احذف التسجيلات المحلية المخزنة مؤقتًا بعد هذه الأيام العديدة. لا يتم تغيير تسجيلات X-Sense السحابية وبطاقة SD.",
+          "recording_cache_max_size_mb": "الحد الأقصى لحجم ذاكرة التخزين المؤقت المحلية بالميجابايت. عند الوصول إلى الحد الأقصى، تتم إزالة التسجيلات الأقل مشاهدة مؤخرًا أولاً.",
+          "recording_cache_mode": "يمرر وضع التشغيل فقط وسائط HLS عبر Home Assistant عند الطلب دون الاحتفاظ بالمقاطع كاملة. يحتفظ وضع الاحتفاظ بنسخ محلية وفق الحدود أدناه."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "سيتم تغيير مجلد ذاكرة التخزين المؤقت للتسجيل من `{old_path}` إلى `{new_path}`. لا يتم نقل مقاطع الفيديو والصور المصغرة الموجودة المخزنة مؤقتًا تلقائيًا. انقل مجلدي `videos` و`thumbs` الموجودين أولاً إذا كنت تريد أن تظل التسجيلات القديمة المخزنة مؤقتًا متاحة."
+        "description": "سيتم تغيير مجلد ذاكرة التخزين المؤقت للتسجيل من `{old_path}` إلى `{new_path}`. لا يتم نقل مقاطع الفيديو والصور المصغرة الموجودة المخزنة مؤقتًا تلقائيًا. انقل مجلدات `hls`, `videos` و`thumbs` الموجودين أولاً إذا كنت تريد أن تظل التسجيلات القديمة المخزنة مؤقتًا متاحة."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "جدول صندوق البريد نشط"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "انقطاع التيار الكهربائي"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "نهاية العمر التشغيلي للبطارية"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "نهاية العمر التشغيلي"
       },
       "armed": {
-        "name": "Armed"
+        "name": "مُفعّل للحراسة"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "تم اكتشاف حركة"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "الشحن عبر USB"
       },
       "charging": {
-        "name": "Charging"
+        "name": "جارٍ الشحن"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "في وضع السكون"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "تمت إزالة حامل التثبيت"
       },
       "activated": {
-        "name": "Activated"
+        "name": "تفعيلها"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "تدريب الإنذار نشط"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "الإنذار نشط"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "مصدر إطلاق الإنذار"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "اختبار الجهاز نشط"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "الجهاز صامت"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "صوت الإنذار"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "إشعارات التطبيق"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "إشعارات الجدول الزمني"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "إنذار تسرب المياه"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "إنذار تسرب المياه مكتوم"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "إنذار درجة الحرارة"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "إنذار درجة الحرارة مكتوم"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "المنطقة الزمنية للجهاز مفعّلة"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "المنطقة الزمنية للجهاز صالحة"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "كتم الصوت"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "إيقاظ"
       }
     },
     "event": {
@@ -188,7 +195,7 @@
           "normal": "عادي",
           "low_battery": "بطارية منخفضة",
           "malfunction": "عطل",
-          "end_of_life": "نهاية الحياة"
+          "end_of_life": "نهاية العمر التشغيلي"
         }
       },
       "alarm_vol": {
@@ -254,139 +261,139 @@
         "name": "وقت ذروة مستوى الرادون"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "مستوى البطارية"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi قوة الإشارة"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi قوة الإشارة"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "رمز حالة الكاميرا"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "إصدار البرنامج الثابت"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "حالة البرنامج الثابت للكاميرا"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "اسم شبكة Wi-Fi ‏(SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "قناة Wi-Fi"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "عنوان MAC"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "حالة بطاقة SD"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "السعة الإجمالية لبطاقة SD"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "المساحة المستخدمة من بطاقة SD"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "وقت تفعيل الكاميرا"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "وقت انقطاع اتصال الكاميرا"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "وقت الصورة المصغّرة للكاميرا"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "وقت إيقاظ الكاميرا من السكون"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "رسالة سكون الكاميرا"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "المنطقة الزمنية للجهاز"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "نسخة كاشف الدخان"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "معيار إنذار CO"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "نوع الفحص"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "فاصل PIR"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "حساسية الاستشعار"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "وقت كتم الإنذار"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "وقت كتم إنذار درجة الحرارة"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "وقت كتم إنذار تسرب المياه"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "تحذير CO قصير المدى"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "مستوى تحذير CO قصير المدى"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "تحذير CO طويل المدى"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "مستوى تحذير CO طويل المدى"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "حدوث الإنذار"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "مصدر الإنذار"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "إنذار متكرر"
       },
       "time": {
-        "name": "Report Time"
+        "name": "وقت التقرير"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "التوقيت العالمي UTC"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "وقت اختبار الجهاز"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "المنطقة الزمنية للجهاز"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "الموقع المعلن صوتيًا"
       },
       "location": {
-        "name": "Location"
+        "name": "الموقع"
       },
       "color": {
-        "name": "Color"
+        "name": "اللون"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "حدث الإضاءة"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "نوع الجهاز"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "نوع الجهاز المُبلّغ عنه"
       },
       "category": {
-        "name": "Category"
+        "name": "الفئة"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "وضع الأمان"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "سطوع الاستعداد"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "حجم التنبيه"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "حجم الصوت"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "مستوى صوت مكبر الصوت"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "مدة الإنذار"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "حساسية الرؤية الليلية"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "حساسية اكتشاف البكاء"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "الفاصل بين التسجيلات"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "مدة الجرس الميكانيكي"
       }
     },
     "select": {
@@ -519,251 +526,266 @@
         "name": "التطبيق في الوقت المحدد"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "اللغة"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "دقة التسجيل"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "حساسية الكشف",
+        "state": {
+          "high": "عالية",
+          "medium": "متوسطة",
+          "low": "منخفضة",
+          "auto": "تلقائية"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "مدة الفيديو"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "تردد الوميض"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "برنامج الترميز الافتراضي"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "تتبع الحركة"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "وضع الرؤية الليلية"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "الفاصل بين التسجيلات السحابية"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "نغمة جرس الباب"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "مستوى البطارية للتشغيل التلقائي"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "مؤشر LED"
       },
       "light_power": {
-        "name": "Light"
+        "name": "الإضاءة"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "الإنذار مفعّل"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "إنذار مستمر"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "تذكير بالبريد"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "النغمة القصيرة مفعّلة"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "التذكير مفعّل"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "نغمة التذكير مفعّلة"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "إضاءة الاستعداد مفعّلة"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "حساس PIR مفعّل"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "استشعار الإضاءة المحيطة مفعّل"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "صوت الأزرار مفعّل"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "التحذير مفعّل"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "اكتشاف الحركة"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "اكتشاف الأشخاص"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "تسجيل الفيديو"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "الرؤية الليلية التلقائية"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "مؤشر الحالة LED"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "إنذار الكاميرا"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "تدوير الصورة"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "منع الوميض"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "اكتشاف البكاء"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "الفاصل بين التسجيلات"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "مكالمات الجهاز"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "جرس ميكانيكي"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "تتبع الحركة"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "مستوى صوت الكلام"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "الصوت المباشر"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "تسجيل الصوت"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "التشغيل التلقائي"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "ضوء أبيض"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "الإنذار عند الإزالة"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "وضع السكون"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "إشعار ذكي بوجود شخص"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "إشعار ذكي بوجود حيوان أليف"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "إشعار ذكي بدخول مركبة"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "إشعار ذكي بمغادرة مركبة"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "إشعار ذكي بمركبة متوقفة"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "إشعار ذكي بوجود طرد"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "إشعار ذكي بتسليم طرد"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "إشعار ذكي باستلام طرد"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "إشعارات ذكية أخرى"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "المساعد الذكي للأشخاص"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "المساعد الذكي للحيوانات الأليفة"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "المساعد الذكي للمركبات"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "المساعد الذكي للطرود"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "إنذار"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "لم تعد محطة X-Sense متاحة"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "لم يعد كيان X-Sense متاحًا"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "اتصال MQTT الخاص بـ X-Sense غير متصل"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "تعذر نشر أمر وضع الأمان في X-Sense"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "لا يوجد طلب تفعيل إجباري معلّق في X-Sense للوضع {mode}"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "حالة تفعيل الفاصل بين التسجيلات في X-Sense غير معروفة"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "الخيار {option} غير مدعوم في X-Sense"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "لا يمكن تعديل خيار التحديد في X-Sense"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "عتبة الرادون في X-Sense غير صالحة"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "القيمة المقابلة لإعداد النطاق في X-Sense مفقودة"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "لا يمكن أن يكون الحد الأدنى في X-Sense أكبر من الحد الأقصى"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "تتطلب خدمة X-Sense ‏{service} مفتاح تشغيل إضاءة"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "تتطلب خدمة X-Sense ‏{service} محطة SBS50"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "معرّفات خدمة X-Sense ‏{service} مفقودة"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "يجب أن يكون وقت جدول X-Sense بتنسيق HH:MM أو HHMM"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "وقت جدول X-Sense خارج النطاق"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "يجب أن يتضمن جدول X-Sense يومًا واحدًا على الأقل من أيام الأسبوع"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "يجب أن تكون أيام الأسبوع في جدول X-Sense من 1 إلى 7"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "يجب أن يتضمن حقل X-Sense ‏{field} معرّفًا واحدًا على الأقل"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "لا يمكن إزالة الاشتراك مرتين"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "يجب أن يكون الموضوع سلسلة نصية"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "خطأ في الاتصال بـ MQTT: ‏{error}"
+    },
+    "recording_cache_failed": {
+      "message": "تعذر التخزين المؤقت لعدد {failed} من التسجيلات. تم تنزيل {downloaded} من التسجيلات."
+    },
+    "force_arm_invalid_link": {
+      "message": "رابط التسليح الإجباري هذا في X-Sense غير صالح."
+    },
+    "force_arm_request_failed": {
+      "message": "فشل طلب التسليح الإجباري في X-Sense."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "تصاعدي",
+        "descending": "تنازلي"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "تصاعدي",
+        "descending": "تنازلي"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "التشغيل فقط",
+        "retained": "الاحتفاظ بالتسجيلات محليًا"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "المنزل",
+        "away": "الغياب"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "fields": {
+        "mode": {
+          "name": "وضع التسليح"
+        }
+      },
+      "name": "التسليح الإجباري",
+      "description": "تأكيد طلب تسليح معلّق في وضع المنزل أو الغياب منعته مستشعرات مفتوحة. يتم تجاوز المستشعرات المفتوحة."
+    },
+    "force_arm_now": {
+      "fields": {
+        "mode": {
+          "name": "وضع التسليح"
+        }
+      },
+      "name": "التسليح الإجباري الآن",
+      "description": "التسليح في وضع المنزل أو الغياب فورًا مع تجاوز المستشعرات المفتوحة دون طلب تأكيد."
+    },
+    "trigger_sos": {
+      "name": "تشغيل إنذار الاستغاثة",
+      "description": "تشغيل إنذار الاستغاثة في SBS50 فورًا."
+    },
+    "cancel_sos": {
+      "name": "إلغاء إنذار الاستغاثة",
+      "description": "إلغاء إنذار استغاثة نشط في SBS50."
+    },
+    "cancel_alarm": {
+      "name": "إلغاء الإنذار النشط",
+      "description": "إلغاء إنذار مستشعر نشط في SBS50."
+    },
+    "set_sos_sound": {
+      "fields": {
+        "audible": {
+          "name": "إنذار استغاثة مسموع"
+        }
+      },
+      "name": "ضبط صوت الاستغاثة",
+      "description": "اختر ما إذا كانت الاستغاثة تستخدم الأضواء الوامضة فقط أم تشغّل الصفارة أيضًا."
+    },
+    "refresh_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "معرّف إدخال التكوين",
+          "description": "اتركه فارغًا للتطبيق على جميع حسابات X-Sense."
+        }
+      },
+      "name": "تحديث التسجيلات",
+      "description": "تحديث فهرس تسجيلات الكاميرا المستخدم في الشريط الجانبي ومتصفح الوسائط."
+    },
+    "cache_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "معرّف إدخال التكوين",
+          "description": "اتركه فارغًا للتطبيق على جميع حسابات X-Sense."
+        }
+      },
+      "name": "تخزين التسجيلات مؤقتًا",
+      "description": "تنزيل تسجيلات الكاميرا للاحتفاظ بها محليًا. يتطلب وضع الاحتفاظ بالتسجيلات محليًا."
+    },
+    "clear_recordings_cache": {
+      "fields": {
+        "entry_id": {
+          "name": "معرّف إدخال التكوين",
+          "description": "اتركه فارغًا للتطبيق على جميع حسابات X-Sense."
+        }
+      },
+      "name": "مسح ذاكرة التخزين المؤقت للتسجيلات",
+      "description": "حذف فهارس التسجيلات والفيديوهات والصور المصغرة المحلية. لا تتغير تسجيلات السحابة وبطاقة SD."
+    },
+    "query_light_schedules": {
+      "name": "الاستعلام عن جداول الإضاءة",
+      "description": "الاستعلام عن جداول الإضاءة. استهدف مفتاح تشغيل الإضاءة في SBS50."
+    },
+    "create_light_schedule": {
+      "fields": {
+        "name": {
+          "name": "اسم العرض"
+        },
+        "start_time": {
+          "name": "وقت البدء (HH:MM أو HHMM)"
+        },
+        "end_time": {
+          "name": "وقت الانتهاء (HH:MM أو HHMM)"
+        },
+        "week_days": {
+          "name": "أيام الأسبوع (1 = الأحد، 7 = السبت)"
+        },
+        "enabled": {
+          "name": "حالة التفعيل"
+        },
+        "time_zone": {
+          "name": "المنطقة الزمنية"
+        }
+      },
+      "name": "إنشاء جدول إضاءة",
+      "description": "إنشاء جدول إضاءة. استهدف مفتاح تشغيل الإضاءة في SBS50."
+    },
+    "update_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "معرّف الجدول"
+        },
+        "start_time": {
+          "name": "وقت البدء (HH:MM أو HHMM)"
+        },
+        "end_time": {
+          "name": "وقت الانتهاء (HH:MM أو HHMM)"
+        },
+        "week_days": {
+          "name": "أيام الأسبوع (1 = الأحد، 7 = السبت)"
+        },
+        "enabled": {
+          "name": "حالة التفعيل"
+        },
+        "time_zone": {
+          "name": "المنطقة الزمنية"
+        }
+      },
+      "name": "تحديث جدول إضاءة",
+      "description": "تحديث جدول إضاءة. استهدف مفتاح تشغيل الإضاءة في SBS50."
+    },
+    "rename_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "معرّف الجدول"
+        },
+        "name": {
+          "name": "اسم العرض"
+        }
+      },
+      "name": "إعادة تسمية جدول إضاءة",
+      "description": "إعادة تسمية جدول إضاءة. استهدف مفتاح تشغيل الإضاءة في SBS50."
+    },
+    "delete_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "معرّف الجدول"
+        }
+      },
+      "name": "حذف جدول إضاءة",
+      "description": "حذف جدول إضاءة. استهدف مفتاح تشغيل الإضاءة في SBS50."
+    },
+    "query_light_groups": {
+      "name": "الاستعلام عن مجموعات الإضاءة",
+      "description": "الاستعلام عن مجموعات الإضاءة. استهدف مفتاح تشغيل الإضاءة في SBS50."
+    },
+    "create_light_group": {
+      "fields": {
+        "name": {
+          "name": "اسم العرض"
+        }
+      },
+      "name": "إنشاء مجموعة إضاءة",
+      "description": "إنشاء مجموعة إضاءة. استهدف مفتاح تشغيل الإضاءة في SBS50."
+    },
+    "rename_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "معرّف المجموعة"
+        },
+        "name": {
+          "name": "اسم العرض"
+        }
+      },
+      "name": "إعادة تسمية مجموعة إضاءة",
+      "description": "إعادة تسمية مجموعة إضاءة. استهدف مفتاح تشغيل الإضاءة في SBS50."
+    },
+    "update_light_group_timer": {
+      "fields": {
+        "group_id": {
+          "name": "معرّف المجموعة"
+        },
+        "timer": {
+          "name": "نوع المؤقت (pirTime أو appTime)"
+        },
+        "value": {
+          "name": "قيمة المؤقت"
+        }
+      },
+      "name": "تحديث مؤقت مجموعة إضاءة",
+      "description": "تحديث مؤقت مجموعة إضاءة. استهدف مفتاح تشغيل الإضاءة في SBS50."
+    },
+    "bind_light_group": {
+      "fields": {
+        "name": {
+          "name": "اسم العرض"
+        },
+        "device_ids": {
+          "name": "معرّفات الأجهزة"
+        }
+      },
+      "name": "ربط مجموعة إضاءة",
+      "description": "ربط مجموعة إضاءة. استهدف مفتاح تشغيل الإضاءة في SBS50."
+    },
+    "delete_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "معرّف المجموعة"
+        }
+      },
+      "name": "حذف مجموعة إضاءة",
+      "description": "حذف مجموعة إضاءة. استهدف مفتاح تشغيل الإضاءة في SBS50."
+    },
+    "remove_light_group_devices": {
+      "fields": {
+        "device_ids": {
+          "name": "معرّفات الأجهزة"
+        }
+      },
+      "name": "إزالة أجهزة من مجموعة إضاءة",
+      "description": "إزالة أجهزة من مجموعة إضاءة. استهدف مفتاح تشغيل الإضاءة في SBS50."
+    },
+    "set_light_group_power": {
+      "fields": {
+        "group_id": {
+          "name": "معرّف المجموعة"
+        },
+        "device_ids": {
+          "name": "الأرقام التسلسلية للأجهزة"
+        },
+        "enabled": {
+          "name": "حالة التفعيل"
+        }
+      },
+      "name": "ضبط تشغيل مجموعة إضاءة",
+      "description": "ضبط تشغيل مجموعة إضاءة. استهدف مفتاح تشغيل الإضاءة في SBS50."
+    }
+  },
+  "issues": {}
 }

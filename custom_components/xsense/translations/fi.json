@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "Laite on jo määritetty",
       "reauth_successful": "Uudelleentodennus onnistui",
-      "reconfigure_successful": "Uudelleenmääritys onnistui"
+      "reconfigure_successful": "Uudelleenmääritys onnistui",
+      "unique_id_mismatch": "Kirjaudu sisään samalla X-Sense-tilillä, joka on liitetty tähän tietueeseen."
     },
     "error": {
       "cannot_connect": "Yhteyden muodostaminen epäonnistui",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "Tallennusmedian synkronointi tallentaa kameraleikkeet välimuistiin Home Assistant-mediaan, joten X-Sense Tallenteet-sivupalkki, Mediaselain ja mobiiliilmoitukset voivat avata tallenteet nopeasti. Jätä se pois päältä tallenteiden välimuistiin vasta, kun ne avataan. Ota se käyttöön pitääksesi viimeisimmät tallenteet valmiina taustalla.",
+        "description": "Oletuksena on vain toisto: tallenteet välitetään Home Assistantin kautta toiston aikana ilman kokonaisten leikkeiden säilyttämistä. Valitse paikallisten tallenteiden säilytys, jos haluat pitää leikkeet Home Assistantin mediassa määritettyjen ikä- ja kokorajojen mukaan. Taustasynkronointi toimii vain säilytystilassa.",
         "data": {
           "recording_media_sync_enabled": "Tallennusmedian synkronointi",
           "recording_media_sync_hours": "Taustasynkronointiväli",
           "recording_media_storage_path": "Tallennusvälimuistikansio",
           "recording_notification_quality": "Ilmoituksen tallennuslaatu",
           "recording_media_days_order": "Tallennuspäivän tilaus",
-          "recording_media_clips_order": "Tallennusleikkeen tilaus"
+          "recording_media_clips_order": "Tallennusleikkeen tilaus",
+          "recording_cache_retention_days": "Tallennusvälimuistin säilytys",
+          "recording_cache_max_size_mb": "Tallennusvälimuistin enimmäiskoko",
+          "recording_cache_mode": "Tallenteiden tallennustila"
         },
         "data_description": {
           "recording_media_sync_enabled": "Tallenna viimeisimmät tallenteet automaattisesti välimuistiin. Tämä käyttää tallennustilaa ja saattaa herättää kamerat useammin.",
           "recording_media_sync_hours": "Kuinka usein normaalin taustasynkronoinnin tulee olla käynnissä. Viimeisimmät tallenteet tarkistetaan muutaman minuutin välein, kun synkronointi on käytössä.",
           "recording_media_storage_path": "Käytä /media-kohdassa olevaa kansiota. Uudet välimuistissa olevat videot ja pikkukuvat tallennetaan tänne.",
-          "recording_notification_quality": "Valitse HD, jos haluat suosia X-Sensein suoria/korkearesoluutioisia leikkeiden URL-osoitteita mobiili-ilmoituksille. Valitse SD, jos haluat käyttää kameran toistokaappauspolkua, kun se on käytettävissä.",
+          "recording_notification_quality": "HD suosii tallenteiden korkeamman resoluution URL-osoitteita. SD suosii vakioresoluutiota, kun X-Sense tarjoaa sen.",
           "recording_media_days_order": "Valitse, näkyvätkö tallenteiden katseluohjelmassa ensin uudemmat vai vanhemmat päivät.",
-          "recording_media_clips_order": "Valitse, näkyvätkö uudemmat vai vanhemmat leikkeet ensimmäisenä joka päivä."
+          "recording_media_clips_order": "Valitse, näkyvätkö uudemmat vai vanhemmat leikkeet ensimmäisenä joka päivä.",
+          "recording_cache_retention_days": "Poista paikalliset välimuistitallenteet tämän monen päivän jälkeen. X-Sense-pilvi- ja SD-kortin tallennukset eivät muutu.",
+          "recording_cache_max_size_mb": "Paikallisen välimuistin enimmäiskoko megatavuina. Kun raja saavutetaan, ensin poistetaan tallenteet, joiden viimeisestä katselusta on kulunut eniten aikaa.",
+          "recording_cache_mode": "Vain toisto välittää HLS-median pyydettäessä Home Assistantin kautta säilyttämättä kokonaisia leikkeitä. Säilytystila pitää paikalliset kopiot alla olevien rajojen mukaan."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "Tallennusvälimuistikansio vaihtuu `{old_path}`-kansiosta `{new_path}`-kansioon. Olemassa olevia välimuistissa olevia videoita ja pikkukuvia ei siirretä automaattisesti. Siirrä ensin olemassa olevat `videos`- ja `thumbs`-kansiot, jos haluat säilyttää vanhat välimuistitallenteet."
+        "description": "Tallennusvälimuistikansio vaihtuu `{old_path}`-kansiosta `{new_path}`-kansioon. Olemassa olevia välimuistissa olevia videoita ja pikkukuvia ei siirretä automaattisesti. Siirrä ensin olemassa olevat `hls`, `videos`- ja `thumbs`-kansiot, jos haluat säilyttää vanhat välimuistitallenteet."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "Postilaatikon aikataulu aktiivinen"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "Verkkovirta katkaistu"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "Akun käyttöiän loppu"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "Käyttöiän loppu"
       },
       "armed": {
-        "name": "Armed"
+        "name": "Valvonta kytketty"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "Liikettä havaittu"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "USB-lataus"
       },
       "charging": {
-        "name": "Charging"
+        "name": "Ladataan"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "Lepotilassa"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "Kiinnitysteline irrotettu"
       },
       "activated": {
-        "name": "Activated"
+        "name": "Aktivoitu"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "Hälytysharjoitus käynnissä"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "Hälytys aktiivinen"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "Hälytyksen käynnistänyt laite"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "Laitetesti käynnissä"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "Laite hiljennetty"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "Hälytysääni"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "Sovelluksen ilmoitukset"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "Aikatauluilmoitukset"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "Vesivuotohälytys"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "Vesivuotohälytys vaimennettu"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "Lämpötilahälytys"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "Lämpötilahälytys vaimennettu"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "Laitteen aikavyöhyke käytössä"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "Laitteen aikavyöhyke kelvollinen"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "Mykistä"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "Herätä"
       }
     },
     "event": {
@@ -188,7 +195,7 @@
           "normal": "Normaali",
           "low_battery": "Alhainen akku",
           "malfunction": "Toimintahäiriö",
-          "end_of_life": "Elämän loppu"
+          "end_of_life": "Käyttöiän loppu"
         }
       },
       "alarm_vol": {
@@ -254,139 +261,139 @@
         "name": "Radonin huipputason aika"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "Akun varaustaso"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Signaalin voimakkuus"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Signaalin voimakkuus"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "Kameran tilakoodi"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "Laiteohjelmiston versio"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "Kameran laiteohjelmiston tila"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Wi-Fi-verkon nimi (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Wi-Fi-kanava"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "MAC-osoite"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "SD-kortin tila"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "SD-kortin kokonaiskapasiteetti"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "SD-kortin käytetty tila"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "Kameran aktivointiaika"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "Kameran yhteyden katkeamisaika"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "Kameran pienoiskuvan aika"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "Kameran herätysaika"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "Kameran lepotilaviesti"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "Laitteen aikavyöhyke"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "Savuilmaisimen versio"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "CO-hälytysstandardi"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "Tarkistuksen tyyppi"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "PIR-aikaväli"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "Anturin herkkyys"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "Vaimennusaika"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "Lämpötilahälytyksen vaimennusaika"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "Vesivuotohälytyksen vaimennusaika"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "Lyhytaikainen CO-varoitus"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "Lyhytaikaisen CO-varoituksen taso"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "Pitkäaikainen CO-varoitus"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "Pitkäaikaisen CO-varoituksen taso"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "Hälytystapahtuma"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "Hälytyksen lähde"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "Toistuva hälytys"
       },
       "time": {
-        "name": "Report Time"
+        "name": "Raportointiaika"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "UTC-aika"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "Laitteen testausaika"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "Laitteen aikavyöhyke"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "Ääni-ilmoituksen sijainti"
       },
       "location": {
-        "name": "Location"
+        "name": "Sijainti"
       },
       "color": {
-        "name": "Color"
+        "name": "Väri"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "Valotapahtuma"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "Laitteen tyyppi"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "Ilmoitettu laitetyyppi"
       },
       "category": {
-        "name": "Category"
+        "name": "Luokka"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "Turvatila"
       }
     },
     "number": {
@@ -403,7 +410,7 @@
         "name": "Äänenvoimakkuus"
       },
       "chirp_volume": {
-        "name": "Chirp Volume"
+        "name": "Lyhyen merkkiäänen voimakkuus"
       },
       "reminder_volume": {
         "name": "Muistutuksen äänenvoimakkuus"
@@ -454,28 +461,28 @@
         "name": "Valmiustilan kirkkaus"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "Hälytyksen äänenvoimakkuus"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Äänenvoimakkuus"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "Kaiuttimen äänenvoimakkuus"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "Hälytyksen kesto"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "Yönäön herkkyys"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "Itkun tunnistuksen herkkyys"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Tallennusten välinen viive"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "Mekaanisen ovikellon soittoaika"
       }
     },
     "select": {
@@ -519,251 +526,266 @@
         "name": "Sovellus ajoissa"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "Kieli"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "Tallennuksen tarkkuus"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "Tunnistusherkkyys",
+        "state": {
+          "high": "Korkea",
+          "medium": "Keskitaso",
+          "low": "Matala",
+          "auto": "Automaattinen"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "Videon kesto"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "Välkyntätaajuus"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "Oletuskoodek"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "Liikkeen seuranta"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "Yönäkötila"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "Pilvitallennusten välinen viive"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "Ovikellon ääni"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "Akun varaustaso automaattista käynnistystä varten"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "LED-merkkivalo"
       },
       "light_power": {
-        "name": "Light"
+        "name": "Valo"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "Hälytys käytössä"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "Jatkuva hälytys"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "Postimuistutus"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "Lyhyt merkkiääni käytössä"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "Muistutus käytössä"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "Muistutusääni käytössä"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "Valmiustilan valaistus käytössä"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR käytössä"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "Ympäristön valon tunnistus käytössä"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "Näppäinäänet käytössä"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "Varoitus käytössä"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "Liikkeen tunnistus"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "Henkilön tunnistus"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "Tallenna video"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "Automaattinen yönäkö"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "Tilan LED-merkkivalo"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "Kameran hälytys"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "Käännä kuvaa"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "Välkynnän esto"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "Itkun tunnistus"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Tallennusten välinen viive"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "Laitteen puhelut"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "Mekaaninen ovikello"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "Liikkeen seuranta"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Puheäänen voimakkuus"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "Suora ääni"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "Tallennuksen ääni"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "Automaattinen käynnistys"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "Valkoinen valo"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "Hälytys irrotettaessa"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "Lepotila"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "Tekoälyilmoitus: henkilö"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "Tekoälyilmoitus: lemmikki"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "Tekoälyilmoitus: ajoneuvo saapuu"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "Tekoälyilmoitus: ajoneuvo poistuu"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "Tekoälyilmoitus: pysäköity ajoneuvo"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "Tekoälyilmoitus: paketti paikalla"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "Tekoälyilmoitus: paketti toimitettu"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "Tekoälyilmoitus: paketti noudettu"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "Muut tekoälyilmoitukset"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "Tekoälyavustaja: henkilöt"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "Tekoälyavustaja: lemmikit"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "Tekoälyavustaja: ajoneuvot"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "Tekoälyavustaja: paketit"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "Hälytys"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "X-Sense-asema ei ole enää käytettävissä"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "X-Sense-entiteetti ei ole enää käytettävissä"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "X-Sense MQTT ei ole yhdistetty"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "X-Sense-turvatilan komentoa ei voitu julkaista"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "X-Sense ei odota pakotettua valvonnan kytkentää tilassa {mode}"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "X-Sense-tallennusten välisen viiveen käyttötila ei ole tiedossa"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option} ei ole tuettu X-Sense-valinta"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "X-Sense-valintaa ei voi kirjoittaa"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "X-Sense-radonraja ei ole kelvollinen"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "X-Sense-alueasetuksen pariarvo puuttuu"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "X-Sense-minimi ei voi ylittää maksimia"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service} vaatii valon virtakytkimen"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service} vaatii SBS50-aseman"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "X-Sense {service} -tunnisteet puuttuvat"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "X-Sense-aikataulun ajan on oltava muodossa HH:MM tai HHMM"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "X-Sense-aikataulun aika on sallitun alueen ulkopuolella"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "X-Sense-aikataulussa on oltava vähintään yksi viikonpäivä"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "X-Sense-aikataulun viikonpäivien on oltava 1–7"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field} -kentässä on oltava vähintään yksi tunniste"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "Tilausta ei voi poistaa kahdesti"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "Aiheen on oltava merkkijono"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "Virhe MQTT-yhteydessä: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "{failed} tallenteen tallentaminen välimuistiin epäonnistui. {downloaded} tallennetta ladattiin."
+    },
+    "force_arm_invalid_link": {
+      "message": "Tämä X-Sensen pakotetun virityksen linkki on virheellinen."
+    },
+    "force_arm_request_failed": {
+      "message": "X-Sensen pakotetun virityksen pyyntö epäonnistui."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Nouseva",
+        "descending": "Laskeva"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Nouseva",
+        "descending": "Laskeva"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "Vain toisto",
+        "retained": "Säilytä paikalliset tallenteet"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "Kotona",
+        "away": "Poissa"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "fields": {
+        "mode": {
+          "name": "Viritystila"
+        }
+      },
+      "name": "Pakota viritys",
+      "description": "Vahvista odottava virityspyyntö Kotona- tai Poissa-tilaan, jonka avoimet anturit estävät. Avoimet anturit ohitetaan."
+    },
+    "force_arm_now": {
+      "fields": {
+        "mode": {
+          "name": "Viritystila"
+        }
+      },
+      "name": "Pakota viritys nyt",
+      "description": "Viritä heti Kotona- tai Poissa-tilaan ja ohita avoimet anturit ilman vahvistuspyyntöä."
+    },
+    "trigger_sos": {
+      "name": "Laukaise SOS-hälytys",
+      "description": "Laukaise SBS50:n SOS-hälytys välittömästi."
+    },
+    "cancel_sos": {
+      "name": "Peruuta SOS-hälytys",
+      "description": "Peruuta SBS50:n aktiivinen SOS-hälytys."
+    },
+    "cancel_alarm": {
+      "name": "Peruuta aktiivinen hälytys",
+      "description": "Peruuta SBS50:n aktiivinen anturihälytys."
+    },
+    "set_sos_sound": {
+      "fields": {
+        "audible": {
+          "name": "Äänellinen SOS-hälytys"
+        }
+      },
+      "name": "Aseta SOS-ääni",
+      "description": "Valitse, käyttääkö SOS vain vilkkuvia valoja vai soittaako se myös summeria."
+    },
+    "refresh_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "Määritystietueen tunnus",
+          "description": "Jätä tyhjäksi, jos haluat käyttää kaikkia X-Sense-tilejä."
+        }
+      },
+      "name": "Päivitä tallenteet",
+      "description": "Päivitä sivupalkin ja mediaselaimen käyttämä kameratallenteiden hakemisto."
+    },
+    "cache_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "Määritystietueen tunnus",
+          "description": "Jätä tyhjäksi, jos haluat käyttää kaikkia X-Sense-tilejä."
+        }
+      },
+      "name": "Tallenna tallenteet välimuistiin",
+      "description": "Lataa kameratallenteita paikallista säilytystä varten. Edellyttää Säilytä paikalliset tallenteet -tilaa."
+    },
+    "clear_recordings_cache": {
+      "fields": {
+        "entry_id": {
+          "name": "Määritystietueen tunnus",
+          "description": "Jätä tyhjäksi, jos haluat käyttää kaikkia X-Sense-tilejä."
+        }
+      },
+      "name": "Tyhjennä tallenteiden välimuisti",
+      "description": "Poista paikalliset tallenteiden hakemistot, videot ja pikkukuvat. Pilven ja SD-kortin tallenteet säilyvät ennallaan."
+    },
+    "query_light_schedules": {
+      "name": "Hae valaistusaikataulut",
+      "description": "Hae valaistusaikataulut. Valitse kohteeksi SBS50:n valaistuksen virtakytkin."
+    },
+    "create_light_schedule": {
+      "fields": {
+        "name": {
+          "name": "Näyttönimi"
+        },
+        "start_time": {
+          "name": "Aloitusaika (HH:MM tai HHMM)"
+        },
+        "end_time": {
+          "name": "Lopetusaika (HH:MM tai HHMM)"
+        },
+        "week_days": {
+          "name": "Viikonpäivät (1 = sunnuntai, 7 = lauantai)"
+        },
+        "enabled": {
+          "name": "Käytössä-tila"
+        },
+        "time_zone": {
+          "name": "Aikavyöhyke"
+        }
+      },
+      "name": "Luo valaistusaikataulu",
+      "description": "Luo valaistusaikataulu. Valitse kohteeksi SBS50:n valaistuksen virtakytkin."
+    },
+    "update_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Aikataulun tunnus"
+        },
+        "start_time": {
+          "name": "Aloitusaika (HH:MM tai HHMM)"
+        },
+        "end_time": {
+          "name": "Lopetusaika (HH:MM tai HHMM)"
+        },
+        "week_days": {
+          "name": "Viikonpäivät (1 = sunnuntai, 7 = lauantai)"
+        },
+        "enabled": {
+          "name": "Käytössä-tila"
+        },
+        "time_zone": {
+          "name": "Aikavyöhyke"
+        }
+      },
+      "name": "Päivitä valaistusaikataulu",
+      "description": "Päivitä valaistusaikataulu. Valitse kohteeksi SBS50:n valaistuksen virtakytkin."
+    },
+    "rename_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Aikataulun tunnus"
+        },
+        "name": {
+          "name": "Näyttönimi"
+        }
+      },
+      "name": "Nimeä valaistusaikataulu uudelleen",
+      "description": "Nimeä valaistusaikataulu uudelleen. Valitse kohteeksi SBS50:n valaistuksen virtakytkin."
+    },
+    "delete_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Aikataulun tunnus"
+        }
+      },
+      "name": "Poista valaistusaikataulu",
+      "description": "Poista valaistusaikataulu. Valitse kohteeksi SBS50:n valaistuksen virtakytkin."
+    },
+    "query_light_groups": {
+      "name": "Hae valoryhmät",
+      "description": "Hae valoryhmät. Valitse kohteeksi SBS50:n valaistuksen virtakytkin."
+    },
+    "create_light_group": {
+      "fields": {
+        "name": {
+          "name": "Näyttönimi"
+        }
+      },
+      "name": "Luo valoryhmä",
+      "description": "Luo valoryhmä. Valitse kohteeksi SBS50:n valaistuksen virtakytkin."
+    },
+    "rename_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Ryhmän tunnus"
+        },
+        "name": {
+          "name": "Näyttönimi"
+        }
+      },
+      "name": "Nimeä valoryhmä uudelleen",
+      "description": "Nimeä valoryhmä uudelleen. Valitse kohteeksi SBS50:n valaistuksen virtakytkin."
+    },
+    "update_light_group_timer": {
+      "fields": {
+        "group_id": {
+          "name": "Ryhmän tunnus"
+        },
+        "timer": {
+          "name": "Ajastimen tyyppi (pirTime tai appTime)"
+        },
+        "value": {
+          "name": "Ajastimen arvo"
+        }
+      },
+      "name": "Päivitä valoryhmän ajastin",
+      "description": "Päivitä valoryhmän ajastin. Valitse kohteeksi SBS50:n valaistuksen virtakytkin."
+    },
+    "bind_light_group": {
+      "fields": {
+        "name": {
+          "name": "Näyttönimi"
+        },
+        "device_ids": {
+          "name": "Laitteiden tunnukset"
+        }
+      },
+      "name": "Yhdistä valoryhmä",
+      "description": "Yhdistä valoryhmä. Valitse kohteeksi SBS50:n valaistuksen virtakytkin."
+    },
+    "delete_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Ryhmän tunnus"
+        }
+      },
+      "name": "Poista valoryhmä",
+      "description": "Poista valoryhmä. Valitse kohteeksi SBS50:n valaistuksen virtakytkin."
+    },
+    "remove_light_group_devices": {
+      "fields": {
+        "device_ids": {
+          "name": "Laitteiden tunnukset"
+        }
+      },
+      "name": "Poista laitteita valoryhmästä",
+      "description": "Poista laitteita valoryhmästä. Valitse kohteeksi SBS50:n valaistuksen virtakytkin."
+    },
+    "set_light_group_power": {
+      "fields": {
+        "group_id": {
+          "name": "Ryhmän tunnus"
+        },
+        "device_ids": {
+          "name": "Laitteiden sarjanumerot"
+        },
+        "enabled": {
+          "name": "Käytössä-tila"
+        }
+      },
+      "name": "Aseta valoryhmän virtatila",
+      "description": "Aseta valoryhmän virtatila. Valitse kohteeksi SBS50:n valaistuksen virtakytkin."
+    }
+  },
+  "issues": {}
 }

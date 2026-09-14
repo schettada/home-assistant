@@ -156,7 +156,7 @@ class XSenseMQTT:
         self._mqttc.on_disconnect = self._async_mqtt_on_disconnect
         self._mqttc.on_message = self._async_mqtt_on_message
         self._mqttc.on_publish = self._async_mqtt_on_callback
-        self._mqttc.on_subscribe = self._async_mqtt_on_callback
+        self._mqttc.on_subscribe = self._async_mqtt_on_subscribe
         self._mqttc.on_unsubscribe = self._async_mqtt_on_callback
 
         # suppress exceptions at callback
@@ -490,7 +490,8 @@ class XSenseMQTT:
     ) -> Callable[[], None]:
         """Set up a subscription to a topic with the provided qos.
 
-        This method is a coroutine.
+        Connected calls wait for SUBACK. Disconnected calls retain intent for
+        the next connection's subscription batch, without claiming broker ACK.
         """
         if not isinstance(topic, str):
             raise xsense_error("mqtt_topic_not_string")
@@ -528,11 +529,12 @@ class XSenseMQTT:
         self._matching_subscriptions_cache.clear()
 
         if self.connected:
-            self.config_entry.async_create_background_task(
-                self.hass,
-                self._async_perform_subscription(subscription),
-                name="xsense-mqtt subscribe",
-            )
+            try:
+                await self._async_perform_subscription(subscription)
+            except BaseException:
+                self._async_untrack_subscription(subscription)
+                self._matching_subscriptions_cache.clear()
+                raise
 
         # self.topics.append(topic)
         return partial(self._async_remove, subscription)
@@ -568,23 +570,17 @@ class XSenseMQTT:
         self._unsubscribe_debouncer.async_schedule()
 
     async def _async_perform_subscriptions(self) -> None:
-        if not self.subscriptions:
-            return
-
-        for topic in [(i.topic, 0) for i in self.subscriptions]:
-            result, mid = self._mqttc.subscribe([topic])
-
-            await self._async_wait_for_mid_or_raise(mid, result)
-
-        # XSense MQTT server doesn't like too many subscriptions at once.
-        # topics = [[i.topic, 0] for i in self.subscriptions]
-        # _LOGGER.error(f"subscribing to {topics}")
-        # result, mid = self._mqttc.subscribe(topics)
-
-        # if result == 0:
-        #     await self._async_wait_for_mid(mid)
-        # else:
-        #     _raise_on_error(result)
+        # Send separately: the X-Sense broker rejects large subscription batches.
+        # Cancellation propagates, retaining subscription intent for reconnect.
+        for subscription in self.subscriptions:
+            try:
+                await self._async_perform_subscription(subscription)
+            except Exception as exc:
+                self._async_untrack_subscription(subscription)
+                self._matching_subscriptions_cache.clear()
+                _LOGGER.warning(
+                    "Could not subscribe to X-Sense MQTT topic (%s)", type(exc).__name__
+                )
 
     # unchanged
     async def _async_perform_unsubscribes(self) -> None:
@@ -687,6 +683,26 @@ class XSenseMQTT:
             self.on_data(topic, msg.payload)
 
     @callback
+    def _async_mqtt_on_subscribe(
+        self,
+        _mqttc: mqtt.Client,
+        _userdata: None,
+        mid: int,
+        reason_codes,
+        _properties: mqtt.Properties | None = None,
+    ) -> None:
+        """Resolve only an outstanding SUBACK, including broker rejections."""
+        future = self._pending_operations.get(mid)
+        if future is None or future.done():
+            return
+        if any(getattr(reason, "value", reason) >= 128 for reason in reason_codes):
+            future.set_exception(
+                xsense_error("mqtt_error", error="MQTT subscription rejected")
+            )
+        else:
+            future.set_result(None)
+
+    @callback
     def _async_mqtt_on_callback(
         self,
         _mqttc: mqtt.Client,
@@ -700,7 +716,7 @@ class XSenseMQTT:
         # see https://github.com/eclipse/paho.mqtt.python/issues/687
         # properties and reason codes are not used in Home Assistant
         future = self._async_get_mid_future(mid)
-        if future.done() and (future.cancelled() or future.exception()):
+        if future.done():
             # Timed out or cancelled
             return
         future.set_result(None)
@@ -757,7 +773,9 @@ class XSenseMQTT:
     # def _async_wait_for_mid_or_raise
 
     # unchanged
-    async def _async_wait_for_mid_or_raise(self, mid: int, result_code: int) -> None:
+    async def _async_wait_for_mid_or_raise(
+        self, mid: int, result_code: int, *, raise_on_timeout: bool = False
+    ) -> None:
         """Wait for ACK from broker or raise on error."""
         if result_code != 0:
             raise xsense_error("mqtt_error", error=mqtt.error_string(result_code))
@@ -773,6 +791,8 @@ class XSenseMQTT:
             _LOGGER.warning(
                 "No ACK from MQTT server in %s seconds (mid: %s)", TIMEOUT_ACK, mid
             )
+            if raise_on_timeout:
+                raise
         finally:
             timer_handle.cancel()
             del self._pending_operations[mid]
@@ -781,10 +801,11 @@ class XSenseMQTT:
 
     # Custom functions
     async def _async_perform_subscription(self, subscription: Subscription) -> None:
-        self._mqttc.subscribe([(subscription.topic, 0)])
+        result, mid = self._mqttc.subscribe([(subscription.topic, subscription.qos)])
+        await self._async_wait_for_mid_or_raise(mid, result, raise_on_timeout=True)
 
     def is_subscribed(self, topic: str):
-        """Check if already subscribed to topic."""
+        """Check tracked subscription intent, including pending reconnects."""
         # return topic in self.topics
         # for topic in [(i.topic, 0) for i in self.subscriptions]:
         # return any(i.topic == topic for i in self.subscriptions)

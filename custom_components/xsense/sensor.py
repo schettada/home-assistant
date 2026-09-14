@@ -11,6 +11,7 @@ from .python_xsense.async_xsense import is_camera_entity
 from .python_xsense.device import Device
 from .python_xsense.entity import Entity
 from .python_xsense.entity_map import EntityType, entities
+from .python_xsense.mapping import bool_state
 
 from homeassistant import config_entries
 from homeassistant import const as ha_const
@@ -36,6 +37,7 @@ from .entity import (
     coordinator_devices,
     coordinator_stations,
     device_station_id,
+    setup_dynamic_entities,
 )
 
 UNIT_PARTS_PER_MILLION = getattr(
@@ -126,7 +128,7 @@ def has_device_status(entity: Entity) -> bool:
 
 def apk_device_status(entity: Entity) -> str:
     """Return the APK current-status value using its exact precedence."""
-    if str(entity.data.get("isLifeEnd", "")).strip() == "1":
+    if bool_state(entity.data.get("isLifeEnd")) is True:
         return "end_of_life"
     if str(entity.data.get("sensorStatus", "")).strip() == "1":
         return "malfunction"
@@ -753,25 +755,27 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the xsense sensor entry."""
-    devices: list[Device] = []
     coordinator: XSenseDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
 
-    for station in coordinator_stations(coordinator).values():
-        devices.extend(
-            XSenseSensorEntity(coordinator, station, description)
-            for description in SENSORS
-            if description.exists_fn(station)
-        )
-    for dev in coordinator_devices(coordinator).values():
-        devices.extend(
-            XSenseSensorEntity(
-                coordinator, dev, description, station_id=device_station_id(dev)
+    def _entities() -> list[Device]:
+        devices: list[Device] = []
+        for station in coordinator_stations(coordinator).values():
+            devices.extend(
+                XSenseSensorEntity(coordinator, station, description)
+                for description in SENSORS
+                if description.exists_fn(station)
             )
-            for description in SENSORS
-            if description.exists_fn(dev)
-        )
+        for dev in coordinator_devices(coordinator).values():
+            devices.extend(
+                XSenseSensorEntity(
+                    coordinator, dev, description, station_id=device_station_id(dev)
+                )
+                for description in SENSORS
+                if description.exists_fn(dev)
+            )
+        return devices
 
-    async_add_entities(devices)
+    setup_dynamic_entities(entry, coordinator, async_add_entities, _entities)
 
 
 class XSenseSensorEntity(XSenseEntity, SensorEntity):

@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "Az eszköz már konfigurálva van",
       "reauth_successful": "Az újrahitelesítés sikeres volt",
-      "reconfigure_successful": "Az újrakonfigurálás sikeres volt"
+      "reconfigure_successful": "Az újrakonfigurálás sikeres volt",
+      "unique_id_mismatch": "Jelentkezzen be az ehhez a bejegyzéshez tartozó X-Sense-fiókkal."
     },
     "error": {
       "cannot_connect": "Nem sikerült csatlakozni",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "A felvételi médiaszinkronizálás gyorsítótárazza a kamera klipjeit a Home Assistant adathordozó alatt, így az X-Sense Recordings oldalsáv, a médiaböngésző és a mobil értesítések gyorsan megnyithatják a felvételeket. Hagyja kikapcsolva a felvételek gyorsítótárazását, ha megnyitják őket. Engedélyezze a legutóbbi felvételek háttérben tartásához.",
+        "description": "Az alapértelmezett csak lejátszás mód lejátszás közben a Home Assistanton keresztül továbbítja a felvételeket, teljes klipek megőrzése nélkül. A klipek Home Assistant médiában, a beállított kor- és méretkorlátok szerint történő tárolásához válassza a helyi felvételek megőrzését. A háttérszinkronizálás csak megőrzési módban fut.",
         "data": {
           "recording_media_sync_enabled": "Felvételi adathordozó szinkronizálása",
           "recording_media_sync_hours": "Háttér szinkronizálási időköz",
           "recording_media_storage_path": "Rögzítési gyorsítótár mappa",
           "recording_notification_quality": "Értesítés rögzítési minősége",
           "recording_media_days_order": "Felvételi napi rendelés",
-          "recording_media_clips_order": "Klip rendelés rögzítése"
+          "recording_media_clips_order": "Klip rendelés rögzítése",
+          "recording_cache_retention_days": "Rögzítés gyorsítótár megőrzése",
+          "recording_cache_max_size_mb": "Maximális rögzítési gyorsítótár mérete",
+          "recording_cache_mode": "Felvételek tárolási módja"
         },
         "data_description": {
           "recording_media_sync_enabled": "A legutóbbi felvételek automatikus gyorsítótárazása. Ez tárhelyet foglal el, és gyakrabban ébresztheti fel a kamerákat.",
           "recording_media_sync_hours": "Milyen gyakran fut a normál háttér-felzárkózási szinkronizálás. A legutóbbi felvételeket a rendszer néhány percenként ellenőrzi, ha a szinkronizálás engedélyezve van.",
           "recording_media_storage_path": "Használjon egy mappát a /media alatt. Az új gyorsítótárazott videók és miniatűrök itt tárolódnak.",
-          "recording_notification_quality": "Válassza a HD lehetőséget, ha előnyben szeretné részesíteni az X-Sense közvetlen/nagy felbontású klip URL-jeit a mobil értesítésekhez. Válassza az SD lehetőséget a kamera lejátszási rögzítési útvonalának használatához, ha elérhető.",
+          "recording_notification_quality": "A HD a nagyobb felbontású felvételi URL-eket részesíti előnyben. Az SD a normál felbontást részesíti előnyben, ha az X-Sense biztosítja.",
           "recording_media_days_order": "Válassza ki, hogy az újabb vagy a régebbi napok jelenjenek meg először a felvételnézőben.",
-          "recording_media_clips_order": "Válassza ki, hogy az újabb vagy a régebbi klipek jelenjenek meg először minden napon."
+          "recording_media_clips_order": "Válassza ki, hogy az újabb vagy a régebbi klipek jelenjenek meg először minden napon.",
+          "recording_cache_retention_days": "Törölje a helyi gyorsítótárazott felvételeket ennyi nap elteltével. Az X-Sense felhő és az SD-kártya felvételei nem változnak.",
+          "recording_cache_max_size_mb": "A helyi gyorsítótár maximális mérete MB-ban. A korlát elérésekor először a legutóbb megtekintett felvételek törlődnek.",
+          "recording_cache_mode": "A csak lejátszás mód igény szerint továbbítja a HLS-médiát a Home Assistanton keresztül, teljes klipek megőrzése nélkül. A megőrzési mód helyi másolatokat tart az alábbi korlátok szerint."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "A rögzítési gyorsítótár mappa `{old_path}`-ről `{new_path}`-re változik. A meglévő gyorsítótárazott videók és miniatűrök nem kerülnek át automatikusan. Először helyezze át a meglévő `videos` és `thumbs` mappákat, ha azt szeretné, hogy a régi gyorsítótárazott felvételek elérhetők maradjanak."
+        "description": "A rögzítési gyorsítótár mappa `{old_path}`-ről `{new_path}`-re változik. A meglévő gyorsítótárazott videók és miniatűrök nem kerülnek át automatikusan. Először helyezze át a meglévő `hls`, `videos` és `thumbs` mappákat, ha azt szeretné, hogy a régi gyorsítótárazott felvételek elérhetők maradjanak."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "Postafiók ütemezése aktív"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "Hálózati tápellátás megszakadt"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "Elem élettartamának vége"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "Készülék élettartamának vége"
       },
       "armed": {
-        "name": "Armed"
+        "name": "Élesítve"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "Mozgás észlelve"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "USB-töltés"
       },
       "charging": {
-        "name": "Charging"
+        "name": "Töltés"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "Alvó állapot"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "Tartókonzol eltávolítva"
       },
       "activated": {
-        "name": "Activated"
+        "name": "Aktiválva"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "Riasztási gyakorlat folyamatban"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "Riasztás aktív"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "Eszköz által indított riasztás"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "Eszközteszt folyamatban"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "Eszköz elnémítva"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "Riasztási hang"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "Alkalmazásértesítések"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "Ütemezési értesítések"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "Vízszivárgási riasztás"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "Vízszivárgási riasztás némítva"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "Hőmérsékleti riasztás"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "Hőmérsékleti riasztás némítva"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "Eszköz időzónája engedélyezve"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "Eszköz időzónája érvényes"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "Némítás"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "Felébresztés"
       }
     },
     "event": {
@@ -188,7 +195,7 @@
           "normal": "Normális",
           "low_battery": "Alacsony akkumulátor",
           "malfunction": "Hibás működés",
-          "end_of_life": "Életvége"
+          "end_of_life": "Készülék élettartamának vége"
         }
       },
       "alarm_vol": {
@@ -254,139 +261,139 @@
         "name": "Radon csúcsidő"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "Töltöttségi szint"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "WIFIPLACETARTÓ Jelerősség"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "WIFIPLACETARTÓ Jelerősség"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "Kamera állapotkódja"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "Firmware-verzió"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "Kamera firmware-állapota"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Wi-Fi hálózat neve (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Wi-Fi-csatorna"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "MAC-cím"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "SD-kártya állapota"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "SD-kártya teljes kapacitása"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "SD-kártya foglalt területe"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "Kamera aktiválásának ideje"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "Kamera kapcsolatvesztésének ideje"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "Kamera bélyegképének ideje"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "Kamera felébresztésének ideje"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "Kamera alvó állapotának üzenete"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "Eszköz időzónája"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "Füstérzékelő modellváltozata"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "CO-riasztó szabványa"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "Ellenőrzés típusa"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "PIR-időköz"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "Szenzor érzékenysége"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "Némítás időpontja"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "Hőmérsékleti riasztás némításának ideje"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "Vízszivárgási riasztás némításának ideje"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "Rövid távú CO-figyelmeztetés"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "Rövid távú CO-figyelmeztetési szint"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "Hosszú távú CO-figyelmeztetés"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "Hosszú távú CO-figyelmeztetési szint"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "Riasztás előfordulása"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "Riasztás forrása"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "Ismételt riasztás"
       },
       "time": {
-        "name": "Report Time"
+        "name": "Jelentés időpontja"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "UTC-idő"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "Eszköz tesztelési ideje"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "Eszköz időzónája"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "Bemondott hely neve"
       },
       "location": {
-        "name": "Location"
+        "name": "Hely"
       },
       "color": {
-        "name": "Color"
+        "name": "Szín"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "Világítási esemény"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "Eszköz típusa"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "Jelentett eszköztípus"
       },
       "category": {
-        "name": "Category"
+        "name": "Kategória"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "Biztonsági mód"
       }
     },
     "number": {
@@ -403,7 +410,7 @@
         "name": "Hangerő"
       },
       "chirp_volume": {
-        "name": "Chirp Volume"
+        "name": "Rövid jelzőhang hangereje"
       },
       "reminder_volume": {
         "name": "Emlékeztető kötet"
@@ -448,34 +455,34 @@
         "name": "Szenzor érzékenysége"
       },
       "trigger_brightness": {
-        "name": "Trigger Brightness"
+        "name": "Aktiváláskori fényerő"
       },
       "standby_brightness": {
         "name": "Készenléti fényerő"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "Riasztás hangereje"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Hangerő"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "Hangszóró hangereje"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "Riasztás időtartama"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "Éjjellátás érzékenysége"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "Sírásérzékelés érzékenysége"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Felvételek közötti szünet"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "Mechanikus csengő időtartama"
       }
     },
     "select": {
@@ -516,254 +523,269 @@
         "name": "Fény jelenet"
       },
       "light_app_on_time": {
-        "name": "App On Time"
+        "name": "Alkalmazásból bekapcsolás időtartama"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "Nyelv"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "Felvételi felbontás"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "Érzékelési érzékenység",
+        "state": {
+          "high": "Magas",
+          "medium": "Közepes",
+          "low": "Alacsony",
+          "auto": "Automatikus"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "Videó időtartama"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "Villogási frekvencia"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "Alapértelmezett kodek"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "Mozgáskövetés"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "Éjjellátási mód"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "Felhőfelvételek közötti szünet"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "Ajtócsengő hangja"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "Automatikus bekapcsolás töltöttségi szintje"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "LED-jelző"
       },
       "light_power": {
-        "name": "Light"
+        "name": "Világítás"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "Riasztás engedélyezve"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "Folyamatos riasztás"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "E-mailes emlékeztető"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "Rövid jelzőhang engedélyezve"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "Emlékeztető engedélyezve"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "Emlékeztető hangja engedélyezve"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "Készenléti világítás engedélyezve"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR engedélyezve"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "Környezeti fény érzékelése engedélyezve"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "Gombhang engedélyezve"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "Figyelmeztetés engedélyezve"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "Mozgásérzékelés"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "Személyérzékelés"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "Videó rögzítése"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "Automatikus éjjellátás"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "Állapotjelző LED"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "Kamerariasztás"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "Kép elforgatása"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "Villogáscsökkentés"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "Sírásérzékelés"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Felvételek közötti szünet"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "Eszközhívás"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "Mechanikus csengő"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "Mozgáskövetés"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Beszéd hangereje"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "Élő hang"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "Felvétel hangja"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "Automatikus bekapcsolás"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "Fehér fény"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "Riasztás eltávolításkor"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "Alvó mód"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "AI-értesítés: személy"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "AI-értesítés: háziállat"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "AI-értesítés: jármű érkezése"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "AI-értesítés: jármű távozása"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "AI-értesítés: parkoló jármű"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "AI-értesítés: csomag jelen van"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "AI-értesítés: csomag kézbesítve"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "AI-értesítés: csomag elvíve"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "AI-értesítés: egyéb"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "AI-asszisztens: személy"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "AI-asszisztens: háziállat"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "AI-asszisztens: jármű"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "AI-asszisztens: csomag"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "Riasztó"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "Az X-Sense állomás már nem érhető el"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "Az X-Sense entitás már nem érhető el"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "Az X-Sense MQTT nincs csatlakoztatva"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "Nem sikerült közzétenni az X-Sense biztonsági mód parancsát"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "Nincs függőben kényszerített X-Sense-élesítés a(z) {mode} módhoz"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "Az X-Sense felvételek közötti szünet engedélyezési állapota ismeretlen"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "A(z) {option} nem támogatott X-Sense-beállítás"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "Az X-Sense-választó értéke nem írható"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "Az X-Sense radonküszöbe érvénytelen"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "Az X-Sense tartománybeállításának hiányzik a párértéke"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "Az X-Sense minimuma nem lehet nagyobb a maximumnál"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "Az X-Sense {service} világításkapcsolót igényel"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "Az X-Sense {service} SBS50 állomást igényel"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "Hiányoznak az X-Sense {service} azonosítói"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "Az X-Sense ütemezési idő formátuma HH:MM vagy HHMM kell legyen"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "Az X-Sense ütemezési idő tartományon kívül van"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "Az X-Sense ütemezésnek legalább egy napot tartalmaznia kell"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "Az X-Sense ütemezés napjainak 1 és 7 közé kell esniük"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "Az X-Sense {field} legalább egy ID-t kell tartalmazzon"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "A feliratkozás nem távolítható el kétszer"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "A témának karakterláncnak kell lennie"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "Hiba az MQTT-kommunikációban: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "{failed} felvételt nem sikerült gyorsítótárazni. {downloaded} felvétel letöltve."
+    },
+    "force_arm_invalid_link": {
+      "message": "Ez az X-Sense kényszerített élesítési hivatkozás érvénytelen."
+    },
+    "force_arm_request_failed": {
+      "message": "Az X-Sense kényszerített élesítési kérelme sikertelen."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Növekvő",
+        "descending": "Csökkenő"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Növekvő",
+        "descending": "Csökkenő"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "Csak lejátszás",
+        "retained": "Helyi felvételek megőrzése"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "Otthon",
+        "away": "Távol"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "name": "Kényszerített élesítés",
+      "description": "Erősítse meg a nyitott érzékelők által blokkolt, függőben lévő Otthon vagy Távol módú élesítési kérelmet. A nyitott érzékelők ki lesznek kerülve.",
+      "fields": {
+        "mode": {
+          "name": "Élesítési mód"
+        }
+      }
+    },
+    "force_arm_now": {
+      "name": "Azonnali kényszerített élesítés",
+      "description": "Azonnali élesítés Otthon vagy Távol módban, a nyitott érzékelők megkerülésével, megerősítés kérése nélkül.",
+      "fields": {
+        "mode": {
+          "name": "Élesítési mód"
+        }
+      }
+    },
+    "trigger_sos": {
+      "name": "SOS-riasztás indítása",
+      "description": "Az SBS50 SOS-riasztásának azonnali indítása."
+    },
+    "cancel_sos": {
+      "name": "SOS-riasztás leállítása",
+      "description": "Az SBS50 aktív SOS-riasztásának leállítása."
+    },
+    "cancel_alarm": {
+      "name": "Aktív riasztás leállítása",
+      "description": "Az SBS50 aktív érzékelőriasztásának leállítása."
+    },
+    "set_sos_sound": {
+      "name": "SOS-hang beállítása",
+      "description": "Válassza ki, hogy az SOS csak villogó fényeket használjon, vagy a hangjelző is megszólaljon.",
+      "fields": {
+        "audible": {
+          "name": "Hangos SOS-riasztás"
+        }
+      }
+    },
+    "refresh_recordings": {
+      "name": "Felvételek frissítése",
+      "description": "Az oldalsáv és a médiaböngésző által használt kamerafelvétel-index frissítése.",
+      "fields": {
+        "entry_id": {
+          "name": "Konfigurációs bejegyzés azonosítója",
+          "description": "Hagyja üresen az összes X-Sense-fiókra való alkalmazáshoz."
+        }
+      }
+    },
+    "cache_recordings": {
+      "name": "Felvételek gyorsítótárazása",
+      "description": "Kamerafelvételek letöltése helyi megőrzéshez. A Helyi felvételek megőrzése mód szükséges.",
+      "fields": {
+        "entry_id": {
+          "name": "Konfigurációs bejegyzés azonosítója",
+          "description": "Hagyja üresen az összes X-Sense-fiókra való alkalmazáshoz."
+        }
+      }
+    },
+    "clear_recordings_cache": {
+      "name": "Felvételek gyorsítótárának törlése",
+      "description": "A helyi felvételindexek, videók és bélyegképek törlése. A felhőben és az SD-kártyán tárolt felvételek változatlanok maradnak.",
+      "fields": {
+        "entry_id": {
+          "name": "Konfigurációs bejegyzés azonosítója",
+          "description": "Hagyja üresen az összes X-Sense-fiókra való alkalmazáshoz."
+        }
+      }
+    },
+    "query_light_schedules": {
+      "name": "Világítási ütemezések lekérdezése",
+      "description": "Világítási ütemezések lekérdezése. Célként válassza az SBS50 világításkapcsolóját."
+    },
+    "create_light_schedule": {
+      "name": "Világítási ütemezés létrehozása",
+      "description": "Világítási ütemezés létrehozása. Célként válassza az SBS50 világításkapcsolóját.",
+      "fields": {
+        "name": {
+          "name": "Megjelenített név"
+        },
+        "start_time": {
+          "name": "Kezdési idő (HH:MM vagy HHMM)"
+        },
+        "end_time": {
+          "name": "Befejezési idő (HH:MM vagy HHMM)"
+        },
+        "week_days": {
+          "name": "A hét napjai (1 = vasárnap, 7 = szombat)"
+        },
+        "enabled": {
+          "name": "Engedélyezett állapot"
+        },
+        "time_zone": {
+          "name": "Időzóna"
+        }
+      }
+    },
+    "update_light_schedule": {
+      "name": "Világítási ütemezés frissítése",
+      "description": "Világítási ütemezés frissítése. Célként válassza az SBS50 világításkapcsolóját.",
+      "fields": {
+        "schedule_id": {
+          "name": "Ütemezés azonosítója"
+        },
+        "start_time": {
+          "name": "Kezdési idő (HH:MM vagy HHMM)"
+        },
+        "end_time": {
+          "name": "Befejezési idő (HH:MM vagy HHMM)"
+        },
+        "week_days": {
+          "name": "A hét napjai (1 = vasárnap, 7 = szombat)"
+        },
+        "enabled": {
+          "name": "Engedélyezett állapot"
+        },
+        "time_zone": {
+          "name": "Időzóna"
+        }
+      }
+    },
+    "rename_light_schedule": {
+      "name": "Világítási ütemezés átnevezése",
+      "description": "Világítási ütemezés átnevezése. Célként válassza az SBS50 világításkapcsolóját.",
+      "fields": {
+        "schedule_id": {
+          "name": "Ütemezés azonosítója"
+        },
+        "name": {
+          "name": "Megjelenített név"
+        }
+      }
+    },
+    "delete_light_schedule": {
+      "name": "Világítási ütemezés törlése",
+      "description": "Világítási ütemezés törlése. Célként válassza az SBS50 világításkapcsolóját.",
+      "fields": {
+        "schedule_id": {
+          "name": "Ütemezés azonosítója"
+        }
+      }
+    },
+    "query_light_groups": {
+      "name": "Világítási csoportok lekérdezése",
+      "description": "Világítási csoportok lekérdezése. Célként válassza az SBS50 világításkapcsolóját."
+    },
+    "create_light_group": {
+      "name": "Világítási csoport létrehozása",
+      "description": "Világítási csoport létrehozása. Célként válassza az SBS50 világításkapcsolóját.",
+      "fields": {
+        "name": {
+          "name": "Megjelenített név"
+        }
+      }
+    },
+    "rename_light_group": {
+      "name": "Világítási csoport átnevezése",
+      "description": "Világítási csoport átnevezése. Célként válassza az SBS50 világításkapcsolóját.",
+      "fields": {
+        "group_id": {
+          "name": "Csoport azonosítója"
+        },
+        "name": {
+          "name": "Megjelenített név"
+        }
+      }
+    },
+    "update_light_group_timer": {
+      "name": "Világítási csoport időzítőjének frissítése",
+      "description": "Világítási csoport időzítőjének frissítése. Célként válassza az SBS50 világításkapcsolóját.",
+      "fields": {
+        "group_id": {
+          "name": "Csoport azonosítója"
+        },
+        "timer": {
+          "name": "Időzítő típusa (pirTime vagy appTime)"
+        },
+        "value": {
+          "name": "Időzítő értéke"
+        }
+      }
+    },
+    "bind_light_group": {
+      "name": "Világítási csoport hozzárendelése",
+      "description": "Világítási csoport hozzárendelése. Célként válassza az SBS50 világításkapcsolóját.",
+      "fields": {
+        "name": {
+          "name": "Megjelenített név"
+        },
+        "device_ids": {
+          "name": "Eszközazonosítók"
+        }
+      }
+    },
+    "delete_light_group": {
+      "name": "Világítási csoport törlése",
+      "description": "Világítási csoport törlése. Célként válassza az SBS50 világításkapcsolóját.",
+      "fields": {
+        "group_id": {
+          "name": "Csoport azonosítója"
+        }
+      }
+    },
+    "remove_light_group_devices": {
+      "name": "Eszközök eltávolítása a világítási csoportból",
+      "description": "Eszközök eltávolítása a világítási csoportból. Célként válassza az SBS50 világításkapcsolóját.",
+      "fields": {
+        "device_ids": {
+          "name": "Eszközazonosítók"
+        }
+      }
+    },
+    "set_light_group_power": {
+      "name": "Világítási csoport be- vagy kikapcsolása",
+      "description": "Világítási csoport be- vagy kikapcsolása. Célként válassza az SBS50 világításkapcsolóját.",
+      "fields": {
+        "group_id": {
+          "name": "Csoport azonosítója"
+        },
+        "device_ids": {
+          "name": "Eszközök sorozatszámai"
+        },
+        "enabled": {
+          "name": "Engedélyezett állapot"
+        }
+      }
+    }
+  },
+  "issues": {}
 }

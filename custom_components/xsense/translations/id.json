@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "Perangkat sudah dikonfigurasi",
       "reauth_successful": "Otentikasi ulang berhasil",
-      "reconfigure_successful": "Konfigurasi ulang berhasil"
+      "reconfigure_successful": "Konfigurasi ulang berhasil",
+      "unique_id_mismatch": "Masuk dengan akun X-Sense yang sama dengan entri ini."
     },
     "error": {
       "cannot_connect": "Gagal terhubung",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "Merekam sinkronisasi media menyimpan cache klip kamera di bawah media Home Assistant sehingga sidebar Rekaman X-Sense, Browser Media, dan notifikasi seluler dapat membuka rekaman dengan cepat. Biarkan rekaman disimpan dalam cache hanya ketika dibuka. Aktifkan untuk menyimpan rekaman terbaru di latar belakang.",
+        "description": "Hanya pemutaran adalah mode bawaan dan meneruskan rekaman melalui Home Assistant saat diputar tanpa menyimpan klip lengkap. Pilih simpan rekaman lokal untuk menyimpan klip di media Home Assistant dengan batas usia dan ukuran yang ditentukan. Sinkronisasi latar belakang hanya berjalan dalam mode penyimpanan.",
         "data": {
           "recording_media_sync_enabled": "Merekam sinkronisasi media",
           "recording_media_sync_hours": "Interval sinkronisasi latar belakang",
           "recording_media_storage_path": "Merekam folder cache",
           "recording_notification_quality": "Kualitas rekaman notifikasi",
           "recording_media_days_order": "Merekam pesanan hari",
-          "recording_media_clips_order": "Merekam urutan klip"
+          "recording_media_clips_order": "Merekam urutan klip",
+          "recording_cache_retention_days": "Merekam retensi cache",
+          "recording_cache_max_size_mb": "Ukuran cache rekaman maksimum",
+          "recording_cache_mode": "Mode penyimpanan rekaman"
         },
         "data_description": {
           "recording_media_sync_enabled": "Cache rekaman terbaru secara otomatis. Tindakan ini menghabiskan ruang penyimpanan dan mungkin lebih sering membangunkan kamera.",
           "recording_media_sync_hours": "Seberapa sering sinkronisasi pengejar latar belakang normal harus dijalankan. Rekaman terbaru diperiksa setiap beberapa menit saat sinkronisasi diaktifkan.",
           "recording_media_storage_path": "Gunakan folder di bawah /media. Video dan thumbnail baru yang di-cache disimpan di sini.",
-          "recording_notification_quality": "Pilih HD untuk memilih URL klip langsung/resolusi tinggi X-Sense untuk notifikasi seluler. Pilih SD untuk menggunakan jalur pengambilan pemutaran kamera bila tersedia.",
+          "recording_notification_quality": "HD mengutamakan URL rekaman beresolusi lebih tinggi. SD mengutamakan resolusi standar jika disediakan oleh X-Sense.",
           "recording_media_days_order": "Pilih apakah hari yang lebih baru atau lebih lama muncul pertama kali di penampil rekaman.",
-          "recording_media_clips_order": "Pilih apakah klip baru atau lama muncul pertama kali setiap hari."
+          "recording_media_clips_order": "Pilih apakah klip baru atau lama muncul pertama kali setiap hari.",
+          "recording_cache_retention_days": "Hapus rekaman cache lokal setelah beberapa hari ini. Rekaman cloud X-Sense dan kartu SD tidak diubah.",
+          "recording_cache_max_size_mb": "Ukuran cache lokal maksimum dalam MB. Bila batasnya tercapai, rekaman yang terakhir dilihat akan dihapus terlebih dahulu.",
+          "recording_cache_mode": "Hanya pemutaran meneruskan media HLS melalui Home Assistant sesuai permintaan tanpa menyimpan klip lengkap. Mode penyimpanan menyimpan salinan lokal dengan batas di bawah ini."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "Folder cache rekaman akan berubah dari `{old_path}` menjadi `{new_path}`. Video dan thumbnail yang ada dalam cache tidak dipindahkan secara otomatis. Pindahkan folder `videos` dan `thumbs` yang ada terlebih dahulu jika Anda ingin rekaman cache lama tetap tersedia."
+        "description": "Folder cache rekaman akan berubah dari `{old_path}` menjadi `{new_path}`. Video dan thumbnail yang ada dalam cache tidak dipindahkan secara otomatis. Pindahkan folder `hls`, `videos` dan `thumbs` yang ada terlebih dahulu jika Anda ingin rekaman cache lama tetap tersedia."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "Jadwal Kotak Surat Aktif"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "Daya AC terputus"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "Masa pakai baterai berakhir"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "Masa pakai perangkat berakhir"
       },
       "armed": {
-        "name": "Armed"
+        "name": "Diaktifkan"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "Gerakan terdeteksi"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "Pengisian daya USB"
       },
       "charging": {
-        "name": "Charging"
+        "name": "Mengisi daya"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "Dalam mode tidur"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "Braket pemasangan dilepas"
       },
       "activated": {
-        "name": "Activated"
+        "name": "Diaktifkan"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "Latihan alarm aktif"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "Alarm aktif"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "Alarm yang dipicu perangkat"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "Pengujian perangkat aktif"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "Perangkat Dibungkam"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "Suara alarm"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "Notifikasi aplikasi"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "Notifikasi jadwal"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "Alarm kebocoran air"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "Alarm kebocoran air dibisukan"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "Alarm suhu"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "Alarm suhu dibisukan"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "Zona waktu perangkat diaktifkan"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "Zona waktu perangkat valid"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "Bisu"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "Bangunkan"
       }
     },
     "event": {
@@ -188,7 +195,7 @@
           "normal": "Biasa",
           "low_battery": "Baterai Lemah",
           "malfunction": "Kerusakan",
-          "end_of_life": "Akhir Kehidupan"
+          "end_of_life": "Masa pakai perangkat berakhir"
         }
       },
       "alarm_vol": {
@@ -254,139 +261,139 @@
         "name": "Waktu Tingkat Puncak Radon"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "Tingkat baterai"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Kekuatan Sinyal Wi-Fi"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Kekuatan Sinyal Wi-Fi"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "Kode status kamera"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "Versi firmware"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "Status firmware kamera"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Nama Wi-Fi (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Kanal Wi-Fi"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "Alamat MAC"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "Status kartu SD"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "Kapasitas total kartu SD"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "Ruang kartu SD terpakai"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "Waktu aktivasi kamera"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "Waktu kamera terputus"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "Waktu gambar mini kamera"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "Waktu kamera bangun dari tidur"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "Pesan mode tidur kamera"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "Zona waktu perangkat"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "Varian model detektor asap"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "Standar alarm CO"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "Jenis pemeriksaan"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "Interval PIR"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "Sensitivitas Sensor"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "Waktu pembisuan"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "Waktu pembisuan alarm suhu"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "Waktu pembisuan alarm kebocoran air"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "Peringatan CO jangka pendek"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "Tingkat peringatan CO jangka pendek"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "Peringatan CO jangka panjang"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "Tingkat peringatan CO jangka panjang"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "Kejadian alarm"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "Sumber alarm"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "Alarm berulang"
       },
       "time": {
-        "name": "Report Time"
+        "name": "Waktu laporan"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "Waktu UTC"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "Waktu Uji Perangkat"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "Zona waktu perangkat"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "Nama lokasi dalam pengumuman suara"
       },
       "location": {
-        "name": "Location"
+        "name": "Lokasi"
       },
       "color": {
-        "name": "Color"
+        "name": "Warna"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "Peristiwa lampu"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "Jenis perangkat"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "Jenis perangkat yang dilaporkan"
       },
       "category": {
-        "name": "Category"
+        "name": "Kategori"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "Mode keamanan"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "Kecerahan Siaga"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "Volume Alarm"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Volume Suara"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "Volume pengeras suara"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "Durasi alarm"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "Sensitivitas penglihatan malam"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "Sensitivitas deteksi tangisan"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Jeda antarrekaman"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "Durasi bel mekanis"
       }
     },
     "select": {
@@ -519,177 +526,183 @@
         "name": "Aplikasi Tepat Waktu"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "Bahasa"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "Resolusi rekaman"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "Sensitivitas Deteksi",
+        "state": {
+          "high": "Tinggi",
+          "medium": "Sedang",
+          "low": "Rendah",
+          "auto": "Otomatis"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "Durasi video"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "Frekuensi kedipan"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "Kodek bawaan"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "Pelacakan gerakan"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "Mode penglihatan malam"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "Jeda rekaman cloud"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "Nada bel pintu"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "Tingkat baterai untuk menyala otomatis"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "Indikator LED"
       },
       "light_power": {
-        "name": "Light"
+        "name": "Lampu"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "Alarm diaktifkan"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "Alarm berkelanjutan"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "Pengingat email"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "Nada kicau diaktifkan"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "Pengingat diaktifkan"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "Nada pengingat diaktifkan"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "Lampu siaga diaktifkan"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR diaktifkan"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "Deteksi cahaya sekitar diaktifkan"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "Suara tombol diaktifkan"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "Peringatan diaktifkan"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "Deteksi gerakan"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "Deteksi orang"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "Rekam video"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "Penglihatan malam otomatis"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "LED status"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "Alarm kamera"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "Putar gambar"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "Antikedip"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "Deteksi tangisan"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Jeda antarrekaman"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "Panggilan perangkat"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "Bel mekanis"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "Pelacakan gerakan"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Volume suara"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "Audio langsung"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "Audio rekaman"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "Menyala otomatis"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "Cahaya putih"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "Alarm saat dilepas"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "Mode tidur"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "Notifikasi AI: orang"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "Notifikasi AI: hewan peliharaan"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "Notifikasi AI: kendaraan masuk"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "Notifikasi AI: kendaraan keluar"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "Notifikasi AI: kendaraan terparkir"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "Notifikasi AI: paket ada"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "Notifikasi AI: paket diantar"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "Notifikasi AI: paket diambil"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "Notifikasi AI: lainnya"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "Asisten AI: orang"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "Asisten AI: hewan peliharaan"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "Asisten AI: kendaraan"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "Asisten AI: paket"
       }
     },
     "alarm_control_panel": {
@@ -700,70 +713,79 @@
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "Stasiun X-Sense tidak lagi tersedia"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "Entitas X-Sense tidak lagi tersedia"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "X-Sense MQTT tidak terhubung"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "Tidak dapat memublikasikan perintah mode keamanan X-Sense"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "Pengaktifan paksa X-Sense tidak tertunda untuk mode {mode}"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "Status pengaktifan jeda antarrekaman X-Sense tidak diketahui"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option} bukan opsi X-Sense yang didukung"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "Nilai pilihan X-Sense tidak dapat ditulis"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "Ambang radon X-Sense tidak valid"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "Pengaturan rentang X-Sense tidak memiliki nilai pasangannya"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "Nilai minimum X-Sense tidak boleh lebih besar dari maksimum"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service} memerlukan sakelar daya lampu"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service} memerlukan stasiun SBS50"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "ID X-Sense {service} tidak ada"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "Waktu jadwal X-Sense harus dalam format HH:MM atau HHMM"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "Waktu jadwal X-Sense di luar rentang"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "Jadwal X-Sense harus mencakup setidaknya satu hari dalam seminggu"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "Hari dalam jadwal X-Sense harus bernilai 1 hingga 7"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field} harus mencakup setidaknya satu ID"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "Langganan tidak dapat dihapus dua kali"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "Topik harus berupa string"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "Kesalahan komunikasi dengan MQTT: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "Tidak dapat menyimpan {failed} rekaman ke cache. {downloaded} rekaman telah diunduh."
+    },
+    "force_arm_invalid_link": {
+      "message": "Tautan pengaktifan paksa X-Sense ini tidak valid."
+    },
+    "force_arm_request_failed": {
+      "message": "Permintaan pengaktifan paksa X-Sense gagal."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Menaik",
+        "descending": "Menurun"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Menaik",
+        "descending": "Menurun"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "Hanya pemutaran",
+        "retained": "Simpan rekaman lokal"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "Di rumah",
+        "away": "Pergi"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "name": "Aktifkan penjagaan secara paksa",
+      "description": "Konfirmasikan permintaan pengaktifan mode Di rumah atau Pergi yang tertunda karena sensor terbuka. Sensor terbuka akan dilewati.",
+      "fields": {
+        "mode": {
+          "name": "Mode penjagaan"
+        }
+      }
+    },
+    "force_arm_now": {
+      "name": "Aktifkan penjagaan secara paksa sekarang",
+      "description": "Aktifkan mode Di rumah atau Pergi segera dengan melewati sensor terbuka tanpa meminta konfirmasi.",
+      "fields": {
+        "mode": {
+          "name": "Mode penjagaan"
+        }
+      }
+    },
+    "trigger_sos": {
+      "name": "Picu alarm SOS",
+      "description": "Picu alarm SOS SBS50 segera."
+    },
+    "cancel_sos": {
+      "name": "Batalkan alarm SOS",
+      "description": "Batalkan alarm SOS SBS50 yang aktif."
+    },
+    "cancel_alarm": {
+      "name": "Batalkan alarm aktif",
+      "description": "Batalkan alarm sensor SBS50 yang aktif."
+    },
+    "set_sos_sound": {
+      "name": "Atur suara SOS",
+      "description": "Pilih apakah SOS hanya menggunakan lampu berkedip atau juga membunyikan bel.",
+      "fields": {
+        "audible": {
+          "name": "Alarm SOS bersuara"
+        }
+      }
+    },
+    "refresh_recordings": {
+      "name": "Segarkan rekaman",
+      "description": "Segarkan indeks rekaman kamera yang digunakan oleh bilah samping dan penjelajah media.",
+      "fields": {
+        "entry_id": {
+          "name": "ID entri konfigurasi",
+          "description": "Biarkan kosong untuk diterapkan ke semua akun X-Sense."
+        }
+      }
+    },
+    "cache_recordings": {
+      "name": "Simpan rekaman ke cache",
+      "description": "Unduh rekaman kamera untuk disimpan secara lokal. Memerlukan mode Simpan rekaman lokal.",
+      "fields": {
+        "entry_id": {
+          "name": "ID entri konfigurasi",
+          "description": "Biarkan kosong untuk diterapkan ke semua akun X-Sense."
+        }
+      }
+    },
+    "clear_recordings_cache": {
+      "name": "Bersihkan cache rekaman",
+      "description": "Hapus indeks rekaman, video, dan gambar mini lokal. Rekaman cloud dan SD tidak berubah.",
+      "fields": {
+        "entry_id": {
+          "name": "ID entri konfigurasi",
+          "description": "Biarkan kosong untuk diterapkan ke semua akun X-Sense."
+        }
+      }
+    },
+    "query_light_schedules": {
+      "name": "Ambil jadwal lampu",
+      "description": "Ambil jadwal lampu. Pilih sakelar daya lampu SBS50 sebagai target."
+    },
+    "create_light_schedule": {
+      "name": "Buat jadwal lampu",
+      "description": "Buat jadwal lampu. Pilih sakelar daya lampu SBS50 sebagai target.",
+      "fields": {
+        "name": {
+          "name": "Nama tampilan"
+        },
+        "start_time": {
+          "name": "Waktu mulai (HH:MM atau HHMM)"
+        },
+        "end_time": {
+          "name": "Waktu selesai (HH:MM atau HHMM)"
+        },
+        "week_days": {
+          "name": "Hari dalam seminggu (1 = Minggu, 7 = Sabtu)"
+        },
+        "enabled": {
+          "name": "Status diaktifkan"
+        },
+        "time_zone": {
+          "name": "Zona waktu"
+        }
+      }
+    },
+    "update_light_schedule": {
+      "name": "Perbarui jadwal lampu",
+      "description": "Perbarui jadwal lampu. Pilih sakelar daya lampu SBS50 sebagai target.",
+      "fields": {
+        "schedule_id": {
+          "name": "Pengenal jadwal"
+        },
+        "start_time": {
+          "name": "Waktu mulai (HH:MM atau HHMM)"
+        },
+        "end_time": {
+          "name": "Waktu selesai (HH:MM atau HHMM)"
+        },
+        "week_days": {
+          "name": "Hari dalam seminggu (1 = Minggu, 7 = Sabtu)"
+        },
+        "enabled": {
+          "name": "Status diaktifkan"
+        },
+        "time_zone": {
+          "name": "Zona waktu"
+        }
+      }
+    },
+    "rename_light_schedule": {
+      "name": "Ubah nama jadwal lampu",
+      "description": "Ubah nama jadwal lampu. Pilih sakelar daya lampu SBS50 sebagai target.",
+      "fields": {
+        "schedule_id": {
+          "name": "Pengenal jadwal"
+        },
+        "name": {
+          "name": "Nama tampilan"
+        }
+      }
+    },
+    "delete_light_schedule": {
+      "name": "Hapus jadwal lampu",
+      "description": "Hapus jadwal lampu. Pilih sakelar daya lampu SBS50 sebagai target.",
+      "fields": {
+        "schedule_id": {
+          "name": "Pengenal jadwal"
+        }
+      }
+    },
+    "query_light_groups": {
+      "name": "Ambil grup lampu",
+      "description": "Ambil grup lampu. Pilih sakelar daya lampu SBS50 sebagai target."
+    },
+    "create_light_group": {
+      "name": "Buat grup lampu",
+      "description": "Buat grup lampu. Pilih sakelar daya lampu SBS50 sebagai target.",
+      "fields": {
+        "name": {
+          "name": "Nama tampilan"
+        }
+      }
+    },
+    "rename_light_group": {
+      "name": "Ubah nama grup lampu",
+      "description": "Ubah nama grup lampu. Pilih sakelar daya lampu SBS50 sebagai target.",
+      "fields": {
+        "group_id": {
+          "name": "Pengenal grup"
+        },
+        "name": {
+          "name": "Nama tampilan"
+        }
+      }
+    },
+    "update_light_group_timer": {
+      "name": "Perbarui pewaktu grup lampu",
+      "description": "Perbarui pewaktu grup lampu. Pilih sakelar daya lampu SBS50 sebagai target.",
+      "fields": {
+        "group_id": {
+          "name": "Pengenal grup"
+        },
+        "timer": {
+          "name": "Jenis pewaktu (pirTime atau appTime)"
+        },
+        "value": {
+          "name": "Nilai pewaktu"
+        }
+      }
+    },
+    "bind_light_group": {
+      "name": "Tautkan grup lampu",
+      "description": "Tautkan grup lampu. Pilih sakelar daya lampu SBS50 sebagai target.",
+      "fields": {
+        "name": {
+          "name": "Nama tampilan"
+        },
+        "device_ids": {
+          "name": "Pengenal perangkat"
+        }
+      }
+    },
+    "delete_light_group": {
+      "name": "Hapus grup lampu",
+      "description": "Hapus grup lampu. Pilih sakelar daya lampu SBS50 sebagai target.",
+      "fields": {
+        "group_id": {
+          "name": "Pengenal grup"
+        }
+      }
+    },
+    "remove_light_group_devices": {
+      "name": "Hapus perangkat dari grup lampu",
+      "description": "Hapus perangkat dari grup lampu. Pilih sakelar daya lampu SBS50 sebagai target.",
+      "fields": {
+        "device_ids": {
+          "name": "Pengenal perangkat"
+        }
+      }
+    },
+    "set_light_group_power": {
+      "name": "Atur daya grup lampu",
+      "description": "Atur daya grup lampu. Pilih sakelar daya lampu SBS50 sebagai target.",
+      "fields": {
+        "group_id": {
+          "name": "Pengenal grup"
+        },
+        "device_ids": {
+          "name": "Nomor seri perangkat"
+        },
+        "enabled": {
+          "name": "Status diaktifkan"
+        }
+      }
+    }
+  },
+  "issues": {}
 }

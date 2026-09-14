@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "Η συσκευή έχει ήδη διαμορφωθεί",
       "reauth_successful": "Ο εκ νέου έλεγχος ταυτότητας ήταν επιτυχής",
-      "reconfigure_successful": "Η επαναδιαμόρφωση ήταν επιτυχής"
+      "reconfigure_successful": "Η επαναδιαμόρφωση ήταν επιτυχής",
+      "unique_id_mismatch": "Συνδεθείτε με τον ίδιο λογαριασμό X-Sense που αντιστοιχεί σε αυτήν την καταχώριση."
     },
     "error": {
       "cannot_connect": "Αποτυχία σύνδεσης",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "Ο συγχρονισμός μέσων εγγραφής αποθηκεύει κλιπ κάμερας κάτω από τα μέσα Home Assistant, έτσι ώστε η πλαϊνή γραμμή εγγραφών X-Sense, το πρόγραμμα περιήγησης πολυμέσων και οι ειδοποιήσεις για κινητά να μπορούν να ανοίγουν τις εγγραφές γρήγορα. Αφήστε το στη μνήμη cache των εγγραφών μόνο όταν ανοίξουν. Ενεργοποιήστε το για να διατηρείτε τις πρόσφατες εγγραφές έτοιμες στο παρασκήνιο.",
+        "description": "Η προεπιλογή είναι μόνο αναπαραγωγή και προωθεί τις εγγραφές μέσω του Home Assistant κατά την αναπαραγωγή χωρίς να διατηρεί ολόκληρα κλιπ. Επιλέξτε διατήρηση τοπικών εγγραφών για αποθήκευση κλιπ στα πολυμέσα του Home Assistant με τα καθορισμένα όρια ηλικίας και μεγέθους. Ο συγχρονισμός παρασκηνίου εκτελείται μόνο στη λειτουργία διατήρησης.",
         "data": {
           "recording_media_sync_enabled": "Συγχρονισμός μέσων εγγραφής",
           "recording_media_sync_hours": "Διάστημα συγχρονισμού φόντου",
           "recording_media_storage_path": "Εγγραφή φακέλου προσωρινής μνήμης",
           "recording_notification_quality": "Ποιότητα εγγραφής ειδοποιήσεων",
           "recording_media_days_order": "Καταγραφή ημέρας παραγγελίας",
-          "recording_media_clips_order": "Παραγγελία κλιπ εγγραφής"
+          "recording_media_clips_order": "Παραγγελία κλιπ εγγραφής",
+          "recording_cache_retention_days": "Καταγραφή διατήρησης κρυφής μνήμης",
+          "recording_cache_max_size_mb": "Μέγιστο μέγεθος κρυφής μνήμης εγγραφής",
+          "recording_cache_mode": "Λειτουργία αποθήκευσης εγγραφών"
         },
         "data_description": {
           "recording_media_sync_enabled": "Αποθηκεύστε προσωρινά τις πρόσφατες εγγραφές αυτόματα. Αυτό χρησιμοποιεί χώρο αποθήκευσης και μπορεί να αφυπνίζει τις κάμερες πιο συχνά.",
           "recording_media_sync_hours": "Πόσο συχνά θα πρέπει να εκτελείται ο κανονικός συγχρονισμός παρακολούθησης φόντου. Οι πρόσφατες εγγραφές ελέγχονται κάθε δύο λεπτά όταν είναι ενεργοποιημένος ο συγχρονισμός.",
           "recording_media_storage_path": "Χρησιμοποιήστε έναν φάκελο στην περιοχή /media. Τα νέα αποθηκευμένα βίντεο και μικρογραφίες αποθηκεύονται εδώ.",
-          "recording_notification_quality": "Επιλέξτε HD για να προτιμήσετε τις διευθύνσεις URL κλιπ απευθείας/υψηλής ανάλυσης του X-Sense για ειδοποιήσεις για κινητά. Επιλέξτε SD για να χρησιμοποιήσετε τη διαδρομή λήψης αναπαραγωγής της κάμερας όταν είναι διαθέσιμη.",
+          "recording_notification_quality": "Το HD προτιμά URL εγγραφών υψηλότερης ανάλυσης. Το SD προτιμά τυπική ανάλυση όταν παρέχεται από το X-Sense.",
           "recording_media_days_order": "Επιλέξτε εάν οι νεότερες ή παλαιότερες ημέρες θα εμφανίζονται πρώτα στην προβολή εγγραφών.",
-          "recording_media_clips_order": "Επιλέξτε εάν νεότερα ή παλαιότερα κλιπ θα εμφανίζονται πρώτα μέσα σε κάθε ημέρα."
+          "recording_media_clips_order": "Επιλέξτε εάν νεότερα ή παλαιότερα κλιπ θα εμφανίζονται πρώτα μέσα σε κάθε ημέρα.",
+          "recording_cache_retention_days": "Διαγράψτε τοπικές αποθηκευμένες εγγραφές μετά από τόσες μέρες. Οι εγγραφές X-Sense cloud και κάρτας SD δεν αλλάζουν.",
+          "recording_cache_max_size_mb": "Μέγιστο μέγεθος τοπικής κρυφής μνήμης σε MB. Όταν συμπληρωθεί το όριο, αφαιρούνται πρώτα οι εγγραφές που προβλήθηκαν λιγότερο πρόσφατα.",
+          "recording_cache_mode": "Η λειτουργία μόνο αναπαραγωγής προωθεί πολυμέσα HLS μέσω του Home Assistant κατ’ απαίτηση χωρίς να διατηρεί ολόκληρα κλιπ. Η λειτουργία διατήρησης κρατά τοπικά αντίγραφα με τα παρακάτω όρια."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "Ο φάκελος της προσωρινής μνήμης εγγραφής θα αλλάξει από `{old_path}` σε `{new_path}`. Τα υπάρχοντα αποθηκευμένα βίντεο και μικρογραφίες δεν μετακινούνται αυτόματα. Μετακινήστε πρώτα τους υπάρχοντες φακέλους `videos` και `thumbs` εάν θέλετε να παραμείνουν διαθέσιμες παλιές αποθηκευμένες εγγραφές."
+        "description": "Ο φάκελος της προσωρινής μνήμης εγγραφής θα αλλάξει από `{old_path}` σε `{new_path}`. Τα υπάρχοντα αποθηκευμένα βίντεο και μικρογραφίες δεν μετακινούνται αυτόματα. Μετακινήστε πρώτα τους υπάρχοντες φακέλους `hls`, `videos` και `thumbs` εάν θέλετε να παραμείνουν διαθέσιμες παλιές αποθηκευμένες εγγραφές."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "Χρονοδιάγραμμα γραμματοκιβωτίου Ενεργό"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "Αποσύνδεση τροφοδοσίας ρεύματος"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "Τέλος διάρκειας ζωής μπαταρίας"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "Τέλος διάρκειας λειτουργίας"
       },
       "armed": {
-        "name": "Armed"
+        "name": "Οπλισμένο"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "Ανιχνεύτηκε κίνηση"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "Φόρτιση μέσω USB"
       },
       "charging": {
-        "name": "Charging"
+        "name": "Φόρτιση"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "Σε αναστολή λειτουργίας"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "Αφαιρέθηκε η βάση στήριξης"
       },
       "activated": {
-        "name": "Activated"
+        "name": "Ενεργοποιήθηκε"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "Άσκηση συναγερμού σε εξέλιξη"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "Ενεργός συναγερμός"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "Συσκευή που προκάλεσε τον συναγερμό"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "Έλεγχος συσκευής σε εξέλιξη"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "Σίγαση συσκευής"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "Ήχος συναγερμού"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "Ειδοποιήσεις εφαρμογής"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "Ειδοποιήσεις χρονοδιαγράμματος"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "Συναγερμός διαρροής νερού"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "Σίγαση συναγερμού διαρροής νερού"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "Συναγερμός θερμοκρασίας"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "Σίγαση συναγερμού θερμοκρασίας"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "Ζώνη ώρας συσκευής ενεργοποιημένη"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "Έγκυρη ζώνη ώρας συσκευής"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "Σίγαση"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "Αφύπνιση"
       }
     },
     "event": {
@@ -188,7 +195,7 @@
           "normal": "Κανονικό",
           "low_battery": "Χαμηλή μπαταρία",
           "malfunction": "Δυσλειτουργία",
-          "end_of_life": "Τέλος Ζωής"
+          "end_of_life": "Τέλος διάρκειας λειτουργίας"
         }
       },
       "alarm_vol": {
@@ -254,139 +261,139 @@
         "name": "Χρόνος αιχμής επιπέδου ραδονίου"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "Στάθμη μπαταρίας"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Ισχύς σήματος Wi-Fi"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Ισχύς σήματος Wi-Fi"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "Κωδικός κατάστασης κάμερας"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "Έκδοση υλικολογισμικού"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "Κατάσταση υλικολογισμικού κάμερας"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Όνομα Wi-Fi (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Κανάλι Wi-Fi"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "Διεύθυνση MAC"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "Κατάσταση κάρτας SD"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "Συνολική χωρητικότητα κάρτας SD"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "Χρησιμοποιημένος χώρος κάρτας SD"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "Ώρα ενεργοποίησης κάμερας"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "Ώρα αποσύνδεσης κάμερας"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "Ώρα μικρογραφίας κάμερας"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "Ώρα αφύπνισης κάμερας"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "Μήνυμα αναστολής λειτουργίας κάμερας"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "Ζώνη ώρας συσκευής"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "Παραλλαγή ανιχνευτή καπνού"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "Πρότυπο συναγερμού CO"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "Τύπος ελέγχου"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "Διάστημα PIR"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "Ευαισθησία αισθητήρα"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "Χρόνος σίγασης"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "Χρόνος σίγασης συναγερμού θερμοκρασίας"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "Χρόνος σίγασης συναγερμού διαρροής νερού"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "Βραχυπρόθεσμη προειδοποίηση CO"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "Επίπεδο βραχυπρόθεσμης προειδοποίησης CO"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "Μακροπρόθεσμη προειδοποίηση CO"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "Επίπεδο μακροπρόθεσμης προειδοποίησης CO"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "Εμφάνιση συναγερμού"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "Πηγή συναγερμού"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "Επαναλαμβανόμενος συναγερμός"
       },
       "time": {
-        "name": "Report Time"
+        "name": "Ώρα αναφοράς"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "Ώρα UTC"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "Ώρα δοκιμής συσκευής"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "Ζώνη ώρας συσκευής"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "Τοποθεσία φωνητικής αναγγελίας"
       },
       "location": {
-        "name": "Location"
+        "name": "Τοποθεσία"
       },
       "color": {
-        "name": "Color"
+        "name": "Χρώμα"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "Συμβάν φωτισμού"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "Τύπος συσκευής"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "Αναφερόμενος τύπος συσκευής"
       },
       "category": {
-        "name": "Category"
+        "name": "Κατηγορία"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "Λειτουργία ασφαλείας"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "Φωτεινότητα αναμονής"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "Ένταση συναγερμού"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Ένταση φωνής"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "Ένταση ηχείου"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "Διάρκεια συναγερμού"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "Ευαισθησία νυχτερινής όρασης"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "Ευαισθησία ανίχνευσης κλάματος"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Διάστημα μεταξύ εγγραφών"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "Διάρκεια μηχανικού κουδουνιού"
       }
     },
     "select": {
@@ -516,254 +523,269 @@
         "name": "Φωτεινή σκηνή"
       },
       "light_app_on_time": {
-        "name": "App On Time"
+        "name": "Διάρκεια ενεργοποίησης μέσω εφαρμογής"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "Γλώσσα"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "Ανάλυση εγγραφής"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "Ευαισθησία ανίχνευσης",
+        "state": {
+          "high": "Υψηλή",
+          "medium": "Μέτρια",
+          "low": "Χαμηλή",
+          "auto": "Αυτόματη"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "Διάρκεια βίντεο"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "Συχνότητα τρεμοπαίγματος"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "Προεπιλεγμένος κωδικοποιητής"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "Παρακολούθηση κίνησης"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "Λειτουργία νυχτερινής όρασης"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "Διάστημα μεταξύ εγγραφών στο cloud"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "Ήχος κουδουνιού πόρτας"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "Στάθμη μπαταρίας για αυτόματη ενεργοποίηση"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "Ενδεικτική λυχνία LED"
       },
       "light_power": {
-        "name": "Light"
+        "name": "Φως"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "Συναγερμός ενεργοποιημένος"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "Συνεχής συναγερμός"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "Υπενθύμιση αλληλογραφίας"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "Σύντομος ηχητικός τόνος ενεργοποιημένος"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "Υπενθύμιση ενεργοποιημένη"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "Ήχος υπενθύμισης ενεργοποιημένος"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "Φωτισμός αναμονής ενεργοποιημένος"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR ενεργοποιημένο"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "Ανίχνευση φωτισμού περιβάλλοντος ενεργοποιημένη"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "Ήχος πλήκτρων ενεργοποιημένος"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "Προειδοποίηση ενεργοποιημένη"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "Ανίχνευση κίνησης"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "Ανίχνευση ατόμων"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "Εγγραφή βίντεο"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "Αυτόματη νυχτερινή όραση"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "Λυχνία κατάστασης LED"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "Συναγερμός κάμερας"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "Περιστροφή εικόνας"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "Μείωση τρεμοπαίγματος"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "Ανίχνευση κλάματος"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Διάστημα μεταξύ εγγραφών"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "Κλήσεις συσκευής"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "Μηχανικό κουδούνι"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "Παρακολούθηση κίνησης"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Ένταση φωνής"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "Ζωντανός ήχος"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "Ήχος εγγραφής"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "Αυτόματη ενεργοποίηση"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "Λευκό φως"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "Συναγερμός κατά την αφαίρεση"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "Λειτουργία αναστολής"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "Ειδοποίηση AI: άτομο"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "Ειδοποίηση AI: κατοικίδιο"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "Ειδοποίηση AI: είσοδος οχήματος"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "Ειδοποίηση AI: έξοδος οχήματος"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "Ειδοποίηση AI: σταθμευμένο όχημα"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "Ειδοποίηση AI: παρουσία δέματος"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "Ειδοποίηση AI: παράδοση δέματος"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "Ειδοποίηση AI: παραλαβή δέματος"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "Άλλες ειδοποιήσεις AI"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "Βοηθός AI: άτομα"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "Βοηθός AI: κατοικίδια"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "Βοηθός AI: οχήματα"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "Βοηθός AI: δέματα"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "Συναγερμός"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "Ο σταθμός X-Sense δεν είναι πλέον διαθέσιμος"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "Η οντότητα X-Sense δεν είναι πλέον διαθέσιμη"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "Το MQTT του X-Sense δεν είναι συνδεδεμένο"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "Δεν ήταν δυνατή η δημοσίευση εντολής λειτουργίας ασφαλείας X-Sense"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "Δεν εκκρεμεί αναγκαστικός οπλισμός X-Sense για τη λειτουργία {mode}"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "Η κατάσταση ενεργοποίησης του διαστήματος μεταξύ εγγραφών X-Sense είναι άγνωστη"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "Το {option} δεν είναι υποστηριζόμενη επιλογή X-Sense"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "Δεν είναι δυνατή η εγγραφή της επιλογής X-Sense"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "Το όριο ραδονίου X-Sense δεν είναι έγκυρο"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "Λείπει η ζευγοποιημένη τιμή της ρύθμισης εύρους X-Sense"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "Το ελάχιστο X-Sense δεν μπορεί να υπερβαίνει το μέγιστο"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "Το X-Sense {service} απαιτεί διακόπτη τροφοδοσίας φωτός"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "Το X-Sense {service} απαιτεί σταθμό SBS50"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "Λείπουν τα ID του X-Sense {service}"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "Η ώρα χρονοδιαγράμματος X-Sense πρέπει να είναι HH:MM ή HHMM"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "Η ώρα χρονοδιαγράμματος X-Sense είναι εκτός ορίων"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "Το χρονοδιάγραμμα X-Sense πρέπει να περιλαμβάνει τουλάχιστον μία ημέρα της εβδομάδας"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "Οι ημέρες του χρονοδιαγράμματος X-Sense πρέπει να είναι από 1 έως 7"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "Το X-Sense {field} πρέπει να περιλαμβάνει τουλάχιστον ένα ID"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "Δεν είναι δυνατή η κατάργηση της συνδρομής δύο φορές"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "Το θέμα πρέπει να είναι συμβολοσειρά"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "Σφάλμα επικοινωνίας με MQTT: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "Δεν ήταν δυνατή η προσωρινή αποθήκευση {failed} εγγραφών. Έγινε λήψη {downloaded} εγγραφών."
+    },
+    "force_arm_invalid_link": {
+      "message": "Αυτός ο σύνδεσμος αναγκαστικής όπλισης X-Sense δεν είναι έγκυρος."
+    },
+    "force_arm_request_failed": {
+      "message": "Το αίτημα αναγκαστικής όπλισης X-Sense απέτυχε."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Αύξουσα",
+        "descending": "Φθίνουσα"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Αύξουσα",
+        "descending": "Φθίνουσα"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "Μόνο αναπαραγωγή",
+        "retained": "Διατήρηση τοπικών εγγραφών"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "Στο σπίτι",
+        "away": "Εκτός σπιτιού"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "fields": {
+        "mode": {
+          "name": "Λειτουργία όπλισης"
+        }
+      },
+      "name": "Αναγκαστική όπλιση",
+      "description": "Επιβεβαιώστε ένα εκκρεμές αίτημα όπλισης σε λειτουργία Στο σπίτι ή Εκτός σπιτιού που εμποδίζεται από ανοικτούς αισθητήρες. Οι ανοικτοί αισθητήρες παρακάμπτονται."
+    },
+    "force_arm_now": {
+      "fields": {
+        "mode": {
+          "name": "Λειτουργία όπλισης"
+        }
+      },
+      "name": "Αναγκαστική όπλιση τώρα",
+      "description": "Οπλίστε αμέσως σε λειτουργία Στο σπίτι ή Εκτός σπιτιού, παρακάμπτοντας τους ανοικτούς αισθητήρες χωρίς αίτημα επιβεβαίωσης."
+    },
+    "trigger_sos": {
+      "name": "Ενεργοποίηση συναγερμού SOS",
+      "description": "Ενεργοποιήστε αμέσως τον συναγερμό SOS του SBS50."
+    },
+    "cancel_sos": {
+      "name": "Ακύρωση συναγερμού SOS",
+      "description": "Ακυρώστε έναν ενεργό συναγερμό SOS του SBS50."
+    },
+    "cancel_alarm": {
+      "name": "Ακύρωση ενεργού συναγερμού",
+      "description": "Ακυρώστε έναν ενεργό συναγερμό αισθητήρα του SBS50."
+    },
+    "set_sos_sound": {
+      "fields": {
+        "audible": {
+          "name": "Ηχητικός συναγερμός SOS"
+        }
+      },
+      "name": "Ρύθμιση ήχου SOS",
+      "description": "Επιλέξτε αν το SOS θα χρησιμοποιεί μόνο φώτα που αναβοσβήνουν ή θα ενεργοποιεί και τον βομβητή."
+    },
+    "refresh_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "Αναγνωριστικό καταχώρισης διαμόρφωσης",
+          "description": "Αφήστε το κενό για εφαρμογή σε όλους τους λογαριασμούς X-Sense."
+        }
+      },
+      "name": "Ανανέωση εγγραφών",
+      "description": "Ανανεώστε το ευρετήριο εγγραφών κάμερας που χρησιμοποιείται από την πλαϊνή στήλη και το πρόγραμμα περιήγησης πολυμέσων."
+    },
+    "cache_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "Αναγνωριστικό καταχώρισης διαμόρφωσης",
+          "description": "Αφήστε το κενό για εφαρμογή σε όλους τους λογαριασμούς X-Sense."
+        }
+      },
+      "name": "Προσωρινή αποθήκευση εγγραφών",
+      "description": "Κατεβάστε εγγραφές κάμερας για τοπική διατήρηση. Απαιτείται η λειτουργία Διατήρηση τοπικών εγγραφών."
+    },
+    "clear_recordings_cache": {
+      "fields": {
+        "entry_id": {
+          "name": "Αναγνωριστικό καταχώρισης διαμόρφωσης",
+          "description": "Αφήστε το κενό για εφαρμογή σε όλους τους λογαριασμούς X-Sense."
+        }
+      },
+      "name": "Εκκαθάριση προσωρινής μνήμης εγγραφών",
+      "description": "Διαγράψτε τοπικά ευρετήρια εγγραφών, βίντεο και μικρογραφίες. Οι εγγραφές στο νέφος και στην κάρτα SD παραμένουν αμετάβλητες."
+    },
+    "query_light_schedules": {
+      "name": "Ανάκτηση προγραμμάτων φωτισμού",
+      "description": "Ανάκτηση προγραμμάτων φωτισμού. Επιλέξτε ως στόχο τον διακόπτη τροφοδοσίας φωτισμού του SBS50."
+    },
+    "create_light_schedule": {
+      "fields": {
+        "name": {
+          "name": "Εμφανιζόμενο όνομα"
+        },
+        "start_time": {
+          "name": "Ώρα έναρξης (HH:MM ή HHMM)"
+        },
+        "end_time": {
+          "name": "Ώρα λήξης (HH:MM ή HHMM)"
+        },
+        "week_days": {
+          "name": "Ημέρες εβδομάδας (1 = Κυριακή, 7 = Σάββατο)"
+        },
+        "enabled": {
+          "name": "Κατάσταση ενεργοποίησης"
+        },
+        "time_zone": {
+          "name": "Ζώνη ώρας"
+        }
+      },
+      "name": "Δημιουργία προγράμματος φωτισμού",
+      "description": "Δημιουργία προγράμματος φωτισμού. Επιλέξτε ως στόχο τον διακόπτη τροφοδοσίας φωτισμού του SBS50."
+    },
+    "update_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Αναγνωριστικό προγράμματος"
+        },
+        "start_time": {
+          "name": "Ώρα έναρξης (HH:MM ή HHMM)"
+        },
+        "end_time": {
+          "name": "Ώρα λήξης (HH:MM ή HHMM)"
+        },
+        "week_days": {
+          "name": "Ημέρες εβδομάδας (1 = Κυριακή, 7 = Σάββατο)"
+        },
+        "enabled": {
+          "name": "Κατάσταση ενεργοποίησης"
+        },
+        "time_zone": {
+          "name": "Ζώνη ώρας"
+        }
+      },
+      "name": "Ενημέρωση προγράμματος φωτισμού",
+      "description": "Ενημέρωση προγράμματος φωτισμού. Επιλέξτε ως στόχο τον διακόπτη τροφοδοσίας φωτισμού του SBS50."
+    },
+    "rename_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Αναγνωριστικό προγράμματος"
+        },
+        "name": {
+          "name": "Εμφανιζόμενο όνομα"
+        }
+      },
+      "name": "Μετονομασία προγράμματος φωτισμού",
+      "description": "Μετονομασία προγράμματος φωτισμού. Επιλέξτε ως στόχο τον διακόπτη τροφοδοσίας φωτισμού του SBS50."
+    },
+    "delete_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Αναγνωριστικό προγράμματος"
+        }
+      },
+      "name": "Διαγραφή προγράμματος φωτισμού",
+      "description": "Διαγραφή προγράμματος φωτισμού. Επιλέξτε ως στόχο τον διακόπτη τροφοδοσίας φωτισμού του SBS50."
+    },
+    "query_light_groups": {
+      "name": "Ανάκτηση ομάδων φωτισμού",
+      "description": "Ανάκτηση ομάδων φωτισμού. Επιλέξτε ως στόχο τον διακόπτη τροφοδοσίας φωτισμού του SBS50."
+    },
+    "create_light_group": {
+      "fields": {
+        "name": {
+          "name": "Εμφανιζόμενο όνομα"
+        }
+      },
+      "name": "Δημιουργία ομάδας φωτισμού",
+      "description": "Δημιουργία ομάδας φωτισμού. Επιλέξτε ως στόχο τον διακόπτη τροφοδοσίας φωτισμού του SBS50."
+    },
+    "rename_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Αναγνωριστικό ομάδας"
+        },
+        "name": {
+          "name": "Εμφανιζόμενο όνομα"
+        }
+      },
+      "name": "Μετονομασία ομάδας φωτισμού",
+      "description": "Μετονομασία ομάδας φωτισμού. Επιλέξτε ως στόχο τον διακόπτη τροφοδοσίας φωτισμού του SBS50."
+    },
+    "update_light_group_timer": {
+      "fields": {
+        "group_id": {
+          "name": "Αναγνωριστικό ομάδας"
+        },
+        "timer": {
+          "name": "Τύπος χρονοδιακόπτη (pirTime ή appTime)"
+        },
+        "value": {
+          "name": "Τιμή χρονοδιακόπτη"
+        }
+      },
+      "name": "Ενημέρωση χρονοδιακόπτη ομάδας φωτισμού",
+      "description": "Ενημέρωση χρονοδιακόπτη ομάδας φωτισμού. Επιλέξτε ως στόχο τον διακόπτη τροφοδοσίας φωτισμού του SBS50."
+    },
+    "bind_light_group": {
+      "fields": {
+        "name": {
+          "name": "Εμφανιζόμενο όνομα"
+        },
+        "device_ids": {
+          "name": "Αναγνωριστικά συσκευών"
+        }
+      },
+      "name": "Σύνδεση ομάδας φωτισμού",
+      "description": "Σύνδεση ομάδας φωτισμού. Επιλέξτε ως στόχο τον διακόπτη τροφοδοσίας φωτισμού του SBS50."
+    },
+    "delete_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Αναγνωριστικό ομάδας"
+        }
+      },
+      "name": "Διαγραφή ομάδας φωτισμού",
+      "description": "Διαγραφή ομάδας φωτισμού. Επιλέξτε ως στόχο τον διακόπτη τροφοδοσίας φωτισμού του SBS50."
+    },
+    "remove_light_group_devices": {
+      "fields": {
+        "device_ids": {
+          "name": "Αναγνωριστικά συσκευών"
+        }
+      },
+      "name": "Αφαίρεση συσκευών από ομάδα φωτισμού",
+      "description": "Αφαίρεση συσκευών από ομάδα φωτισμού. Επιλέξτε ως στόχο τον διακόπτη τροφοδοσίας φωτισμού του SBS50."
+    },
+    "set_light_group_power": {
+      "fields": {
+        "group_id": {
+          "name": "Αναγνωριστικό ομάδας"
+        },
+        "device_ids": {
+          "name": "Σειριακοί αριθμοί συσκευών"
+        },
+        "enabled": {
+          "name": "Κατάσταση ενεργοποίησης"
+        }
+      },
+      "name": "Ρύθμιση τροφοδοσίας ομάδας φωτισμού",
+      "description": "Ρύθμιση τροφοδοσίας ομάδας φωτισμού. Επιλέξτε ως στόχο τον διακόπτη τροφοδοσίας φωτισμού του SBS50."
+    }
+  },
+  "issues": {}
 }

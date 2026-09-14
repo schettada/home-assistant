@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "O dispositivo já está configurado",
       "reauth_successful": "A reautenticação foi bem-sucedida",
-      "reconfigure_successful": "A reconfiguração foi bem-sucedida"
+      "reconfigure_successful": "A reconfiguração foi bem-sucedida",
+      "unique_id_mismatch": "Inicie sessão com a mesma conta X-Sense utilizada nesta entrada."
     },
     "error": {
       "cannot_connect": "Falha ao conectar",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "A sincronização de mídia de gravação armazena em cache os clipes da câmera na mídia Home Assistant para que a barra lateral de gravações X-Sense, o navegador de mídia e as notificações móveis possam abrir as gravações rapidamente. Deixe-o desativado para armazenar em cache as gravações somente quando elas forem abertas. Ative-o para manter as gravações recentes prontas em segundo plano.",
+        "description": "Apenas reprodução é o modo predefinido e encaminha as gravações pelo Home Assistant durante a reprodução sem guardar clipes completos. Escolha manter gravações locais para armazenar clipes nos conteúdos multimédia do Home Assistant com os limites configurados de idade e tamanho. A sincronização em segundo plano funciona apenas no modo de retenção.",
         "data": {
           "recording_media_sync_enabled": "Gravação de sincronização de mídia",
           "recording_media_sync_hours": "Intervalo de sincronização em segundo plano",
           "recording_media_storage_path": "Pasta de cache de gravação",
           "recording_notification_quality": "Qualidade de gravação de notificação",
           "recording_media_days_order": "Ordem do dia de gravação",
-          "recording_media_clips_order": "Gravando a ordem dos clipes"
+          "recording_media_clips_order": "Gravando a ordem dos clipes",
+          "recording_cache_retention_days": "Gravando retenção de cache",
+          "recording_cache_max_size_mb": "Tamanho máximo do cache de gravação",
+          "recording_cache_mode": "Modo de armazenamento das gravações"
         },
         "data_description": {
           "recording_media_sync_enabled": "Armazene em cache as gravações recentes automaticamente. Isso utiliza espaço de armazenamento e pode ativar as câmeras com mais frequência.",
           "recording_media_sync_hours": "Com que frequência a sincronização normal de atualização em segundo plano deve ser executada. As gravações recentes são verificadas a cada dois minutos quando a sincronização está ativada.",
           "recording_media_storage_path": "Use uma pasta em /media. Novos vídeos e miniaturas em cache são armazenados aqui.",
-          "recording_notification_quality": "Escolha HD para preferir os URLs de clipe direto/de alta resolução do X-Sense para notificações móveis. Escolha SD para usar o caminho de captura de reprodução da câmera quando disponível.",
+          "recording_notification_quality": "HD dá preferência aos URLs de gravação de maior resolução. SD prefere URLs de resolução padrão quando o X-Sense os disponibiliza.",
           "recording_media_days_order": "Escolha se os dias mais recentes ou mais antigos aparecem primeiro no visualizador de gravações.",
-          "recording_media_clips_order": "Escolha se os clipes mais recentes ou mais antigos aparecem primeiro em cada dia."
+          "recording_media_clips_order": "Escolha se os clipes mais recentes ou mais antigos aparecem primeiro em cada dia.",
+          "recording_cache_retention_days": "Exclua as gravações em cache locais após tantos dias. As gravações na nuvem X-Sense e no cartão SD não são alteradas.",
+          "recording_cache_max_size_mb": "Tamanho máximo do cache local em MB. Quando o limite é atingido, as gravações visualizadas menos recentemente são removidas primeiro.",
+          "recording_cache_mode": "Apenas reprodução encaminha conteúdos HLS pelo Home Assistant a pedido sem guardar clipes completos. O modo de retenção mantém cópias locais segundo os limites abaixo."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "A pasta de cache de gravação mudará de `{old_path}` para `{new_path}`. Os vídeos e miniaturas existentes em cache não são movidos automaticamente. Mova primeiro as pastas `videos` e `thumbs` existentes se desejar que as gravações antigas em cache permaneçam disponíveis."
+        "description": "A pasta de cache de gravação mudará de `{old_path}` para `{new_path}`. Os vídeos e miniaturas existentes em cache não são movidos automaticamente. Mova primeiro as pastas `hls`, `videos` e `thumbs` existentes se desejar que as gravações antigas em cache permaneçam disponíveis."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "Agendamento de caixa de correio ativo"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "Alimentação de CA desligada"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "Fim de vida da bateria"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "Fim da vida útil"
       },
       "armed": {
-        "name": "Armed"
+        "name": "Armado"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "Movimento detetado"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "Carregamento por USB"
       },
       "charging": {
-        "name": "Charging"
+        "name": "A carregar"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "Em suspensão"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "Suporte de montagem removido"
       },
       "activated": {
-        "name": "Activated"
+        "name": "Ativado"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "Simulacro de alarme ativo"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "Alarme ativo"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "Alarme iniciador"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "Teste do dispositivo ativo"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "Dispositivo silenciado"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "Som do alarme"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "Notificações da aplicação"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "Notificações do horário"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "Alarme de fuga de água"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "Alarme de fuga de água silenciado"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "Alarme de temperatura"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "Alarme de temperatura silenciado"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "Fuso horário do dispositivo ativado"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "Fuso horário do dispositivo válido"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "Mudo"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "Despertar"
       }
     },
     "event": {
@@ -188,7 +195,7 @@
           "normal": "Normais",
           "low_battery": "Bateria fraca",
           "malfunction": "Mau funcionamento",
-          "end_of_life": "Fim da vida"
+          "end_of_life": "Fim da vida útil"
         }
       },
       "alarm_vol": {
@@ -254,139 +261,139 @@
         "name": "Tempo de pico do nível de radônio"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "Nível da bateria"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Força do sinal Wi-Fi"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Força do sinal Wi-Fi"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "Código de estado da câmara"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "Versão do firmware"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "Estado do firmware da câmara"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Nome da rede Wi-Fi (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Canal Wi-Fi"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "Endereço MAC"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "Estado do cartão SD"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "Capacidade total do cartão SD"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "Espaço utilizado no cartão SD"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "Hora de ativação da câmara"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "Hora de desconexão da câmara"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "Hora da miniatura da câmara"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "Hora de despertar da suspensão da câmara"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "Mensagem de suspensão da câmara"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "Fuso horário do dispositivo"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "Variante do detetor de fumo"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "Norma do alarme de CO"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "Tipo de verificação"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "Intervalo PIR"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "Sensibilidade do Sensor"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "Tempo de silêncio"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "Tempo de silêncio do alarme de temperatura"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "Tempo de silêncio do alarme de fuga de água"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "Aviso de CO a curto prazo"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "Nível de aviso de CO a curto prazo"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "Aviso de CO a longo prazo"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "Nível de aviso de CO a longo prazo"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "Ocorrência de alarme"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "Origem do alarme"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "Alarme repetido"
       },
       "time": {
-        "name": "Report Time"
+        "name": "Hora do relatório"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "Hora UTC"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "Tempo de teste do dispositivo"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "Fuso horário do dispositivo"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "Localização por voz"
       },
       "location": {
-        "name": "Location"
+        "name": "Localização"
       },
       "color": {
-        "name": "Color"
+        "name": "Cor"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "Evento de iluminação"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "Tipo de dispositivo"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "Tipo de dispositivo comunicado"
       },
       "category": {
-        "name": "Category"
+        "name": "Categoria"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "Modo de segurança"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "Brilho em espera"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "Volume do alarme"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Volume de voz"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "Volume do altifalante"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "Duração do alarme"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "Sensibilidade da visão noturna"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "Sensibilidade da deteção de choro"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Intervalo entre gravações"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "Duração da campainha mecânica"
       }
     },
     "select": {
@@ -519,251 +526,266 @@
         "name": "Aplicativo dentro do prazo"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "Idioma"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "Resolução de gravação"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "Sensibilidade de detecção",
+        "state": {
+          "high": "Alta",
+          "medium": "Média",
+          "low": "Baixa",
+          "auto": "Automática"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "Duração do vídeo"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "Frequência de cintilação"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "Codec predefinido"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "Seguimento de movimento"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "Modo de visão noturna"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "Intervalo entre gravações na nuvem"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "Toque da campainha"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "Nível de bateria para ligação automática"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "Indicador LED"
       },
       "light_power": {
-        "name": "Light"
+        "name": "Luz"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "Alarme ativado"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "Alarme contínuo"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "Lembrete de correio"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "Sinal sonoro ativado"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "Lembrete ativado"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "Som do lembrete ativado"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "Luz de espera ativada"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR ativado"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "Deteção de luz ambiente ativada"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "Som das teclas ativado"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "Aviso ativado"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "Deteção de movimento"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "Deteção de pessoas"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "Gravar vídeo"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "Visão noturna automática"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "LED de estado"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "Alarme da câmara"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "Rodar imagem"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "Anticintilação"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "Deteção de choro"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Intervalo entre gravações"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "Chamada do dispositivo"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "Campainha mecânica"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "Seguimento de movimento"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Volume da voz"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "Áudio em direto"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "Gravação de áudio"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "Ligação automática"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "Luz branca"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "Alarme ao remover"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "Modo de suspensão"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "Notificação de IA: pessoa"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "Notificação de IA: animal de estimação"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "Notificação de IA: entrada de veículo"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "Notificação de IA: saída de veículo"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "Notificação de IA: veículo estacionado"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "Notificação de IA: encomenda presente"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "Notificação de IA: entrega de encomenda"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "Notificação de IA: recolha de encomenda"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "Notificação de IA: outro"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "Assistente de IA: pessoa"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "Assistente de IA: animal de estimação"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "Assistente de IA: veículo"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "Assistente de IA: encomenda"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "Alarme"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "A estação X-Sense já não está disponível"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "A entidade X-Sense já não está disponível"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "O X-Sense não está ligado ao MQTT"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "Não foi possível publicar o comando do modo de segurança X-Sense"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "Não há um arme forçado X-Sense pendente para o modo {mode}"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "O estado de ativação do intervalo entre gravações X-Sense é desconhecido"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option} não é uma opção suportada pelo X-Sense"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "Não é possível escrever no seletor X-Sense"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "O limiar de rádon X-Sense não é válido"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "Falta o valor emparelhado na definição de intervalo X-Sense"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "O mínimo X-Sense não pode ser superior ao máximo"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service} requer um interruptor de alimentação da luz"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service} requer uma estação SBS50"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "Faltam os identificadores de X-Sense {service}"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "A hora do horário X-Sense deve estar no formato HH:MM ou HHMM"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "A hora do horário X-Sense está fora do intervalo"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "O horário X-Sense deve incluir pelo menos um dia da semana"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "Os dias da semana do horário X-Sense devem ser de 1 a 7"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field} deve incluir pelo menos um identificador"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "Não é possível remover a subscrição duas vezes"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "O tópico deve ser uma cadeia de caracteres"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "Erro de comunicação com MQTT: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "Não foi possível guardar {failed} gravação(ões) em cache. Foram transferidas {downloaded} gravação(ões)."
+    },
+    "force_arm_invalid_link": {
+      "message": "Esta ligação de arme forçado do X-Sense é inválida."
+    },
+    "force_arm_request_failed": {
+      "message": "O pedido de arme forçado do X-Sense falhou."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Ascendente",
+        "descending": "Descendente"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Ascendente",
+        "descending": "Descendente"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "Apenas reprodução",
+        "retained": "Manter gravações locais"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "Em casa",
+        "away": "Ausente"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "fields": {
+        "mode": {
+          "name": "Modo de arme"
+        }
+      },
+      "name": "Forçar arme",
+      "description": "Confirme um pedido de arme pendente no modo Em casa ou Ausente bloqueado por sensores abertos. Os sensores abertos serão ignorados."
+    },
+    "force_arm_now": {
+      "fields": {
+        "mode": {
+          "name": "Modo de arme"
+        }
+      },
+      "name": "Forçar arme agora",
+      "description": "Arme imediatamente no modo Em casa ou Ausente, ignorando sensores abertos sem pedir confirmação."
+    },
+    "trigger_sos": {
+      "name": "Acionar alarme SOS",
+      "description": "Acione imediatamente o alarme SOS do SBS50."
+    },
+    "cancel_sos": {
+      "name": "Cancelar alarme SOS",
+      "description": "Cancele um alarme SOS ativo do SBS50."
+    },
+    "cancel_alarm": {
+      "name": "Cancelar alarme ativo",
+      "description": "Cancele um alarme de sensor ativo do SBS50."
+    },
+    "set_sos_sound": {
+      "fields": {
+        "audible": {
+          "name": "Alarme SOS sonoro"
+        }
+      },
+      "name": "Definir som do SOS",
+      "description": "Escolha se o SOS utiliza apenas luzes intermitentes ou também aciona o sinal sonoro."
+    },
+    "refresh_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "ID da entrada de configuração",
+          "description": "Deixe em branco para aplicar a todas as contas X-Sense."
+        }
+      },
+      "name": "Atualizar gravações",
+      "description": "Atualize o índice de gravações das câmaras utilizado pela barra lateral e pelo navegador multimédia."
+    },
+    "cache_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "ID da entrada de configuração",
+          "description": "Deixe em branco para aplicar a todas as contas X-Sense."
+        }
+      },
+      "name": "Guardar gravações em cache",
+      "description": "Transfira gravações das câmaras para armazenamento local. Requer o modo Manter gravações locais."
+    },
+    "clear_recordings_cache": {
+      "fields": {
+        "entry_id": {
+          "name": "ID da entrada de configuração",
+          "description": "Deixe em branco para aplicar a todas as contas X-Sense."
+        }
+      },
+      "name": "Limpar cache de gravações",
+      "description": "Elimine índices de gravações, vídeos e miniaturas locais. As gravações na nuvem e no cartão SD permanecem inalteradas."
+    },
+    "query_light_schedules": {
+      "name": "Consultar horários de iluminação",
+      "description": "Consulte os horários de iluminação. Selecione o interruptor de alimentação da iluminação do SBS50 como destino."
+    },
+    "create_light_schedule": {
+      "fields": {
+        "name": {
+          "name": "Nome de apresentação"
+        },
+        "start_time": {
+          "name": "Hora de início (HH:MM ou HHMM)"
+        },
+        "end_time": {
+          "name": "Hora de fim (HH:MM ou HHMM)"
+        },
+        "week_days": {
+          "name": "Dias da semana (1 = domingo, 7 = sábado)"
+        },
+        "enabled": {
+          "name": "Estado de ativação"
+        },
+        "time_zone": {
+          "name": "Fuso horário"
+        }
+      },
+      "name": "Criar horário de iluminação",
+      "description": "Crie um horário de iluminação. Selecione o interruptor de alimentação da iluminação do SBS50 como destino."
+    },
+    "update_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Identificador do horário"
+        },
+        "start_time": {
+          "name": "Hora de início (HH:MM ou HHMM)"
+        },
+        "end_time": {
+          "name": "Hora de fim (HH:MM ou HHMM)"
+        },
+        "week_days": {
+          "name": "Dias da semana (1 = domingo, 7 = sábado)"
+        },
+        "enabled": {
+          "name": "Estado de ativação"
+        },
+        "time_zone": {
+          "name": "Fuso horário"
+        }
+      },
+      "name": "Atualizar horário de iluminação",
+      "description": "Atualize um horário de iluminação. Selecione o interruptor de alimentação da iluminação do SBS50 como destino."
+    },
+    "rename_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Identificador do horário"
+        },
+        "name": {
+          "name": "Nome de apresentação"
+        }
+      },
+      "name": "Mudar nome do horário de iluminação",
+      "description": "Mude o nome de um horário de iluminação. Selecione o interruptor de alimentação da iluminação do SBS50 como destino."
+    },
+    "delete_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Identificador do horário"
+        }
+      },
+      "name": "Eliminar horário de iluminação",
+      "description": "Elimine um horário de iluminação. Selecione o interruptor de alimentação da iluminação do SBS50 como destino."
+    },
+    "query_light_groups": {
+      "name": "Consultar grupos de iluminação",
+      "description": "Consulte os grupos de iluminação. Selecione o interruptor de alimentação da iluminação do SBS50 como destino."
+    },
+    "create_light_group": {
+      "fields": {
+        "name": {
+          "name": "Nome de apresentação"
+        }
+      },
+      "name": "Criar grupo de iluminação",
+      "description": "Crie um grupo de iluminação. Selecione o interruptor de alimentação da iluminação do SBS50 como destino."
+    },
+    "rename_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Identificador do grupo"
+        },
+        "name": {
+          "name": "Nome de apresentação"
+        }
+      },
+      "name": "Mudar nome do grupo de iluminação",
+      "description": "Mude o nome de um grupo de iluminação. Selecione o interruptor de alimentação da iluminação do SBS50 como destino."
+    },
+    "update_light_group_timer": {
+      "fields": {
+        "group_id": {
+          "name": "Identificador do grupo"
+        },
+        "timer": {
+          "name": "Tipo de temporizador (pirTime ou appTime)"
+        },
+        "value": {
+          "name": "Valor do temporizador"
+        }
+      },
+      "name": "Atualizar temporizador do grupo de iluminação",
+      "description": "Atualize o temporizador de um grupo de iluminação. Selecione o interruptor de alimentação da iluminação do SBS50 como destino."
+    },
+    "bind_light_group": {
+      "fields": {
+        "name": {
+          "name": "Nome de apresentação"
+        },
+        "device_ids": {
+          "name": "Identificadores dos dispositivos"
+        }
+      },
+      "name": "Associar grupo de iluminação",
+      "description": "Associe um grupo de iluminação. Selecione o interruptor de alimentação da iluminação do SBS50 como destino."
+    },
+    "delete_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Identificador do grupo"
+        }
+      },
+      "name": "Eliminar grupo de iluminação",
+      "description": "Elimine um grupo de iluminação. Selecione o interruptor de alimentação da iluminação do SBS50 como destino."
+    },
+    "remove_light_group_devices": {
+      "fields": {
+        "device_ids": {
+          "name": "Identificadores dos dispositivos"
+        }
+      },
+      "name": "Remover dispositivos do grupo de iluminação",
+      "description": "Remova dispositivos de um grupo de iluminação. Selecione o interruptor de alimentação da iluminação do SBS50 como destino."
+    },
+    "set_light_group_power": {
+      "fields": {
+        "group_id": {
+          "name": "Identificador do grupo"
+        },
+        "device_ids": {
+          "name": "Números de série dos dispositivos"
+        },
+        "enabled": {
+          "name": "Estado de ativação"
+        }
+      },
+      "name": "Ligar ou desligar grupo de iluminação",
+      "description": "Ligue ou desligue um grupo de iluminação. Selecione o interruptor de alimentação da iluminação do SBS50 como destino."
+    }
+  },
+  "issues": {}
 }

@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "Zařízení je již nakonfigurováno",
       "reauth_successful": "Opětovné ověření bylo úspěšné",
-      "reconfigure_successful": "Rekonfigurace byla úspěšná"
+      "reconfigure_successful": "Rekonfigurace byla úspěšná",
+      "unique_id_mismatch": "Přihlaste se ke stejnému účtu X-Sense, který je přiřazen k této položce."
     },
     "error": {
       "cannot_connect": "Připojení se nezdařilo",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "Synchronizace záznamových médií ukládá do mezipaměti klipy z fotoaparátu pod média Home Assistant, takže postranní panel Nahrávek X-Sense, Prohlížeč médií a mobilní oznámení mohou rychle otevřít nahrávky. Ponechte jej pro ukládání do mezipaměti pouze tehdy, když jsou otevřeny. Aktivujte ji, aby byly poslední nahrávky připraveny na pozadí.",
+        "description": "Výchozí je pouze přehrávání, které při přehrávání předává nahrávky přes Home Assistant bez uchovávání celých klipů. Chcete-li ukládat klipy do médií Home Assistant podle nastaveného stáří a velikosti, zvolte uchovávání místních nahrávek. Synchronizace na pozadí běží jen v režimu uchovávání.",
         "data": {
           "recording_media_sync_enabled": "Synchronizace nahrávacího média",
           "recording_media_sync_hours": "Interval synchronizace na pozadí",
           "recording_media_storage_path": "Složka mezipaměti záznamů",
           "recording_notification_quality": "Kvalita záznamu oznámení",
           "recording_media_days_order": "Objednávka dne záznamu",
-          "recording_media_clips_order": "Pořadí nahrávání klipů"
+          "recording_media_clips_order": "Pořadí nahrávání klipů",
+          "recording_cache_retention_days": "Uchovávání mezipaměti záznamu",
+          "recording_cache_max_size_mb": "Maximální velikost mezipaměti pro nahrávání",
+          "recording_cache_mode": "Režim ukládání nahrávek"
         },
         "data_description": {
           "recording_media_sync_enabled": "Automaticky ukládat poslední nahrávky do mezipaměti. To využívá úložný prostor a může častěji probudit kamery.",
           "recording_media_sync_hours": "Jak často by měla běžet normální synchronizace na pozadí. Pokud je povolena synchronizace, poslední nahrávky se kontrolují každých pár minut.",
           "recording_media_storage_path": "Použijte složku pod /media. Zde se ukládají nová videa a miniatury uložené v mezipaměti.",
-          "recording_notification_quality": "Vyberte HD, chcete-li upřednostnit přímé adresy URL klipů/ve vysokém rozlišení X-Sense pro mobilní oznámení. Zvolte SD, chcete-li použít cestu snímání přehrávání kamery, je-li k dispozici.",
+          "recording_notification_quality": "HD upřednostňuje adresy záznamů s vyšším rozlišením. SD upřednostňuje standardní rozlišení, pokud je X-Sense poskytuje.",
           "recording_media_days_order": "Zvolte, zda se v prohlížeči nahrávek jako první zobrazí novější nebo starší dny.",
-          "recording_media_clips_order": "Vyberte, zda se v každém dni zobrazí jako první novější nebo starší klipy."
+          "recording_media_clips_order": "Vyberte, zda se v každém dni zobrazí jako první novější nebo starší klipy.",
+          "recording_cache_retention_days": "Po tomto mnoha dnech smažte místní nahrávky uložené v mezipaměti. Cloud X-Sense a záznamy na SD kartě se nezmění.",
+          "recording_cache_max_size_mb": "Maximální velikost místní mezipaměti v MB. Po dosažení limitu jsou nejdříve odstraněny nahrávky, které byly naposledy zobrazeny.",
+          "recording_cache_mode": "Pouze přehrávání předává média HLS na vyžádání přes Home Assistant bez uchovávání celých klipů. Režim uchovávání ukládá místní kopie podle níže uvedených limitů."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "Složka mezipaměti záznamů se změní z `{old_path}` na `{new_path}`. Stávající videa a miniatury uložené v mezipaměti se nepřesouvají automaticky. Pokud chcete, aby staré nahrávky uložené v mezipaměti zůstaly dostupné, přesuňte nejprve existující složky `videos` a `thumbs`."
+        "description": "Složka mezipaměti záznamů se změní z `{old_path}` na `{new_path}`. Stávající videa a miniatury uložené v mezipaměti se nepřesouvají automaticky. Pokud chcete, aby staré nahrávky uložené v mezipaměti zůstaly dostupné, přesuňte nejprve existující složky `hls`, `videos` a `thumbs`."
       }
     },
     "error": {
@@ -87,81 +94,81 @@
         "name": "Plán poštovní schránky je aktivní"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "Síťové napájení odpojeno"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "Konec životnosti baterie"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "Konec životnosti"
       },
       "armed": {
-        "name": "Armed"
+        "name": "Zastřeženo"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "Zjištěn pohyb"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "Nabíjení přes USB"
       },
       "charging": {
-        "name": "Charging"
+        "name": "Nabíjení"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "Režim spánku"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "Montážní držák sejmut"
       },
       "activated": {
-        "name": "Activated"
+        "name": "Aktivováno"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "Probíhá cvičný poplach"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "Poplach aktivní"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "Zdroj spuštění poplachu"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "Probíhá test zařízení"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "Zařízení ztišeno"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "Zvuk poplachu"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "Oznámení aplikace"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "Oznámení plánu"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "Poplach úniku vody"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "Poplach úniku vody ztišen"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "Teplotní poplach"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "Teplotní poplach ztišen"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "Časové pásmo zařízení zapnuto"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "Časové pásmo zařízení platné"
       }
     },
     "button": {
       "fire_drill": {
-        "name": "Alarm Drill"
+        "name": "Cvičný poplach"
       },
       "test": {
         "name": "Test zařízení"
@@ -170,7 +177,7 @@
         "name": "Ztlumit"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "Probudit"
       }
     },
     "event": {
@@ -254,139 +261,139 @@
         "name": "Doba nejvyšší hladiny radonu"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "Úroveň baterie"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Síla signálu"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Síla signálu"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "Stavový kód kamery"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "Verze firmwaru"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "Stav firmwaru kamery"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Název Wi-Fi (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Kanál Wi-Fi"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "Adresa MAC"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "Stav karty SD"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "Celková kapacita karty SD"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "Využité místo na kartě SD"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "Čas aktivace kamery"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "Čas odpojení kamery"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "Čas náhledu kamery"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "Čas probuzení kamery"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "Zpráva o spánku kamery"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "Časové pásmo zařízení"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "Varianta detektoru kouře"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "Norma poplachu CO"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "Typ kontroly"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "Interval PIR"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "Citlivost snímače"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "Čas ztišení"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "Čas ztišení teplotního poplachu"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "Čas ztišení poplachu úniku vody"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "Krátkodobé varování CO"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "Úroveň krátkodobého varování CO"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "Dlouhodobé varování CO"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "Úroveň dlouhodobého varování CO"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "Výskyt poplachu"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "Zdroj poplachu"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "Opakovaný poplach"
       },
       "time": {
-        "name": "Report Time"
+        "name": "Čas hlášení"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "Čas UTC"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "Doba testu zařízení"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "Časové pásmo zařízení"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "Hlasově oznámené umístění"
       },
       "location": {
-        "name": "Location"
+        "name": "Umístění"
       },
       "color": {
-        "name": "Color"
+        "name": "Barva"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "Událost světla"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "Typ zařízení"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "Hlášený typ zařízení"
       },
       "category": {
-        "name": "Category"
+        "name": "Kategorie"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "Režim zabezpečení"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "Jas v pohotovostním režimu"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "Hlasitost alarmu"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Hlasitost hlasu"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "Hlasitost reproduktoru"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "Délka poplachu"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "Citlivost nočního vidění"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "Citlivost detekce pláče"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Prodleva mezi záznamy"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "Délka mechanického zvonění"
       }
     },
     "select": {
@@ -519,251 +526,266 @@
         "name": "Aplikace na čas"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "Jazyk"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "Rozlišení záznamu"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "Citlivost detekce",
+        "state": {
+          "high": "Vysoká",
+          "medium": "Střední",
+          "low": "Nízká",
+          "auto": "Automatická"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "Délka videa"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "Frekvence blikání"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "Výchozí kodek"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "Sledování pohybu"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "Režim nočního vidění"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "Prodleva mezi cloudovými záznamy"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "Tón domovního zvonku"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "Úroveň baterie pro automatické zapnutí"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "Indikátor LED"
       },
       "light_power": {
-        "name": "Light"
+        "name": "Světlo"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "Poplach povolen"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "Pokračující poplach"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "Připomenutí pošty"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "Krátký tón povolen"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "Připomenutí povoleno"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "Tón připomenutí povolen"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "Pohotovostní osvětlení povoleno"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR povoleno"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "Detekce okolního světla povolena"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "Zvuk tlačítek povolen"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "Varování povoleno"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "Detekce pohybu"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "Detekce osob"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "Nahrávat video"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "Automatické noční vidění"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "Stavová LED"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "Poplach kamery"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "Otočit obraz"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "Potlačení blikání"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "Detekce pláče"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Prodleva mezi záznamy"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "Volání zařízení"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "Mechanický zvonek"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "Sledování pohybu"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Hlasitost hlasu"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "Živý zvuk"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "Zvuk záznamu"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "Automatické zapnutí"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "Bílé světlo"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "Poplach při sejmutí"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "Režim spánku"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "Oznámení AI: osoba"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "Oznámení AI: domácí zvíře"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "Oznámení AI: příjezd vozidla"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "Oznámení AI: odjezd vozidla"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "Oznámení AI: zaparkované vozidlo"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "Oznámení AI: přítomný balík"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "Oznámení AI: doručení balíku"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "Oznámení AI: vyzvednutí balíku"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "Oznámení AI: ostatní"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "Asistent AI: osoby"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "Asistent AI: domácí zvířata"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "Asistent AI: vozidla"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "Asistent AI: balíky"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "Poplach"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "Stanice X-Sense již není dostupná"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "Entita X-Sense již není dostupná"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "MQTT X-Sense není připojeno"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "Nepodařilo se odeslat příkaz režimu zabezpečení X-Sense"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "V režimu {mode} nečeká X-Sense na vynucené zastřežení"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "Není známo, zda je prodleva mezi záznamy X-Sense povolena"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option} není podporovaná volba X-Sense"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "Volbu X-Sense nelze zapsat"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "Prahová hodnota radonu X-Sense není platná"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "Nastavení rozsahu X-Sense postrádá párovou hodnotu"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "Minimum X-Sense nesmí být větší než maximum"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service} vyžaduje vypínač světla"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service} vyžaduje stanici SBS50"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "Chybí ID pro X-Sense {service}"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "Čas plánu X-Sense musí mít formát HH:MM nebo HHMM"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "Čas plánu X-Sense je mimo rozsah"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "Plán X-Sense musí obsahovat alespoň jeden den v týdnu"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "Dny v týdnu plánu X-Sense musí být 1 až 7"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field} musí obsahovat alespoň jedno ID"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "Odběr nelze odebrat dvakrát"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "Téma musí být textový řetězec"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "Chyba komunikace s MQTT: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "Počet záznamů, které se nepodařilo uložit do mezipaměti: {failed}. Počet stažených záznamů: {downloaded}."
+    },
+    "force_arm_invalid_link": {
+      "message": "Tento odkaz na vynucené střežení X-Sense je neplatný."
+    },
+    "force_arm_request_failed": {
+      "message": "Požadavek na vynucené střežení X-Sense selhal."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Vzestupně",
+        "descending": "Sestupně"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Vzestupně",
+        "descending": "Sestupně"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "Pouze přehrávání",
+        "retained": "Uchovávat místní nahrávky"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "Doma",
+        "away": "Pryč"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "fields": {
+        "mode": {
+          "name": "Režim střežení"
+        }
+      },
+      "name": "Vynutit střežení",
+      "description": "Potvrďte čekající požadavek na střežení v režimu Doma nebo Pryč, který blokují otevřené senzory. Otevřené senzory budou vynechány."
+    },
+    "force_arm_now": {
+      "fields": {
+        "mode": {
+          "name": "Režim střežení"
+        }
+      },
+      "name": "Vynutit střežení ihned",
+      "description": "Okamžitě zapněte střežení v režimu Doma nebo Pryč a vynechte otevřené senzory bez výzvy k potvrzení."
+    },
+    "trigger_sos": {
+      "name": "Spustit SOS poplach",
+      "description": "Okamžitě spusťte SOS poplach stanice SBS50."
+    },
+    "cancel_sos": {
+      "name": "Zrušit SOS poplach",
+      "description": "Zrušte aktivní SOS poplach stanice SBS50."
+    },
+    "cancel_alarm": {
+      "name": "Zrušit aktivní poplach",
+      "description": "Zrušte aktivní poplach senzoru stanice SBS50."
+    },
+    "set_sos_sound": {
+      "fields": {
+        "audible": {
+          "name": "Zvukový SOS poplach"
+        }
+      },
+      "name": "Nastavit zvuk SOS",
+      "description": "Vyberte, zda má SOS pouze blikat světly, nebo také spustit bzučák."
+    },
+    "refresh_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "ID položky konfigurace",
+          "description": "Ponechte prázdné pro použití na všechny účty X-Sense."
+        }
+      },
+      "name": "Obnovit záznamy",
+      "description": "Obnovte index kamerových záznamů používaný postranním panelem a prohlížečem médií."
+    },
+    "cache_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "ID položky konfigurace",
+          "description": "Ponechte prázdné pro použití na všechny účty X-Sense."
+        }
+      },
+      "name": "Uložit záznamy do mezipaměti",
+      "description": "Stáhněte kamerové záznamy pro místní uchování. Vyžaduje režim Uchovávat místní nahrávky."
+    },
+    "clear_recordings_cache": {
+      "fields": {
+        "entry_id": {
+          "name": "ID položky konfigurace",
+          "description": "Ponechte prázdné pro použití na všechny účty X-Sense."
+        }
+      },
+      "name": "Vymazat mezipaměť záznamů",
+      "description": "Smažte místní indexy záznamů, videa a náhledy. Záznamy v cloudu a na kartě SD zůstanou beze změny."
+    },
+    "query_light_schedules": {
+      "name": "Načíst rozvrhy osvětlení",
+      "description": "Načíst rozvrhy osvětlení. Jako cíl vyberte vypínač osvětlení SBS50."
+    },
+    "create_light_schedule": {
+      "fields": {
+        "name": {
+          "name": "Zobrazovaný název"
+        },
+        "start_time": {
+          "name": "Čas začátku (HH:MM nebo HHMM)"
+        },
+        "end_time": {
+          "name": "Čas konce (HH:MM nebo HHMM)"
+        },
+        "week_days": {
+          "name": "Dny v týdnu (1 = neděle, 7 = sobota)"
+        },
+        "enabled": {
+          "name": "Stav povolení"
+        },
+        "time_zone": {
+          "name": "Časové pásmo"
+        }
+      },
+      "name": "Vytvořit rozvrh osvětlení",
+      "description": "Vytvořit rozvrh osvětlení. Jako cíl vyberte vypínač osvětlení SBS50."
+    },
+    "update_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Identifikátor rozvrhu"
+        },
+        "start_time": {
+          "name": "Čas začátku (HH:MM nebo HHMM)"
+        },
+        "end_time": {
+          "name": "Čas konce (HH:MM nebo HHMM)"
+        },
+        "week_days": {
+          "name": "Dny v týdnu (1 = neděle, 7 = sobota)"
+        },
+        "enabled": {
+          "name": "Stav povolení"
+        },
+        "time_zone": {
+          "name": "Časové pásmo"
+        }
+      },
+      "name": "Aktualizovat rozvrh osvětlení",
+      "description": "Aktualizovat rozvrh osvětlení. Jako cíl vyberte vypínač osvětlení SBS50."
+    },
+    "rename_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Identifikátor rozvrhu"
+        },
+        "name": {
+          "name": "Zobrazovaný název"
+        }
+      },
+      "name": "Přejmenovat rozvrh osvětlení",
+      "description": "Přejmenovat rozvrh osvětlení. Jako cíl vyberte vypínač osvětlení SBS50."
+    },
+    "delete_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Identifikátor rozvrhu"
+        }
+      },
+      "name": "Smazat rozvrh osvětlení",
+      "description": "Smazat rozvrh osvětlení. Jako cíl vyberte vypínač osvětlení SBS50."
+    },
+    "query_light_groups": {
+      "name": "Načíst skupiny světel",
+      "description": "Načíst skupiny světel. Jako cíl vyberte vypínač osvětlení SBS50."
+    },
+    "create_light_group": {
+      "fields": {
+        "name": {
+          "name": "Zobrazovaný název"
+        }
+      },
+      "name": "Vytvořit skupinu světel",
+      "description": "Vytvořit skupinu světel. Jako cíl vyberte vypínač osvětlení SBS50."
+    },
+    "rename_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Identifikátor skupiny"
+        },
+        "name": {
+          "name": "Zobrazovaný název"
+        }
+      },
+      "name": "Přejmenovat skupinu světel",
+      "description": "Přejmenovat skupinu světel. Jako cíl vyberte vypínač osvětlení SBS50."
+    },
+    "update_light_group_timer": {
+      "fields": {
+        "group_id": {
+          "name": "Identifikátor skupiny"
+        },
+        "timer": {
+          "name": "Typ časovače (pirTime nebo appTime)"
+        },
+        "value": {
+          "name": "Hodnota časovače"
+        }
+      },
+      "name": "Aktualizovat časovač skupiny světel",
+      "description": "Aktualizovat časovač skupiny světel. Jako cíl vyberte vypínač osvětlení SBS50."
+    },
+    "bind_light_group": {
+      "fields": {
+        "name": {
+          "name": "Zobrazovaný název"
+        },
+        "device_ids": {
+          "name": "Identifikátory zařízení"
+        }
+      },
+      "name": "Propojit skupinu světel",
+      "description": "Propojit skupinu světel. Jako cíl vyberte vypínač osvětlení SBS50."
+    },
+    "delete_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Identifikátor skupiny"
+        }
+      },
+      "name": "Smazat skupinu světel",
+      "description": "Smazat skupinu světel. Jako cíl vyberte vypínač osvětlení SBS50."
+    },
+    "remove_light_group_devices": {
+      "fields": {
+        "device_ids": {
+          "name": "Identifikátory zařízení"
+        }
+      },
+      "name": "Odebrat zařízení ze skupiny světel",
+      "description": "Odebrat zařízení ze skupiny světel. Jako cíl vyberte vypínač osvětlení SBS50."
+    },
+    "set_light_group_power": {
+      "fields": {
+        "group_id": {
+          "name": "Identifikátor skupiny"
+        },
+        "device_ids": {
+          "name": "Sériová čísla zařízení"
+        },
+        "enabled": {
+          "name": "Stav povolení"
+        }
+      },
+      "name": "Nastavit zapnutí skupiny světel",
+      "description": "Nastavit zapnutí skupiny světel. Jako cíl vyberte vypínač osvětlení SBS50."
+    }
+  },
+  "issues": {}
 }

@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "Apparaat is al geconfigureerd",
       "reauth_successful": "Opnieuw verifiëren is gelukt",
-      "reconfigure_successful": "Herconfiguratie was succesvol"
+      "reconfigure_successful": "Herconfiguratie was succesvol",
+      "unique_id_mismatch": "Meld je aan met hetzelfde X-Sense-account als voor dit configuratie-item."
     },
     "error": {
       "cannot_connect": "Kan geen verbinding maken",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "Bij het synchroniseren van opnamemedia worden camerafragmenten in de cache opgeslagen onder Home Assistant-media, zodat de zijbalk Opnames van X-Sense, de mediabrowser en mobiele meldingen opnames snel kunnen openen. Laat het uitgeschakeld om opnames alleen in de cache op te slaan wanneer ze worden geopend. Schakel het in om recente opnamen op de achtergrond gereed te houden.",
+        "description": "Alleen afspelen is de standaardinstelling en stuurt opnamen tijdens het afspelen via Home Assistant door zonder volledige clips te bewaren. Kies lokale opnamen bewaren om clips onder Home Assistant-media op te slaan met de ingestelde leeftijds- en groottelimieten. Achtergrondsynchronisatie werkt alleen in de bewaarmodus.",
         "data": {
           "recording_media_sync_enabled": "Synchronisatie van opnamemedia",
           "recording_media_sync_hours": "Achtergrondsynchronisatie-interval",
           "recording_media_storage_path": "Opnamecachemap",
           "recording_notification_quality": "Opnamekwaliteit van meldingen",
           "recording_media_days_order": "Dagvolgorde opnemen",
-          "recording_media_clips_order": "Volgorde van opnameclips"
+          "recording_media_clips_order": "Volgorde van opnameclips",
+          "recording_cache_retention_days": "Retentie van opnamecache",
+          "recording_cache_max_size_mb": "Maximale grootte van de opnamecache",
+          "recording_cache_mode": "Opslagmodus voor opnamen"
         },
         "data_description": {
           "recording_media_sync_enabled": "Cache recente opnames automatisch. Dit gebruikt opslagruimte en kan camera's vaker activeren.",
           "recording_media_sync_hours": "Hoe vaak de normale inhaalsynchronisatie op de achtergrond moet worden uitgevoerd. Recente opnamen worden elke paar minuten gecontroleerd wanneer synchronisatie is ingeschakeld.",
           "recording_media_storage_path": "Gebruik een map onder /media. Nieuwe in de cache opgeslagen video's en thumbnails worden hier opgeslagen.",
-          "recording_notification_quality": "Kies HD om de voorkeur te geven aan de directe clip-URL's/clip-URL's van X-Sense voor mobiele meldingen. Kies SD om het opnamepad voor het afspelen van de camera te gebruiken, indien beschikbaar.",
+          "recording_notification_quality": "HD geeft voorkeur aan opname-URL's met hogere resolutie. SD geeft voorkeur aan standaardresolutie wanneer X-Sense die beschikbaar stelt.",
           "recording_media_days_order": "Kies of nieuwere of oudere dagen eerst verschijnen in de opnameviewer.",
-          "recording_media_clips_order": "Kies of nieuwere of oudere clips elke dag als eerste verschijnen."
+          "recording_media_clips_order": "Kies of nieuwere of oudere clips elke dag als eerste verschijnen.",
+          "recording_cache_retention_days": "Verwijder lokale opnamen in de cache na dit aantal dagen. X-Sense cloud- en SD-kaartopnamen worden niet gewijzigd.",
+          "recording_cache_max_size_mb": "Maximale lokale cachegrootte in MB. Wanneer de limiet is bereikt, worden de minst recent bekeken opnames als eerste verwijderd.",
+          "recording_cache_mode": "Alleen afspelen stuurt HLS-media op aanvraag via Home Assistant door zonder volledige clips te bewaren. De bewaarmodus houdt lokale kopieën bij volgens de onderstaande limieten."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "De map voor de opnamecache verandert van `{old_path}` in `{new_path}`. Bestaande video's en thumbnails in de cache worden niet automatisch verplaatst. Verplaats eerst de bestaande mappen `videos` en `thumbs` als u wilt dat oude opnamen in de cache beschikbaar blijven."
+        "description": "De map voor de opnamecache verandert van `{old_path}` in `{new_path}`. Bestaande video's en thumbnails in de cache worden niet automatisch verplaatst. Verplaats eerst de bestaande mappen `hls`, `videos` en `thumbs` als u wilt dat oude opnamen in de cache beschikbaar blijven."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "Mailboxschema actief"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "AC-voeding losgekoppeld"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "Einde batterijlevensduur"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "Einde levensduur"
       },
       "armed": {
-        "name": "Armed"
+        "name": "Ingeschakeld"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "Beweging gedetecteerd"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "Opladen via USB"
       },
       "charging": {
-        "name": "Charging"
+        "name": "Opladen"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "Slaapstand"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "Montagebeugel verwijderd"
       },
       "activated": {
-        "name": "Activated"
+        "name": "Geactiveerd"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "Alarmoefening actief"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "Alarm actief"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "Alarm afkomstig van apparaat"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "Apparaattest actief"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "Apparaat stilgezet"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "Alarmgeluid"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "Appmeldingen"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "Schemameldingen"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "Waterlekalarm"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "Waterlekalarm gedempt"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "Temperatuuralarm"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "Temperatuuralarm gedempt"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "Apparaattijdzone ingeschakeld"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "Apparaattijdzone geldig"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "Dempen"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "Activeren"
       }
     },
     "event": {
@@ -254,139 +261,139 @@
         "name": "Piekradonniveautijd"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "Batterijniveau"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Signaalsterkte"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Signaalsterkte"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "Camerastatuscode"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "Firmwareversie"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "Camerafirmwarestatus"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Wi-Fi-naam (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Wi-Fi-kanaal"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "MAC-adres"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "SD-kaartstatus"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "Totale SD-kaartcapaciteit"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "Gebruikte SD-kaartruimte"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "Activeringstijd camera"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "Verbinding verbroken op"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "Tijdstip cameraminiatuur"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "Ontwaaktijd camera"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "Slaapstandmelding camera"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "Apparaattijdzone"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "Rookmeldermodelvariant"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "CO-alarmnorm"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "Controletype"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "PIR-interval"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "Sensorgevoeligheid"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "Demptijdstip"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "Demptijdstip temperatuuralarm"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "Demptijdstip waterlekalarm"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "Kortetermijnwaarschuwing CO"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "Waarschuwingsniveau CO op korte termijn"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "Langetermijnwaarschuwing CO"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "Waarschuwingsniveau CO op lange termijn"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "Alarmgebeurtenis"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "Alarmbron"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "Herhaald alarm"
       },
       "time": {
-        "name": "Report Time"
+        "name": "Rapportagetijd"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "UTC-tijd"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "Testtijd apparaat"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "Apparaattijdzone"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "Gesproken locatie"
       },
       "location": {
-        "name": "Location"
+        "name": "Locatie"
       },
       "color": {
-        "name": "Color"
+        "name": "Kleur"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "Lichtgebeurtenis"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "Apparaattype"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "Gemeld apparaattype"
       },
       "category": {
-        "name": "Category"
+        "name": "Categorie"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "Beveiligingsmodus"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "Stand-by helderheid"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "Alarmvolume"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Stemvolume"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "Luidsprekervolume"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "Alarmduur"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "Nachtzichtgevoeligheid"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "Gevoeligheid huildetectie"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Wachttijd tussen opnamen"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "Duur mechanische bel"
       }
     },
     "select": {
@@ -519,177 +526,183 @@
         "name": "App op tijd"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "Taal"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "Opnameresolutie"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "Detectiegevoeligheid",
+        "state": {
+          "high": "Hoog",
+          "medium": "Gemiddeld",
+          "low": "Laag",
+          "auto": "Automatisch"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "Videoduur"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "Flikkerfrequentie"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "Standaardcodec"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "Bewegingsvolging"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "Nachtzichtmodus"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "Wachttijd tussen cloudopnamen"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "Deurbeltoon"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "Batterijniveau voor automatisch inschakelen"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "LED-indicator"
       },
       "light_power": {
-        "name": "Light"
+        "name": "Licht"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "Alarm ingeschakeld"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "Doorlopend alarm"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "E-mailherinnering"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "Korte pieptoon ingeschakeld"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "Herinnering ingeschakeld"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "Herinneringstoon ingeschakeld"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "Stand-byverlichting ingeschakeld"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR ingeschakeld"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "Omgevingslichtdetectie ingeschakeld"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "Toetsgeluid ingeschakeld"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "Waarschuwing ingeschakeld"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "Bewegingsdetectie"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "Persoonsdetectie"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "Video opnemen"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "Automatisch nachtzicht"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "Status-LED"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "Camera-alarm"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "Beeld draaien"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "Flikkeronderdrukking"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "Huildetectie"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Wachttijd tussen opnamen"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "Apparaatoproep"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "Mechanische bel"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "Bewegingsvolging"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Spraakvolume"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "Livegeluid"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "Opnamegeluid"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "Automatisch inschakelen"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "Wit licht"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "Alarm bij verwijderen"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "Slaapstand"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "AI-melding: persoon"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "AI-melding: huisdier"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "AI-melding: aankomend voertuig"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "AI-melding: vertrekkend voertuig"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "AI-melding: geparkeerd voertuig"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "AI-melding: pakket aanwezig"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "AI-melding: pakket bezorgd"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "AI-melding: pakket opgehaald"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "AI-melding: overig"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "AI-assistent: persoon"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "AI-assistent: huisdier"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "AI-assistent: voertuig"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "AI-assistent: pakket"
       }
     },
     "alarm_control_panel": {
@@ -700,70 +713,79 @@
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "Het X-Sense-station is niet meer beschikbaar"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "De X-Sense-entiteit is niet meer beschikbaar"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "X-Sense MQTT is niet verbonden"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "De X-Sense-beveiligingsmodusopdracht kon niet worden gepubliceerd"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "Er staat geen geforceerde X-Sense-inschakeling open voor modus {mode}"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "Het is onbekend of de X-Sense-wachttijd tussen opnamen is ingeschakeld"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option} is geen ondersteunde X-Sense-optie"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "De X-Sense-selectiewaarde kan niet worden gewijzigd"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "De X-Sense-radondrempel is ongeldig"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "De bijbehorende waarde ontbreekt in de X-Sense-bereikinstelling"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "Het X-Sense-minimum mag niet groter zijn dan het maximum"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service} vereist een lichtschakelaar"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service} vereist een SBS50-station"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "De ID's voor X-Sense {service} ontbreken"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "De X-Sense-schematijd moet de notatie HH:MM of HHMM hebben"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "De X-Sense-schematijd valt buiten het toegestane bereik"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "Het X-Sense-schema moet minstens één weekdag bevatten"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "De weekdagen in het X-Sense-schema moeten 1 tot en met 7 zijn"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field} moet minstens één ID bevatten"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "Een abonnement kan niet tweemaal worden verwijderd"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "Het onderwerp moet een tekenreeks zijn"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "Fout bij communicatie met MQTT: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "Kon {failed} opname(n) niet in de cache opslaan. Er zijn {downloaded} opname(n) gedownload."
+    },
+    "force_arm_invalid_link": {
+      "message": "Deze X-Sense-link voor geforceerd inschakelen is ongeldig."
+    },
+    "force_arm_request_failed": {
+      "message": "Het X-Sense-verzoek voor geforceerd inschakelen is mislukt."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Oplopend",
+        "descending": "Aflopend"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Oplopend",
+        "descending": "Aflopend"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "Alleen afspelen",
+        "retained": "Lokale opnamen bewaren"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "Thuis",
+        "away": "Afwezig"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "fields": {
+        "mode": {
+          "name": "Inschakelmodus"
+        }
+      },
+      "name": "Geforceerd inschakelen",
+      "description": "Bevestig een openstaand inschakelverzoek voor Thuis of Afwezig dat door open sensoren is geblokkeerd. Open sensoren worden overbrugd."
+    },
+    "force_arm_now": {
+      "fields": {
+        "mode": {
+          "name": "Inschakelmodus"
+        }
+      },
+      "name": "Nu geforceerd inschakelen",
+      "description": "Schakel direct in de modus Thuis of Afwezig in en overbrug open sensoren zonder om bevestiging te vragen."
+    },
+    "trigger_sos": {
+      "name": "SOS-alarm activeren",
+      "description": "Activeer het SOS-alarm van de SBS50 onmiddellijk."
+    },
+    "cancel_sos": {
+      "name": "SOS-alarm annuleren",
+      "description": "Annuleer een actief SOS-alarm van de SBS50."
+    },
+    "cancel_alarm": {
+      "name": "Actief alarm annuleren",
+      "description": "Annuleer een actief sensoralarm van de SBS50."
+    },
+    "set_sos_sound": {
+      "fields": {
+        "audible": {
+          "name": "Hoorbaar SOS-alarm"
+        }
+      },
+      "name": "SOS-geluid instellen",
+      "description": "Kies of SOS alleen knipperlichten gebruikt of ook de zoemer laat klinken."
+    },
+    "refresh_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "ID van configuratie-item",
+          "description": "Laat leeg om dit op alle X-Sense-accounts toe te passen."
+        }
+      },
+      "name": "Opnamen vernieuwen",
+      "description": "Vernieuw de index van cameraopnamen die door de zijbalk en de mediabrowser wordt gebruikt."
+    },
+    "cache_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "ID van configuratie-item",
+          "description": "Laat leeg om dit op alle X-Sense-accounts toe te passen."
+        }
+      },
+      "name": "Opnamen in cache opslaan",
+      "description": "Download cameraopnamen om ze lokaal te bewaren. Vereist de modus Lokale opnamen bewaren."
+    },
+    "clear_recordings_cache": {
+      "fields": {
+        "entry_id": {
+          "name": "ID van configuratie-item",
+          "description": "Laat leeg om dit op alle X-Sense-accounts toe te passen."
+        }
+      },
+      "name": "Opnamencache wissen",
+      "description": "Verwijder lokale opname-indexen, video's en miniaturen. Opnamen in de cloud en op de SD-kaart blijven ongewijzigd."
+    },
+    "query_light_schedules": {
+      "name": "Lichtschema's opvragen",
+      "description": "Vraag lichtschema's op. Selecteer de lichtschakelaar van de SBS50 als doel."
+    },
+    "create_light_schedule": {
+      "fields": {
+        "name": {
+          "name": "Weergavenaam"
+        },
+        "start_time": {
+          "name": "Begintijd (HH:MM of HHMM)"
+        },
+        "end_time": {
+          "name": "Eindtijd (HH:MM of HHMM)"
+        },
+        "week_days": {
+          "name": "Weekdagen (1 = zondag, 7 = zaterdag)"
+        },
+        "enabled": {
+          "name": "Ingeschakelde status"
+        },
+        "time_zone": {
+          "name": "Tijdzone"
+        }
+      },
+      "name": "Lichtschema maken",
+      "description": "Maak een lichtschema. Selecteer de lichtschakelaar van de SBS50 als doel."
+    },
+    "update_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Schema-ID"
+        },
+        "start_time": {
+          "name": "Begintijd (HH:MM of HHMM)"
+        },
+        "end_time": {
+          "name": "Eindtijd (HH:MM of HHMM)"
+        },
+        "week_days": {
+          "name": "Weekdagen (1 = zondag, 7 = zaterdag)"
+        },
+        "enabled": {
+          "name": "Ingeschakelde status"
+        },
+        "time_zone": {
+          "name": "Tijdzone"
+        }
+      },
+      "name": "Lichtschema bijwerken",
+      "description": "Werk een lichtschema bij. Selecteer de lichtschakelaar van de SBS50 als doel."
+    },
+    "rename_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Schema-ID"
+        },
+        "name": {
+          "name": "Weergavenaam"
+        }
+      },
+      "name": "Lichtschema hernoemen",
+      "description": "Hernoem een lichtschema. Selecteer de lichtschakelaar van de SBS50 als doel."
+    },
+    "delete_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Schema-ID"
+        }
+      },
+      "name": "Lichtschema verwijderen",
+      "description": "Verwijder een lichtschema. Selecteer de lichtschakelaar van de SBS50 als doel."
+    },
+    "query_light_groups": {
+      "name": "Lichtgroepen opvragen",
+      "description": "Vraag lichtgroepen op. Selecteer de lichtschakelaar van de SBS50 als doel."
+    },
+    "create_light_group": {
+      "fields": {
+        "name": {
+          "name": "Weergavenaam"
+        }
+      },
+      "name": "Lichtgroep maken",
+      "description": "Maak een lichtgroep. Selecteer de lichtschakelaar van de SBS50 als doel."
+    },
+    "rename_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Groeps-ID"
+        },
+        "name": {
+          "name": "Weergavenaam"
+        }
+      },
+      "name": "Lichtgroep hernoemen",
+      "description": "Hernoem een lichtgroep. Selecteer de lichtschakelaar van de SBS50 als doel."
+    },
+    "update_light_group_timer": {
+      "fields": {
+        "group_id": {
+          "name": "Groeps-ID"
+        },
+        "timer": {
+          "name": "Timertype (pirTime of appTime)"
+        },
+        "value": {
+          "name": "Timerwaarde"
+        }
+      },
+      "name": "Lichtgroeptimer bijwerken",
+      "description": "Werk de timer van een lichtgroep bij. Selecteer de lichtschakelaar van de SBS50 als doel."
+    },
+    "bind_light_group": {
+      "fields": {
+        "name": {
+          "name": "Weergavenaam"
+        },
+        "device_ids": {
+          "name": "Apparaat-ID's"
+        }
+      },
+      "name": "Lichtgroep koppelen",
+      "description": "Koppel een lichtgroep. Selecteer de lichtschakelaar van de SBS50 als doel."
+    },
+    "delete_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Groeps-ID"
+        }
+      },
+      "name": "Lichtgroep verwijderen",
+      "description": "Verwijder een lichtgroep. Selecteer de lichtschakelaar van de SBS50 als doel."
+    },
+    "remove_light_group_devices": {
+      "fields": {
+        "device_ids": {
+          "name": "Apparaat-ID's"
+        }
+      },
+      "name": "Apparaten uit lichtgroep verwijderen",
+      "description": "Verwijder apparaten uit een lichtgroep. Selecteer de lichtschakelaar van de SBS50 als doel."
+    },
+    "set_light_group_power": {
+      "fields": {
+        "group_id": {
+          "name": "Groeps-ID"
+        },
+        "device_ids": {
+          "name": "Serienummers van apparaten"
+        },
+        "enabled": {
+          "name": "Ingeschakelde status"
+        }
+      },
+      "name": "Lichtgroep in- of uitschakelen",
+      "description": "Schakel een lichtgroep in of uit. Selecteer de lichtschakelaar van de SBS50 als doel."
+    }
+  },
+  "issues": {}
 }

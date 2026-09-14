@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "Thiết bị đã được định cấu hình",
       "reauth_successful": "Xác thực lại thành công",
-      "reconfigure_successful": "Cấu hình lại đã thành công"
+      "reconfigure_successful": "Cấu hình lại đã thành công",
+      "unique_id_mismatch": "Đăng nhập bằng cùng tài khoản X-Sense được dùng cho mục này."
     },
     "error": {
       "cannot_connect": "Không thể kết nối",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "Đồng bộ hóa phương tiện ghi sẽ lưu vào bộ nhớ đệm các clip camera trong phương tiện Home Assistant để thanh bên X-Sense Bản ghi, Trình duyệt phương tiện và thông báo trên thiết bị di động có thể mở các bản ghi một cách nhanh chóng. Chỉ để nó vào bộ nhớ đệm khi chúng được mở. Kích hoạt nó để giữ các bản ghi gần đây sẵn sàng ở chế độ nền.",
+        "description": "Mặc định là chỉ phát lại, chuyển tiếp bản ghi qua Home Assistant khi phát mà không lưu toàn bộ clip. Chọn giữ bản ghi cục bộ để lưu clip trong thư mục media của Home Assistant theo giới hạn thời gian và dung lượng đã đặt. Đồng bộ nền chỉ chạy trong chế độ lưu giữ.",
         "data": {
           "recording_media_sync_enabled": "Ghi đồng bộ hóa phương tiện",
           "recording_media_sync_hours": "Khoảng thời gian đồng bộ hóa nền",
           "recording_media_storage_path": "Ghi thư mục bộ đệm",
           "recording_notification_quality": "Chất lượng ghi thông báo",
           "recording_media_days_order": "Ghi thứ tự ngày",
-          "recording_media_clips_order": "Thứ tự ghi clip"
+          "recording_media_clips_order": "Thứ tự ghi clip",
+          "recording_cache_retention_days": "Ghi lại việc lưu giữ bộ nhớ đệm",
+          "recording_cache_max_size_mb": "Kích thước bộ đệm ghi tối đa",
+          "recording_cache_mode": "Chế độ lưu trữ bản ghi"
         },
         "data_description": {
           "recording_media_sync_enabled": "Tự động lưu trữ các bản ghi gần đây. Điều này sử dụng không gian lưu trữ và có thể đánh thức camera thường xuyên hơn.",
           "recording_media_sync_hours": "Tần suất chạy đồng bộ hóa bắt kịp nền thông thường. Các bản ghi gần đây được kiểm tra vài phút một lần khi bật đồng bộ hóa.",
           "recording_media_storage_path": "Sử dụng thư mục trong /media. Các video và hình thu nhỏ mới được lưu trong bộ nhớ đệm được lưu trữ tại đây.",
-          "recording_notification_quality": "Chọn HD để ưu tiên URL clip trực tiếp/độ phân giải cao của X-Sense cho thông báo trên thiết bị di động. Chọn SD để sử dụng đường dẫn chụp phát lại của máy ảnh khi khả dụng.",
+          "recording_notification_quality": "HD ưu tiên URL bản ghi có độ phân giải cao hơn. SD ưu tiên độ phân giải tiêu chuẩn khi X-Sense cung cấp.",
           "recording_media_days_order": "Chọn xem ngày mới hơn hay cũ hơn sẽ xuất hiện đầu tiên trong trình xem bản ghi.",
-          "recording_media_clips_order": "Chọn xem các clip mới hơn hay cũ hơn sẽ xuất hiện đầu tiên trong mỗi ngày."
+          "recording_media_clips_order": "Chọn xem các clip mới hơn hay cũ hơn sẽ xuất hiện đầu tiên trong mỗi ngày.",
+          "recording_cache_retention_days": "Xóa các bản ghi được lưu trong bộ nhớ đệm cục bộ sau nhiều ngày. Bản ghi trên đám mây X-Sense và thẻ SD không bị thay đổi.",
+          "recording_cache_max_size_mb": "Kích thước bộ đệm cục bộ tối đa tính bằng MB. Khi đạt đến giới hạn, bản ghi ít được xem gần đây nhất sẽ bị xóa trước tiên.",
+          "recording_cache_mode": "Chế độ chỉ phát lại chuyển tiếp nội dung HLS qua Home Assistant theo yêu cầu mà không lưu toàn bộ clip. Chế độ lưu giữ giữ bản sao cục bộ theo các giới hạn bên dưới."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "Thư mục bộ đệm ghi âm sẽ thay đổi từ `{old_path}` thành `{new_path}`. Các video và hình thu nhỏ hiện có trong bộ nhớ đệm không được di chuyển tự động. Trước tiên, hãy di chuyển các thư mục `videos` và `thumbs` hiện có nếu bạn muốn các bản ghi cũ được lưu trong bộ nhớ đệm vẫn khả dụng."
+        "description": "Thư mục bộ đệm ghi âm sẽ thay đổi từ `{old_path}` thành `{new_path}`. Các video và hình thu nhỏ hiện có trong bộ nhớ đệm không được di chuyển tự động. Trước tiên, hãy di chuyển các thư mục `hls`, `videos` và `thumbs` hiện có nếu bạn muốn các bản ghi cũ được lưu trong bộ nhớ đệm vẫn khả dụng."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "Lịch biểu hộp thư đang hoạt động"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "Đã ngắt nguồn điện xoay chiều"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "Pin hết tuổi thọ"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "Hết tuổi thọ sử dụng"
       },
       "armed": {
-        "name": "Armed"
+        "name": "Đã bật bảo vệ"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "Phát hiện chuyển động"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "Đang sạc qua USB"
       },
       "charging": {
-        "name": "Charging"
+        "name": "Đang sạc"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "Đang ngủ"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "Đã tháo giá đỡ"
       },
       "activated": {
-        "name": "Activated"
+        "name": "Đã kích hoạt"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "Diễn tập báo động đang hoạt động"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "Báo động đang hoạt động"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "Báo động khởi phát"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "Đang kiểm tra thiết bị"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "Thiết bị đã im lặng"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "Âm thanh báo động"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "Thông báo ứng dụng"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "Thông báo theo lịch"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "Báo động rò rỉ nước"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "Đã tắt tiếng báo động rò rỉ nước"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "Báo động nhiệt độ"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "Đã tắt tiếng báo động nhiệt độ"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "Đã bật múi giờ thiết bị"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "Múi giờ thiết bị hợp lệ"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "Tắt tiếng"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "Đánh thức"
       }
     },
     "event": {
@@ -188,7 +195,7 @@
           "normal": "Bình thường",
           "low_battery": "Pin yếu",
           "malfunction": "Trục trặc",
-          "end_of_life": "Cuối đời"
+          "end_of_life": "Hết tuổi thọ sử dụng"
         }
       },
       "alarm_vol": {
@@ -254,139 +261,139 @@
         "name": "Thời gian mức Radon cao nhất"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "Mức pin"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Cường độ tín hiệu Wi-Fi"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Cường độ tín hiệu Wi-Fi"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "Mã trạng thái camera"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "Phiên bản phần sụn"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "Trạng thái phần sụn camera"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Tên Wi-Fi (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Kênh Wi-Fi"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "Địa chỉ MAC"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "Trạng thái thẻ SD"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "Tổng dung lượng thẻ SD"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "Dung lượng thẻ SD đã dùng"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "Thời gian kích hoạt camera"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "Thời gian camera ngoại tuyến"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "Thời gian ảnh thu nhỏ camera"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "Thời gian đánh thức camera"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "Thông báo chế độ ngủ của camera"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "Múi giờ thiết bị"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "Biến thể đầu báo khói"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "Tiêu chuẩn báo động CO"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "Loại kiểm tra"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "Khoảng thời gian PIR"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "Độ nhạy cảm biến"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "Thời gian tắt tiếng"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "Thời gian tắt tiếng báo động nhiệt độ"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "Thời gian tắt tiếng báo động rò rỉ nước"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "Cảnh báo CO ngắn hạn"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "Mức cảnh báo CO ngắn hạn"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "Cảnh báo CO dài hạn"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "Mức cảnh báo CO dài hạn"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "Sự xuất hiện báo động"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "Nguồn báo động"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "Báo động lặp lại"
       },
       "time": {
-        "name": "Report Time"
+        "name": "Thời gian báo cáo"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "Thời gian UTC"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "Thời gian kiểm tra thiết bị"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "Múi giờ thiết bị"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "Vị trí thông báo bằng giọng nói"
       },
       "location": {
-        "name": "Location"
+        "name": "Vị trí"
       },
       "color": {
-        "name": "Color"
+        "name": "Màu sắc"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "Sự kiện chiếu sáng"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "Loại thiết bị"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "Loại thiết bị được báo cáo"
       },
       "category": {
-        "name": "Category"
+        "name": "Danh mục"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "Chế độ bảo mật"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "Độ sáng chờ"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "Âm lượng báo động"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Âm lượng giọng nói"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "Âm lượng loa"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "Thời lượng báo động"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "Độ nhạy nhìn đêm"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "Độ nhạy phát hiện tiếng khóc"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Khoảng nghỉ giữa các lần ghi hình"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "Thời lượng chuông cơ"
       }
     },
     "select": {
@@ -519,251 +526,266 @@
         "name": "Ứng dụng đúng giờ"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "Ngôn ngữ"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "Độ phân giải ghi hình"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "Độ nhạy phát hiện",
+        "state": {
+          "high": "Cao",
+          "medium": "Trung bình",
+          "low": "Thấp",
+          "auto": "Tự động"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "Thời lượng video"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "Tần số nhấp nháy"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "Bộ mã hóa mặc định"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "Theo dõi chuyển động"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "Chế độ nhìn đêm"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "Khoảng nghỉ giữa các lần ghi hình trên đám mây"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "Âm chuông cửa"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "Mức pin để tự động bật nguồn"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "Đèn chỉ báo LED"
       },
       "light_power": {
-        "name": "Light"
+        "name": "Đèn"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "Đã bật báo động"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "Báo động liên tục"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "Nhắc nhở thư"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "Đã bật tiếng bíp"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "Đã bật lời nhắc"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "Đã bật âm lời nhắc"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "Đã bật đèn chờ"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "Đã bật PIR"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "Đã bật phát hiện ánh sáng môi trường"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "Đã bật âm phím"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "Đã bật cảnh báo"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "Phát hiện chuyển động"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "Phát hiện người"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "Ghi video"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "Tự động nhìn đêm"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "Đèn LED trạng thái"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "Báo động camera"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "Xoay hình ảnh"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "Chống nhấp nháy"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "Phát hiện tiếng khóc"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Khoảng nghỉ giữa các lần ghi hình"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "Cuộc gọi thiết bị"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "Chuông cơ"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "Theo dõi chuyển động"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Âm lượng giọng nói"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "Âm thanh trực tiếp"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "Ghi âm"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "Tự động bật nguồn"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "Ánh sáng trắng"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "Báo động khi tháo"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "Chế độ ngủ"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "Thông báo AI: người"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "Thông báo AI: thú cưng"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "Thông báo AI: xe đi vào"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "Thông báo AI: xe đi ra"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "Thông báo AI: xe đang đỗ"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "Thông báo AI: có bưu kiện"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "Thông báo AI: giao bưu kiện"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "Thông báo AI: lấy bưu kiện"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "Thông báo AI: khác"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "Trợ lý AI: người"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "Trợ lý AI: thú cưng"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "Trợ lý AI: xe"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "Trợ lý AI: bưu kiện"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "Báo động"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "Trạm X-Sense không còn khả dụng"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "Thực thể X-Sense không còn khả dụng"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "X-Sense chưa kết nối MQTT"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "Không thể gửi lệnh chế độ bảo mật X-Sense"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "Không có yêu cầu bắt buộc bật bảo vệ X-Sense đang chờ cho chế độ {mode}"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "Không rõ trạng thái bật khoảng nghỉ giữa các lần ghi hình X-Sense"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option} không phải là tùy chọn được X-Sense hỗ trợ"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "Không thể ghi giá trị lựa chọn X-Sense"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "Ngưỡng radon X-Sense không hợp lệ"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "Cài đặt phạm vi X-Sense thiếu giá trị ghép cặp"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "Giá trị tối thiểu X-Sense không được lớn hơn giá trị tối đa"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service} yêu cầu công tắc nguồn đèn"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service} yêu cầu trạm SBS50"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "Thiếu mã định danh X-Sense {service}"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "Thời gian lịch X-Sense phải có định dạng HH:MM hoặc HHMM"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "Thời gian lịch X-Sense nằm ngoài phạm vi"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "Lịch X-Sense phải có ít nhất một ngày trong tuần"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "Các ngày trong tuần của lịch X-Sense phải từ 1 đến 7"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field} phải có ít nhất một mã định danh"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "Không thể xóa đăng ký hai lần"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "Chủ đề phải là một chuỗi"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "Lỗi giao tiếp với MQTT: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "Không thể lưu {failed} bản ghi vào bộ nhớ đệm. Đã tải xuống {downloaded} bản ghi."
+    },
+    "force_arm_invalid_link": {
+      "message": "Liên kết bắt buộc bật bảo vệ X-Sense này không hợp lệ."
+    },
+    "force_arm_request_failed": {
+      "message": "Yêu cầu bắt buộc bật bảo vệ X-Sense thất bại."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Tăng dần",
+        "descending": "Giảm dần"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Tăng dần",
+        "descending": "Giảm dần"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "Chỉ phát lại",
+        "retained": "Giữ bản ghi cục bộ"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "Ở nhà",
+        "away": "Vắng nhà"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "fields": {
+        "mode": {
+          "name": "Chế độ bật bảo vệ"
+        }
+      },
+      "name": "Bắt buộc bật bảo vệ",
+      "description": "Xác nhận yêu cầu bật bảo vệ ở chế độ Ở nhà hoặc Vắng nhà đang chờ do bị chặn bởi các cảm biến báo mở. Các cảm biến báo mở sẽ được bỏ qua."
+    },
+    "force_arm_now": {
+      "fields": {
+        "mode": {
+          "name": "Chế độ bật bảo vệ"
+        }
+      },
+      "name": "Bắt buộc bật bảo vệ ngay",
+      "description": "Bật bảo vệ ngay ở chế độ Ở nhà hoặc Vắng nhà, bỏ qua các cảm biến báo mở mà không yêu cầu xác nhận."
+    },
+    "trigger_sos": {
+      "name": "Kích hoạt báo động SOS",
+      "description": "Kích hoạt ngay báo động SOS của SBS50."
+    },
+    "cancel_sos": {
+      "name": "Hủy báo động SOS",
+      "description": "Hủy báo động SOS đang hoạt động của SBS50."
+    },
+    "cancel_alarm": {
+      "name": "Hủy báo động đang hoạt động",
+      "description": "Hủy báo động cảm biến đang hoạt động của SBS50."
+    },
+    "set_sos_sound": {
+      "fields": {
+        "audible": {
+          "name": "Báo động SOS có âm thanh"
+        }
+      },
+      "name": "Đặt âm thanh SOS",
+      "description": "Chọn SOS chỉ nhấp nháy đèn hay đồng thời phát âm báo."
+    },
+    "refresh_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "ID mục cấu hình",
+          "description": "Để trống để áp dụng cho tất cả tài khoản X-Sense."
+        }
+      },
+      "name": "Làm mới bản ghi",
+      "description": "Làm mới chỉ mục bản ghi của camera được dùng trong thanh bên và trình duyệt đa phương tiện."
+    },
+    "cache_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "ID mục cấu hình",
+          "description": "Để trống để áp dụng cho tất cả tài khoản X-Sense."
+        }
+      },
+      "name": "Lưu bản ghi vào bộ nhớ đệm",
+      "description": "Tải xuống bản ghi của camera để lưu trữ cục bộ. Yêu cầu chế độ Giữ bản ghi cục bộ."
+    },
+    "clear_recordings_cache": {
+      "fields": {
+        "entry_id": {
+          "name": "ID mục cấu hình",
+          "description": "Để trống để áp dụng cho tất cả tài khoản X-Sense."
+        }
+      },
+      "name": "Xóa bộ nhớ đệm bản ghi",
+      "description": "Xóa chỉ mục bản ghi, video và ảnh thu nhỏ cục bộ. Bản ghi trên đám mây và thẻ SD không thay đổi."
+    },
+    "query_light_schedules": {
+      "name": "Truy vấn lịch đèn",
+      "description": "Truy vấn lịch đèn. Chọn công tắc nguồn đèn SBS50 làm đối tượng."
+    },
+    "create_light_schedule": {
+      "fields": {
+        "name": {
+          "name": "Tên hiển thị"
+        },
+        "start_time": {
+          "name": "Giờ bắt đầu (HH:MM hoặc HHMM)"
+        },
+        "end_time": {
+          "name": "Giờ kết thúc (HH:MM hoặc HHMM)"
+        },
+        "week_days": {
+          "name": "Ngày trong tuần (1 = Chủ nhật, 7 = Thứ bảy)"
+        },
+        "enabled": {
+          "name": "Trạng thái bật"
+        },
+        "time_zone": {
+          "name": "Múi giờ"
+        }
+      },
+      "name": "Tạo lịch đèn",
+      "description": "Tạo lịch đèn. Chọn công tắc nguồn đèn SBS50 làm đối tượng."
+    },
+    "update_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Mã định danh lịch"
+        },
+        "start_time": {
+          "name": "Giờ bắt đầu (HH:MM hoặc HHMM)"
+        },
+        "end_time": {
+          "name": "Giờ kết thúc (HH:MM hoặc HHMM)"
+        },
+        "week_days": {
+          "name": "Ngày trong tuần (1 = Chủ nhật, 7 = Thứ bảy)"
+        },
+        "enabled": {
+          "name": "Trạng thái bật"
+        },
+        "time_zone": {
+          "name": "Múi giờ"
+        }
+      },
+      "name": "Cập nhật lịch đèn",
+      "description": "Cập nhật lịch đèn. Chọn công tắc nguồn đèn SBS50 làm đối tượng."
+    },
+    "rename_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Mã định danh lịch"
+        },
+        "name": {
+          "name": "Tên hiển thị"
+        }
+      },
+      "name": "Đổi tên lịch đèn",
+      "description": "Đổi tên lịch đèn. Chọn công tắc nguồn đèn SBS50 làm đối tượng."
+    },
+    "delete_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Mã định danh lịch"
+        }
+      },
+      "name": "Xóa lịch đèn",
+      "description": "Xóa lịch đèn. Chọn công tắc nguồn đèn SBS50 làm đối tượng."
+    },
+    "query_light_groups": {
+      "name": "Truy vấn nhóm đèn",
+      "description": "Truy vấn nhóm đèn. Chọn công tắc nguồn đèn SBS50 làm đối tượng."
+    },
+    "create_light_group": {
+      "fields": {
+        "name": {
+          "name": "Tên hiển thị"
+        }
+      },
+      "name": "Tạo nhóm đèn",
+      "description": "Tạo nhóm đèn. Chọn công tắc nguồn đèn SBS50 làm đối tượng."
+    },
+    "rename_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Mã định danh nhóm"
+        },
+        "name": {
+          "name": "Tên hiển thị"
+        }
+      },
+      "name": "Đổi tên nhóm đèn",
+      "description": "Đổi tên nhóm đèn. Chọn công tắc nguồn đèn SBS50 làm đối tượng."
+    },
+    "update_light_group_timer": {
+      "fields": {
+        "group_id": {
+          "name": "Mã định danh nhóm"
+        },
+        "timer": {
+          "name": "Loại bộ hẹn giờ (pirTime hoặc appTime)"
+        },
+        "value": {
+          "name": "Giá trị bộ hẹn giờ"
+        }
+      },
+      "name": "Cập nhật bộ hẹn giờ nhóm đèn",
+      "description": "Cập nhật bộ hẹn giờ nhóm đèn. Chọn công tắc nguồn đèn SBS50 làm đối tượng."
+    },
+    "bind_light_group": {
+      "fields": {
+        "name": {
+          "name": "Tên hiển thị"
+        },
+        "device_ids": {
+          "name": "Mã định danh thiết bị"
+        }
+      },
+      "name": "Liên kết nhóm đèn",
+      "description": "Liên kết nhóm đèn. Chọn công tắc nguồn đèn SBS50 làm đối tượng."
+    },
+    "delete_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Mã định danh nhóm"
+        }
+      },
+      "name": "Xóa nhóm đèn",
+      "description": "Xóa nhóm đèn. Chọn công tắc nguồn đèn SBS50 làm đối tượng."
+    },
+    "remove_light_group_devices": {
+      "fields": {
+        "device_ids": {
+          "name": "Mã định danh thiết bị"
+        }
+      },
+      "name": "Xóa thiết bị khỏi nhóm đèn",
+      "description": "Xóa thiết bị khỏi nhóm đèn. Chọn công tắc nguồn đèn SBS50 làm đối tượng."
+    },
+    "set_light_group_power": {
+      "fields": {
+        "group_id": {
+          "name": "Mã định danh nhóm"
+        },
+        "device_ids": {
+          "name": "Số sê-ri thiết bị"
+        },
+        "enabled": {
+          "name": "Trạng thái bật"
+        }
+      },
+      "name": "Đặt trạng thái nguồn nhóm đèn",
+      "description": "Đặt trạng thái nguồn nhóm đèn. Chọn công tắc nguồn đèn SBS50 làm đối tượng."
+    }
+  },
+  "issues": {}
 }

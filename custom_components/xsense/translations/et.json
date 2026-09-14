@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "Seade on juba konfigureeritud",
       "reauth_successful": "Taasautentimine õnnestus",
-      "reconfigure_successful": "Ümberseadistamine õnnestus"
+      "reconfigure_successful": "Ümberseadistamine õnnestus",
+      "unique_id_mismatch": "Logi sisse selle kirjega seotud X-Sense'i kontoga."
     },
     "error": {
       "cannot_connect": "Ühenduse loomine ebaõnnestus",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "Salvestusmeediumi sünkroonimine salvestab kaamera klipid vahemällu Home Assistant meedia alla, nii et X-Sense salvestiste külgriba, meediabrauser ja mobiilimärguanded saavad salvestisi kiiresti avada. Jätke see salvestuste vahemällu ainult siis, kui need on avatud. Lubage see, et hoida hiljutised salvestised taustal valmis.",
+        "description": "Vaikimisi kasutatakse ainult taasesitust: salvestised edastatakse esitamise ajal Home Assistanti kaudu ilma terveid klippe säilitamata. Klippide hoidmiseks Home Assistanti meedias määratud vanuse- ja mahupiirangutega valige kohalike salvestiste säilitamine. Taustsünkroonimine töötab ainult säilitamisrežiimis.",
         "data": {
           "recording_media_sync_enabled": "Salvestusmeediumi sünkroonimine",
           "recording_media_sync_hours": "Taustal sünkroonimise intervall",
           "recording_media_storage_path": "Salvestamise vahemälu kaust",
           "recording_notification_quality": "Teavituste salvestamise kvaliteet",
           "recording_media_days_order": "Salvestuspäeva tellimus",
-          "recording_media_clips_order": "Klipi salvestamise tellimus"
+          "recording_media_clips_order": "Klipi salvestamise tellimus",
+          "recording_cache_retention_days": "Salvestamise vahemälu säilitamine",
+          "recording_cache_max_size_mb": "Salvestamise vahemälu maksimaalne suurus",
+          "recording_cache_mode": "Salvestiste talletusrežiim"
         },
         "data_description": {
           "recording_media_sync_enabled": "Salvestage hiljutised salvestised automaatselt vahemällu. See kasutab salvestusruumi ja võib kaameraid sagedamini äratada.",
           "recording_media_sync_hours": "Kui tihti peaks käima tavaline tausta järelsünkroonimine. Kui sünkroonimine on lubatud, kontrollitakse hiljutisi salvestisi iga paari minuti järel.",
           "recording_media_storage_path": "Kasutage /media all olevat kausta. Siia salvestatakse uued vahemällu salvestatud videod ja pisipildid.",
-          "recording_notification_quality": "Valige HD, et eelistada mobiilimärguannete jaoks X-Sensei otse-/kõrge eraldusvõimega klipi URL-e. Valige SD, et kasutada kaamera taasesituse jäädvustusteed, kui see on saadaval.",
+          "recording_notification_quality": "HD eelistab suurema eraldusvõimega salvestiste URL-e. SD eelistab standardlahutust, kui X-Sense seda pakub.",
           "recording_media_days_order": "Valige, kas salvestiste vaatajas kuvatakse esimesena uuemad või vanemad päevad.",
-          "recording_media_clips_order": "Valige, kas iga päev kuvatakse esimesena uuemad või vanemad klipid."
+          "recording_media_clips_order": "Valige, kas iga päev kuvatakse esimesena uuemad või vanemad klipid.",
+          "recording_cache_retention_days": "Kustutage kohalikud vahemällu salvestatud salvestised pärast seda mitut päeva. X-Sense pilve ja SD-kaardi salvestusi ei muudeta.",
+          "recording_cache_max_size_mb": "Kohaliku vahemälu maksimaalne maht MB. Kui limiit on täis, eemaldatakse kõigepealt viimati vaadatud salvestised.",
+          "recording_cache_mode": "Ainult taasesitus edastab HLS-meedia nõudmisel Home Assistanti kaudu ilma terveid klippe säilitamata. Säilitamisrežiim hoiab kohalikke koopiaid allolevate piirangute järgi."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "Salvestamise vahemälu kaust muudetakse kaustast `{old_path}` kaustaks `{new_path}`. Olemasolevaid vahemällu salvestatud videoid ja pisipilte ei teisaldata automaatselt. Kui soovite, et vanad vahemällu salvestatud salvestised jääksid kättesaadavaks, teisaldage esmalt olemasolevad kaustad `videos` ja `thumbs`."
+        "description": "Salvestamise vahemälu kaust muudetakse kaustast `{old_path}` kaustaks `{new_path}`. Olemasolevaid vahemällu salvestatud videoid ja pisipilte ei teisaldata automaatselt. Kui soovite, et vanad vahemällu salvestatud salvestised jääksid kättesaadavaks, teisaldage esmalt olemasolevad kaustad `hls`, `videos` ja `thumbs`."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "Postkasti ajakava aktiivne"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "Võrgutoide katkenud"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "Aku kasutusea lõpp"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "Kasutusea lõpp"
       },
       "armed": {
-        "name": "Armed"
+        "name": "Valvestatud"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "Liikumine tuvastatud"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "USB kaudu laadimine"
       },
       "charging": {
-        "name": "Charging"
+        "name": "Laadimine"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "Puhkeolekus"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "Kinnitusklamber eemaldatud"
       },
       "activated": {
-        "name": "Activated"
+        "name": "Aktiveeritud"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "Häireõppus käib"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "Häire aktiivne"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "Häire käivitanud seade"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "Seadme test käib"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "Seade vaigistatud"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "Häireheli"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "Rakenduse teavitused"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "Ajakava teavitused"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "Veelekke häire"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "Veelekke häire vaigistatud"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "Temperatuurihäire"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "Temperatuurihäire vaigistatud"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "Seadme ajavöönd lubatud"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "Seadme ajavöönd kehtiv"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "Vaigista"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "Ärata"
       }
     },
     "event": {
@@ -188,7 +195,7 @@
           "normal": "Tavaline",
           "low_battery": "Aku tühi",
           "malfunction": "Talitlushäire",
-          "end_of_life": "Elu lõpp"
+          "end_of_life": "Kasutusea lõpp"
         }
       },
       "alarm_vol": {
@@ -254,139 +261,139 @@
         "name": "Radooni tipptaseme aeg"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "Aku tase"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "WIFIPLACEHOIDER Signaali tugevus"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "WIFIPLACEHOIDER Signaali tugevus"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "Kaamera olekukood"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "Püsivara versioon"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "Kaamera püsivara olek"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Wi-Fi nimi (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Wi-Fi kanal"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "MAC-aadress"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "SD-kaardi olek"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "SD-kaardi kogumaht"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "SD-kaardi kasutatud maht"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "Kaamera aktiveerimise aeg"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "Kaamera ühenduse katkemise aeg"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "Kaamera pisipildi aeg"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "Kaamera puhkeolekust ärkamise aeg"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "Kaamera puhkeoleku teade"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "Seadme ajavöönd"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "Suitsuanduri variant"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "CO-häire standard"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "Kontrolli tüüp"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "PIR-intervall"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "Anduri tundlikkus"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "Vaigistamise aeg"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "Temperatuurihäire vaigistamise aeg"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "Veelekke häire vaigistamise aeg"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "Lühiajaline CO-hoiatus"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "Lühiajalise CO-hoiatuse tase"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "Pikaajaline CO-hoiatus"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "Pikaajalise CO-hoiatuse tase"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "Häire esinemine"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "Häire allikas"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "Korduv häire"
       },
       "time": {
-        "name": "Report Time"
+        "name": "Raporti aeg"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "UTC-aeg"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "Seadme testimise aeg"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "Seadme ajavöönd"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "Häälteates öeldav asukoht"
       },
       "location": {
-        "name": "Location"
+        "name": "Asukoht"
       },
       "color": {
-        "name": "Color"
+        "name": "Värv"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "Valgustuse sündmus"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "Seadme tüüp"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "Teatatud seadme tüüp"
       },
       "category": {
-        "name": "Category"
+        "name": "Kategooria"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "Turvarežiim"
       }
     },
     "number": {
@@ -403,7 +410,7 @@
         "name": "Hääle helitugevus"
       },
       "chirp_volume": {
-        "name": "Chirp Volume"
+        "name": "Lühikese helisignaali tugevus"
       },
       "reminder_volume": {
         "name": "Meeldetuletuse helitugevus"
@@ -454,28 +461,28 @@
         "name": "Ooterežiimi heledus"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "Häire helitugevus"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Hääle helitugevus"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "Kõlari helitugevus"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "Häire kestus"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "Öönägemise tundlikkus"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "Nutu tuvastamise tundlikkus"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Salvestuste vaheline paus"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "Mehaanilise uksekella kestus"
       }
     },
     "select": {
@@ -519,251 +526,266 @@
         "name": "Rakendus õigel ajal"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "Keel"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "Salvestuse eraldusvõime"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "Tuvastamise tundlikkus",
+        "state": {
+          "high": "Kõrge",
+          "medium": "Keskmine",
+          "low": "Madal",
+          "auto": "Automaatne"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "Video kestus"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "Virvendussagedus"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "Vaikekoodek"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "Liikumise jälgimine"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "Öönägemise režiim"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "Pilvesalvestuste vaheline paus"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "Uksekella helin"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "Aku tase automaatseks sisselülituseks"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "LED-märgutuli"
       },
       "light_power": {
-        "name": "Light"
+        "name": "Valgus"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "Häire lubatud"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "Jätkuv häire"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "Posti meeldetuletus"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "Lühike helisignaal lubatud"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "Meeldetuletus lubatud"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "Meeldetuletuse heli lubatud"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "Ootevalgustus lubatud"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR lubatud"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "Ümbritseva valguse tuvastamine lubatud"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "Klahviheli lubatud"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "Hoiatus lubatud"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "Liikumise tuvastamine"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "Inimese tuvastamine"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "Salvesta video"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "Automaatne öönägemine"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "Oleku-LED"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "Kaamera häire"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "Pööra pilti"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "Virvenduse vähendamine"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "Nutu tuvastamine"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Salvestuste vaheline paus"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "Seadme kõned"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "Mehaaniline uksekell"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "Liikumise jälgimine"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Hääle helitugevus"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "Otseheli"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "Salvestuse heli"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "Automaatne sisselülitus"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "Valge valgus"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "Häire eemaldamisel"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "Puhkerežiim"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "AI-teavitus: inimene"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "AI-teavitus: lemmikloom"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "AI-teavitus: sõiduki saabumine"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "AI-teavitus: sõiduki lahkumine"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "AI-teavitus: pargitud sõiduk"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "AI-teavitus: pakk kohal"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "AI-teavitus: paki kohaletoimetamine"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "AI-teavitus: paki äravõtmine"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "Muud AI-teavitused"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "AI-assistent: inimesed"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "AI-assistent: lemmikloomad"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "AI-assistent: sõidukid"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "AI-assistent: pakid"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "Häire"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "X-Sense'i jaam pole enam saadaval"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "X-Sense'i olem pole enam saadaval"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "X-Sense'i MQTT pole ühendatud"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "X-Sense'i turvarežiimi käsku ei saanud avaldada"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "X-Sense'i sundvalvestamine pole režiimis {mode} ootel"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "Pole teada, kas X-Sense'i salvestuste vaheline paus on lubatud"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option} pole toetatud X-Sense'i valik"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "X-Sense'i valikut ei saa kirjutada"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "X-Sense'i radoonilävi pole kehtiv"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "X-Sense'i vahemiku seadest puudub paarisväärtus"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "X-Sense'i miinimum ei tohi olla maksimumist suurem"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense'i {service} vajab valguse toitelülitit"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense'i {service} vajab SBS50-jaama"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "X-Sense'i {service} ID-d puuduvad"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "X-Sense'i ajakava kellaaeg peab olema kujul HH:MM või HHMM"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "X-Sense'i ajakava kellaaeg on väljaspool lubatud vahemikku"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "X-Sense'i ajakava peab sisaldama vähemalt ühte nädalapäeva"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "X-Sense'i ajakava nädalapäevad peavad olema 1 kuni 7"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense'i {field} peab sisaldama vähemalt ühte ID-d"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "Tellimust ei saa kaks korda eemaldada"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "Teema peab olema tekstistring"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "Viga MQTT-ga suhtlemisel: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "{failed} salvestist ei õnnestunud vahemällu salvestada. Alla laaditi {downloaded} salvestist."
+    },
+    "force_arm_invalid_link": {
+      "message": "See X-Sense'i sundvalvestamise link on vigane."
+    },
+    "force_arm_request_failed": {
+      "message": "X-Sense'i sundvalvestamise taotlus ebaõnnestus."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Kasvav",
+        "descending": "Kahanev"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Kasvav",
+        "descending": "Kahanev"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "Ainult taasesitus",
+        "retained": "Säilita kohalikud salvestised"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "Kodus",
+        "away": "Eemal"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "fields": {
+        "mode": {
+          "name": "Valvestusrežiim"
+        }
+      },
+      "name": "Sundvalvestamine",
+      "description": "Kinnita ootel valvestamistaotlus režiimis Kodus või Eemal, mida takistavad avatud andurid. Avatud andurid jäetakse vahele."
+    },
+    "force_arm_now": {
+      "fields": {
+        "mode": {
+          "name": "Valvestusrežiim"
+        }
+      },
+      "name": "Sundvalvestamine kohe",
+      "description": "Valvesta kohe režiimis Kodus või Eemal, jättes avatud andurid vahele ilma kinnitust küsimata."
+    },
+    "trigger_sos": {
+      "name": "Käivita SOS-häire",
+      "description": "Käivita SBS50 SOS-häire kohe."
+    },
+    "cancel_sos": {
+      "name": "Tühista SOS-häire",
+      "description": "Tühista aktiivne SBS50 SOS-häire."
+    },
+    "cancel_alarm": {
+      "name": "Tühista aktiivne häire",
+      "description": "Tühista aktiivne SBS50 andurihäire."
+    },
+    "set_sos_sound": {
+      "fields": {
+        "audible": {
+          "name": "Heliga SOS-häire"
+        }
+      },
+      "name": "Määra SOS-heli",
+      "description": "Vali, kas SOS kasutab ainult vilkuvaid tulesid või käivitab ka sumisti."
+    },
+    "refresh_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "Seadistuskirje ID",
+          "description": "Kõigile X-Sense'i kontodele rakendamiseks jäta tühjaks."
+        }
+      },
+      "name": "Värskenda salvestisi",
+      "description": "Värskenda külgribal ja meediasirvijas kasutatavat kaamerasalvestiste indeksit."
+    },
+    "cache_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "Seadistuskirje ID",
+          "description": "Kõigile X-Sense'i kontodele rakendamiseks jäta tühjaks."
+        }
+      },
+      "name": "Salvesta salvestised vahemällu",
+      "description": "Laadi kaamerasalvestised alla kohalikuks säilitamiseks. Vajab kohalike salvestiste säilitamise režiimi."
+    },
+    "clear_recordings_cache": {
+      "fields": {
+        "entry_id": {
+          "name": "Seadistuskirje ID",
+          "description": "Kõigile X-Sense'i kontodele rakendamiseks jäta tühjaks."
+        }
+      },
+      "name": "Tühjenda salvestiste vahemälu",
+      "description": "Kustuta kohalikud salvestiste indeksid, videod ja pisipildid. Pilve- ja SD-kaardi salvestised jäävad muutmata."
+    },
+    "query_light_schedules": {
+      "name": "Päri valgustuse ajakavasid",
+      "description": "Päri valgustuse ajakavasid. Vali sihtmärgiks SBS50 valgustuse toitelüliti."
+    },
+    "create_light_schedule": {
+      "fields": {
+        "name": {
+          "name": "Kuvatav nimi"
+        },
+        "start_time": {
+          "name": "Algusaeg (HH:MM või HHMM)"
+        },
+        "end_time": {
+          "name": "Lõpuaeg (HH:MM või HHMM)"
+        },
+        "week_days": {
+          "name": "Nädalapäevad (1 = pühapäev, 7 = laupäev)"
+        },
+        "enabled": {
+          "name": "Lubatud olek"
+        },
+        "time_zone": {
+          "name": "Ajavöönd"
+        }
+      },
+      "name": "Loo valgustuse ajakava",
+      "description": "Loo valgustuse ajakava. Vali sihtmärgiks SBS50 valgustuse toitelüliti."
+    },
+    "update_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Ajakava tunnus"
+        },
+        "start_time": {
+          "name": "Algusaeg (HH:MM või HHMM)"
+        },
+        "end_time": {
+          "name": "Lõpuaeg (HH:MM või HHMM)"
+        },
+        "week_days": {
+          "name": "Nädalapäevad (1 = pühapäev, 7 = laupäev)"
+        },
+        "enabled": {
+          "name": "Lubatud olek"
+        },
+        "time_zone": {
+          "name": "Ajavöönd"
+        }
+      },
+      "name": "Uuenda valgustuse ajakava",
+      "description": "Uuenda valgustuse ajakava. Vali sihtmärgiks SBS50 valgustuse toitelüliti."
+    },
+    "rename_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Ajakava tunnus"
+        },
+        "name": {
+          "name": "Kuvatav nimi"
+        }
+      },
+      "name": "Nimeta valgustuse ajakava ümber",
+      "description": "Nimeta valgustuse ajakava ümber. Vali sihtmärgiks SBS50 valgustuse toitelüliti."
+    },
+    "delete_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Ajakava tunnus"
+        }
+      },
+      "name": "Kustuta valgustuse ajakava",
+      "description": "Kustuta valgustuse ajakava. Vali sihtmärgiks SBS50 valgustuse toitelüliti."
+    },
+    "query_light_groups": {
+      "name": "Päri valgustite rühmi",
+      "description": "Päri valgustite rühmi. Vali sihtmärgiks SBS50 valgustuse toitelüliti."
+    },
+    "create_light_group": {
+      "fields": {
+        "name": {
+          "name": "Kuvatav nimi"
+        }
+      },
+      "name": "Loo valgustite rühm",
+      "description": "Loo valgustite rühm. Vali sihtmärgiks SBS50 valgustuse toitelüliti."
+    },
+    "rename_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Rühma tunnus"
+        },
+        "name": {
+          "name": "Kuvatav nimi"
+        }
+      },
+      "name": "Nimeta valgustite rühm ümber",
+      "description": "Nimeta valgustite rühm ümber. Vali sihtmärgiks SBS50 valgustuse toitelüliti."
+    },
+    "update_light_group_timer": {
+      "fields": {
+        "group_id": {
+          "name": "Rühma tunnus"
+        },
+        "timer": {
+          "name": "Taimeri tüüp (pirTime või appTime)"
+        },
+        "value": {
+          "name": "Taimeri väärtus"
+        }
+      },
+      "name": "Uuenda valgustite rühma taimerit",
+      "description": "Uuenda valgustite rühma taimerit. Vali sihtmärgiks SBS50 valgustuse toitelüliti."
+    },
+    "bind_light_group": {
+      "fields": {
+        "name": {
+          "name": "Kuvatav nimi"
+        },
+        "device_ids": {
+          "name": "Seadmete tunnused"
+        }
+      },
+      "name": "Seo valgustite rühm",
+      "description": "Seo valgustite rühm. Vali sihtmärgiks SBS50 valgustuse toitelüliti."
+    },
+    "delete_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Rühma tunnus"
+        }
+      },
+      "name": "Kustuta valgustite rühm",
+      "description": "Kustuta valgustite rühm. Vali sihtmärgiks SBS50 valgustuse toitelüliti."
+    },
+    "remove_light_group_devices": {
+      "fields": {
+        "device_ids": {
+          "name": "Seadmete tunnused"
+        }
+      },
+      "name": "Eemalda seadmed valgustite rühmast",
+      "description": "Eemalda seadmed valgustite rühmast. Vali sihtmärgiks SBS50 valgustuse toitelüliti."
+    },
+    "set_light_group_power": {
+      "fields": {
+        "group_id": {
+          "name": "Rühma tunnus"
+        },
+        "device_ids": {
+          "name": "Seadmete seerianumbrid"
+        },
+        "enabled": {
+          "name": "Lubatud olek"
+        }
+      },
+      "name": "Määra valgustite rühma toiteolek",
+      "description": "Määra valgustite rühma toiteolek. Vali sihtmärgiks SBS50 valgustuse toitelüliti."
+    }
+  },
+  "issues": {}
 }

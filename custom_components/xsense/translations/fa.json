@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "دستگاه قبلاً پیکربندی شده است",
       "reauth_successful": "احراز هویت مجدد با موفقیت انجام شد",
-      "reconfigure_successful": "پیکربندی مجدد با موفقیت انجام شد"
+      "reconfigure_successful": "پیکربندی مجدد با موفقیت انجام شد",
+      "unique_id_mismatch": "با همان حساب X-Sense مرتبط با این ورودی وارد شوید."
     },
     "error": {
       "cannot_connect": "اتصال ناموفق بود",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "همگام سازی رسانه ضبط، کلیپ های دوربین را در حافظه پنهان Home Assistant ذخیره می کند، بنابراین نوار کناری ضبط X-Sense، مرورگر رسانه و اعلان های تلفن همراه می توانند ضبط ها را به سرعت باز کنند. آن را تنها زمانی که ضبط‌ها در حافظه پنهان باز می‌شوند، بگذارید. برای آماده نگه داشتن ضبط های اخیر در پس زمینه، آن را فعال کنید.",
+        "description": "حالت پیش‌فرض فقط پخش است و هنگام پخش، ضبط‌ها را بدون نگهداری کلیپ کامل از طریق Home Assistant عبور می‌دهد. برای نگهداری کلیپ‌ها در رسانه Home Assistant با محدودیت سن و اندازه تعیین‌شده، نگهداری ضبط‌های محلی را انتخاب کنید. همگام‌سازی پس‌زمینه فقط در حالت نگهداری اجرا می‌شود.",
         "data": {
           "recording_media_sync_enabled": "همگام سازی رسانه ضبط",
           "recording_media_sync_hours": "فاصله همگام سازی پس زمینه",
           "recording_media_storage_path": "در حال ضبط پوشه کش",
           "recording_notification_quality": "کیفیت ضبط اعلان",
           "recording_media_days_order": "ثبت سفارش روز",
-          "recording_media_clips_order": "سفارش کلیپ ضبط"
+          "recording_media_clips_order": "سفارش کلیپ ضبط",
+          "recording_cache_retention_days": "ضبط حفظ حافظه پنهان",
+          "recording_cache_max_size_mb": "حداکثر اندازه حافظه پنهان ضبط",
+          "recording_cache_mode": "حالت ذخیره‌سازی ضبط‌ها"
         },
         "data_description": {
           "recording_media_sync_enabled": "ضبط های اخیر را به صورت خودکار ذخیره کنید. این از فضای ذخیره سازی استفاده می کند و ممکن است دوربین ها را بیشتر بیدار کند.",
           "recording_media_sync_hours": "هر چند وقت یک‌بار همگام‌سازی عادی پس‌زمینه باید اجرا شود. وقتی همگام‌سازی فعال است، ضبط‌های اخیر هر چند دقیقه بررسی می‌شوند.",
           "recording_media_storage_path": "از پوشه ای در زیر /media استفاده کنید. ویدیوها و تصاویر کوچک ذخیره شده جدید در اینجا ذخیره می شوند.",
-          "recording_notification_quality": "HD را انتخاب کنید تا URL های کلیپ مستقیم/با وضوح بالا X-Sense را برای اعلان های تلفن همراه ترجیح دهید. SD را انتخاب کنید تا در صورت موجود بودن از مسیر ضبط پخش دوربین استفاده کنید.",
+          "recording_notification_quality": "HD نشانی ضبط‌های با وضوح بالاتر را ترجیح می‌دهد. SD در صورت ارائه توسط X-Sense، نشانی‌های با وضوح استاندارد را ترجیح می‌دهد.",
           "recording_media_days_order": "انتخاب کنید روزهای جدیدتر یا قدیمی‌تر ابتدا در نمایشگر ضبط‌شده ظاهر شوند.",
-          "recording_media_clips_order": "انتخاب کنید کلیپ‌های جدیدتر یا قدیمی‌تر ابتدا در هر روز ظاهر شوند."
+          "recording_media_clips_order": "انتخاب کنید کلیپ‌های جدیدتر یا قدیمی‌تر ابتدا در هر روز ظاهر شوند.",
+          "recording_cache_retention_days": "پس از این چند روز، ضبط های ذخیره شده محلی را حذف کنید. ضبط های ابری و کارت SD X-Sense تغییری نکرده اند.",
+          "recording_cache_max_size_mb": "حداکثر اندازه کش محلی در مگابایت. با رسیدن به حد مجاز، ابتدا کمترین میزان مشاهده شده ضبط شده حذف می شود.",
+          "recording_cache_mode": "حالت فقط پخش، رسانه HLS را هنگام نیاز بدون نگهداری کلیپ کامل از طریق Home Assistant عبور می‌دهد. حالت نگهداری نسخه‌های محلی را با محدودیت‌های زیر حفظ می‌کند."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "پوشه کش ضبط از `{old_path}` به `{new_path}` تغییر می کند. ویدیوها و تصاویر کوچک موجود در حافظه پنهان به طور خودکار جابجا نمی شوند. اگر می‌خواهید ضبط‌های ذخیره شده قدیمی در حافظه پنهان باقی بمانند، ابتدا پوشه‌های `videos` و `thumbs` موجود را جابه‌جا کنید."
+        "description": "پوشه کش ضبط از `{old_path}` به `{new_path}` تغییر می کند. ویدیوها و تصاویر کوچک موجود در حافظه پنهان به طور خودکار جابجا نمی شوند. اگر می‌خواهید ضبط‌های ذخیره شده قدیمی در حافظه پنهان باقی بمانند، ابتدا پوشه‌های `hls`, `videos` و `thumbs` موجود را جابه‌جا کنید."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "برنامه زمانی صندوق پست فعال است"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "برق شهری قطع شده"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "پایان عمر مفید باتری"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "پایان عمر مفید"
       },
       "armed": {
-        "name": "Armed"
+        "name": "مسلح"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "حرکت شناسایی شد"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "شارژ از طریق USB"
       },
       "charging": {
-        "name": "Charging"
+        "name": "در حال شارژ"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "در حالت خواب"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "پایه نصب جدا شده"
       },
       "activated": {
-        "name": "Activated"
+        "name": "فعال شد"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "تمرین هشدار فعال است"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "هشدار فعال"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "دستگاه آغازکننده هشدار"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "آزمایش دستگاه فعال است"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "دستگاه خاموش شد"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "صدای هشدار"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "اعلان‌های برنامه"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "اعلان‌های زمان‌بندی"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "هشدار نشت آب"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "هشدار نشت آب بی‌صدا شده"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "هشدار دما"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "هشدار دما بی‌صدا شده"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "منطقه زمانی دستگاه فعال است"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "منطقه زمانی دستگاه معتبر است"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "بی صدا"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "بیدار کردن"
       }
     },
     "event": {
@@ -188,7 +195,7 @@
           "normal": "عادی",
           "low_battery": "باتری کم",
           "malfunction": "خرابی",
-          "end_of_life": "پایان زندگی"
+          "end_of_life": "پایان عمر مفید"
         }
       },
       "alarm_vol": {
@@ -254,139 +261,139 @@
         "name": "زمان اوج سطح رادون"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "سطح باتری"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "قدرت سیگنال Wi-Fi"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "قدرت سیگنال Wi-Fi"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "کد وضعیت دوربین"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "نسخه میان‌افزار"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "وضعیت میان‌افزار دوربین"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "نام Wi-Fi (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "کانال Wi-Fi"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "نشانی MAC"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "وضعیت کارت SD"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "ظرفیت کل کارت SD"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "فضای استفاده‌شده کارت SD"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "زمان فعال‌سازی دوربین"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "زمان قطع اتصال دوربین"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "زمان تصویر بندانگشتی دوربین"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "زمان بیدار شدن دوربین از خواب"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "پیام حالت خواب دوربین"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "منطقه زمانی دستگاه"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "گونه آشکارساز دود"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "استاندارد هشدار CO"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "نوع بررسی"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "فاصله زمانی PIR"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "حساسیت سنسور"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "زمان بی‌صدا کردن"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "زمان بی‌صدا کردن هشدار دما"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "زمان بی‌صدا کردن هشدار نشت آب"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "هشدار کوتاه‌مدت CO"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "سطح هشدار کوتاه‌مدت CO"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "هشدار بلندمدت CO"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "سطح هشدار بلندمدت CO"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "وقوع هشدار"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "منبع هشدار"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "هشدار تکراری"
       },
       "time": {
-        "name": "Report Time"
+        "name": "زمان گزارش"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "زمان UTC"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "زمان تست دستگاه"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "منطقه زمانی دستگاه"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "مکان اعلام‌شده با صدا"
       },
       "location": {
-        "name": "Location"
+        "name": "مکان"
       },
       "color": {
-        "name": "Color"
+        "name": "رنگ"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "رویداد روشنایی"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "نوع دستگاه"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "نوع دستگاه گزارش‌شده"
       },
       "category": {
-        "name": "Category"
+        "name": "دسته‌بندی"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "حالت امنیتی"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "روشنایی آماده به کار"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "صدای زنگ هشدار"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "میزان صدا"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "بلندی صدای بلندگو"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "مدت هشدار"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "حساسیت دید در شب"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "حساسیت تشخیص گریه"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "فاصله میان ضبط‌ها"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "مدت زنگ مکانیکی"
       }
     },
     "select": {
@@ -519,251 +526,266 @@
         "name": "برنامه به موقع"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "زبان"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "وضوح ضبط"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "حساسیت تشخیص",
+        "state": {
+          "high": "زیاد",
+          "medium": "متوسط",
+          "low": "کم",
+          "auto": "خودکار"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "مدت ویدئو"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "فرکانس سوسو زدن"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "کدک پیش‌فرض"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "ردیابی حرکت"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "حالت دید در شب"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "فاصله میان ضبط‌های ابری"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "آهنگ زنگ در"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "سطح باتری برای روشن شدن خودکار"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "نشانگر LED"
       },
       "light_power": {
-        "name": "Light"
+        "name": "چراغ"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "هشدار فعال است"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "هشدار پیوسته"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "یادآوری نامه"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "بوق کوتاه فعال است"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "یادآوری فعال است"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "صدای یادآوری فعال است"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "روشنایی آماده‌به‌کار فعال است"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR فعال است"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "تشخیص نور محیط فعال است"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "صدای کلیدها فعال است"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "هشداردهی فعال است"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "تشخیص حرکت"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "تشخیص انسان"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "ضبط ویدئو"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "دید در شب خودکار"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "LED وضعیت"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "هشدار دوربین"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "چرخاندن تصویر"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "کاهش سوسو زدن"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "تشخیص گریه"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "فاصله میان ضبط‌ها"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "تماس دستگاه"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "زنگ مکانیکی"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "ردیابی حرکت"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "بلندی صدای گفتار"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "صدای زنده"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "صدای ضبط"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "روشن شدن خودکار"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "نور سفید"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "هشدار هنگام جدا شدن"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "حالت خواب"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "اعلان هوش مصنوعی: انسان"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "اعلان هوش مصنوعی: حیوان خانگی"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "اعلان هوش مصنوعی: ورود خودرو"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "اعلان هوش مصنوعی: خروج خودرو"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "اعلان هوش مصنوعی: خودروی پارک‌شده"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "اعلان هوش مصنوعی: وجود بسته"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "اعلان هوش مصنوعی: تحویل بسته"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "اعلان هوش مصنوعی: برداشتن بسته"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "سایر اعلان‌های هوش مصنوعی"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "دستیار هوش مصنوعی: انسان"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "دستیار هوش مصنوعی: حیوان خانگی"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "دستیار هوش مصنوعی: خودرو"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "دستیار هوش مصنوعی: بسته"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "هشدار"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "ایستگاه X-Sense دیگر در دسترس نیست"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "موجودیت X-Sense دیگر در دسترس نیست"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "MQTT مربوط به X-Sense متصل نیست"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "فرمان حالت امنیتی X-Sense منتشر نشد"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "مسلح‌سازی اجباری X-Sense برای حالت {mode} در انتظار نیست"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "وضعیت فعال بودن فاصله میان ضبط‌های X-Sense نامشخص است"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "گزینه {option} در X-Sense پشتیبانی نمی‌شود"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "انتخاب X-Sense قابل نوشتن نیست"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "آستانه رادون X-Sense معتبر نیست"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "مقدار جفت تنظیم بازه X-Sense وجود ندارد"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "حداقل X-Sense نمی‌تواند از حداکثر بزرگ‌تر باشد"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service} به کلید برق چراغ نیاز دارد"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service} به ایستگاه SBS50 نیاز دارد"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "شناسه‌های X-Sense {service} وجود ندارند"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "زمان برنامه X-Sense باید به صورت HH:MM یا HHMM باشد"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "زمان برنامه X-Sense خارج از بازه است"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "برنامه X-Sense باید دست‌کم یک روز هفته را شامل شود"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "روزهای هفته در برنامه X-Sense باید از 1 تا 7 باشند"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field} باید دست‌کم یک شناسه داشته باشد"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "اشتراک را نمی‌توان دو بار حذف کرد"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "موضوع باید یک رشته متنی باشد"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "خطا در ارتباط با MQTT: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "ذخیره {failed} ضبط در حافظه نهان ناموفق بود. {downloaded} ضبط بارگیری شد."
+    },
+    "force_arm_invalid_link": {
+      "message": "این پیوند فعال‌سازی اجباری حفاظت X-Sense نامعتبر است."
+    },
+    "force_arm_request_failed": {
+      "message": "درخواست فعال‌سازی اجباری حفاظت X-Sense ناموفق بود."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "صعودی",
+        "descending": "نزولی"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "صعودی",
+        "descending": "نزولی"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "فقط پخش",
+        "retained": "نگهداری ضبط‌های محلی"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "خانه",
+        "away": "بیرون"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "fields": {
+        "mode": {
+          "name": "حالت فعال‌سازی حفاظت"
+        }
+      },
+      "name": "فعال‌سازی اجباری حفاظت",
+      "description": "درخواست معلق فعال‌سازی حفاظت در حالت خانه یا بیرون را که به‌دلیل حسگرهای باز مسدود شده است، تأیید کنید. حسگرهای باز نادیده گرفته می‌شوند."
+    },
+    "force_arm_now": {
+      "fields": {
+        "mode": {
+          "name": "حالت فعال‌سازی حفاظت"
+        }
+      },
+      "name": "فعال‌سازی اجباری حفاظت همین حالا",
+      "description": "حفاظت را در حالت خانه یا بیرون بلافاصله فعال کنید و بدون درخواست تأیید، حسگرهای باز را نادیده بگیرید."
+    },
+    "trigger_sos": {
+      "name": "فعال کردن هشدار اضطراری SOS",
+      "description": "هشدار اضطراری SOS دستگاه SBS50 را بلافاصله فعال کنید."
+    },
+    "cancel_sos": {
+      "name": "لغو هشدار اضطراری SOS",
+      "description": "هشدار اضطراری SOS فعال دستگاه SBS50 را لغو کنید."
+    },
+    "cancel_alarm": {
+      "name": "لغو هشدار فعال",
+      "description": "هشدار فعال حسگر دستگاه SBS50 را لغو کنید."
+    },
+    "set_sos_sound": {
+      "fields": {
+        "audible": {
+          "name": "هشدار صوتی SOS"
+        }
+      },
+      "name": "تنظیم صدای SOS",
+      "description": "انتخاب کنید که SOS فقط از چراغ‌های چشمک‌زن استفاده کند یا بوق را نیز به صدا درآورد."
+    },
+    "refresh_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "شناسه ورودی پیکربندی",
+          "description": "برای اعمال به همه حساب‌های X-Sense خالی بگذارید."
+        }
+      },
+      "name": "تازه‌سازی ضبط‌ها",
+      "description": "فهرست ضبط‌های دوربین را که در نوار کناری و مرورگر رسانه استفاده می‌شود، تازه‌سازی کنید."
+    },
+    "cache_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "شناسه ورودی پیکربندی",
+          "description": "برای اعمال به همه حساب‌های X-Sense خالی بگذارید."
+        }
+      },
+      "name": "ذخیره ضبط‌ها در حافظه نهان",
+      "description": "ضبط‌های دوربین را برای نگهداری محلی بارگیری کنید. به حالت نگهداری ضبط‌های محلی نیاز دارد."
+    },
+    "clear_recordings_cache": {
+      "fields": {
+        "entry_id": {
+          "name": "شناسه ورودی پیکربندی",
+          "description": "برای اعمال به همه حساب‌های X-Sense خالی بگذارید."
+        }
+      },
+      "name": "پاک کردن حافظه نهان ضبط‌ها",
+      "description": "فهرست‌های محلی ضبط، ویدیوها و تصاویر بندانگشتی را حذف کنید. ضبط‌های ابری و کارت SD تغییر نمی‌کنند."
+    },
+    "query_light_schedules": {
+      "name": "دریافت زمان‌بندی‌های روشنایی",
+      "description": "دریافت زمان‌بندی‌های روشنایی. کلید برق روشنایی SBS50 را به‌عنوان هدف انتخاب کنید."
+    },
+    "create_light_schedule": {
+      "fields": {
+        "name": {
+          "name": "نام نمایشی"
+        },
+        "start_time": {
+          "name": "زمان شروع (HH:MM یا HHMM)"
+        },
+        "end_time": {
+          "name": "زمان پایان (HH:MM یا HHMM)"
+        },
+        "week_days": {
+          "name": "روزهای هفته (1 = یکشنبه، 7 = شنبه)"
+        },
+        "enabled": {
+          "name": "وضعیت فعال بودن"
+        },
+        "time_zone": {
+          "name": "منطقه زمانی"
+        }
+      },
+      "name": "ایجاد زمان‌بندی روشنایی",
+      "description": "ایجاد زمان‌بندی روشنایی. کلید برق روشنایی SBS50 را به‌عنوان هدف انتخاب کنید."
+    },
+    "update_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "شناسه زمان‌بندی"
+        },
+        "start_time": {
+          "name": "زمان شروع (HH:MM یا HHMM)"
+        },
+        "end_time": {
+          "name": "زمان پایان (HH:MM یا HHMM)"
+        },
+        "week_days": {
+          "name": "روزهای هفته (1 = یکشنبه، 7 = شنبه)"
+        },
+        "enabled": {
+          "name": "وضعیت فعال بودن"
+        },
+        "time_zone": {
+          "name": "منطقه زمانی"
+        }
+      },
+      "name": "به‌روزرسانی زمان‌بندی روشنایی",
+      "description": "به‌روزرسانی زمان‌بندی روشنایی. کلید برق روشنایی SBS50 را به‌عنوان هدف انتخاب کنید."
+    },
+    "rename_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "شناسه زمان‌بندی"
+        },
+        "name": {
+          "name": "نام نمایشی"
+        }
+      },
+      "name": "تغییر نام زمان‌بندی روشنایی",
+      "description": "تغییر نام زمان‌بندی روشنایی. کلید برق روشنایی SBS50 را به‌عنوان هدف انتخاب کنید."
+    },
+    "delete_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "شناسه زمان‌بندی"
+        }
+      },
+      "name": "حذف زمان‌بندی روشنایی",
+      "description": "حذف زمان‌بندی روشنایی. کلید برق روشنایی SBS50 را به‌عنوان هدف انتخاب کنید."
+    },
+    "query_light_groups": {
+      "name": "دریافت گروه‌های چراغ",
+      "description": "دریافت گروه‌های چراغ. کلید برق روشنایی SBS50 را به‌عنوان هدف انتخاب کنید."
+    },
+    "create_light_group": {
+      "fields": {
+        "name": {
+          "name": "نام نمایشی"
+        }
+      },
+      "name": "ایجاد گروه چراغ",
+      "description": "ایجاد گروه چراغ. کلید برق روشنایی SBS50 را به‌عنوان هدف انتخاب کنید."
+    },
+    "rename_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "شناسه گروه"
+        },
+        "name": {
+          "name": "نام نمایشی"
+        }
+      },
+      "name": "تغییر نام گروه چراغ",
+      "description": "تغییر نام گروه چراغ. کلید برق روشنایی SBS50 را به‌عنوان هدف انتخاب کنید."
+    },
+    "update_light_group_timer": {
+      "fields": {
+        "group_id": {
+          "name": "شناسه گروه"
+        },
+        "timer": {
+          "name": "نوع زمان‌سنج (pirTime یا appTime)"
+        },
+        "value": {
+          "name": "مقدار زمان‌سنج"
+        }
+      },
+      "name": "به‌روزرسانی زمان‌سنج گروه چراغ",
+      "description": "به‌روزرسانی زمان‌سنج گروه چراغ. کلید برق روشنایی SBS50 را به‌عنوان هدف انتخاب کنید."
+    },
+    "bind_light_group": {
+      "fields": {
+        "name": {
+          "name": "نام نمایشی"
+        },
+        "device_ids": {
+          "name": "شناسه‌های دستگاه"
+        }
+      },
+      "name": "پیوند دادن گروه چراغ",
+      "description": "پیوند دادن گروه چراغ. کلید برق روشنایی SBS50 را به‌عنوان هدف انتخاب کنید."
+    },
+    "delete_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "شناسه گروه"
+        }
+      },
+      "name": "حذف گروه چراغ",
+      "description": "حذف گروه چراغ. کلید برق روشنایی SBS50 را به‌عنوان هدف انتخاب کنید."
+    },
+    "remove_light_group_devices": {
+      "fields": {
+        "device_ids": {
+          "name": "شناسه‌های دستگاه"
+        }
+      },
+      "name": "حذف دستگاه‌ها از گروه چراغ",
+      "description": "حذف دستگاه‌ها از گروه چراغ. کلید برق روشنایی SBS50 را به‌عنوان هدف انتخاب کنید."
+    },
+    "set_light_group_power": {
+      "fields": {
+        "group_id": {
+          "name": "شناسه گروه"
+        },
+        "device_ids": {
+          "name": "شماره‌های سریال دستگاه"
+        },
+        "enabled": {
+          "name": "وضعیت فعال بودن"
+        }
+      },
+      "name": "تنظیم وضعیت روشن و خاموش گروه چراغ",
+      "description": "تنظیم وضعیت روشن و خاموش گروه چراغ. کلید برق روشنایی SBS50 را به‌عنوان هدف انتخاب کنید."
+    }
+  },
+  "issues": {}
 }

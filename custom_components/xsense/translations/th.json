@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "อุปกรณ์ได้รับการกำหนดค่าแล้ว",
       "reauth_successful": "การตรวจสอบสิทธิ์ซ้ำสำเร็จแล้ว",
-      "reconfigure_successful": "การกำหนดค่าใหม่สำเร็จแล้ว"
+      "reconfigure_successful": "การกำหนดค่าใหม่สำเร็จแล้ว",
+      "unique_id_mismatch": "ลงชื่อเข้าใช้ด้วยบัญชี X-Sense เดียวกับที่ใช้ในรายการนี้"
     },
     "error": {
       "cannot_connect": "ไม่สามารถเชื่อมต่อได้",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "สื่อบันทึกจะซิงค์คลิปกล้องไว้ใต้สื่อ Home Assistant เพื่อให้แถบด้านข้างการบันทึก X-Sense เบราว์เซอร์สื่อ และการแจ้งเตือนทางมือถือสามารถเปิดการบันทึกได้อย่างรวดเร็ว ปล่อยให้เป็นการบันทึกแคชเฉพาะเมื่อเปิดเท่านั้น เปิดใช้งานเพื่อให้การบันทึกล่าสุดพร้อมในเบื้องหลัง",
+        "description": "ค่าเริ่มต้นคือเล่นอย่างเดียว โดยส่งการบันทึกผ่าน Home Assistant ระหว่างเล่นโดยไม่เก็บคลิปฉบับเต็ม เลือกเก็บการบันทึกในเครื่องเพื่อบันทึกคลิปไว้ในสื่อของ Home Assistant ตามขีดจำกัดอายุและขนาดที่ตั้งไว้ การซิงค์เบื้องหลังทำงานเฉพาะในโหมดเก็บรักษา",
         "data": {
           "recording_media_sync_enabled": "ซิงค์สื่อบันทึก",
           "recording_media_sync_hours": "ช่วงเวลาการซิงค์พื้นหลัง",
           "recording_media_storage_path": "โฟลเดอร์แคชบันทึก",
           "recording_notification_quality": "คุณภาพการบันทึกการแจ้งเตือน",
-          "recording_media_days_order": "Recording day order",
-          "recording_media_clips_order": "ลำดับการบันทึกคลิป"
+          "recording_media_days_order": "ลำดับวันบันทึก",
+          "recording_media_clips_order": "ลำดับการบันทึกคลิป",
+          "recording_cache_retention_days": "การบันทึกการเก็บรักษาแคช",
+          "recording_cache_max_size_mb": "ขนาดแคชการบันทึกสูงสุด",
+          "recording_cache_mode": "โหมดจัดเก็บการบันทึก"
         },
         "data_description": {
           "recording_media_sync_enabled": "แคชการบันทึกล่าสุดโดยอัตโนมัติ การดำเนินการนี้ใช้พื้นที่เก็บข้อมูลและอาจปลุกกล้องได้บ่อยขึ้น",
           "recording_media_sync_hours": "ควรรันการซิงค์เบื้องหลังตามปกติบ่อยเพียงใด การบันทึกล่าสุดจะถูกตรวจสอบทุกๆ สองสามนาทีเมื่อเปิดใช้งานการซิงค์",
           "recording_media_storage_path": "ใช้โฟลเดอร์ภายใต้ /media วิดีโอและภาพขนาดย่อที่เก็บไว้ใหม่จะถูกเก็บไว้ที่นี่",
-          "recording_notification_quality": "เลือก HD เพื่อเลือก URL คลิปโดยตรง/ความละเอียดสูงของ X-Sense สำหรับการแจ้งเตือนทางมือถือ เลือก SD เพื่อใช้เส้นทางการถ่ายภาพการเล่นกล้องเมื่อมีให้ใช้งาน",
+          "recording_notification_quality": "HD เลือก URL การบันทึกที่มีความละเอียดสูงกว่า ส่วน SD เลือกความละเอียดมาตรฐานเมื่อ X-Sense มีให้",
           "recording_media_days_order": "เลือกว่าวันที่ใหม่กว่าหรือเก่ากว่าจะปรากฏเป็นอันดับแรกในโปรแกรมดูการบันทึก",
-          "recording_media_clips_order": "เลือกว่าคลิปใหม่หรือเก่ากว่าจะปรากฏก่อนในแต่ละวัน"
+          "recording_media_clips_order": "เลือกว่าคลิปใหม่หรือเก่ากว่าจะปรากฏก่อนในแต่ละวัน",
+          "recording_cache_retention_days": "ลบการบันทึกแคชในเครื่องหลังจากผ่านไปหลายวัน การบันทึกบนคลาวด์ X-Sense และการ์ด SD จะไม่เปลี่ยนแปลง",
+          "recording_cache_max_size_mb": "ขนาดแคชในเครื่องสูงสุดเป็น MB เมื่อถึงขีดจำกัด บันทึกที่ดูน้อยที่สุดจะถูกลบออกก่อน",
+          "recording_cache_mode": "โหมดเล่นอย่างเดียวส่งสื่อ HLS ผ่าน Home Assistant เมื่อต้องการโดยไม่เก็บคลิปฉบับเต็ม โหมดเก็บรักษาจะเก็บสำเนาในเครื่องตามขีดจำกัดด้านล่าง"
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "โฟลเดอร์แคชการบันทึกจะเปลี่ยนจาก `{old_path}` เป็น `{new_path}` วิดีโอและภาพขนาดย่อที่แคชไว้จะไม่ถูกย้ายโดยอัตโนมัติ ย้ายโฟลเดอร์ `videos` และ `thumbs` ที่มีอยู่ก่อน หากคุณต้องการให้การบันทึกแคชเก่ายังคงอยู่"
+        "description": "โฟลเดอร์แคชการบันทึกจะเปลี่ยนจาก `{old_path}` เป็น `{new_path}` วิดีโอและภาพขนาดย่อที่แคชไว้จะไม่ถูกย้ายโดยอัตโนมัติ ย้ายโฟลเดอร์ `hls`, `videos` และ `thumbs` ที่มีอยู่ก่อน หากคุณต้องการให้การบันทึกแคชเก่ายังคงอยู่"
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "ตารางกล่องจดหมายที่ใช้งานอยู่"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "ตัดการเชื่อมต่อไฟฟ้ากระแสสลับ"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "แบตเตอรี่หมดอายุการใช้งาน"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "หมดอายุการใช้งาน"
       },
       "armed": {
-        "name": "Armed"
+        "name": "เปิดระบบป้องกันแล้ว"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "ตรวจพบการเคลื่อนไหว"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "กำลังชาร์จผ่าน USB"
       },
       "charging": {
-        "name": "Charging"
+        "name": "กำลังชาร์จ"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "อยู่ในโหมดพัก"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "ถอดขายึดแล้ว"
       },
       "activated": {
-        "name": "Activated"
+        "name": "เปิดใช้งานแล้ว"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "กำลังฝึกซ้อมสัญญาณเตือน"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "สัญญาณเตือนทำงาน"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "สัญญาณเตือนต้นทาง"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "กำลังทดสอบอุปกรณ์"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "อุปกรณ์ปิดเสียง"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "เสียงสัญญาณเตือน"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "การแจ้งเตือนของแอป"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "การแจ้งเตือนตามกำหนดเวลา"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "สัญญาณเตือนน้ำรั่ว"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "ปิดเสียงสัญญาณเตือนน้ำรั่วแล้ว"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "สัญญาณเตือนอุณหภูมิ"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "ปิดเสียงสัญญาณเตือนอุณหภูมิแล้ว"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "เปิดใช้เขตเวลาของอุปกรณ์"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "เขตเวลาของอุปกรณ์ถูกต้อง"
       }
     },
     "button": {
@@ -170,25 +177,25 @@
         "name": "ปิดเสียง"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "ปลุก"
       }
     },
     "event": {
       "ai_detection": {
-        "name": "AI Detection"
+        "name": "การตรวจจับ AI"
       },
       "motion": {
-        "name": "Motion"
+        "name": "การเคลื่อนไหว"
       }
     },
     "sensor": {
       "device_status": {
         "name": "สถานะอุปกรณ์",
         "state": {
-          "normal": "Normal",
+          "normal": "ปกติ",
           "low_battery": "แบตเตอรี่ต่ำ",
           "malfunction": "ความผิดปกติ",
-          "end_of_life": "จุดสิ้นสุดของชีวิต"
+          "end_of_life": "หมดอายุการใช้งาน"
         }
       },
       "alarm_vol": {
@@ -207,7 +214,7 @@
         "name": "ระดับ CO"
       },
       "peak_co_level": {
-        "name": "Peak CO Level"
+        "name": "ระดับ CO สูงสุด"
       },
       "peak_co_level_time": {
         "name": "เวลาระดับ CO สูงสุด"
@@ -218,8 +225,8 @@
       "rf_level": {
         "name": "ความแรงของสัญญาณ",
         "state": {
-          "no_signal": "No Signal",
-          "weak": "Weak",
+          "no_signal": "ไม่มีสัญญาณ",
+          "weak": "อ่อน",
           "moderate": "ปานกลาง",
           "good": "ดี"
         }
@@ -248,145 +255,145 @@
         "name": "เวลาทดสอบอุปกรณ์"
       },
       "radon_peak": {
-        "name": "Peak Radon Level"
+        "name": "ระดับเรดอนสูงสุด"
       },
       "radon_peak_time": {
         "name": "เวลาระดับพีคเรดอน"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "ระดับแบตเตอรี่"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "ความแรงของสัญญาณ Wi-Fi"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "ความแรงของสัญญาณ Wi-Fi"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "รหัสสถานะกล้อง"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "เวอร์ชันเฟิร์มแวร์"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "สถานะเฟิร์มแวร์กล้อง"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "ชื่อเครือข่าย Wi-Fi (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "ช่องสัญญาณ Wi-Fi"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "ที่อยู่ MAC"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "สถานะการ์ด SD"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "ความจุรวมของการ์ด SD"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "พื้นที่ที่ใช้ในการ์ด SD"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "เวลาเปิดใช้งานกล้อง"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "เวลาที่กล้องออฟไลน์"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "เวลาของภาพขนาดย่อกล้อง"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "เวลาปลุกกล้องจากโหมดพัก"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "ข้อความโหมดพักของกล้อง"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "เขตเวลาของอุปกรณ์"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "รุ่นย่อยของเครื่องตรวจจับควัน"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "มาตรฐานสัญญาณเตือน CO"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "ประเภทการตรวจสอบ"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "ช่วงเวลา PIR"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "ความไวของเซ็นเซอร์"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "ระยะเวลาปิดเสียง"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "ระยะเวลาปิดเสียงสัญญาณเตือนอุณหภูมิ"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "ระยะเวลาปิดเสียงสัญญาณเตือนน้ำรั่ว"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "คำเตือน CO ระยะสั้น"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "ระดับคำเตือน CO ระยะสั้น"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "คำเตือน CO ระยะยาว"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "ระดับคำเตือน CO ระยะยาว"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "การเกิดสัญญาณเตือน"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "แหล่งสัญญาณเตือน"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "สัญญาณเตือนซ้ำ"
       },
       "time": {
-        "name": "Report Time"
+        "name": "เวลารายงาน"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "เวลา UTC"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "เวลาทดสอบอุปกรณ์"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "เขตเวลาของอุปกรณ์"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "ตำแหน่งสำหรับเสียงประกาศ"
       },
       "location": {
-        "name": "Location"
+        "name": "ตำแหน่ง"
       },
       "color": {
-        "name": "Color"
+        "name": "สี"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "เหตุการณ์แสงไฟ"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "ประเภทอุปกรณ์"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "ประเภทอุปกรณ์ที่รายงาน"
       },
       "category": {
-        "name": "Category"
+        "name": "หมวดหมู่"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "โหมดความปลอดภัย"
       }
     },
     "number": {
@@ -394,22 +401,22 @@
         "name": "เกณฑ์เส้นสีเขียว"
       },
       "radon_maximum_threshold": {
-        "name": "Red Line Threshold"
+        "name": "เกณฑ์เส้นสีแดง"
       },
       "alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "ระดับเสียงสัญญาณเตือน"
       },
       "voice_volume": {
         "name": "ระดับเสียง"
       },
       "chirp_volume": {
-        "name": "Chirp Volume"
+        "name": "ระดับเสียงบี๊บ"
       },
       "reminder_volume": {
         "name": "ปริมาณการแจ้งเตือน"
       },
       "temperature_adjustment": {
-        "name": "Temperature Calibration"
+        "name": "การปรับเทียบอุณหภูมิ"
       },
       "humidity_adjustment": {
         "name": "การสอบเทียบความชื้นสัมพัทธ์"
@@ -454,28 +461,28 @@
         "name": "ความสว่างขณะสแตนด์บาย"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "ระดับเสียงสัญญาณเตือน"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "ระดับเสียง"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "ระดับเสียงลำโพง"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "ระยะเวลาสัญญาณเตือน"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "ความไวของการมองเห็นกลางคืน"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "ความไวของการตรวจจับเสียงร้องไห้"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "ช่วงพักระหว่างการบันทึกวิดีโอ"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "ระยะเวลากริ่งแบบกลไก"
       }
     },
     "select": {
@@ -492,7 +499,7 @@
         "name": "ช่วงสัญญาณเตือน"
       },
       "reminder_time": {
-        "name": "Reminder Time"
+        "name": "เวลาเตือนความจำ"
       },
       "mailbox_report_interval": {
         "name": "ช่วงเวลาการรายงานข้อมูล"
@@ -513,257 +520,272 @@
         "name": "ระยะเวลาแสงอัตโนมัติ"
       },
       "light_scene": {
-        "name": "Light Scene"
+        "name": "ฉากแสงไฟ"
       },
       "light_app_on_time": {
         "name": "แอพตรงเวลา"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "ภาษา"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "ความละเอียดการบันทึก"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "ความไวในการตรวจจับ",
+        "state": {
+          "high": "สูง",
+          "medium": "ปานกลาง",
+          "low": "ต่ำ",
+          "auto": "อัตโนมัติ"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "ความยาววิดีโอ"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "ความถี่การกะพริบ"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "ตัวแปลงสัญญาณเริ่มต้น"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "การติดตามการเคลื่อนไหว"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "โหมดการมองเห็นกลางคืน"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "ช่วงพักระหว่างการบันทึกวิดีโอบนคลาวด์"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "เสียงกริ่งประตู"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "ระดับแบตเตอรี่สำหรับเปิดเครื่องอัตโนมัติ"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "ไฟแสดงสถานะ LED"
       },
       "light_power": {
-        "name": "Light"
+        "name": "แสงไฟ"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "เปิดใช้สัญญาณเตือน"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "สัญญาณเตือนต่อเนื่อง"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "การแจ้งเตือนจดหมาย"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "เปิดใช้เสียงบี๊บ"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "เปิดใช้การเตือนความจำ"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "เปิดใช้เสียงเตือนความจำ"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "เปิดใช้ไฟสแตนด์บาย"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "เปิดใช้ PIR"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "เปิดใช้การตรวจจับแสงโดยรอบ"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "เปิดใช้เสียงปุ่ม"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "เปิดใช้คำเตือน"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "การตรวจจับการเคลื่อนไหว"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "การตรวจจับบุคคล"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "บันทึกวิดีโอ"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "การมองเห็นกลางคืนอัตโนมัติ"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "ไฟ LED แสดงสถานะ"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "สัญญาณเตือนกล้อง"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "หมุนภาพ"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "ลดการกะพริบ"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "การตรวจจับเสียงร้องไห้"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "ช่วงพักระหว่างการบันทึกวิดีโอ"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "การโทรของอุปกรณ์"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "กริ่งแบบกลไก"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "การติดตามการเคลื่อนไหว"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "ระดับเสียงพูด"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "เสียงสด"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "การบันทึกเสียง"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "เปิดเครื่องอัตโนมัติ"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "แสงสีขาว"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "เตือนเมื่อถอดออก"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "โหมดพัก"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "การแจ้งเตือน AI: บุคคล"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "การแจ้งเตือน AI: สัตว์เลี้ยง"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "การแจ้งเตือน AI: ยานพาหนะเข้า"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "การแจ้งเตือน AI: ยานพาหนะออก"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "การแจ้งเตือน AI: ยานพาหนะจอดอยู่"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "การแจ้งเตือน AI: มีพัสดุ"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "การแจ้งเตือน AI: ส่งพัสดุ"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "การแจ้งเตือน AI: รับพัสดุ"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "การแจ้งเตือน AI: อื่น ๆ"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "ผู้ช่วย AI: บุคคล"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "ผู้ช่วย AI: สัตว์เลี้ยง"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "ผู้ช่วย AI: ยานพาหนะ"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "ผู้ช่วย AI: พัสดุ"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "สัญญาณเตือน"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "สถานี X-Sense ไม่พร้อมใช้งานอีกต่อไป"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "เอนทิตี X-Sense ไม่พร้อมใช้งานอีกต่อไป"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "X-Sense ไม่ได้เชื่อมต่อกับ MQTT"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "ไม่สามารถเผยแพร่คำสั่งโหมดความปลอดภัย X-Sense"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "ไม่มีการบังคับเปิดระบบป้องกัน X-Sense ที่รอดำเนินการสำหรับโหมด {mode}"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "ไม่ทราบสถานะการเปิดใช้ช่วงพักระหว่างการบันทึกวิดีโอ X-Sense"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option} ไม่ใช่ตัวเลือกที่ X-Sense รองรับ"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "ไม่สามารถเขียนค่าการเลือก X-Sense"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "ค่าเกณฑ์เรดอน X-Sense ไม่ถูกต้อง"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "การตั้งค่าช่วง X-Sense ขาดค่าคู่กัน"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "ค่าต่ำสุด X-Sense ต้องไม่มากกว่าค่าสูงสุด"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service} ต้องใช้สวิตช์จ่ายไฟแสงสว่าง"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service} ต้องใช้สถานี SBS50"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "ไม่มีรหัส X-Sense {service}"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "เวลากำหนดการ X-Sense ต้องอยู่ในรูปแบบ HH:MM หรือ HHMM"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "เวลากำหนดการ X-Sense อยู่นอกช่วง"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "กำหนดการ X-Sense ต้องมีวันในสัปดาห์อย่างน้อยหนึ่งวัน"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "วันในสัปดาห์ของกำหนดการ X-Sense ต้องเป็น 1 ถึง 7"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field} ต้องมีรหัสอย่างน้อยหนึ่งรายการ"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "ไม่สามารถลบการสมัครรับข้อมูลสองครั้ง"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "หัวข้อต้องเป็นสตริง"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "ข้อผิดพลาดในการสื่อสารกับ MQTT: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "ไม่สามารถแคชการบันทึก {failed} รายการ ดาวน์โหลดการบันทึกแล้ว {downloaded} รายการ"
+    },
+    "force_arm_invalid_link": {
+      "message": "ลิงก์บังคับเปิดระบบป้องกัน X-Sense นี้ไม่ถูกต้อง"
+    },
+    "force_arm_request_failed": {
+      "message": "คำขอบังคับเปิดระบบป้องกัน X-Sense ล้มเหลว"
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "จากน้อยไปมาก",
+        "descending": "จากมากไปน้อย"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "จากน้อยไปมาก",
+        "descending": "จากมากไปน้อย"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "เล่นอย่างเดียว",
+        "retained": "เก็บการบันทึกในเครื่อง"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "อยู่บ้าน",
+        "away": "ไม่อยู่บ้าน"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "fields": {
+        "mode": {
+          "name": "โหมดเปิดระบบป้องกัน"
+        }
+      },
+      "name": "บังคับเปิดระบบป้องกัน",
+      "description": "ยืนยันคำขอเปิดระบบป้องกันในโหมดอยู่บ้านหรือไม่อยู่บ้านที่รอดำเนินการเนื่องจากเซ็นเซอร์ตรวจพบการเปิด โดยจะข้ามเซ็นเซอร์ที่ตรวจพบการเปิด"
+    },
+    "force_arm_now": {
+      "fields": {
+        "mode": {
+          "name": "โหมดเปิดระบบป้องกัน"
+        }
+      },
+      "name": "บังคับเปิดระบบป้องกันทันที",
+      "description": "เปิดระบบป้องกันในโหมดอยู่บ้านหรือไม่อยู่บ้านทันที โดยข้ามเซ็นเซอร์ที่ตรวจพบการเปิดโดยไม่ขอการยืนยัน"
+    },
+    "trigger_sos": {
+      "name": "เรียกใช้สัญญาณเตือน SOS",
+      "description": "เรียกใช้สัญญาณเตือน SOS ของ SBS50 ทันที"
+    },
+    "cancel_sos": {
+      "name": "ยกเลิกสัญญาณเตือน SOS",
+      "description": "ยกเลิกสัญญาณเตือน SOS ของ SBS50 ที่กำลังทำงาน"
+    },
+    "cancel_alarm": {
+      "name": "ยกเลิกสัญญาณเตือนที่กำลังทำงาน",
+      "description": "ยกเลิกสัญญาณเตือนจากเซ็นเซอร์ของ SBS50 ที่กำลังทำงาน"
+    },
+    "set_sos_sound": {
+      "fields": {
+        "audible": {
+          "name": "สัญญาณเตือน SOS แบบมีเสียง"
+        }
+      },
+      "name": "ตั้งค่าเสียง SOS",
+      "description": "เลือกว่าจะให้ SOS ใช้เฉพาะไฟกะพริบหรือส่งเสียงเตือนด้วย"
+    },
+    "refresh_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "ID รายการกำหนดค่า",
+          "description": "เว้นว่างไว้เพื่อใช้กับบัญชี X-Sense ทั้งหมด"
+        }
+      },
+      "name": "รีเฟรชการบันทึก",
+      "description": "รีเฟรชดัชนีการบันทึกของกล้องที่ใช้ในแถบด้านข้างและเบราว์เซอร์สื่อ"
+    },
+    "cache_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "ID รายการกำหนดค่า",
+          "description": "เว้นว่างไว้เพื่อใช้กับบัญชี X-Sense ทั้งหมด"
+        }
+      },
+      "name": "แคชการบันทึก",
+      "description": "ดาวน์โหลดการบันทึกของกล้องเพื่อเก็บไว้ในเครื่อง ต้องใช้โหมดเก็บการบันทึกในเครื่อง"
+    },
+    "clear_recordings_cache": {
+      "fields": {
+        "entry_id": {
+          "name": "ID รายการกำหนดค่า",
+          "description": "เว้นว่างไว้เพื่อใช้กับบัญชี X-Sense ทั้งหมด"
+        }
+      },
+      "name": "ล้างแคชการบันทึก",
+      "description": "ลบดัชนีการบันทึก วิดีโอ และภาพขนาดย่อในเครื่อง โดยไม่เปลี่ยนแปลงการบันทึกบนคลาวด์และการ์ด SD"
+    },
+    "query_light_schedules": {
+      "name": "เรียกดูตารางเวลาไฟ",
+      "description": "เรียกดูตารางเวลาไฟ โดยเลือกสวิตช์เปิดปิดไฟของ SBS50 เป็นเป้าหมาย"
+    },
+    "create_light_schedule": {
+      "fields": {
+        "name": {
+          "name": "ชื่อที่แสดง"
+        },
+        "start_time": {
+          "name": "เวลาเริ่มต้น (HH:MM หรือ HHMM)"
+        },
+        "end_time": {
+          "name": "เวลาสิ้นสุด (HH:MM หรือ HHMM)"
+        },
+        "week_days": {
+          "name": "วันในสัปดาห์ (1 = วันอาทิตย์, 7 = วันเสาร์)"
+        },
+        "enabled": {
+          "name": "สถานะการเปิดใช้งาน"
+        },
+        "time_zone": {
+          "name": "เขตเวลา"
+        }
+      },
+      "name": "สร้างตารางเวลาไฟ",
+      "description": "สร้างตารางเวลาไฟ โดยเลือกสวิตช์เปิดปิดไฟของ SBS50 เป็นเป้าหมาย"
+    },
+    "update_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "ตัวระบุตารางเวลา"
+        },
+        "start_time": {
+          "name": "เวลาเริ่มต้น (HH:MM หรือ HHMM)"
+        },
+        "end_time": {
+          "name": "เวลาสิ้นสุด (HH:MM หรือ HHMM)"
+        },
+        "week_days": {
+          "name": "วันในสัปดาห์ (1 = วันอาทิตย์, 7 = วันเสาร์)"
+        },
+        "enabled": {
+          "name": "สถานะการเปิดใช้งาน"
+        },
+        "time_zone": {
+          "name": "เขตเวลา"
+        }
+      },
+      "name": "อัปเดตตารางเวลาไฟ",
+      "description": "อัปเดตตารางเวลาไฟ โดยเลือกสวิตช์เปิดปิดไฟของ SBS50 เป็นเป้าหมาย"
+    },
+    "rename_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "ตัวระบุตารางเวลา"
+        },
+        "name": {
+          "name": "ชื่อที่แสดง"
+        }
+      },
+      "name": "เปลี่ยนชื่อตารางเวลาไฟ",
+      "description": "เปลี่ยนชื่อตารางเวลาไฟ โดยเลือกสวิตช์เปิดปิดไฟของ SBS50 เป็นเป้าหมาย"
+    },
+    "delete_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "ตัวระบุตารางเวลา"
+        }
+      },
+      "name": "ลบตารางเวลาไฟ",
+      "description": "ลบตารางเวลาไฟ โดยเลือกสวิตช์เปิดปิดไฟของ SBS50 เป็นเป้าหมาย"
+    },
+    "query_light_groups": {
+      "name": "เรียกดูกลุ่มไฟ",
+      "description": "เรียกดูกลุ่มไฟ โดยเลือกสวิตช์เปิดปิดไฟของ SBS50 เป็นเป้าหมาย"
+    },
+    "create_light_group": {
+      "fields": {
+        "name": {
+          "name": "ชื่อที่แสดง"
+        }
+      },
+      "name": "สร้างกลุ่มไฟ",
+      "description": "สร้างกลุ่มไฟ โดยเลือกสวิตช์เปิดปิดไฟของ SBS50 เป็นเป้าหมาย"
+    },
+    "rename_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "ตัวระบุกลุ่ม"
+        },
+        "name": {
+          "name": "ชื่อที่แสดง"
+        }
+      },
+      "name": "เปลี่ยนชื่อกลุ่มไฟ",
+      "description": "เปลี่ยนชื่อกลุ่มไฟ โดยเลือกสวิตช์เปิดปิดไฟของ SBS50 เป็นเป้าหมาย"
+    },
+    "update_light_group_timer": {
+      "fields": {
+        "group_id": {
+          "name": "ตัวระบุกลุ่ม"
+        },
+        "timer": {
+          "name": "ประเภทตัวตั้งเวลา (pirTime หรือ appTime)"
+        },
+        "value": {
+          "name": "ค่าตัวตั้งเวลา"
+        }
+      },
+      "name": "อัปเดตตัวตั้งเวลาของกลุ่มไฟ",
+      "description": "อัปเดตตัวตั้งเวลาของกลุ่มไฟ โดยเลือกสวิตช์เปิดปิดไฟของ SBS50 เป็นเป้าหมาย"
+    },
+    "bind_light_group": {
+      "fields": {
+        "name": {
+          "name": "ชื่อที่แสดง"
+        },
+        "device_ids": {
+          "name": "ตัวระบุอุปกรณ์"
+        }
+      },
+      "name": "ผูกกลุ่มไฟ",
+      "description": "ผูกกลุ่มไฟ โดยเลือกสวิตช์เปิดปิดไฟของ SBS50 เป็นเป้าหมาย"
+    },
+    "delete_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "ตัวระบุกลุ่ม"
+        }
+      },
+      "name": "ลบกลุ่มไฟ",
+      "description": "ลบกลุ่มไฟ โดยเลือกสวิตช์เปิดปิดไฟของ SBS50 เป็นเป้าหมาย"
+    },
+    "remove_light_group_devices": {
+      "fields": {
+        "device_ids": {
+          "name": "ตัวระบุอุปกรณ์"
+        }
+      },
+      "name": "นำอุปกรณ์ออกจากกลุ่มไฟ",
+      "description": "นำอุปกรณ์ออกจากกลุ่มไฟ โดยเลือกสวิตช์เปิดปิดไฟของ SBS50 เป็นเป้าหมาย"
+    },
+    "set_light_group_power": {
+      "fields": {
+        "group_id": {
+          "name": "ตัวระบุกลุ่ม"
+        },
+        "device_ids": {
+          "name": "หมายเลขซีเรียลของอุปกรณ์"
+        },
+        "enabled": {
+          "name": "สถานะการเปิดใช้งาน"
+        }
+      },
+      "name": "ตั้งค่าการเปิดปิดกลุ่มไฟ",
+      "description": "ตั้งค่าการเปิดปิดกลุ่มไฟ โดยเลือกสวิตช์เปิดปิดไฟของ SBS50 เป็นเป้าหมาย"
+    }
+  },
+  "issues": {}
 }

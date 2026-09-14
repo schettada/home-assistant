@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "Enheten är redan konfigurerad",
       "reauth_successful": "Återautentiseringen lyckades",
-      "reconfigure_successful": "Omkonfigurationen lyckades"
+      "reconfigure_successful": "Omkonfigurationen lyckades",
+      "unique_id_mismatch": "Logga in med samma X-Sense-konto som används för den här posten."
     },
     "error": {
       "cannot_connect": "Det gick inte att ansluta",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "Inspelning av mediasynkronisering cachar kameraklipp under Home Assistant media så att X-Sense Recordings sidofältet, mediebläddraren och mobilaviseringar kan öppna inspelningar snabbt. Lämna det avstängt för att cachelagra inspelningar endast när de är öppna. Aktivera den för att hålla de senaste inspelningarna redo i bakgrunden.",
+        "description": "Endast uppspelning är standard och vidarebefordrar inspelningar genom Home Assistant under uppspelning utan att lagra hela klipp. Välj behåll lokala inspelningar för att spara klipp under Home Assistant-media med de inställda ålders- och storleksgränserna. Bakgrundssynkronisering körs endast i lagringsläget.",
         "data": {
           "recording_media_sync_enabled": "Synkronisering av inspelningsmedia",
           "recording_media_sync_hours": "Bakgrundssynkroniseringsintervall",
           "recording_media_storage_path": "Inspelningscachemapp",
           "recording_notification_quality": "Meddelandeinspelningskvalitet",
           "recording_media_days_order": "Beställning av inspelningsdag",
-          "recording_media_clips_order": "Inspelningsordning för klipp"
+          "recording_media_clips_order": "Inspelningsordning för klipp",
+          "recording_cache_retention_days": "Inspelningscachelagring",
+          "recording_cache_max_size_mb": "Maximal inspelningscachestorlek",
+          "recording_cache_mode": "Lagringsläge för inspelningar"
         },
         "data_description": {
           "recording_media_sync_enabled": "Cachelagra de senaste inspelningarna automatiskt. Detta använder lagringsutrymme och kan väcka kameror oftare.",
           "recording_media_sync_hours": "Hur ofta den normala bakgrundssynkroniseringen ska köras. Senaste inspelningar kontrolleras varannan minut när synkronisering är aktiverad.",
           "recording_media_storage_path": "Använd en mapp under /media. Nya cachade videor och miniatyrer lagras här.",
-          "recording_notification_quality": "Välj HD för att föredra X-Senses direkta/högupplösta klippwebbadresser för mobilaviseringar. Välj SD för att använda kamerauppspelningsbanan när den är tillgänglig.",
+          "recording_notification_quality": "HD föredrar inspelningsadresser med högre upplösning. SD föredrar standardupplösning när X-Sense tillhandahåller den.",
           "recording_media_days_order": "Välj om nyare eller äldre dagar ska visas först i inspelningsvisningen.",
-          "recording_media_clips_order": "Välj om nyare eller äldre klipp ska visas först inom varje dag."
+          "recording_media_clips_order": "Välj om nyare eller äldre klipp ska visas först inom varje dag.",
+          "recording_cache_retention_days": "Ta bort lokala cachade inspelningar efter så här många dagar. X-Sense moln- och SD-kortinspelningar ändras inte.",
+          "recording_cache_max_size_mb": "Maximal lokal cachestorlek i MB. När gränsen nås tas de minst senast visade inspelningarna bort först.",
+          "recording_cache_mode": "Endast uppspelning vidarebefordrar HLS-media genom Home Assistant vid behov utan att lagra hela klipp. Lagringsläget behåller lokala kopior enligt gränserna nedan."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "Inspelningscachemappen ändras från `{old_path}` till `{new_path}`. Befintliga cachade videor och miniatyrer flyttas inte automatiskt. Flytta de befintliga mapparna `videos` och `thumbs` först om du vill att gamla cachade inspelningar ska förbli tillgängliga."
+        "description": "Inspelningscachemappen ändras från `{old_path}` till `{new_path}`. Befintliga cachade videor och miniatyrer flyttas inte automatiskt. Flytta de befintliga mapparna `hls`, `videos` och `thumbs` först om du vill att gamla cachade inspelningar ska förbli tillgängliga."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "Mailbox-schema aktivt"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "Nätström frånkopplad"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "Batteriets livslängd slut"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "Livslängden slut"
       },
       "armed": {
-        "name": "Armed"
+        "name": "Tillkopplat"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "Rörelse upptäckt"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "USB-laddning"
       },
       "charging": {
-        "name": "Charging"
+        "name": "Laddar"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "Vilande"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "Monteringsfäste borttaget"
       },
       "activated": {
-        "name": "Activated"
+        "name": "Aktiverad"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "Larmövning aktiv"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "Larm aktivt"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "Initierande larm"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "Enhetstest aktivt"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "Enheten tystad"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "Larmljud"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "Appaviseringar"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "Schemaaviseringar"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "Vattenläckagelarm"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "Vattenläckagelarm tystat"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "Temperaturlarm"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "Temperaturlarm tystat"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "Enhetens tidszon aktiverad"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "Enhetens tidszon giltig"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "Ljud av"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "Väck"
       }
     },
     "event": {
@@ -188,7 +195,7 @@
           "normal": "Normal",
           "low_battery": "Lågt batteri",
           "malfunction": "Felfunktion",
-          "end_of_life": "End-of-Life"
+          "end_of_life": "Livslängden slut"
         }
       },
       "alarm_vol": {
@@ -210,7 +217,7 @@
         "name": "Toppnivå CO"
       },
       "peak_co_level_time": {
-        "name": "Peak CO Level Time"
+        "name": "Tid för högsta CO-nivå"
       },
       "mcu_sw_version": {
         "name": "MCU Mjukvaruversion"
@@ -254,139 +261,139 @@
         "name": "Högsta radonnivåtid"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "Batterinivå"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Signalstyrka"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Signalstyrka"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "Kamerans statuskod"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "Version av inbyggd programvara"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "Status för kamerans inbyggda programvara"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Wi-Fi-namn (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Wi-Fi-kanal"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "MAC-adress"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "SD-kortets status"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "SD-kortets totala kapacitet"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "Använt utrymme på SD-kort"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "Kamerans aktiveringstid"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "Tid då kameran kopplades från"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "Tid för kamerans miniatyrbild"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "Kamerans uppvakningstid"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "Kamerans vilomeddelande"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "Enhetens tidszon"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "Rökdetektorvariant"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "CO-larmstandard"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "Kontrolltyp"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "PIR-intervall"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "Sensorkänslighet"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "Tystnadstid"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "Tystnadstid för temperaturlarm"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "Tystnadstid för vattenläckagelarm"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "Korttidsvarning för CO"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "Nivå för korttidsvarning för CO"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "Långtidsvarning för CO"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "Nivå för långtidsvarning för CO"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "Larmförekomst"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "Larmkälla"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "Upprepat larm"
       },
       "time": {
-        "name": "Report Time"
+        "name": "Rapporttid"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "UTC-tid"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "Testtid för enheten"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "Enhetens tidszon"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "Plats för röstmeddelande"
       },
       "location": {
-        "name": "Location"
+        "name": "Plats"
       },
       "color": {
-        "name": "Color"
+        "name": "Färg"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "Belysningshändelse"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "Enhetstyp"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "Rapporterad enhetstyp"
       },
       "category": {
-        "name": "Category"
+        "name": "Kategori"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "Säkerhetsläge"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "Standby ljusstyrka"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "Larmvolym"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Röstvolym"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "Högtalarvolym"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "Larmets varaktighet"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "Känslighet för mörkerseende"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "Känslighet för gråtdetektering"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Paus mellan inspelningar"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "Mekanisk ringklockas varaktighet"
       }
     },
     "select": {
@@ -483,7 +490,7 @@
         "name": "Larmsignal"
       },
       "chirp_tone": {
-        "name": "Chirp Tone"
+        "name": "Pipsignal"
       },
       "reminder_tone": {
         "name": "Påminnelseton"
@@ -519,251 +526,266 @@
         "name": "App i tid"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "Språk"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "Inspelningsupplösning"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "Detektionskänslighet",
+        "state": {
+          "high": "Hög",
+          "medium": "Medel",
+          "low": "Låg",
+          "auto": "Automatisk"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "Videolängd"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "Flimmerfrekvens"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "Standardkodek"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "Rörelsespårning"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "Mörkerseendeläge"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "Paus mellan molninspelningar"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "Dörrklockans signal"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "Batterinivå för automatisk start"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "LED-indikator"
       },
       "light_power": {
-        "name": "Light"
+        "name": "Ljus"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "Larm aktiverat"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "Kontinuerligt larm"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "Postpåminnelse"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "Pipsignal aktiverad"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "Påminnelse aktiverad"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "Påminnelseljud aktiverat"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "Väntelägesbelysning aktiverad"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR aktiverad"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "Omgivningsljusdetektering aktiverad"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "Knappljud aktiverat"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "Varning aktiverad"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "Rörelsedetektering"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "Persondetektering"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "Spela in video"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "Automatiskt mörkerseende"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "Statuslysdiod"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "Kameralarm"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "Rotera bild"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "Flimmerreducering"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "Gråtdetektering"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Paus mellan inspelningar"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "Enhetssamtal"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "Mekanisk ringklocka"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "Rörelsespårning"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Röstvolym"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "Direktljud"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "Ljudinspelning"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "Automatisk start"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "Vitt ljus"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "Larm vid borttagning"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "Viloläge"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "AI-avisering: person"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "AI-avisering: husdjur"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "AI-avisering: fordon anländer"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "AI-avisering: fordon lämnar"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "AI-avisering: parkerat fordon"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "AI-avisering: paket finns"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "AI-avisering: paket lämnas"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "AI-avisering: paket hämtas"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "AI-avisering: annat"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "AI-assistent: person"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "AI-assistent: husdjur"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "AI-assistent: fordon"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "AI-assistent: paket"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "Larm"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "X-Sense-stationen är inte längre tillgänglig"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "X-Sense-entiteten är inte längre tillgänglig"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "X-Sense är inte anslutet till MQTT"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "Det gick inte att publicera kommandot för X-Sense-säkerhetsläge"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "Ingen tvingad tillkoppling väntar för X-Sense-läget {mode}"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "Aktiveringstillståndet för pausen mellan X-Sense-inspelningar är okänt"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option} är inte ett alternativ som stöds av X-Sense"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "X-Sense-valet kan inte skrivas"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "X-Sense-radongränsen är ogiltig"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "X-Sense-intervallinställningen saknar sitt parade värde"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "X-Sense-minimum får inte vara större än maximum"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service} kräver en strömbrytare för belysning"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service} kräver en SBS50-station"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "ID:n för X-Sense {service} saknas"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "X-Sense-schematiden måste ha formatet HH:MM eller HHMM"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "X-Sense-schematiden ligger utanför intervallet"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "X-Sense-schemat måste innehålla minst en veckodag"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "X-Sense-schemats veckodagar måste vara 1 till 7"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field} måste innehålla minst ett ID"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "Det går inte att ta bort prenumerationen två gånger"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "Ämnet måste vara en sträng"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "Fel vid kommunikation med MQTT: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "Det gick inte att cachelagra {failed} inspelning(ar). {downloaded} inspelning(ar) hämtades."
+    },
+    "force_arm_invalid_link": {
+      "message": "Den här X-Sense-länken för tvingad tillkoppling är ogiltig."
+    },
+    "force_arm_request_failed": {
+      "message": "Begäran om tvingad tillkoppling för X-Sense misslyckades."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Stigande",
+        "descending": "Fallande"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Stigande",
+        "descending": "Fallande"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "Endast uppspelning",
+        "retained": "Behåll lokala inspelningar"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "Hemma",
+        "away": "Borta"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "fields": {
+        "mode": {
+          "name": "Tillkopplingsläge"
+        }
+      },
+      "name": "Tvingad tillkoppling",
+      "description": "Bekräfta en väntande tillkoppling i läget Hemma eller Borta som blockeras av öppna sensorer. Öppna sensorer förbikopplas."
+    },
+    "force_arm_now": {
+      "fields": {
+        "mode": {
+          "name": "Tillkopplingsläge"
+        }
+      },
+      "name": "Tvingad tillkoppling nu",
+      "description": "Koppla till i läget Hemma eller Borta omedelbart och förbikoppla öppna sensorer utan att be om bekräftelse."
+    },
+    "trigger_sos": {
+      "name": "Utlös SOS-larm",
+      "description": "Utlös SOS-larmet på SBS50 omedelbart."
+    },
+    "cancel_sos": {
+      "name": "Avbryt SOS-larm",
+      "description": "Avbryt ett aktivt SOS-larm på SBS50."
+    },
+    "cancel_alarm": {
+      "name": "Avbryt aktivt larm",
+      "description": "Avbryt ett aktivt sensorlarm på SBS50."
+    },
+    "set_sos_sound": {
+      "fields": {
+        "audible": {
+          "name": "SOS-larm med ljud"
+        }
+      },
+      "name": "Ställ in SOS-ljud",
+      "description": "Välj om SOS bara använder blinkande ljus eller även aktiverar summern."
+    },
+    "refresh_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "Konfigurationspostens ID",
+          "description": "Lämna tomt för att tillämpa på alla X-Sense-konton."
+        }
+      },
+      "name": "Uppdatera inspelningar",
+      "description": "Uppdatera indexet över kamerainspelningar som används av sidofältet och mediebläddraren."
+    },
+    "cache_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "Konfigurationspostens ID",
+          "description": "Lämna tomt för att tillämpa på alla X-Sense-konton."
+        }
+      },
+      "name": "Cachelagra inspelningar",
+      "description": "Hämta kamerainspelningar för lokal lagring. Kräver läget Behåll lokala inspelningar."
+    },
+    "clear_recordings_cache": {
+      "fields": {
+        "entry_id": {
+          "name": "Konfigurationspostens ID",
+          "description": "Lämna tomt för att tillämpa på alla X-Sense-konton."
+        }
+      },
+      "name": "Rensa inspelningscache",
+      "description": "Ta bort lokala inspelningsindex, videor och miniatyrbilder. Inspelningar i molnet och på SD-kort påverkas inte."
+    },
+    "query_light_schedules": {
+      "name": "Hämta belysningsscheman",
+      "description": "Hämta belysningsscheman. Välj SBS50:s strömbrytare för belysning som mål."
+    },
+    "create_light_schedule": {
+      "fields": {
+        "name": {
+          "name": "Visningsnamn"
+        },
+        "start_time": {
+          "name": "Starttid (HH:MM eller HHMM)"
+        },
+        "end_time": {
+          "name": "Sluttid (HH:MM eller HHMM)"
+        },
+        "week_days": {
+          "name": "Veckodagar (1 = söndag, 7 = lördag)"
+        },
+        "enabled": {
+          "name": "Aktiveringsstatus"
+        },
+        "time_zone": {
+          "name": "Tidszon"
+        }
+      },
+      "name": "Skapa belysningsschema",
+      "description": "Skapa ett belysningsschema. Välj SBS50:s strömbrytare för belysning som mål."
+    },
+    "update_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Schemaidentifierare"
+        },
+        "start_time": {
+          "name": "Starttid (HH:MM eller HHMM)"
+        },
+        "end_time": {
+          "name": "Sluttid (HH:MM eller HHMM)"
+        },
+        "week_days": {
+          "name": "Veckodagar (1 = söndag, 7 = lördag)"
+        },
+        "enabled": {
+          "name": "Aktiveringsstatus"
+        },
+        "time_zone": {
+          "name": "Tidszon"
+        }
+      },
+      "name": "Uppdatera belysningsschema",
+      "description": "Uppdatera ett belysningsschema. Välj SBS50:s strömbrytare för belysning som mål."
+    },
+    "rename_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Schemaidentifierare"
+        },
+        "name": {
+          "name": "Visningsnamn"
+        }
+      },
+      "name": "Byt namn på belysningsschema",
+      "description": "Byt namn på ett belysningsschema. Välj SBS50:s strömbrytare för belysning som mål."
+    },
+    "delete_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Schemaidentifierare"
+        }
+      },
+      "name": "Ta bort belysningsschema",
+      "description": "Ta bort ett belysningsschema. Välj SBS50:s strömbrytare för belysning som mål."
+    },
+    "query_light_groups": {
+      "name": "Hämta belysningsgrupper",
+      "description": "Hämta belysningsgrupper. Välj SBS50:s strömbrytare för belysning som mål."
+    },
+    "create_light_group": {
+      "fields": {
+        "name": {
+          "name": "Visningsnamn"
+        }
+      },
+      "name": "Skapa belysningsgrupp",
+      "description": "Skapa en belysningsgrupp. Välj SBS50:s strömbrytare för belysning som mål."
+    },
+    "rename_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Gruppidentifierare"
+        },
+        "name": {
+          "name": "Visningsnamn"
+        }
+      },
+      "name": "Byt namn på belysningsgrupp",
+      "description": "Byt namn på en belysningsgrupp. Välj SBS50:s strömbrytare för belysning som mål."
+    },
+    "update_light_group_timer": {
+      "fields": {
+        "group_id": {
+          "name": "Gruppidentifierare"
+        },
+        "timer": {
+          "name": "Timertyp (pirTime eller appTime)"
+        },
+        "value": {
+          "name": "Timervärde"
+        }
+      },
+      "name": "Uppdatera belysningsgruppens timer",
+      "description": "Uppdatera belysningsgruppens timer. Välj SBS50:s strömbrytare för belysning som mål."
+    },
+    "bind_light_group": {
+      "fields": {
+        "name": {
+          "name": "Visningsnamn"
+        },
+        "device_ids": {
+          "name": "Enhetsidentifierare"
+        }
+      },
+      "name": "Koppla belysningsgrupp",
+      "description": "Koppla en belysningsgrupp. Välj SBS50:s strömbrytare för belysning som mål."
+    },
+    "delete_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Gruppidentifierare"
+        }
+      },
+      "name": "Ta bort belysningsgrupp",
+      "description": "Ta bort en belysningsgrupp. Välj SBS50:s strömbrytare för belysning som mål."
+    },
+    "remove_light_group_devices": {
+      "fields": {
+        "device_ids": {
+          "name": "Enhetsidentifierare"
+        }
+      },
+      "name": "Ta bort enheter från belysningsgrupp",
+      "description": "Ta bort enheter från belysningsgruppen. Välj SBS50:s strömbrytare för belysning som mål."
+    },
+    "set_light_group_power": {
+      "fields": {
+        "group_id": {
+          "name": "Gruppidentifierare"
+        },
+        "device_ids": {
+          "name": "Enheternas serienummer"
+        },
+        "enabled": {
+          "name": "Aktiveringsstatus"
+        }
+      },
+      "name": "Ställ in strömläge för belysningsgrupp",
+      "description": "Ställ in strömläge för belysningsgruppen. Välj SBS50:s strömbrytare för belysning som mål."
+    }
+  },
+  "issues": {}
 }

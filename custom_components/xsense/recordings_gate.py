@@ -38,6 +38,11 @@ def has_any_camera_entities(hass: HomeAssistant) -> bool:
     """Return whether X-Sense recordings features should be available."""
     if has_registered_camera_entities(hass):
         return True
+    return has_loaded_camera_entities(hass)
+
+
+def has_loaded_camera_entities(hass: HomeAssistant) -> bool:
+    """Return whether a loaded entry owns camera recordings runtime."""
     for coordinator in getattr(hass, "data", {}).get(DOMAIN, {}).values():
         data = getattr(coordinator, "data", None)
         if isinstance(data, dict) and has_camera_entities(data):

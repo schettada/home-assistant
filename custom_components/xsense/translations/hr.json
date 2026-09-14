@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "Uređaj je već konfiguriran",
       "reauth_successful": "Ponovna provjera autentičnosti bila je uspješna",
-      "reconfigure_successful": "Rekonfiguracija je bila uspješna"
+      "reconfigure_successful": "Rekonfiguracija je bila uspješna",
+      "unique_id_mismatch": "Prijavite se istim X-Sense računom koji je povezan s ovim unosom."
     },
     "error": {
       "cannot_connect": "Povezivanje nije uspjelo",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "Sinkronizacija medija za snimanje predmemorira isječke kamere ispod medija Home Assistant tako da bočna traka X-Sense Snimke, preglednik medija i mobilne obavijesti mogu brzo otvoriti snimke. Ostavite ga isključenim da biste spremili snimke u predmemoriju samo kada su otvorene. Omogućite ga kako bi nedavne snimke bile spremne u pozadini.",
+        "description": "Samo reprodukcija zadani je način i prosljeđuje snimke kroz Home Assistant tijekom reprodukcije bez čuvanja cijelih isječaka. Odaberite čuvanje lokalnih snimki kako biste spremili isječke u medije Home Assistanta prema zadanim ograničenjima starosti i veličine. Pozadinska sinkronizacija radi samo u načinu čuvanja.",
         "data": {
           "recording_media_sync_enabled": "Sinkronizacija medija za snimanje",
           "recording_media_sync_hours": "Interval sinkronizacije u pozadini",
           "recording_media_storage_path": "Mapa predmemorije snimanja",
           "recording_notification_quality": "Kvaliteta snimanja obavijesti",
           "recording_media_days_order": "Dnevni red snimanja",
-          "recording_media_clips_order": "Redoslijed snimanja isječaka"
+          "recording_media_clips_order": "Redoslijed snimanja isječaka",
+          "recording_cache_retention_days": "Zadržavanje predmemorije snimanja",
+          "recording_cache_max_size_mb": "Maksimalna veličina predmemorije snimanja",
+          "recording_cache_mode": "Način pohrane snimki"
         },
         "data_description": {
           "recording_media_sync_enabled": "Automatski spremite nedavne snimke u predmemoriju. To koristi prostor za pohranu i može češće probuditi kamere.",
           "recording_media_sync_hours": "Koliko često bi se normalna pozadinska sinkronizacija trebala izvoditi. Nedavne snimke provjeravaju se svakih nekoliko minuta kada je sinkronizacija omogućena.",
           "recording_media_storage_path": "Koristite mapu ispod /media. Ovdje se pohranjuju novi predmemorirani videozapisi i sličice.",
-          "recording_notification_quality": "Odaberite HD da biste radije koristili izravne URL-ove isječaka/isječaka visoke rezolucije X-Sense za mobilne obavijesti. Odaberite SD za korištenje putanje snimanja reprodukcije kamere kada je to dostupno.",
+          "recording_notification_quality": "HD daje prednost URL-ovima snimki više rezolucije. SD daje prednost standardnoj rezoluciji ako je X-Sense pruža.",
           "recording_media_days_order": "Odaberite hoće li se noviji ili stariji dani prvi pojaviti u pregledniku snimaka.",
-          "recording_media_clips_order": "Odaberite hoće li se noviji ili stariji isječci pojaviti prvi unutar svakog dana."
+          "recording_media_clips_order": "Odaberite hoće li se noviji ili stariji isječci pojaviti prvi unutar svakog dana.",
+          "recording_cache_retention_days": "Izbrišite lokalno predmemorirane snimke nakon toliko dana. X-Sense cloud i snimke SD kartice se ne mijenjaju.",
+          "recording_cache_max_size_mb": "Maksimalna veličina lokalne predmemorije u MB. Kada se dosegne ograničenje, najprije se uklanjaju posljednje gledane snimke.",
+          "recording_cache_mode": "Samo reprodukcija prosljeđuje HLS medije kroz Home Assistant na zahtjev bez čuvanja cijelih isječaka. Način čuvanja zadržava lokalne kopije prema ograničenjima u nastavku."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "Mapa predmemorije snimanja promijenit će se iz `{old_path}` u `{new_path}`. Postojeći predmemorirani videozapisi i minijature ne premještaju se automatski. Najprije premjestite postojeće mape `videos` i `thumbs` ako želite da stare predmemorirane snimke ostanu dostupne."
+        "description": "Mapa predmemorije snimanja promijenit će se iz `{old_path}` u `{new_path}`. Postojeći predmemorirani videozapisi i minijature ne premještaju se automatski. Najprije premjestite postojeće mape `hls`, `videos` i `thumbs` ako želite da stare predmemorirane snimke ostanu dostupne."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "Raspored poštanskog sandučića aktivan"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "Napajanje izmjeničnom strujom odspojeno"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "Kraj vijeka baterije"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "Kraj životnog vijeka"
       },
       "armed": {
-        "name": "Armed"
+        "name": "Naoružano"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "Otkriveno kretanje"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "USB punjenje"
       },
       "charging": {
-        "name": "Charging"
+        "name": "Punjenje"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "U mirovanju"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "Nosač uklonjen"
       },
       "activated": {
-        "name": "Activated"
+        "name": "Aktiviran"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "Vježba alarma aktivna"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "Alarm aktivan"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "Alarm pokrenut na uređaju"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "Test uređaja aktivan"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "Uređaj utišan"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "Zvuk alarma"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "Obavijesti aplikacije"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "Obavijesti rasporeda"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "Alarm curenja vode"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "Alarm curenja vode utišan"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "Temperaturni alarm"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "Temperaturni alarm utišan"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "Vremenska zona uređaja omogućena"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "Vremenska zona uređaja valjana"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "Isključi zvuk"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "Probudi"
       }
     },
     "event": {
@@ -254,139 +261,139 @@
         "name": "Vrijeme najveće razine radona"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "Razina baterije"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Snaga signala"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Snaga signala"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "Kod stanja kamere"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "Verzija firmvera"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "Stanje firmvera kamere"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Naziv Wi-Fi mreže (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Wi-Fi kanal"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "MAC adresa"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "Stanje SD kartice"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "Ukupni kapacitet SD kartice"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "Zauzeće SD kartice"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "Vrijeme aktivacije kamere"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "Vrijeme prekida veze kamere"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "Vrijeme sličice kamere"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "Vrijeme buđenja kamere iz mirovanja"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "Poruka mirovanja kamere"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "Vremenska zona uređaja"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "Varijanta modela detektora dima"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "Norma CO alarma"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "Vrsta provjere"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "PIR interval"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "Osjetljivost senzora"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "Vrijeme utišavanja"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "Vrijeme utišavanja temperaturnog alarma"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "Vrijeme utišavanja alarma curenja vode"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "Kratkoročno upozorenje za CO"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "Razina kratkoročnog upozorenja za CO"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "Dugoročno upozorenje za CO"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "Razina dugoročnog upozorenja za CO"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "Pojava alarma"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "Izvor alarma"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "Ponovljeni alarm"
       },
       "time": {
-        "name": "Report Time"
+        "name": "Vrijeme izvješća"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "UTC vrijeme"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "Vrijeme testiranja uređaja"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "Vremenska zona uređaja"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "Glasovni naziv lokacije"
       },
       "location": {
-        "name": "Location"
+        "name": "Lokacija"
       },
       "color": {
-        "name": "Color"
+        "name": "Boja"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "Događaj svjetla"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "Vrsta uređaja"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "Prijavljena vrsta uređaja"
       },
       "category": {
-        "name": "Category"
+        "name": "Kategorija"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "Sigurnosni način"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "Svjetlina u stanju mirovanja"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "Glasnoća alarma"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Glasnoća glasa"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "Glasnoća zvučnika"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "Trajanje alarma"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "Osjetljivost noćnog vida"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "Osjetljivost otkrivanja plača"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Razmak između snimanja"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "Trajanje mehaničkog zvona"
       }
     },
     "select": {
@@ -519,177 +526,183 @@
         "name": "Aplikacija na vrijeme"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "Jezik"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "Razlučivost snimanja"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "Osjetljivost detekcije",
+        "state": {
+          "high": "Visoka",
+          "medium": "Srednja",
+          "low": "Niska",
+          "auto": "Automatska"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "Trajanje videozapisa"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "Frekvencija treperenja"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "Zadani kodek"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "Praćenje kretanja"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "Način noćnog vida"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "Razmak između snimanja u oblak"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "Zvuk zvona na vratima"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "Razina baterije za automatsko uključivanje"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "LED pokazivač"
       },
       "light_power": {
-        "name": "Light"
+        "name": "Svjetlo"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "Alarm omogućen"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "Neprekidni alarm"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "Podsjetnik e-poštom"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "Kratki zvučni signal omogućen"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "Podsjetnik omogućen"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "Zvuk podsjetnika omogućen"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "Svjetlo u stanju pripravnosti omogućeno"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR omogućen"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "Otkrivanje okolnog svjetla omogućeno"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "Zvuk tipki omogućen"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "Upozorenje omogućeno"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "Otkrivanje kretanja"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "Otkrivanje osoba"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "Snimanje videa"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "Automatski noćni vid"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "LED stanja"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "Alarm kamere"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "Zakreni sliku"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "Smanjenje treperenja"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "Otkrivanje plača"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Razmak između snimanja"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "Poziv uređaja"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "Mehaničko zvono"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "Praćenje kretanja"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Glasnoća glasa"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "Zvuk uživo"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "Zvuk snimke"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "Automatsko uključivanje"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "Bijelo svjetlo"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "Alarm pri uklanjanju"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "Način mirovanja"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "AI obavijest: osoba"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "AI obavijest: kućni ljubimac"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "AI obavijest: dolazak vozila"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "AI obavijest: odlazak vozila"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "AI obavijest: parkirano vozilo"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "AI obavijest: paket prisutan"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "AI obavijest: paket dostavljen"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "AI obavijest: paket preuzet"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "AI obavijest: ostalo"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "AI pomoćnik: osoba"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "AI pomoćnik: kućni ljubimac"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "AI pomoćnik: vozilo"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "AI pomoćnik: paket"
       }
     },
     "alarm_control_panel": {
@@ -700,70 +713,79 @@
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "X-Sense stanica više nije dostupna"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "X-Sense entitet više nije dostupan"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "X-Sense MQTT nije povezan"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "Nije moguće objaviti naredbu sigurnosnog načina X-Sense"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "Prisilno uključivanje zaštite X-Sense nije na čekanju za način {mode}"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "Nije poznato je li razmak između snimanja X-Sense omogućen"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option} nije podržana opcija X-Sense"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "Nije moguće upisati vrijednost odabira X-Sense"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "Prag radona X-Sense nije valjan"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "Postavci raspona X-Sense nedostaje druga vrijednost para"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "Minimalna vrijednost X-Sense ne može biti veća od maksimalne"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service} zahtijeva prekidač napajanja svjetla"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service} zahtijeva SBS50 stanicu"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "Nedostaju X-Sense {service} ID-ovi"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "Vrijeme rasporeda X-Sense mora biti u obliku HH:MM ili HHMM"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "Vrijeme rasporeda X-Sense izvan je raspona"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "Raspored X-Sense mora uključivati barem jedan dan u tjednu"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "Dani u tjednu za raspored X-Sense moraju biti od 1 do 7"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field} mora uključivati barem jedan ID"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "Pretplatu nije moguće ukloniti dvaput"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "Tema mora biti tekstualni niz"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "Pogreška u komunikaciji s MQTT-om: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "Nije moguće spremiti {failed} snimki u predmemoriju. Preuzeto je {downloaded} snimki."
+    },
+    "force_arm_invalid_link": {
+      "message": "Ova poveznica za prisilno uključivanje zaštite X-Sense nije valjana."
+    },
+    "force_arm_request_failed": {
+      "message": "Zahtjev za prisilno uključivanje zaštite X-Sense nije uspio."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Uzlazno",
+        "descending": "Silazno"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Uzlazno",
+        "descending": "Silazno"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "Samo reprodukcija",
+        "retained": "Čuvaj lokalne snimke"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "Kod kuće",
+        "away": "Odsutan"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "name": "Prisilno uključi zaštitu",
+      "description": "Potvrdite zahtjev na čekanju za uključivanje zaštite u načinu Kod kuće ili Odsutan koji blokiraju otvoreni senzori. Otvoreni senzori se zaobilaze.",
+      "fields": {
+        "mode": {
+          "name": "Način uključivanja zaštite"
+        }
+      }
+    },
+    "force_arm_now": {
+      "name": "Odmah prisilno uključi zaštitu",
+      "description": "Odmah uključite zaštitu u načinu Kod kuće ili Odsutan, zaobilazeći otvorene senzore bez traženja potvrde.",
+      "fields": {
+        "mode": {
+          "name": "Način uključivanja zaštite"
+        }
+      }
+    },
+    "trigger_sos": {
+      "name": "Pokreni SOS alarm",
+      "description": "Odmah pokrenite SOS alarm stanice SBS50."
+    },
+    "cancel_sos": {
+      "name": "Zaustavi SOS alarm",
+      "description": "Zaustavite aktivni SOS alarm stanice SBS50."
+    },
+    "cancel_alarm": {
+      "name": "Zaustavi aktivni alarm",
+      "description": "Zaustavite aktivni alarm senzora stanice SBS50."
+    },
+    "set_sos_sound": {
+      "name": "Postavi zvuk SOS alarma",
+      "description": "Odaberite koristi li SOS samo treptajuća svjetla ili i zvučni signal.",
+      "fields": {
+        "audible": {
+          "name": "Zvučni SOS alarm"
+        }
+      }
+    },
+    "refresh_recordings": {
+      "name": "Osvježi snimke",
+      "description": "Osvježite indeks snimki kamere koji koriste bočna traka i preglednik medija.",
+      "fields": {
+        "entry_id": {
+          "name": "ID konfiguracijskog unosa",
+          "description": "Ostavite prazno za primjenu na sve X-Sense račune."
+        }
+      }
+    },
+    "cache_recordings": {
+      "name": "Spremi snimke u predmemoriju",
+      "description": "Preuzmite snimke kamere za lokalno čuvanje. Potreban je način Čuvaj lokalne snimke.",
+      "fields": {
+        "entry_id": {
+          "name": "ID konfiguracijskog unosa",
+          "description": "Ostavite prazno za primjenu na sve X-Sense račune."
+        }
+      }
+    },
+    "clear_recordings_cache": {
+      "name": "Očisti predmemoriju snimki",
+      "description": "Izbrišite lokalne indekse snimki, videozapise i sličice. Snimke u oblaku i na SD kartici ostaju nepromijenjene.",
+      "fields": {
+        "entry_id": {
+          "name": "ID konfiguracijskog unosa",
+          "description": "Ostavite prazno za primjenu na sve X-Sense račune."
+        }
+      }
+    },
+    "query_light_schedules": {
+      "name": "Dohvati rasporede svjetla",
+      "description": "Dohvatite rasporede svjetla. Kao cilj odaberite prekidač napajanja svjetla SBS50."
+    },
+    "create_light_schedule": {
+      "name": "Stvori raspored svjetla",
+      "description": "Stvorite raspored svjetla. Kao cilj odaberite prekidač napajanja svjetla SBS50.",
+      "fields": {
+        "name": {
+          "name": "Prikazni naziv"
+        },
+        "start_time": {
+          "name": "Vrijeme početka (HH:MM ili HHMM)"
+        },
+        "end_time": {
+          "name": "Vrijeme završetka (HH:MM ili HHMM)"
+        },
+        "week_days": {
+          "name": "Dani u tjednu (1 = nedjelja, 7 = subota)"
+        },
+        "enabled": {
+          "name": "Omogućeno stanje"
+        },
+        "time_zone": {
+          "name": "Vremenska zona"
+        }
+      }
+    },
+    "update_light_schedule": {
+      "name": "Ažuriraj raspored svjetla",
+      "description": "Ažurirajte raspored svjetla. Kao cilj odaberite prekidač napajanja svjetla SBS50.",
+      "fields": {
+        "schedule_id": {
+          "name": "Identifikator rasporeda"
+        },
+        "start_time": {
+          "name": "Vrijeme početka (HH:MM ili HHMM)"
+        },
+        "end_time": {
+          "name": "Vrijeme završetka (HH:MM ili HHMM)"
+        },
+        "week_days": {
+          "name": "Dani u tjednu (1 = nedjelja, 7 = subota)"
+        },
+        "enabled": {
+          "name": "Omogućeno stanje"
+        },
+        "time_zone": {
+          "name": "Vremenska zona"
+        }
+      }
+    },
+    "rename_light_schedule": {
+      "name": "Preimenuj raspored svjetla",
+      "description": "Preimenujte raspored svjetla. Kao cilj odaberite prekidač napajanja svjetla SBS50.",
+      "fields": {
+        "schedule_id": {
+          "name": "Identifikator rasporeda"
+        },
+        "name": {
+          "name": "Prikazni naziv"
+        }
+      }
+    },
+    "delete_light_schedule": {
+      "name": "Izbriši raspored svjetla",
+      "description": "Izbrišite raspored svjetla. Kao cilj odaberite prekidač napajanja svjetla SBS50.",
+      "fields": {
+        "schedule_id": {
+          "name": "Identifikator rasporeda"
+        }
+      }
+    },
+    "query_light_groups": {
+      "name": "Dohvati grupe svjetala",
+      "description": "Dohvatite grupe svjetala. Kao cilj odaberite prekidač napajanja svjetla SBS50."
+    },
+    "create_light_group": {
+      "name": "Stvori grupu svjetala",
+      "description": "Stvorite grupu svjetala. Kao cilj odaberite prekidač napajanja svjetla SBS50.",
+      "fields": {
+        "name": {
+          "name": "Prikazni naziv"
+        }
+      }
+    },
+    "rename_light_group": {
+      "name": "Preimenuj grupu svjetala",
+      "description": "Preimenujte grupu svjetala. Kao cilj odaberite prekidač napajanja svjetla SBS50.",
+      "fields": {
+        "group_id": {
+          "name": "Identifikator grupe"
+        },
+        "name": {
+          "name": "Prikazni naziv"
+        }
+      }
+    },
+    "update_light_group_timer": {
+      "name": "Ažuriraj vremenski mjerač grupe svjetala",
+      "description": "Ažurirajte vremenski mjerač grupe svjetala. Kao cilj odaberite prekidač napajanja svjetla SBS50.",
+      "fields": {
+        "group_id": {
+          "name": "Identifikator grupe"
+        },
+        "timer": {
+          "name": "Vrsta vremenskog mjerača (pirTime ili appTime)"
+        },
+        "value": {
+          "name": "Vrijednost vremenskog mjerača"
+        }
+      }
+    },
+    "bind_light_group": {
+      "name": "Poveži grupu svjetala",
+      "description": "Povežite grupu svjetala. Kao cilj odaberite prekidač napajanja svjetla SBS50.",
+      "fields": {
+        "name": {
+          "name": "Prikazni naziv"
+        },
+        "device_ids": {
+          "name": "Identifikatori uređaja"
+        }
+      }
+    },
+    "delete_light_group": {
+      "name": "Izbriši grupu svjetala",
+      "description": "Izbrišite grupu svjetala. Kao cilj odaberite prekidač napajanja svjetla SBS50.",
+      "fields": {
+        "group_id": {
+          "name": "Identifikator grupe"
+        }
+      }
+    },
+    "remove_light_group_devices": {
+      "name": "Ukloni uređaje iz grupe svjetala",
+      "description": "Uklonite uređaje iz grupe svjetala. Kao cilj odaberite prekidač napajanja svjetla SBS50.",
+      "fields": {
+        "device_ids": {
+          "name": "Identifikatori uređaja"
+        }
+      }
+    },
+    "set_light_group_power": {
+      "name": "Postavi napajanje grupe svjetala",
+      "description": "Postavite napajanje grupe svjetala. Kao cilj odaberite prekidač napajanja svjetla SBS50.",
+      "fields": {
+        "group_id": {
+          "name": "Identifikator grupe"
+        },
+        "device_ids": {
+          "name": "Serijski brojevi uređaja"
+        },
+        "enabled": {
+          "name": "Omogućeno stanje"
+        }
+      }
+    }
+  },
+  "issues": {}
 }

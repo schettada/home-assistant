@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from .python_xsense.async_xsense import is_camera_entity
 from .python_xsense.device import Device
 from .python_xsense.entity import Entity
-from .python_xsense.entity_map import EntityType
+from .python_xsense.entity_map import EntityType, entities
 from .python_xsense.station import Station
 
 from homeassistant import config_entries
@@ -28,6 +28,7 @@ from .entity import (
     coordinator_devices,
     coordinator_stations,
     device_station_id,
+    setup_dynamic_entities,
 )
 
 
@@ -250,6 +251,9 @@ COMMAND_ONLY_MUTE_STATUS_DEVICE_TYPES = frozenset({"SMA0A", "SMA51"})
 
 def alarm_device_class(entity: Entity) -> BinarySensorDeviceClass | None:
     """Return the Home Assistant device class for an XSense alarm state."""
+    if entities.get(entity.type, {}).get("type") == EntityType.COMBI:
+        # The normalized aggregate flag cannot distinguish smoke from CO.
+        return None
     for model_prefix, device_class in ALARM_DEVICE_CLASS_BY_TYPE.items():
         if entity.type.startswith(model_prefix):
             return device_class
@@ -332,6 +336,18 @@ def has_life_end_status(entity: Entity) -> bool:
     return "isLifeEnd" in data or model in LIFE_END_STATUS_DEVICE_TYPES
 
 
+def life_end_status(entity: Entity) -> bool | None:
+    """Return the APK end-of-life state for a supported detector."""
+    data = getattr(entity, "data", {}) or {}
+    if "isLifeEnd" in data:
+        return boolean_state(data["isLifeEnd"])
+
+    model = str(getattr(entity, "type", "") or "").strip()
+    if model in LIFE_END_STATUS_DEVICE_TYPES:
+        return False
+    return None
+
+
 def alarm_status(entity: Entity) -> bool | None:
     """Return the reported alarm status, or unknown before the first report."""
     if "alarmStatus" not in entity.data:
@@ -363,11 +379,6 @@ def data_bool(key: str) -> Callable[[Entity], bool | None]:
     return lambda entity: boolean_state(entity.data[key])
 
 
-def optional_data_bool(key: str) -> Callable[[Entity], bool | None]:
-    """Return a value function for late-reporting X-Sense boolean keys."""
-    return lambda entity: boolean_state(entity.data.get(key))
-
-
 def has_data(key: str) -> Callable[[Entity], bool]:
     """Return an exists function for a X-Sense data key."""
     return lambda entity: key in entity.data
@@ -381,12 +392,14 @@ def has_camera_data(key: str) -> Callable[[Entity], bool]:
 def has_motion_detection(entity: Entity) -> bool:
     """Return if an entity can expose regular motion detection state."""
     if is_camera_entity(entity):
-        return False
+        return True
     return "isMoved" in entity.data
 
 
 def motion_detection_value(entity: Entity) -> bool | None:
     """Return motion state, defaulting supported cameras to idle before events."""
+    if is_camera_entity(entity):
+        return boolean_state(entity.data.get("cameraMotionDetected", False))
     return boolean_state(entity.data.get("isMoved"))
 
 
@@ -431,7 +444,7 @@ _ALL_SENSORS: tuple[XSenseBinarySensorEntityDescription, ...] = (
         translation_key="is_life_end",
         device_class=BinarySensorDeviceClass.PROBLEM,
         exists_fn=has_life_end_status,
-        value_fn=optional_data_bool("isLifeEnd"),
+        value_fn=life_end_status,
     ),
     XSenseBinarySensorEntityDescription(
         key="armed",
@@ -636,27 +649,29 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the xsense binary sensor entry."""
-    devices: list[Device] = []
     coordinator: XSenseDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
 
-    for station in coordinator_stations(coordinator).values():
-        devices.extend(
-            XSenseBinarySensorEntity(coordinator, station, description)
-            for description in SENSORS
-            if description.exists_fn(station)
-        )
-        devices.append(XSenseMQTTConnectedEntity(coordinator, station, MQTTSensor))
-
-    for dev in coordinator_devices(coordinator).values():
-        devices.extend(
-            XSenseBinarySensorEntity(
-                coordinator, dev, description, station_id=device_station_id(dev)
+    def _entities() -> list[Device]:
+        devices: list[Device] = []
+        for station in coordinator_stations(coordinator).values():
+            devices.extend(
+                XSenseBinarySensorEntity(coordinator, station, description)
+                for description in SENSORS
+                if description.exists_fn(station)
             )
-            for description in SENSORS
-            if description.exists_fn(dev)
-        )
+            devices.append(XSenseMQTTConnectedEntity(coordinator, station, MQTTSensor))
 
-    async_add_entities(devices)
+        for dev in coordinator_devices(coordinator).values():
+            devices.extend(
+                XSenseBinarySensorEntity(
+                    coordinator, dev, description, station_id=device_station_id(dev)
+                )
+                for description in SENSORS
+                if description.exists_fn(dev)
+            )
+        return devices
+
+    setup_dynamic_entities(entry, coordinator, async_add_entities, _entities)
 
 
 class XSenseBinarySensorEntity(XSenseEntity, BinarySensorEntity):

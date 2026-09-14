@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "ডিভাইচ ইতিমধ্যে বিন্যাস কৰা হৈছে",
       "reauth_successful": "পুনৰ প্ৰমাণীকৰণ সফল হৈছিল",
-      "reconfigure_successful": "পুনৰ বিন্যাস সফল হৈছিল"
+      "reconfigure_successful": "পুনৰ বিন্যাস সফল হৈছিল",
+      "unique_id_mismatch": "এই প্ৰৱিষ্টিৰ সৈতে জড়িত একেটা X-Sense একাউণ্টেৰে চাইন ইন কৰক।"
     },
     "error": {
       "cannot_connect": "সংযোগ কৰাত ব্যৰ্থ",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "ৰেকৰ্ডিং মিডিয়া ছিঙ্কে Home Assistant মাধ্যমৰ অন্তৰ্গত কেমেৰা ক্লিপসমূহ কেশ্ব কৰে যাতে X-Sense ৰেকৰ্ডিংসমূহ চাইডবাৰ, মিডিয়া ব্ৰাউজাৰ, আৰু মোবাইল জাননীসমূহে ৰেকৰ্ডিংসমূহ দ্ৰুতভাৱে খোলিব পাৰে। ৰেকৰ্ডিংসমূহ খোলাৰ পিছতহে ইয়াক কেশ্ব কৰিবলৈ বন্ধ কৰক। ইয়াক পটভূমিত শেহতীয়া ৰেকৰ্ডিংসমূহ সাজু কৰি ৰাখিবলৈ সামৰ্থবান কৰক।",
+        "description": "কেৱল প্লেবেক ডিফল্ট আৰু সম্পূৰ্ণ ক্লিপ সংৰক্ষণ নকৰাকৈ চলাৰ সময়ত Home Assistant-ৰ মাজেৰে ৰেকৰ্ডিং প্ৰক্সি কৰে। নিৰ্ধাৰিত সময় আৰু আকাৰ সীমাৰে Home Assistant media-ত ক্লিপ ৰাখিবলৈ স্থানীয় ৰেকৰ্ডিং সংৰক্ষণ বাছক। background sync কেৱল retained mode-ত চলে।",
         "data": {
           "recording_media_sync_enabled": "ৰেকৰ্ডিং মিডিয়া ছিংক",
           "recording_media_sync_hours": "পটভূমি ছিঙ্ক ব্যৱধান",
           "recording_media_storage_path": "ৰেকৰ্ডিং কেচ ফোল্ডাৰ",
           "recording_notification_quality": "অধিসূচনা ৰেকৰ্ডিং মান",
           "recording_media_days_order": "ৰেকৰ্ডিং ডে অৰ্ডাৰ",
-          "recording_media_clips_order": "ক্লিপ অৰ্ডাৰ ৰেকৰ্ডিং"
+          "recording_media_clips_order": "ক্লিপ অৰ্ডাৰ ৰেকৰ্ডিং",
+          "recording_cache_retention_days": "কেশ্ব ধৰি ৰখা ৰেকৰ্ডিং কৰা",
+          "recording_cache_max_size_mb": "সৰ্বোচ্চ ৰেকৰ্ডিং কেশ্ব আকাৰ",
+          "recording_cache_mode": "ৰেকৰ্ডিং সংৰক্ষণ মোড"
         },
         "data_description": {
           "recording_media_sync_enabled": "শেহতীয়া ৰেকৰ্ডিংসমূহ স্বয়ংক্ৰিয়ভাৱে কেশ্ব কৰক। ইয়াৰ দ্বাৰা সংৰক্ষণ স্থান ব্যৱহাৰ কৰা হয় আৰু কেমেৰাক অধিক সঘনাই জগাই তুলিব পাৰে।",
           "recording_media_sync_hours": "সাধাৰণ পটভূমি কেচ-আপ ছিংক কিমান সঘনাই চলিব লাগে। শেহতীয়া ৰেকৰ্ডিংসমূহ প্ৰতি দুমিনিটৰ মূৰে মূৰে পৰীক্ষা কৰা হয় যেতিয়া ছিঙ্ক সামৰ্থবান কৰা হয়।",
           "recording_media_storage_path": "/media ৰ অন্তৰ্গত এটা ফোল্ডাৰ ব্যৱহাৰ কৰক। নতুন কেচ কৰা ভিডিঅ' আৰু থাম্বনেইলসমূহ ইয়াত সংৰক্ষণ কৰা হয়।",
-          "recording_notification_quality": "মোবাইল জাননীসমূহৰ বাবে X-Sense ৰ প্ৰত্যক্ষ/উচ্চ-ৰিজ'লিউচন ক্লিপ URLসমূহ পছন্দ কৰিবলে HD নিৰ্ব্বাচন কৰক। উপলব্ধ হ'লে কেমেৰা প্লেবেক কেপচাৰ পথ ব্যৱহাৰ কৰিবলে SD নিৰ্ব্বাচন কৰক।",
+          "recording_notification_quality": "HD এ অধিক ৰিজ'লিউচনৰ ৰেকৰ্ডিং URL পছন্দ কৰে। X-Sense এ প্ৰদান কৰিলে SD এ সাধাৰণ ৰিজ'লিউচনৰ URL পছন্দ কৰে।",
           "recording_media_days_order": "ৰেকৰ্ডিং দৰ্শকত নতুন বা পুৰণি দিন প্ৰথমে দেখা দিয়ে নে নাই বাছক।",
-          "recording_media_clips_order": "প্ৰতিটো দিনৰ ভিতৰত নতুন বা পুৰণি ক্লিপসমূহ প্ৰথমে দেখা দিয়ে নেকি বাছক।"
+          "recording_media_clips_order": "প্ৰতিটো দিনৰ ভিতৰত নতুন বা পুৰণি ক্লিপসমূহ প্ৰথমে দেখা দিয়ে নেকি বাছক।",
+          "recording_cache_retention_days": "ইয়াৰ বহুদিনৰ পিছত স্থানীয় কেচ কৰা ৰেকৰ্ডিংসমূহ মচি পেলাওক। এক্স-চেন্স ক্লাউড আৰু এছডি কাৰ্ড ৰেকৰ্ডিং সলনি কৰা নহয়।",
+          "recording_cache_max_size_mb": "সৰ্বাধিক স্থানীয় কেশ্ব আকাৰ MB ত। যেতিয়া সীমাত উপনীত হয়, তেতিয়া কমকৈ শেহতীয়াকৈ চোৱা ৰেকৰ্ডিংবোৰ প্ৰথমে আঁতৰোৱা হয়।",
+          "recording_cache_mode": "কেৱল প্লেবেকে সম্পূৰ্ণ ক্লিপ সংৰক্ষণ নকৰাকৈ প্ৰয়োজন অনুসৰি Home Assistant-ৰ মাজেৰে HLS media প্ৰক্সি কৰে। retained mode-এ তলৰ সীমা অনুসৰি স্থানীয় কপি ৰাখে।"
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "ৰেকৰ্ডিং কেশ্ব ফোল্ডাৰ `{old_path}` ৰ পৰা `{new_path}` লৈ সলনি হ'ব। বৰ্তমানৰ কেচ কৰা ভিডিঅ' আৰু থাম্বনেইলসমূহ স্বয়ংক্ৰিয়ভাৱে স্থানান্তৰ কৰা নহয়। বৰ্ত্তমানৰ `videos` আৰু `thumbs` ফোল্ডাৰসমূহ প্ৰথমে স্থানান্তৰ কৰক যদি আপুনি পুৰণি কেশ্ব কৰা ৰেকৰ্ডিংসমূহ উপলব্ধ থাকিব বিচাৰে।"
+        "description": "ৰেকৰ্ডিং কেশ্ব ফোল্ডাৰ `{old_path}` ৰ পৰা `{new_path}` লৈ সলনি হ'ব। বৰ্তমানৰ কেচ কৰা ভিডিঅ' আৰু থাম্বনেইলসমূহ স্বয়ংক্ৰিয়ভাৱে স্থানান্তৰ কৰা নহয়। বৰ্ত্তমানৰ `hls`, `videos` আৰু `thumbs` ফোল্ডাৰসমূহ প্ৰথমে স্থানান্তৰ কৰক যদি আপুনি পুৰণি কেশ্ব কৰা ৰেকৰ্ডিংসমূহ উপলব্ধ থাকিব বিচাৰে।"
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "মেইলবক্স সূচী সক্ৰিয়"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "বিদ্যুৎ সংযোগ বিচ্ছিন্ন"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "বেটাৰীৰ কাৰ্যকালৰ সমাপ্তি"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "কাৰ্যকালৰ সমাপ্তি"
       },
       "armed": {
-        "name": "Armed"
+        "name": "সুৰক্ষা সক্ৰিয়"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "গতি ধৰা পৰিছে"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "USBৰ জৰিয়তে চাৰ্জ হৈ আছে"
       },
       "charging": {
-        "name": "Charging"
+        "name": "চাৰ্জ হৈ আছে"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "নিদ্ৰা অৱস্থাত"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "স্থাপন বন্ধনী আঁতৰোৱা হৈছে"
       },
       "activated": {
-        "name": "Activated"
+        "name": "সক্ৰিয় কৰা হৈছে"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "এলাৰ্মৰ অনুশীলন সক্ৰিয়"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "এলাৰ্ম সক্ৰিয়"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "এলাৰ্ম আৰম্ভ কৰা যন্ত্ৰ"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "যন্ত্ৰৰ পৰীক্ষা সক্ৰিয়"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "ডিভাইচ নিস্তব্ধ কৰা হৈছে"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "এলাৰ্মৰ শব্দ"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "এপৰ জাননী"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "সময়সূচীৰ জাননী"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "পানী লিক হোৱাৰ এলাৰ্ম"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "পানী লিকৰ এলাৰ্ম নীৰৱ কৰা হৈছে"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "উষ্ণতাৰ এলাৰ্ম"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "উষ্ণতাৰ এলাৰ্ম নীৰৱ কৰা হৈছে"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "যন্ত্ৰৰ সময় মণ্ডল সক্ৰিয়"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "যন্ত্ৰৰ সময় মণ্ডল বৈধ"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "নিস্তব্ধ"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "জগাওক"
       }
     },
     "event": {
@@ -188,7 +195,7 @@
           "normal": "স্বাভাৱিক",
           "low_battery": "বেটাৰী কম",
           "malfunction": "বিজুতি",
-          "end_of_life": "জীৱনৰ শেষ"
+          "end_of_life": "কাৰ্যকালৰ সমাপ্তি"
         }
       },
       "alarm_vol": {
@@ -254,139 +261,139 @@
         "name": "শীৰ্ষ ৰেডন স্তৰৰ সময়"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "বেটাৰীৰ স্তৰ"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi সংকেতৰ শক্তি"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi সংকেতৰ শক্তি"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "কেমেৰাৰ স্থিতি কোড"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "ফাৰ্মৱেৰৰ সংস্কৰণ"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "কেমেৰাৰ ফাৰ্মৱেৰৰ স্থিতি"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Wi-Fiৰ নাম (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Wi-Fi চেনেল"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "MAC ঠিকনা"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "SD কাৰ্ডৰ স্থিতি"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "SD কাৰ্ডৰ মুঠ ধাৰণক্ষমতা"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "SD কাৰ্ডৰ ব্যৱহৃত স্থান"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "কেমেৰা সক্ৰিয় কৰাৰ সময়"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "কেমেৰা অফলাইন হোৱাৰ সময়"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "কেমেৰাৰ ক্ষুদ্ৰ ছবিৰ সময়"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "কেমেৰাৰ নিদ্ৰাৰ পৰা জগোৱাৰ সময়"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "কেমেৰাৰ নিদ্ৰা অৱস্থাৰ বাৰ্তা"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "যন্ত্ৰৰ সময় মণ্ডল"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "ধোঁৱা সংবেদকৰ প্ৰকাৰ"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "CO এলাৰ্মৰ মানদণ্ড"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "পৰীক্ষাৰ প্ৰকাৰ"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "PIR ব্যৱধান"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "চেন্সৰৰ সংবেদনশীলতা"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "এলাৰ্ম নীৰৱ কৰাৰ সময়"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "উষ্ণতাৰ এলাৰ্ম নীৰৱ কৰাৰ সময়"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "পানী লিকৰ এলাৰ্ম নীৰৱ কৰাৰ সময়"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "হ্ৰস্বম্যাদী CO সতৰ্কবাণী"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "হ্ৰস্বম্যাদী CO সতৰ্কবাণীৰ স্তৰ"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "দীৰ্ঘম্যাদী CO সতৰ্কবাণী"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "দীৰ্ঘম্যাদী CO সতৰ্কবাণীৰ স্তৰ"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "এলাৰ্মৰ ঘটনা"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "এলাৰ্মৰ উৎস"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "পুনৰাবৃত্ত এলাৰ্ম"
       },
       "time": {
-        "name": "Report Time"
+        "name": "প্ৰতিবেদনৰ সময়"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "UTC সময়"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "ডিভাইচ পৰীক্ষাৰ সময়"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "যন্ত্ৰৰ সময় মণ্ডল"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "কণ্ঠস্বৰে ঘোষণা কৰা স্থান"
       },
       "location": {
-        "name": "Location"
+        "name": "স্থান"
       },
       "color": {
-        "name": "Color"
+        "name": "ৰং"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "পোহৰৰ ঘটনা"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "যন্ত্ৰৰ প্ৰকাৰ"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "প্ৰতিবেদিত যন্ত্ৰৰ প্ৰকাৰ"
       },
       "category": {
-        "name": "Category"
+        "name": "শ্ৰেণী"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "সুৰক্ষা অৱস্থা"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "ষ্টেণ্ডবাই উজ্জ্বলতা"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "এলাৰ্ম ভলিউম"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "কণ্ঠৰ ভলিউম"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "স্পীকাৰৰ শব্দৰ মাত্ৰা"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "এলাৰ্মৰ সময়সীমা"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "নিশাৰ দৃষ্টিৰ সংবেদনশীলতা"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "কান্দোন চিনাক্তকৰণৰ সংবেদনশীলতা"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "ৰেকৰ্ডিঙৰ মাজৰ বিৰতি"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "যান্ত্ৰিক ঘণ্টাৰ সময়সীমা"
       }
     },
     "select": {
@@ -519,251 +526,266 @@
         "name": "এপ অন টাইম"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "ভাষা"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "ৰেকৰ্ডিঙৰ ৰিজলিউচন"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "ধৰা পেলোৱা সংবেদনশীলতা",
+        "state": {
+          "high": "উচ্চ",
+          "medium": "মধ্যম",
+          "low": "নিম্ন",
+          "auto": "স্বয়ংক্ৰিয়"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "ভিডিঅ'ৰ সময়সীমা"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "টিপটিপনিৰ কম্পাঙ্ক"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "অবিকল্প ক'ডেক"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "গতি অনুসৰণ"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "নিশাৰ দৃষ্টিৰ অৱস্থা"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "ক্লাউড ৰেকৰ্ডিঙৰ মাজৰ বিৰতি"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "দুৱাৰৰ ঘণ্টাৰ সুৰ"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "স্বয়ংক্ৰিয়ভাৱে চালু হোৱাৰ বেটাৰীৰ স্তৰ"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "LED সূচক"
       },
       "light_power": {
-        "name": "Light"
+        "name": "পোহৰ"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "এলাৰ্ম সক্ষম"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "অব্যাহত এলাৰ্ম"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "ডাকৰ সোঁৱৰণী"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "চুটি সংকেতৰ সুৰ সক্ষম"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "সোঁৱৰণী সক্ষম"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "সোঁৱৰণীৰ সুৰ সক্ষম"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "অপেক্ষাৰ পোহৰ সক্ষম"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR সক্ষম"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "পৰিবেশৰ পোহৰ চিনাক্তকৰণ সক্ষম"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "বুটামৰ শব্দ সক্ষম"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "সতৰ্কবাণী সক্ষম"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "গতি চিনাক্তকৰণ"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "ব্যক্তি চিনাক্তকৰণ"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "ভিডিঅ' ৰেকৰ্ড কৰক"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "স্বয়ংক্ৰিয় নিশাৰ দৃষ্টি"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "স্থিতিৰ LED"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "কেমেৰাৰ এলাৰ্ম"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "ছবি ঘূৰাওক"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "টিপটিপনি প্ৰতিৰোধ"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "কান্দোন চিনাক্তকৰণ"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "ৰেকৰ্ডিঙৰ মাজৰ বিৰতি"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "যন্ত্ৰৰ কল"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "যান্ত্ৰিক ঘণ্টা"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "গতি অনুসৰণ"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "কণ্ঠস্বৰৰ মাত্ৰা"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "পোনপটীয়া শব্দ"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "শব্দ ৰেকৰ্ডিং"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "স্বয়ংক্ৰিয়ভাৱে চালু"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "বগা পোহৰ"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "আঁতৰালে এলাৰ্ম"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "নিদ্ৰা অৱস্থা"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "AI জাননী: ব্যক্তি"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "AI জাননী: পোহনীয়া জন্তু"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "AI জাননী: বাহনৰ প্ৰৱেশ"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "AI জাননী: বাহনৰ প্ৰস্থান"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "AI জাননী: ৰখাই থোৱা বাহন"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "AI জাননী: পাৰ্চেল উপস্থিত"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "AI জাননী: পাৰ্চেল থৈ যোৱা"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "AI জাননী: পাৰ্চেল লৈ যোৱা"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "AI জাননী: অন্যান্য"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "AI সহায়ক: ব্যক্তি"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "AI সহায়ক: পোহনীয়া জন্তু"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "AI সহায়ক: বাহন"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "AI সহায়ক: পাৰ্চেল"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "এলাৰ্ম"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "X-Sense ষ্টেচন এতিয়া উপলব্ধ নহয়"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "X-Sense সত্তা এতিয়া উপলব্ধ নহয়"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "X-Sense MQTT সংযুক্ত নহয়"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "X-Senseৰ সুৰক্ষা অৱস্থাৰ আদেশ প্ৰকাশ কৰিব পৰা নগ'ল"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "{mode} অৱস্থাৰ বাবে X-Senseৰ বলপূৰ্বক সুৰক্ষা সক্ৰিয়কৰণ অপেক্ষাৰত নাই"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "X-Senseৰ ৰেকৰ্ডিঙৰ মাজৰ বিৰতি সক্ষম নে নাই অজ্ঞাত"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option} X-Senseত সমৰ্থিত বিকল্প নহয়"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "X-Senseৰ নিৰ্বাচন লিখিব নোৱাৰি"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "X-Senseৰ ৰেডন সীমা বৈধ নহয়"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "X-Senseৰ পৰিসৰ সংহতিত যোৰা মানটো নাই"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "X-Senseৰ সৰ্বনিম্ন মান সৰ্বোচ্চ মানতকৈ ডাঙৰ হ'ব নোৱাৰে"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service}ৰ বাবে পোহৰৰ শক্তি চুইচৰ প্ৰয়োজন"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service}ৰ বাবে SBS50 ষ্টেচনৰ প্ৰয়োজন"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "X-Sense {service}ৰ IDসমূহ নাই"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "X-Senseৰ সময়সূচীৰ সময় HH:MM বা HHMM ৰূপত হ'ব লাগিব"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "X-Senseৰ সময়সূচীৰ সময় সীমাৰ বাহিৰত"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "X-Senseৰ সময়সূচীত সপ্তাহৰ অন্ততঃ এটা দিন থাকিব লাগিব"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "X-Senseৰ সময়সূচীৰ সপ্তাহৰ দিন 1ৰ পৰা 7লৈ হ'ব লাগিব"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field}ত অন্ততঃ এটা ID থাকিব লাগিব"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "চাবস্ক্ৰিপচন দুবাৰ আঁতৰাব নোৱাৰি"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "বিষয়টো পাঠ্য ষ্ট্ৰিং হ'ব লাগিব"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "MQTTৰ সৈতে যোগাযোগত ত্ৰুটি: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "{failed}টা ৰেকৰ্ডিং কেশ্বত ৰাখিব পৰা নগ'ল। {downloaded}টা ৰেকৰ্ডিং ডাউনলোড কৰা হ'ল।"
+    },
+    "force_arm_invalid_link": {
+      "message": "X-Sense-ৰ জোৰকৈ সুৰক্ষা সক্ৰিয় কৰাৰ এই লিংকটো অবৈধ।"
+    },
+    "force_arm_request_failed": {
+      "message": "X-Sense-ৰ জোৰকৈ সুৰক্ষা সক্ৰিয় কৰাৰ অনুৰোধ ব্যৰ্থ হ'ল।"
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "ঊৰ্ধ্বক্ৰমত",
+        "descending": "অধঃক্ৰমত"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "ঊৰ্ধ্বক্ৰমত",
+        "descending": "অধঃক্ৰমত"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "কেৱল প্লেবেক",
+        "retained": "স্থানীয় ৰেকৰ্ডিং ৰাখক"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "ঘৰত",
+        "away": "বাহিৰত"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "fields": {
+        "mode": {
+          "name": "সুৰক্ষা সক্ৰিয় কৰাৰ অৱস্থা"
+        }
+      },
+      "name": "জোৰকৈ সুৰক্ষা সক্ৰিয় কৰক",
+      "description": "খোলা চেন্সৰৰ বাবে বাধাপ্ৰাপ্ত হৈ থকা ঘৰত বা বাহিৰত অৱস্থাৰ সুৰক্ষা সক্ৰিয় কৰাৰ অনুৰোধ নিশ্চিত কৰক। খোলা চেন্সৰসমূহ এৰি যোৱা হ'ব।"
+    },
+    "force_arm_now": {
+      "fields": {
+        "mode": {
+          "name": "সুৰক্ষা সক্ৰিয় কৰাৰ অৱস্থা"
+        }
+      },
+      "name": "এতিয়াই জোৰকৈ সুৰক্ষা সক্ৰিয় কৰক",
+      "description": "নিশ্চিতকৰণ নিবিচৰাকৈ খোলা চেন্সৰসমূহ এৰি ঘৰত বা বাহিৰত অৱস্থাত তৎক্ষণাৎ সুৰক্ষা সক্ৰিয় কৰক।"
+    },
+    "trigger_sos": {
+      "name": "জৰুৰীকালীন SOS এলাৰ্ম বজাওক",
+      "description": "SBS50-ৰ জৰুৰীকালীন SOS এলাৰ্ম তৎক্ষণাৎ বজাওক।"
+    },
+    "cancel_sos": {
+      "name": "জৰুৰীকালীন SOS এলাৰ্ম বাতিল কৰক",
+      "description": "SBS50-ৰ সক্ৰিয় জৰুৰীকালীন SOS এলাৰ্ম বাতিল কৰক।"
+    },
+    "cancel_alarm": {
+      "name": "সক্ৰিয় এলাৰ্ম বাতিল কৰক",
+      "description": "SBS50-ৰ সক্ৰিয় চেন্সৰ এলাৰ্ম বাতিল কৰক।"
+    },
+    "set_sos_sound": {
+      "fields": {
+        "audible": {
+          "name": "শব্দযুক্ত SOS এলাৰ্ম"
+        }
+      },
+      "name": "SOS-ৰ শব্দ নিৰ্ধাৰণ কৰক",
+      "description": "SOS-এ কেৱল লাইট জিলিকাব নে লগতে বুজাৰো বজাব, সেয়া বাছক।"
+    },
+    "refresh_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "বিন্যাস প্ৰৱিষ্টিৰ ID",
+          "description": "সকলো X-Sense একাউণ্টত প্ৰয়োগ কৰিবলৈ খালী ৰাখক।"
+        }
+      },
+      "name": "ৰেকৰ্ডিংসমূহ সতেজ কৰক",
+      "description": "কাষৰ বাৰ আৰু মিডিয়া ব্ৰাউজাৰে ব্যৱহাৰ কৰা কেমেৰাৰ ৰেকৰ্ডিং সূচী সতেজ কৰক।"
+    },
+    "cache_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "বিন্যাস প্ৰৱিষ্টিৰ ID",
+          "description": "সকলো X-Sense একাউণ্টত প্ৰয়োগ কৰিবলৈ খালী ৰাখক।"
+        }
+      },
+      "name": "ৰেকৰ্ডিংসমূহ কেশ্বত ৰাখক",
+      "description": "স্থানীয়ভাৱে ৰাখিবলৈ কেমেৰাৰ ৰেকৰ্ডিংসমূহ ডাউনলোড কৰক। ইয়াৰ বাবে স্থানীয় ৰেকৰ্ডিং ৰাখক অৱস্থা প্ৰয়োজন।"
+    },
+    "clear_recordings_cache": {
+      "fields": {
+        "entry_id": {
+          "name": "বিন্যাস প্ৰৱিষ্টিৰ ID",
+          "description": "সকলো X-Sense একাউণ্টত প্ৰয়োগ কৰিবলৈ খালী ৰাখক।"
+        }
+      },
+      "name": "ৰেকৰ্ডিংসমূহৰ কেশ্ব খালী কৰক",
+      "description": "স্থানীয় ৰেকৰ্ডিং সূচী, ভিডিঅ' আৰু থাম্বনেইলসমূহ মচক। ক্লাউড আৰু SD কাৰ্ডৰ ৰেকৰ্ডিংসমূহ অপৰিৱৰ্তিত থাকিব।"
+    },
+    "query_light_schedules": {
+      "name": "লাইটৰ সময়সূচীসমূহ বিচাৰক",
+      "description": "লাইটৰ সময়সূচীসমূহ বিচাৰক। SBS50-ৰ লাইটৰ পাৱাৰ চুইচটো লক্ষ্য হিচাপে বাছক।"
+    },
+    "create_light_schedule": {
+      "fields": {
+        "name": {
+          "name": "প্ৰদৰ্শিত নাম"
+        },
+        "start_time": {
+          "name": "আৰম্ভণিৰ সময় (HH:MM বা HHMM)"
+        },
+        "end_time": {
+          "name": "সমাপ্তিৰ সময় (HH:MM বা HHMM)"
+        },
+        "week_days": {
+          "name": "সপ্তাহৰ দিন (1 = দেওবাৰ, 7 = শনিবাৰ)"
+        },
+        "enabled": {
+          "name": "সক্ৰিয় অৱস্থা"
+        },
+        "time_zone": {
+          "name": "সময় অঞ্চল"
+        }
+      },
+      "name": "লাইটৰ সময়সূচী সৃষ্টি কৰক",
+      "description": "লাইটৰ সময়সূচী সৃষ্টি কৰক। SBS50-ৰ লাইটৰ পাৱাৰ চুইচটো লক্ষ্য হিচাপে বাছক।"
+    },
+    "update_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "সময়সূচীৰ পৰিচয়ক"
+        },
+        "start_time": {
+          "name": "আৰম্ভণিৰ সময় (HH:MM বা HHMM)"
+        },
+        "end_time": {
+          "name": "সমাপ্তিৰ সময় (HH:MM বা HHMM)"
+        },
+        "week_days": {
+          "name": "সপ্তাহৰ দিন (1 = দেওবাৰ, 7 = শনিবাৰ)"
+        },
+        "enabled": {
+          "name": "সক্ৰিয় অৱস্থা"
+        },
+        "time_zone": {
+          "name": "সময় অঞ্চল"
+        }
+      },
+      "name": "লাইটৰ সময়সূচী আপডেট কৰক",
+      "description": "লাইটৰ সময়সূচী আপডেট কৰক। SBS50-ৰ লাইটৰ পাৱাৰ চুইচটো লক্ষ্য হিচাপে বাছক।"
+    },
+    "rename_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "সময়সূচীৰ পৰিচয়ক"
+        },
+        "name": {
+          "name": "প্ৰদৰ্শিত নাম"
+        }
+      },
+      "name": "লাইটৰ সময়সূচীৰ নাম সলনি কৰক",
+      "description": "লাইটৰ সময়সূচীৰ নাম সলনি কৰক। SBS50-ৰ লাইটৰ পাৱাৰ চুইচটো লক্ষ্য হিচাপে বাছক।"
+    },
+    "delete_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "সময়সূচীৰ পৰিচয়ক"
+        }
+      },
+      "name": "লাইটৰ সময়সূচী মচক",
+      "description": "লাইটৰ সময়সূচী মচক। SBS50-ৰ লাইটৰ পাৱাৰ চুইচটো লক্ষ্য হিচাপে বাছক।"
+    },
+    "query_light_groups": {
+      "name": "লাইটৰ গোটসমূহ বিচাৰক",
+      "description": "লাইটৰ গোটসমূহ বিচাৰক। SBS50-ৰ লাইটৰ পাৱাৰ চুইচটো লক্ষ্য হিচাপে বাছক।"
+    },
+    "create_light_group": {
+      "fields": {
+        "name": {
+          "name": "প্ৰদৰ্শিত নাম"
+        }
+      },
+      "name": "লাইটৰ গোট সৃষ্টি কৰক",
+      "description": "লাইটৰ গোট সৃষ্টি কৰক। SBS50-ৰ লাইটৰ পাৱাৰ চুইচটো লক্ষ্য হিচাপে বাছক।"
+    },
+    "rename_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "গোটৰ পৰিচয়ক"
+        },
+        "name": {
+          "name": "প্ৰদৰ্শিত নাম"
+        }
+      },
+      "name": "লাইটৰ গোটৰ নাম সলনি কৰক",
+      "description": "লাইটৰ গোটৰ নাম সলনি কৰক। SBS50-ৰ লাইটৰ পাৱাৰ চুইচটো লক্ষ্য হিচাপে বাছক।"
+    },
+    "update_light_group_timer": {
+      "fields": {
+        "group_id": {
+          "name": "গোটৰ পৰিচয়ক"
+        },
+        "timer": {
+          "name": "টাইমাৰৰ প্ৰকাৰ (pirTime বা appTime)"
+        },
+        "value": {
+          "name": "টাইমাৰৰ মান"
+        }
+      },
+      "name": "লাইটৰ গোটৰ টাইমাৰ আপডেট কৰক",
+      "description": "লাইটৰ গোটৰ টাইমাৰ আপডেট কৰক। SBS50-ৰ লাইটৰ পাৱাৰ চুইচটো লক্ষ্য হিচাপে বাছক।"
+    },
+    "bind_light_group": {
+      "fields": {
+        "name": {
+          "name": "প্ৰদৰ্শিত নাম"
+        },
+        "device_ids": {
+          "name": "ডিভাইচৰ পৰিচয়কসমূহ"
+        }
+      },
+      "name": "লাইটৰ গোট সংযোগ কৰক",
+      "description": "লাইটৰ গোট সংযোগ কৰক। SBS50-ৰ লাইটৰ পাৱাৰ চুইচটো লক্ষ্য হিচাপে বাছক।"
+    },
+    "delete_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "গোটৰ পৰিচয়ক"
+        }
+      },
+      "name": "লাইটৰ গোট মচক",
+      "description": "লাইটৰ গোট মচক। SBS50-ৰ লাইটৰ পাৱাৰ চুইচটো লক্ষ্য হিচাপে বাছক।"
+    },
+    "remove_light_group_devices": {
+      "fields": {
+        "device_ids": {
+          "name": "ডিভাইচৰ পৰিচয়কসমূহ"
+        }
+      },
+      "name": "লাইটৰ গোটৰ পৰা ডিভাইচসমূহ আঁতৰাওক",
+      "description": "লাইটৰ গোটৰ পৰা ডিভাইচসমূহ আঁতৰাওক। SBS50-ৰ লাইটৰ পাৱাৰ চুইচটো লক্ষ্য হিচাপে বাছক।"
+    },
+    "set_light_group_power": {
+      "fields": {
+        "group_id": {
+          "name": "গোটৰ পৰিচয়ক"
+        },
+        "device_ids": {
+          "name": "ডিভাইচৰ ক্ৰমিক নম্বৰসমূহ"
+        },
+        "enabled": {
+          "name": "সক্ৰিয় অৱস্থা"
+        }
+      },
+      "name": "লাইটৰ গোট অন বা অফ কৰক",
+      "description": "লাইটৰ গোট অন বা অফ কৰক। SBS50-ৰ লাইটৰ পাৱাৰ চুইচটো লক্ষ্য হিচাপে বাছক।"
+    }
+  },
+  "issues": {}
 }

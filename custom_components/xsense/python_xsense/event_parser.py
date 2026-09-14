@@ -94,11 +94,12 @@ __all__ = [
     "apply_apk_dispatch_aliases",
     "apply_apk_event_aliases",
     "camera_ai_history_event_key",
-    "camera_event_history_event_key",
+    "camera_event_record_event_key",
+    "camera_event_record_station_data",
+    "camera_event_records",
     "camera_event_history_playback_data",
     "camera_event_history_playback_source",
-    "camera_event_history_records",
-    "camera_event_history_station_data",
+    "camera_library_records",
     "camera_event_history_time",
     "camera_playback_epoch_seconds",
     "latest_apk_detection_time",
@@ -312,8 +313,8 @@ def camera_ai_history_event_key(server_id: str, alarm_item: dict[str, Any]) -> s
     return f"{server_id}:{payload}"
 
 
-def camera_event_history_records(history: dict[str, Any]) -> list[dict[str, Any]]:
-    """Return ADDX camera event records from the APK event-history response."""
+def camera_library_records(history: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return ADDX recording rows from the APK playback-library response."""
     data = history.get("data") if isinstance(history.get("data"), dict) else history
     records = data.get("list") if isinstance(data, dict) else None
     if not isinstance(records, list):
@@ -321,13 +322,20 @@ def camera_event_history_records(history: dict[str, Any]) -> list[dict[str, Any]
     return [record for record in records if isinstance(record, dict)]
 
 
-def camera_event_history_event_key(record: dict[str, Any]) -> str:
-    """Return a stable key for one APK ADDX camera event record."""
+def camera_event_records(history: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return records from the APK event-filtered camera library response."""
+    return camera_library_records(history)
+
+
+def camera_event_record_event_key(record: dict[str, Any]) -> str:
+    """Return a stable key for one APK event-filtered camera record."""
     serial = record.get("serialNumber") or record.get("deviceSn") or record.get("sn")
-    trace = record.get("traceId") or record.get("traceIds")
     timestamp = record.get("timestamp") or record.get("startTime") or record.get("date")
-    if serial and (trace or timestamp):
-        return f"camera-event:{serial}:{trace or timestamp}"
+    trace = record.get("traceId") or record.get("traceIds")
+    if serial and trace:
+        return f"camera-event:{serial}:{trace}"
+    if serial and timestamp:
+        return f"camera-event:{serial}:{timestamp}"
     payload = json.dumps(
         record,
         ensure_ascii=False,
@@ -338,29 +346,38 @@ def camera_event_history_event_key(record: dict[str, Any]) -> str:
     return f"camera-event:{payload}"
 
 
-def camera_event_history_station_data(record: dict[str, Any]) -> dict[str, Any]:
-    """Return normal camera state keys from an APK ADDX event-history record."""
+def camera_event_record_station_data(record: dict[str, Any]) -> dict[str, Any]:
+    """Return camera event data from the APK event-filtered library record."""
     serial = record.get("serialNumber") or record.get("deviceSn") or record.get("sn")
-    if not serial:
+    timestamp = record.get("timestamp") or record.get("startTime") or record.get("date")
+    event_time = camera_event_history_time(timestamp)
+    if not serial or not event_time:
         return {}
 
-    timestamp = record.get("timestamp") or record.get("startTime")
-    event_time = camera_event_history_time(timestamp)
     data: dict[str, Any] = {
         "serialNumber": serial,
         "deviceSN": serial,
+        "eventTime": event_time,
+        "time": event_time,
+        "cameraMotionDetected": True,
         "eventType": record.get("videoEvent") or record.get("tags") or "motion",
         "eventItems": record.get("eventInfoList"),
         "eventObjectType": record.get("eventInfoList") or record.get("tags"),
-        "lastType": record.get("videoEvent") or record.get("tags"),
+        "lastType": record.get("videoEvent") or record.get("tags") or "motion",
     }
-    if event_time:
-        data["time"] = event_time
-        data["eventTime"] = event_time
-
     if playback := camera_event_history_playback_data(record):
         data["playback"] = playback
-
+        if image_url := playback.get("image_url"):
+            data["lastEventImageUrl"] = image_url
+        if package_image_url := playback.get("package_image_url"):
+            data["lastEventPackageImageUrl"] = package_image_url
+        if image_time := (
+            playback.get("timestamp_s")
+            or playback.get("start_time_s")
+            or playback.get("timestamp")
+            or playback.get("start_time")
+        ):
+            data["lastEventImageTime"] = image_time
     apply_apk_event_aliases(data)
     return data
 

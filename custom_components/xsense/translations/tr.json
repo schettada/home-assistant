@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "Cihaz zaten yapılandırılmış",
       "reauth_successful": "Yeniden kimlik doğrulama başarılı oldu",
-      "reconfigure_successful": "Yeniden yapılandırma başarılı oldu"
+      "reconfigure_successful": "Yeniden yapılandırma başarılı oldu",
+      "unique_id_mismatch": "Bu girdide kullanılan X-Sense hesabıyla oturum açın."
     },
     "error": {
       "cannot_connect": "Bağlantı başarısız oldu",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "Kayıt ortamı senkronizasyonu, kamera kliplerini Home Assistant ortamı altında önbelleğe alır, böylece X-Sense Kayıtlar kenar çubuğu, Medya Tarayıcı ve mobil bildirimler kayıtları hızlı bir şekilde açabilir. Kayıtları yalnızca açıldıklarında önbelleğe almak için bunu kapalı bırakın. Son kayıtları arka planda hazır tutmak için bunu etkinleştirin.",
+        "description": "Varsayılan olan yalnızca oynatma modu, tam klipleri saklamadan kayıtları oynatılırken Home Assistant üzerinden aktarır. Klipleri belirlenen yaş ve boyut sınırlarıyla Home Assistant medyasında tutmak için yerel kayıtları sakla seçeneğini seçin. Arka plan eşitlemesi yalnızca saklama modunda çalışır.",
         "data": {
           "recording_media_sync_enabled": "Medya senkronizasyonu kaydediliyor",
           "recording_media_sync_hours": "Arka planda senkronizasyon aralığı",
           "recording_media_storage_path": "Önbellek klasörü kaydediliyor",
           "recording_notification_quality": "Bildirim kayıt kalitesi",
           "recording_media_days_order": "Kayıt günü sırası",
-          "recording_media_clips_order": "Klip sırası kaydediliyor"
+          "recording_media_clips_order": "Klip sırası kaydediliyor",
+          "recording_cache_retention_days": "Önbellek saklamayı kaydetme",
+          "recording_cache_max_size_mb": "Maksimum kayıt önbellek boyutu",
+          "recording_cache_mode": "Kayıt depolama modu"
         },
         "data_description": {
           "recording_media_sync_enabled": "Son kayıtları otomatik olarak önbelleğe alın. Bu, depolama alanını kullanır ve kameraları daha sık uyandırabilir.",
           "recording_media_sync_hours": "Normal arka plan yakalama senkronizasyonunun ne sıklıkta çalışması gerektiği. Senkronizasyon etkinleştirildiğinde son kayıtlar birkaç dakikada bir kontrol edilir.",
           "recording_media_storage_path": "/media altında bir klasör kullanın. Önbelleğe alınan yeni videolar ve küçük resimler burada saklanır.",
-          "recording_notification_quality": "Mobil bildirimler için X-Sense'ın doğrudan/yüksek çözünürlüklü klip URL'lerini tercih etmek için HD'ı seçin. Mümkün olduğunda kamera oynatma yakalama yolunu kullanmak için SD'ı seçin.",
+          "recording_notification_quality": "HD, daha yüksek çözünürlüklü kayıt URL'lerini tercih eder. SD, X-Sense sağladığında standart çözünürlüklü URL'leri tercih eder.",
           "recording_media_days_order": "Kayıt görüntüleyicide ilk olarak daha yeni günlerin mi yoksa daha eski günlerin mi görüntüleneceğini seçin.",
-          "recording_media_clips_order": "Her gün içinde daha yeni veya daha eski kliplerin ilk önce görünüp görünmeyeceğini seçin."
+          "recording_media_clips_order": "Her gün içinde daha yeni veya daha eski kliplerin ilk önce görünüp görünmeyeceğini seçin.",
+          "recording_cache_retention_days": "Bu kadar gün geçtikten sonra yerel önbelleğe alınmış kayıtları silin. X-Sense bulut ve SD kart kayıtları değiştirilmez.",
+          "recording_cache_max_size_mb": "MB cinsinden maksimum yerel önbellek boyutu. Sınıra ulaşıldığında, en son görüntülenen kayıtlar ilk önce kaldırılır.",
+          "recording_cache_mode": "Yalnızca oynatma modu, tam klipleri saklamadan HLS medyasını istek üzerine Home Assistant üzerinden aktarır. Saklama modu aşağıdaki sınırlara göre yerel kopyaları tutar."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "Kayıt önbelleği klasörü `{old_path}` yerine `{new_path}` olarak değişecektir. Önbelleğe alınmış mevcut videolar ve küçük resimler otomatik olarak taşınmaz. Önbelleğe alınmış eski kayıtların kullanılabilir kalmasını istiyorsanız önce mevcut `videos` ve `thumbs` klasörlerini taşıyın."
+        "description": "Kayıt önbelleği klasörü `{old_path}` yerine `{new_path}` olarak değişecektir. Önbelleğe alınmış mevcut videolar ve küçük resimler otomatik olarak taşınmaz. Önbelleğe alınmış eski kayıtların kullanılabilir kalmasını istiyorsanız önce mevcut `hls`, `videos` ve `thumbs` klasörlerini taşıyın."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "Posta Kutusu Programı Etkin"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "Şebeke gücü bağlantısı kesildi"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "Pil kullanım ömrü sona erdi"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "Kullanım Ömrü Sonu"
       },
       "armed": {
-        "name": "Armed"
+        "name": "Kurulu"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "Hareket algılandı"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "USB ile şarj"
       },
       "charging": {
-        "name": "Charging"
+        "name": "Şarj oluyor"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "Uykuda"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "Montaj braketi çıkarıldı"
       },
       "activated": {
-        "name": "Activated"
+        "name": "Etkinleştirildi"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "Alarm tatbikatı etkin"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "Alarm etkin"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "Başlatıcı alarm"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "Cihaz testi etkin"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "Cihaz Susturuldu"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "Alarm sesi"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "Uygulama bildirimleri"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "Program bildirimleri"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "Su sızıntısı alarmı"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "Su sızıntısı alarmı susturuldu"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "Sıcaklık alarmı"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "Sıcaklık alarmı susturuldu"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "Cihaz saat dilimi etkin"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "Cihaz saat dilimi geçerli"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "Sessiz"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "Uyandır"
       }
     },
     "event": {
@@ -254,139 +261,139 @@
         "name": "Radon Zirve Seviyesi Süresi"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "Pil seviyesi"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Sinyal Gücü"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Sinyal Gücü"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "Kamera durum kodu"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "Donanım yazılımı sürümü"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "Kamera donanım yazılımı durumu"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Wi-Fi adı (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Wi-Fi kanalı"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "MAC adresi"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "SD kart durumu"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "SD kart toplam kapasitesi"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "SD kart kullanılan alanı"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "Kamera etkinleştirme zamanı"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "Kameranın çevrimdışı olma zamanı"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "Kamera küçük resim zamanı"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "Kameranın uykudan uyanma zamanı"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "Kamera uyku mesajı"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "Cihaz saat dilimi"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "Duman dedektörü varyantı"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "CO alarm standardı"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "Kontrol türü"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "PIR aralığı"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "Sensör Hassasiyeti"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "Susturma süresi"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "Sıcaklık alarmı susturma süresi"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "Su sızıntısı alarmı susturma süresi"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "Kısa süreli CO uyarısı"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "Kısa süreli CO uyarı seviyesi"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "Uzun süreli CO uyarısı"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "Uzun süreli CO uyarı seviyesi"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "Alarm oluşumu"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "Alarm kaynağı"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "Tekrarlanan alarm"
       },
       "time": {
-        "name": "Report Time"
+        "name": "Rapor zamanı"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "UTC zamanı"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "Cihaz Test Süresi"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "Cihaz saat dilimi"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "Sesli konum"
       },
       "location": {
-        "name": "Location"
+        "name": "Konum"
       },
       "color": {
-        "name": "Color"
+        "name": "Renk"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "Aydınlatma olayı"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "Cihaz türü"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "Bildirilen cihaz türü"
       },
       "category": {
-        "name": "Category"
+        "name": "Kategori"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "Güvenlik modu"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "Bekleme Parlaklığı"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "Alarm Sesi"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Ses Seviyesi"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "Hoparlör ses düzeyi"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "Alarm süresi"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "Gece görüşü hassasiyeti"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "Ağlama algılama hassasiyeti"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Kayıtlar arası bekleme"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "Mekanik zil süresi"
       }
     },
     "select": {
@@ -519,177 +526,183 @@
         "name": "Uygulamanın Zamanında Açılması"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "Dil"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "Kayıt çözünürlüğü"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "Algılama Hassasiyeti",
+        "state": {
+          "high": "Yüksek",
+          "medium": "Orta",
+          "low": "Düşük",
+          "auto": "Otomatik"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "Video süresi"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "Titreme frekansı"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "Varsayılan kodek"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "Hareket takibi"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "Gece görüşü modu"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "Bulut kayıtları arası bekleme süresi"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "Kapı zili tonu"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "Otomatik açılma pil seviyesi"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "LED göstergesi"
       },
       "light_power": {
-        "name": "Light"
+        "name": "Işık"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "Alarm etkinleştirildi"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "Kesintisiz alarm"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "Posta hatırlatıcısı"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "Bip sesi etkin"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "Hatırlatıcı etkin"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "Hatırlatıcı sesi etkin"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "Bekleme ışığı etkin"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR etkin"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "Ortam ışığı algılama etkin"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "Tuş sesi etkin"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "Uyarı etkin"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "Hareket algılama"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "Kişi algılama"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "Video kaydı"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "Otomatik gece görüşü"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "Durum LED'i"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "Kamera alarmı"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "Görüntüyü döndür"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "Titreme önleme"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "Ağlama algılama"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Kayıtlar arası bekleme"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "Cihaz araması"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "Mekanik zil"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "Hareket takibi"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Konuşma ses düzeyi"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "Canlı ses"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "Ses kaydı"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "Otomatik açılma"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "Beyaz ışık"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "Çıkarıldığında alarm"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "Uyku modu"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "Yapay zekâ bildirimi: kişi"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "Yapay zekâ bildirimi: evcil hayvan"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "Yapay zekâ bildirimi: araç girişi"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "Yapay zekâ bildirimi: araç çıkışı"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "Yapay zekâ bildirimi: park edilmiş araç"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "Yapay zekâ bildirimi: paket mevcut"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "Yapay zekâ bildirimi: paket bırakıldı"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "Yapay zekâ bildirimi: paket alındı"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "Yapay zekâ bildirimi: diğer"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "Yapay zekâ asistanı: kişi"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "Yapay zekâ asistanı: evcil hayvan"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "Yapay zekâ asistanı: araç"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "Yapay zekâ asistanı: paket"
       }
     },
     "alarm_control_panel": {
@@ -700,70 +713,79 @@
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "X-Sense istasyonu artık kullanılamıyor"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "X-Sense varlığı artık kullanılamıyor"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "X-Sense MQTT bağlantısı yok"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "X-Sense güvenlik modu komutu yayımlanamadı"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "{mode} modu için bekleyen X-Sense zorla kurma işlemi yok"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "X-Sense kayıtlar arası bekleme süresinin etkinlik durumu bilinmiyor"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option}, desteklenen bir X-Sense seçeneği değil"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "X-Sense seçimi yazılamıyor"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "X-Sense radon eşiği geçersiz"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "X-Sense aralık ayarında eşlenmiş değer eksik"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "X-Sense minimum değeri maksimumdan büyük olamaz"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service}, bir ışık güç anahtarı gerektirir"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service}, bir SBS50 istasyonu gerektirir"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "X-Sense {service} kimlikleri eksik"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "X-Sense program saati HH:MM veya HHMM biçiminde olmalıdır"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "X-Sense program saati aralık dışında"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "X-Sense programı en az bir haftanın gününü içermelidir"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "X-Sense programının haftanın günleri 1 ile 7 arasında olmalıdır"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field} en az bir kimlik içermelidir"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "Abonelik iki kez kaldırılamaz"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "Konu bir dize olmalıdır"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "MQTT ile iletişim hatası: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "{failed} kayıt önbelleğe alınamadı. {downloaded} kayıt indirildi."
+    },
+    "force_arm_invalid_link": {
+      "message": "Bu X-Sense zorla kurma bağlantısı geçersiz."
+    },
+    "force_arm_request_failed": {
+      "message": "X-Sense zorla kurma isteği başarısız oldu."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Artan",
+        "descending": "Azalan"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Artan",
+        "descending": "Azalan"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "Yalnızca oynatma",
+        "retained": "Yerel kayıtları sakla"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "Evde",
+        "away": "Dışarıda"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "fields": {
+        "mode": {
+          "name": "Kurma modu"
+        }
+      },
+      "name": "Zorla kur",
+      "description": "Açık sensörler tarafından engellenen, bekleyen Evde veya Dışarıda modunda kurma isteğini onaylayın. Açık sensörler atlanır."
+    },
+    "force_arm_now": {
+      "fields": {
+        "mode": {
+          "name": "Kurma modu"
+        }
+      },
+      "name": "Şimdi zorla kur",
+      "description": "Onay istemeden açık sensörleri atlayarak Evde veya Dışarıda modunda hemen kurun."
+    },
+    "trigger_sos": {
+      "name": "SOS alarmını tetikle",
+      "description": "SBS50 SOS alarmını hemen tetikleyin."
+    },
+    "cancel_sos": {
+      "name": "SOS alarmını iptal et",
+      "description": "Etkin bir SBS50 SOS alarmını iptal edin."
+    },
+    "cancel_alarm": {
+      "name": "Etkin alarmı iptal et",
+      "description": "Etkin bir SBS50 sensör alarmını iptal edin."
+    },
+    "set_sos_sound": {
+      "fields": {
+        "audible": {
+          "name": "Sesli SOS alarmı"
+        }
+      },
+      "name": "SOS sesini ayarla",
+      "description": "SOS için yalnızca yanıp sönen ışıkların mı kullanılacağını yoksa sesli uyarının da mı çalacağını seçin."
+    },
+    "refresh_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "Yapılandırma girdisi kimliği",
+          "description": "Tüm X-Sense hesaplarına uygulamak için boş bırakın."
+        }
+      },
+      "name": "Kayıtları yenile",
+      "description": "Kenar çubuğu ve Medya Tarayıcısı tarafından kullanılan kamera kayıt dizinini yenileyin."
+    },
+    "cache_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "Yapılandırma girdisi kimliği",
+          "description": "Tüm X-Sense hesaplarına uygulamak için boş bırakın."
+        }
+      },
+      "name": "Kayıtları önbelleğe al",
+      "description": "Yerel olarak saklamak için kamera kayıtlarını indirin. Yerel kayıtları sakla modu gereklidir."
+    },
+    "clear_recordings_cache": {
+      "fields": {
+        "entry_id": {
+          "name": "Yapılandırma girdisi kimliği",
+          "description": "Tüm X-Sense hesaplarına uygulamak için boş bırakın."
+        }
+      },
+      "name": "Kayıt önbelleğini temizle",
+      "description": "Yerel kayıt dizinlerini, videoları ve küçük resimleri silin. Bulut ve SD kayıtları değişmez."
+    },
+    "query_light_schedules": {
+      "name": "Işık zamanlamalarını sorgula",
+      "description": "Işık zamanlamalarını sorgulayın. Hedef olarak SBS50 ışık güç anahtarını seçin."
+    },
+    "create_light_schedule": {
+      "fields": {
+        "name": {
+          "name": "Görünen ad"
+        },
+        "start_time": {
+          "name": "Başlangıç saati (HH:MM veya HHMM)"
+        },
+        "end_time": {
+          "name": "Bitiş saati (HH:MM veya HHMM)"
+        },
+        "week_days": {
+          "name": "Haftanın günleri (1 = Pazar, 7 = Cumartesi)"
+        },
+        "enabled": {
+          "name": "Etkinlik durumu"
+        },
+        "time_zone": {
+          "name": "Saat dilimi"
+        }
+      },
+      "name": "Işık zamanlaması oluştur",
+      "description": "Işık zamanlaması oluşturun. Hedef olarak SBS50 ışık güç anahtarını seçin."
+    },
+    "update_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Zamanlama kimliği"
+        },
+        "start_time": {
+          "name": "Başlangıç saati (HH:MM veya HHMM)"
+        },
+        "end_time": {
+          "name": "Bitiş saati (HH:MM veya HHMM)"
+        },
+        "week_days": {
+          "name": "Haftanın günleri (1 = Pazar, 7 = Cumartesi)"
+        },
+        "enabled": {
+          "name": "Etkinlik durumu"
+        },
+        "time_zone": {
+          "name": "Saat dilimi"
+        }
+      },
+      "name": "Işık zamanlamasını güncelle",
+      "description": "Işık zamanlamasını güncelleyin. Hedef olarak SBS50 ışık güç anahtarını seçin."
+    },
+    "rename_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Zamanlama kimliği"
+        },
+        "name": {
+          "name": "Görünen ad"
+        }
+      },
+      "name": "Işık zamanlamasını yeniden adlandır",
+      "description": "Işık zamanlamasını yeniden adlandırın. Hedef olarak SBS50 ışık güç anahtarını seçin."
+    },
+    "delete_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Zamanlama kimliği"
+        }
+      },
+      "name": "Işık zamanlamasını sil",
+      "description": "Işık zamanlamasını silin. Hedef olarak SBS50 ışık güç anahtarını seçin."
+    },
+    "query_light_groups": {
+      "name": "Işık gruplarını sorgula",
+      "description": "Işık gruplarını sorgulayın. Hedef olarak SBS50 ışık güç anahtarını seçin."
+    },
+    "create_light_group": {
+      "fields": {
+        "name": {
+          "name": "Görünen ad"
+        }
+      },
+      "name": "Işık grubu oluştur",
+      "description": "Işık grubu oluşturun. Hedef olarak SBS50 ışık güç anahtarını seçin."
+    },
+    "rename_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Grup kimliği"
+        },
+        "name": {
+          "name": "Görünen ad"
+        }
+      },
+      "name": "Işık grubunu yeniden adlandır",
+      "description": "Işık grubunu yeniden adlandırın. Hedef olarak SBS50 ışık güç anahtarını seçin."
+    },
+    "update_light_group_timer": {
+      "fields": {
+        "group_id": {
+          "name": "Grup kimliği"
+        },
+        "timer": {
+          "name": "Zamanlayıcı türü (pirTime veya appTime)"
+        },
+        "value": {
+          "name": "Zamanlayıcı değeri"
+        }
+      },
+      "name": "Işık grubu zamanlayıcısını güncelle",
+      "description": "Işık grubu zamanlayıcısını güncelleyin. Hedef olarak SBS50 ışık güç anahtarını seçin."
+    },
+    "bind_light_group": {
+      "fields": {
+        "name": {
+          "name": "Görünen ad"
+        },
+        "device_ids": {
+          "name": "Cihaz kimlikleri"
+        }
+      },
+      "name": "Işık grubunu bağla",
+      "description": "Işık grubunu bağlayın. Hedef olarak SBS50 ışık güç anahtarını seçin."
+    },
+    "delete_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Grup kimliği"
+        }
+      },
+      "name": "Işık grubunu sil",
+      "description": "Işık grubunu silin. Hedef olarak SBS50 ışık güç anahtarını seçin."
+    },
+    "remove_light_group_devices": {
+      "fields": {
+        "device_ids": {
+          "name": "Cihaz kimlikleri"
+        }
+      },
+      "name": "Işık grubu cihazlarını kaldır",
+      "description": "Işık grubu cihazlarını kaldırın. Hedef olarak SBS50 ışık güç anahtarını seçin."
+    },
+    "set_light_group_power": {
+      "fields": {
+        "group_id": {
+          "name": "Grup kimliği"
+        },
+        "device_ids": {
+          "name": "Cihaz seri numaraları"
+        },
+        "enabled": {
+          "name": "Etkinlik durumu"
+        }
+      },
+      "name": "Işık grubu gücünü ayarla",
+      "description": "Işık grubu gücünü ayarlayın. Hedef olarak SBS50 ışık güç anahtarını seçin."
+    }
+  },
+  "issues": {}
 }

@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "장치가 이미 구성되었습니다.",
       "reauth_successful": "재인증이 성공했습니다",
-      "reconfigure_successful": "재구성에 성공했습니다"
+      "reconfigure_successful": "재구성에 성공했습니다",
+      "unique_id_mismatch": "이 항목에 연결된 것과 동일한 X-Sense 계정으로 로그인하세요."
     },
     "error": {
       "cannot_connect": "연결하지 못했습니다.",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "녹화 미디어 동기화는 Home Assistant 미디어 아래에 카메라 클립을 캐시하므로 X-Sense 녹화 사이드바, 미디어 브라우저 및 모바일 알림이 녹화를 빠르게 열 수 있습니다. 녹음이 열릴 때만 캐시하려면 이 옵션을 꺼두세요. 백그라운드에서 최근 녹음을 준비하려면 활성화하세요.",
+        "description": "기본값인 재생 전용 모드는 전체 클립을 보관하지 않고 재생할 때 Home Assistant를 통해 녹화를 프록시합니다. 설정된 기간 및 크기 제한에 따라 Home Assistant 미디어에 클립을 저장하려면 로컬 녹화 보관을 선택하세요. 백그라운드 동기화는 보관 모드에서만 실행됩니다.",
         "data": {
           "recording_media_sync_enabled": "녹화 미디어 동기화",
           "recording_media_sync_hours": "백그라운드 동기화 간격",
           "recording_media_storage_path": "녹화 캐시 폴더",
           "recording_notification_quality": "알림 녹음 품질",
           "recording_media_days_order": "녹화일 순서",
-          "recording_media_clips_order": "녹화 클립 순서"
+          "recording_media_clips_order": "녹화 클립 순서",
+          "recording_cache_retention_days": "녹화 캐시 보존",
+          "recording_cache_max_size_mb": "최대 녹화 캐시 크기",
+          "recording_cache_mode": "녹화 저장 모드"
         },
         "data_description": {
           "recording_media_sync_enabled": "최근 녹음을 자동으로 캐시합니다. 이는 저장 공간을 사용하며 카메라를 더 자주 깨울 수 있습니다.",
           "recording_media_sync_hours": "일반적인 백그라운드 캐치업 동기화를 실행해야 하는 빈도입니다. 동기화가 활성화되면 최근 녹음은 몇 분마다 확인됩니다.",
           "recording_media_storage_path": "/media 아래의 폴더를 사용하세요. 새로 캐시된 비디오와 썸네일은 여기에 저장됩니다.",
-          "recording_notification_quality": "모바일 알림을 위해 X-Sense의 직접/고해상도 클립 URL을 선호하려면 HD를 선택하세요. 가능한 경우 카메라 재생 캡처 경로를 사용하려면 SD를 선택하십시오.",
+          "recording_notification_quality": "HD는 더 높은 해상도의 녹화 URL을 우선합니다. SD는 X-Sense가 제공하는 경우 표준 해상도 URL을 우선합니다.",
           "recording_media_days_order": "녹음 뷰어에서 최신 날짜 또는 이전 날짜를 먼저 표시할지 선택합니다.",
-          "recording_media_clips_order": "매일 새로운 클립이나 오래된 클립을 먼저 표시할지 선택합니다."
+          "recording_media_clips_order": "매일 새로운 클립이나 오래된 클립을 먼저 표시할지 선택합니다.",
+          "recording_cache_retention_days": "며칠이 지나면 로컬에 캐시된 녹음을 삭제하세요. X-Sense 클라우드 및 SD 카드 녹화는 변경되지 않습니다.",
+          "recording_cache_max_size_mb": "로컬 캐시의 최대 크기(MB)입니다. 한도에 도달하면 마지막으로 본 시점이 가장 오래된 녹화부터 삭제됩니다.",
+          "recording_cache_mode": "재생 전용 모드는 전체 클립을 보관하지 않고 필요할 때 HLS 미디어를 Home Assistant를 통해 프록시합니다. 보관 모드는 아래 제한에 따라 로컬 사본을 유지합니다."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "녹화 캐시 폴더가 `{old_path}`에서 `{new_path}`로 변경됩니다. 기존에 캐시된 비디오와 썸네일은 자동으로 이동되지 않습니다. 오래되고 캐시된 녹화물을 계속 사용하려면 기존 `videos` 및 `thumbs` 폴더를 먼저 이동하세요."
+        "description": "녹화 캐시 폴더가 `{old_path}`에서 `{new_path}`로 변경됩니다. 기존에 캐시된 비디오와 썸네일은 자동으로 이동되지 않습니다. 오래되고 캐시된 녹화물을 계속 사용하려면 기존 `hls`, `videos` 및 `thumbs` 폴더를 먼저 이동하세요."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "사서함 일정 활성"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "AC 전원 연결 해제"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "배터리 수명 종료"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "수명 종료"
       },
       "armed": {
-        "name": "Armed"
+        "name": "경계 설정됨"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "움직임 감지됨"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "USB 충전 중"
       },
       "charging": {
-        "name": "Charging"
+        "name": "충전 중"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "절전 중"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "장착 브래킷 분리됨"
       },
       "activated": {
-        "name": "Activated"
+        "name": "활성화됨"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "경보 훈련 진행 중"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "경보 작동 중"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "기기에서 시작된 경보"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "기기 테스트 진행 중"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "장치가 침묵됨"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "경보음"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "앱 알림"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "일정 알림"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "누수 경보"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "누수 경보 음소거됨"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "온도 경보"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "온도 경보 음소거됨"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "기기 시간대 활성화됨"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "기기 시간대 유효함"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "음소거"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "절전 해제"
       }
     },
     "event": {
@@ -254,139 +261,139 @@
         "name": "최고 라돈 수준 시간"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "배터리 잔량"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi 신호 강도"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi 신호 강도"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "카메라 상태 코드"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "펌웨어 버전"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "카메라 펌웨어 상태"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Wi-Fi 이름 (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Wi-Fi 채널"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "MAC 주소"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "SD 카드 상태"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "SD 카드 총 용량"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "SD 카드 사용 용량"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "카메라 활성화 시각"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "카메라 연결 끊김 시각"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "카메라 미리보기 이미지 시각"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "카메라 절전 해제 시각"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "카메라 절전 메시지"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "기기 시간대"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "연기 감지기 모델 변형"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "CO 경보 표준"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "점검 유형"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "PIR 간격"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "센서 감도"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "음소거 시각"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "온도 경보 음소거 시각"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "누수 경보 음소거 시각"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "단기 CO 경고"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "단기 CO 경고 수준"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "장기 CO 경고"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "장기 CO 경고 수준"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "경보 발생"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "경보 발생원"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "반복 경보"
       },
       "time": {
-        "name": "Report Time"
+        "name": "보고 시각"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "UTC 시각"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "장치 테스트 시간"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "기기 시간대"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "음성 안내 위치"
       },
       "location": {
-        "name": "Location"
+        "name": "위치"
       },
       "color": {
-        "name": "Color"
+        "name": "색상"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "조명 이벤트"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "기기 유형"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "보고된 기기 유형"
       },
       "category": {
-        "name": "Category"
+        "name": "범주"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "보안 모드"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "대기 밝기"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "알람 볼륨"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "음성 볼륨"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "스피커 음량"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "경보 지속 시간"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "야간 투시 감도"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "울음 감지 감도"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "녹화 대기 간격"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "기계식 차임 지속 시간"
       }
     },
     "select": {
@@ -519,251 +526,266 @@
         "name": "앱 온타임"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "언어"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "녹화 해상도"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "감지 감도",
+        "state": {
+          "high": "높음",
+          "medium": "중간",
+          "low": "낮음",
+          "auto": "자동"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "동영상 길이"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "깜박임 주파수"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "기본 코덱"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "움직임 추적"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "야간 투시 모드"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "클라우드 녹화 대기 간격"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "초인종 소리"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "자동 전원 켜짐 배터리 수준"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "LED 표시등"
       },
       "light_power": {
-        "name": "Light"
+        "name": "조명"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "경보 활성화됨"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "지속 경보"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "이메일 알림"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "짧은 알림음 활성화됨"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "알림 활성화됨"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "알림음 활성화됨"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "대기 조명 활성화됨"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR 활성화됨"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "주변광 감지 활성화됨"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "버튼 소리 활성화됨"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "경고 활성화됨"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "움직임 감지"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "사람 감지"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "동영상 녹화"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "자동 야간 투시"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "상태 LED"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "카메라 경보"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "이미지 회전"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "깜박임 방지"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "울음 감지"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "녹화 대기 간격"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "기기 통화"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "기계식 차임"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "움직임 추적"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "음성 음량"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "실시간 오디오"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "녹화 오디오"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "자동 전원 켜짐"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "백색 조명"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "분리 시 경보"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "절전 모드"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "AI 알림: 사람"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "AI 알림: 반려동물"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "AI 알림: 차량 진입"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "AI 알림: 차량 이탈"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "AI 알림: 주차된 차량"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "AI 알림: 택배 있음"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "AI 알림: 택배 배달됨"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "AI 알림: 택배 수거됨"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "AI 알림: 기타"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "AI 도우미: 사람"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "AI 도우미: 반려동물"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "AI 도우미: 차량"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "AI 도우미: 택배"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "경보"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "X-Sense 스테이션을 더 이상 사용할 수 없습니다"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "X-Sense 엔티티를 더 이상 사용할 수 없습니다"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "X-Sense MQTT가 연결되지 않았습니다"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "X-Sense 보안 모드 명령을 발행하지 못했습니다"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "{mode} 모드에 대기 중인 X-Sense 강제 경계 설정이 없습니다"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "X-Sense 녹화 대기 간격의 활성화 상태를 알 수 없습니다"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option}은(는) 지원되는 X-Sense 옵션이 아닙니다"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "X-Sense 선택 값을 변경할 수 없습니다"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "X-Sense 라돈 임계값이 유효하지 않습니다"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "X-Sense 범위 설정에 짝을 이루는 값이 없습니다"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "X-Sense 최솟값은 최댓값보다 클 수 없습니다"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service}에는 조명 전원 스위치가 필요합니다"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service}에는 SBS50 스테이션이 필요합니다"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "X-Sense {service} ID가 누락되었습니다"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "X-Sense 일정 시간은 HH:MM 또는 HHMM 형식이어야 합니다"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "X-Sense 일정 시간이 범위를 벗어났습니다"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "X-Sense 일정에는 요일이 하나 이상 포함되어야 합니다"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "X-Sense 일정의 요일은 1부터 7까지여야 합니다"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field}에는 ID가 하나 이상 포함되어야 합니다"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "구독을 두 번 제거할 수 없습니다"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "토픽은 문자열이어야 합니다"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "MQTT 통신 오류: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "녹화 {failed}개를 캐시에 저장하지 못했습니다. 녹화 {downloaded}개를 다운로드했습니다."
+    },
+    "force_arm_invalid_link": {
+      "message": "이 X-Sense 강제 경계 설정 링크는 유효하지 않습니다."
+    },
+    "force_arm_request_failed": {
+      "message": "X-Sense 강제 경계 설정 요청이 실패했습니다."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "오름차순",
+        "descending": "내림차순"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "오름차순",
+        "descending": "내림차순"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "재생 전용",
+        "retained": "로컬 녹화 보관"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "재택",
+        "away": "외출"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "name": "강제 경계 설정",
+      "description": "열린 센서로 인해 차단된 재택 또는 외출 모드의 대기 중인 경계 설정 요청을 확인합니다. 열린 센서는 우회합니다.",
+      "fields": {
+        "mode": {
+          "name": "경계 모드"
+        }
+      }
+    },
+    "force_arm_now": {
+      "name": "지금 강제 경계 설정",
+      "description": "확인 요청 없이 열린 센서를 우회하여 재택 또는 외출 모드로 즉시 경계를 설정합니다.",
+      "fields": {
+        "mode": {
+          "name": "경계 모드"
+        }
+      }
+    },
+    "trigger_sos": {
+      "name": "SOS 경보 작동",
+      "description": "SBS50 SOS 경보를 즉시 작동시킵니다."
+    },
+    "cancel_sos": {
+      "name": "SOS 경보 중지",
+      "description": "작동 중인 SBS50 SOS 경보를 중지합니다."
+    },
+    "cancel_alarm": {
+      "name": "작동 중인 경보 중지",
+      "description": "작동 중인 SBS50 센서 경보를 중지합니다."
+    },
+    "set_sos_sound": {
+      "name": "SOS 소리 설정",
+      "description": "SOS에서 조명만 깜박이게 할지, 부저도 울리게 할지 선택합니다.",
+      "fields": {
+        "audible": {
+          "name": "소리가 나는 SOS 경보"
+        }
+      }
+    },
+    "refresh_recordings": {
+      "name": "녹화 목록 새로 고침",
+      "description": "사이드바와 미디어 탐색기에서 사용하는 카메라 녹화 색인을 새로 고칩니다.",
+      "fields": {
+        "entry_id": {
+          "name": "구성 항목 ID",
+          "description": "모든 X-Sense 계정에 적용하려면 비워 두세요."
+        }
+      }
+    },
+    "cache_recordings": {
+      "name": "녹화 캐시 저장",
+      "description": "로컬에 보관할 카메라 녹화를 다운로드합니다. 로컬 녹화 보관 모드가 필요합니다.",
+      "fields": {
+        "entry_id": {
+          "name": "구성 항목 ID",
+          "description": "모든 X-Sense 계정에 적용하려면 비워 두세요."
+        }
+      }
+    },
+    "clear_recordings_cache": {
+      "name": "녹화 캐시 지우기",
+      "description": "로컬 녹화 색인, 동영상 및 미리 보기 이미지를 삭제합니다. 클라우드 및 SD 녹화는 변경되지 않습니다.",
+      "fields": {
+        "entry_id": {
+          "name": "구성 항목 ID",
+          "description": "모든 X-Sense 계정에 적용하려면 비워 두세요."
+        }
+      }
+    },
+    "query_light_schedules": {
+      "name": "조명 일정 조회",
+      "description": "조명 일정을 조회합니다. SBS50 조명 전원 스위치를 대상으로 선택하세요."
+    },
+    "create_light_schedule": {
+      "name": "조명 일정 생성",
+      "description": "조명 일정을 생성합니다. SBS50 조명 전원 스위치를 대상으로 선택하세요.",
+      "fields": {
+        "name": {
+          "name": "표시 이름"
+        },
+        "start_time": {
+          "name": "시작 시간 (HH:MM 또는 HHMM)"
+        },
+        "end_time": {
+          "name": "종료 시간 (HH:MM 또는 HHMM)"
+        },
+        "week_days": {
+          "name": "요일 (1 = 일요일, 7 = 토요일)"
+        },
+        "enabled": {
+          "name": "활성화 상태"
+        },
+        "time_zone": {
+          "name": "시간대"
+        }
+      }
+    },
+    "update_light_schedule": {
+      "name": "조명 일정 갱신",
+      "description": "조명 일정을 갱신합니다. SBS50 조명 전원 스위치를 대상으로 선택하세요.",
+      "fields": {
+        "schedule_id": {
+          "name": "일정 식별자"
+        },
+        "start_time": {
+          "name": "시작 시간 (HH:MM 또는 HHMM)"
+        },
+        "end_time": {
+          "name": "종료 시간 (HH:MM 또는 HHMM)"
+        },
+        "week_days": {
+          "name": "요일 (1 = 일요일, 7 = 토요일)"
+        },
+        "enabled": {
+          "name": "활성화 상태"
+        },
+        "time_zone": {
+          "name": "시간대"
+        }
+      }
+    },
+    "rename_light_schedule": {
+      "name": "조명 일정 이름 변경",
+      "description": "조명 일정의 이름을 변경합니다. SBS50 조명 전원 스위치를 대상으로 선택하세요.",
+      "fields": {
+        "schedule_id": {
+          "name": "일정 식별자"
+        },
+        "name": {
+          "name": "표시 이름"
+        }
+      }
+    },
+    "delete_light_schedule": {
+      "name": "조명 일정 삭제",
+      "description": "조명 일정을 삭제합니다. SBS50 조명 전원 스위치를 대상으로 선택하세요.",
+      "fields": {
+        "schedule_id": {
+          "name": "일정 식별자"
+        }
+      }
+    },
+    "query_light_groups": {
+      "name": "조명 그룹 조회",
+      "description": "조명 그룹을 조회합니다. SBS50 조명 전원 스위치를 대상으로 선택하세요."
+    },
+    "create_light_group": {
+      "name": "조명 그룹 생성",
+      "description": "조명 그룹을 생성합니다. SBS50 조명 전원 스위치를 대상으로 선택하세요.",
+      "fields": {
+        "name": {
+          "name": "표시 이름"
+        }
+      }
+    },
+    "rename_light_group": {
+      "name": "조명 그룹 이름 변경",
+      "description": "조명 그룹의 이름을 변경합니다. SBS50 조명 전원 스위치를 대상으로 선택하세요.",
+      "fields": {
+        "group_id": {
+          "name": "그룹 식별자"
+        },
+        "name": {
+          "name": "표시 이름"
+        }
+      }
+    },
+    "update_light_group_timer": {
+      "name": "조명 그룹 타이머 갱신",
+      "description": "조명 그룹 타이머를 갱신합니다. SBS50 조명 전원 스위치를 대상으로 선택하세요.",
+      "fields": {
+        "group_id": {
+          "name": "그룹 식별자"
+        },
+        "timer": {
+          "name": "타이머 유형 (pirTime 또는 appTime)"
+        },
+        "value": {
+          "name": "타이머 값"
+        }
+      }
+    },
+    "bind_light_group": {
+      "name": "조명 그룹 연결",
+      "description": "조명 그룹을 연결합니다. SBS50 조명 전원 스위치를 대상으로 선택하세요.",
+      "fields": {
+        "name": {
+          "name": "표시 이름"
+        },
+        "device_ids": {
+          "name": "기기 식별자"
+        }
+      }
+    },
+    "delete_light_group": {
+      "name": "조명 그룹 삭제",
+      "description": "조명 그룹을 삭제합니다. SBS50 조명 전원 스위치를 대상으로 선택하세요.",
+      "fields": {
+        "group_id": {
+          "name": "그룹 식별자"
+        }
+      }
+    },
+    "remove_light_group_devices": {
+      "name": "조명 그룹에서 기기 제거",
+      "description": "조명 그룹에서 기기를 제거합니다. SBS50 조명 전원 스위치를 대상으로 선택하세요.",
+      "fields": {
+        "device_ids": {
+          "name": "기기 식별자"
+        }
+      }
+    },
+    "set_light_group_power": {
+      "name": "조명 그룹 전원 설정",
+      "description": "조명 그룹의 전원을 설정합니다. SBS50 조명 전원 스위치를 대상으로 선택하세요.",
+      "fields": {
+        "group_id": {
+          "name": "그룹 식별자"
+        },
+        "device_ids": {
+          "name": "기기 일련번호"
+        },
+        "enabled": {
+          "name": "활성화 상태"
+        }
+      }
+    }
+  },
+  "issues": {}
 }

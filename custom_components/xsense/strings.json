@@ -1,4 +1,233 @@
 {
+  "services": {
+    "force_arm": {
+      "name": "Force arm",
+      "description": "Confirm a pending Home or Away arm request blocked by open sensors. Open sensors are bypassed.",
+      "fields": {
+        "mode": {
+          "name": "Arm mode"
+        }
+      }
+    },
+    "force_arm_now": {
+      "name": "Force arm now",
+      "description": "Arm in Home or Away mode immediately, bypassing open sensors without a confirmation prompt.",
+      "fields": {
+        "mode": {
+          "name": "Arm mode"
+        }
+      }
+    },
+    "trigger_sos": {
+      "name": "Trigger SOS alarm",
+      "description": "Trigger the SBS50 SOS alarm immediately."
+    },
+    "cancel_sos": {
+      "name": "Cancel SOS alarm",
+      "description": "Cancel an active SBS50 SOS alarm."
+    },
+    "cancel_alarm": {
+      "name": "Cancel active alarm",
+      "description": "Cancel an active SBS50 sensor alarm."
+    },
+    "set_sos_sound": {
+      "name": "Set SOS sound",
+      "description": "Choose whether SOS uses flashing lights only or also sounds the buzzer.",
+      "fields": {
+        "audible": {
+          "name": "Audible SOS alarm"
+        }
+      }
+    },
+    "refresh_recordings": {
+      "name": "Refresh recordings",
+      "description": "Refresh the camera recording index used by the sidebar and Media Browser.",
+      "fields": {
+        "entry_id": {
+          "name": "Config entry ID",
+          "description": "Leave empty to apply to all X-Sense accounts."
+        }
+      }
+    },
+    "cache_recordings": {
+      "name": "Cache recordings",
+      "description": "Download camera recordings for local retention. Requires Keep local recordings mode.",
+      "fields": {
+        "entry_id": {
+          "name": "Config entry ID",
+          "description": "Leave empty to apply to all X-Sense accounts."
+        }
+      }
+    },
+    "clear_recordings_cache": {
+      "name": "Clear recordings cache",
+      "description": "Delete local recording indexes, videos and thumbnails. Cloud and SD recordings are unchanged.",
+      "fields": {
+        "entry_id": {
+          "name": "Config entry ID",
+          "description": "Leave empty to apply to all X-Sense accounts."
+        }
+      }
+    },
+    "query_light_schedules": {
+      "name": "Query light schedules",
+      "description": "Query light schedules. Target the SBS50 light power switch."
+    },
+    "create_light_schedule": {
+      "name": "Create light schedule",
+      "description": "Create light schedule. Target the SBS50 light power switch.",
+      "fields": {
+        "name": {
+          "name": "Display name"
+        },
+        "start_time": {
+          "name": "Start time (HH:MM or HHMM)"
+        },
+        "end_time": {
+          "name": "End time (HH:MM or HHMM)"
+        },
+        "week_days": {
+          "name": "Weekdays (1 = Sunday, 7 = Saturday)"
+        },
+        "enabled": {
+          "name": "Enabled state"
+        },
+        "time_zone": {
+          "name": "Time zone"
+        }
+      }
+    },
+    "update_light_schedule": {
+      "name": "Update light schedule",
+      "description": "Update light schedule. Target the SBS50 light power switch.",
+      "fields": {
+        "schedule_id": {
+          "name": "Schedule identifier"
+        },
+        "start_time": {
+          "name": "Start time (HH:MM or HHMM)"
+        },
+        "end_time": {
+          "name": "End time (HH:MM or HHMM)"
+        },
+        "week_days": {
+          "name": "Weekdays (1 = Sunday, 7 = Saturday)"
+        },
+        "enabled": {
+          "name": "Enabled state"
+        },
+        "time_zone": {
+          "name": "Time zone"
+        }
+      }
+    },
+    "rename_light_schedule": {
+      "name": "Rename light schedule",
+      "description": "Rename light schedule. Target the SBS50 light power switch.",
+      "fields": {
+        "schedule_id": {
+          "name": "Schedule identifier"
+        },
+        "name": {
+          "name": "Display name"
+        }
+      }
+    },
+    "delete_light_schedule": {
+      "name": "Delete light schedule",
+      "description": "Delete light schedule. Target the SBS50 light power switch.",
+      "fields": {
+        "schedule_id": {
+          "name": "Schedule identifier"
+        }
+      }
+    },
+    "query_light_groups": {
+      "name": "Query light groups",
+      "description": "Query light groups. Target the SBS50 light power switch."
+    },
+    "create_light_group": {
+      "name": "Create light group",
+      "description": "Create light group. Target the SBS50 light power switch.",
+      "fields": {
+        "name": {
+          "name": "Display name"
+        }
+      }
+    },
+    "rename_light_group": {
+      "name": "Rename light group",
+      "description": "Rename light group. Target the SBS50 light power switch.",
+      "fields": {
+        "group_id": {
+          "name": "Group identifier"
+        },
+        "name": {
+          "name": "Display name"
+        }
+      }
+    },
+    "update_light_group_timer": {
+      "name": "Update light group timer",
+      "description": "Update light group timer. Target the SBS50 light power switch.",
+      "fields": {
+        "group_id": {
+          "name": "Group identifier"
+        },
+        "timer": {
+          "name": "Timer type (pirTime or appTime)"
+        },
+        "value": {
+          "name": "Timer value"
+        }
+      }
+    },
+    "bind_light_group": {
+      "name": "Bind light group",
+      "description": "Bind light group. Target the SBS50 light power switch.",
+      "fields": {
+        "name": {
+          "name": "Display name"
+        },
+        "device_ids": {
+          "name": "Device identifiers"
+        }
+      }
+    },
+    "delete_light_group": {
+      "name": "Delete light group",
+      "description": "Delete light group. Target the SBS50 light power switch.",
+      "fields": {
+        "group_id": {
+          "name": "Group identifier"
+        }
+      }
+    },
+    "remove_light_group_devices": {
+      "name": "Remove light group devices",
+      "description": "Remove light group devices. Target the SBS50 light power switch.",
+      "fields": {
+        "device_ids": {
+          "name": "Device identifiers"
+        }
+      }
+    },
+    "set_light_group_power": {
+      "name": "Set light group power",
+      "description": "Set light group power. Target the SBS50 light power switch.",
+      "fields": {
+        "group_id": {
+          "name": "Group identifier"
+        },
+        "device_ids": {
+          "name": "Device serial numbers"
+        },
+        "enabled": {
+          "name": "Enabled state"
+        }
+      }
+    }
+  },
   "config": {
     "step": {
       "reauth_confirm": {
@@ -29,6 +258,7 @@
       "unknown": "[%key:common::config_flow::error::unknown%]"
     },
     "abort": {
+      "unique_id_mismatch": "Sign in with the same X-Sense account as this entry.",
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
       "reauth_successful": "[%key:common::config_flow::abort::reauth_successful%]",
       "reconfigure_successful": "[%key:common::config_flow::abort::reconfigure_successful%]"
@@ -37,26 +267,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "Recording media sync caches camera clips under Home Assistant media so the X-Sense Recordings sidebar, Media Browser, and mobile notifications can open recordings quickly. Leave it off to cache recordings only when they are opened. Enable it to keep recent recordings ready in the background.",
+        "description": "Playback only is the default and proxies recordings through Home Assistant as they play without retaining complete clips. Choose retained local recordings to keep clips under Home Assistant media using the configured age and size limits. Background sync only runs in retained mode.",
         "data": {
+          "recording_cache_mode": "Recording storage mode",
           "recording_media_sync_enabled": "Recording media sync",
           "recording_media_sync_hours": "Background sync interval",
           "recording_media_storage_path": "Recording cache folder",
+          "recording_cache_retention_days": "Recording cache retention",
+          "recording_cache_max_size_mb": "Maximum recording cache size",
           "recording_notification_quality": "Notification recording quality",
           "recording_media_days_order": "Recording day order",
           "recording_media_clips_order": "Recording clip order"
         },
         "data_description": {
+          "recording_cache_mode": "Playback only proxies HLS media through Home Assistant on demand without retaining complete clips. Retained mode keeps local copies using the limits below.",
           "recording_media_sync_enabled": "Cache recent recordings automatically. This uses storage space and may wake cameras more often.",
           "recording_media_sync_hours": "How often the normal background catch-up sync should run. Recent recordings are checked every couple minutes when sync is enabled.",
           "recording_media_storage_path": "Use a folder under /media. New cached videos and thumbnails are stored here.",
-          "recording_notification_quality": "Choose HD to prefer X-Sense's direct/high-resolution clip URLs for mobile notifications. Choose SD to use the camera playback capture path when available.",
+          "recording_cache_retention_days": "Delete local cached recordings after this many days. X-Sense cloud and SD card recordings are not changed.",
+          "recording_cache_max_size_mb": "Maximum local cache size in MB. When the limit is reached, the least recently viewed recordings are removed first.",
+          "recording_notification_quality": "HD prefers higher-resolution recording URLs. SD prefers standard-resolution URLs when X-Sense provides them.",
           "recording_media_days_order": "Choose whether newer or older days appear first in the recordings viewer.",
           "recording_media_clips_order": "Choose whether newer or older clips appear first within each day."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "The recording cache folder will change from `{old_path}` to `{new_path}`. Existing cached videos and thumbnails are not moved automatically. Move the existing `videos` and `thumbs` folders first if you want old cached recordings to remain available."
+        "description": "The recording cache folder will change from `{old_path}` to `{new_path}`. Existing cached videos and thumbnails are not moved automatically. Move the existing `hls`, `videos` and `thumbs` folders first if you want old cached recordings to remain available."
       }
     },
     "error": {
@@ -526,7 +762,13 @@
         "name": "Recording Resolution"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "Detection Sensitivity",
+        "state": {
+          "high": "High",
+          "medium": "Medium",
+          "low": "Low",
+          "auto": "Auto"
+        }
       },
       "camera_video_seconds": {
         "name": "Video Duration"
@@ -700,6 +942,15 @@
     }
   },
   "exceptions": {
+    "recording_cache_failed": {
+      "message": "Could not cache {failed} recording(s). {downloaded} recording(s) were downloaded."
+    },
+    "force_arm_invalid_link": {
+      "message": "This X-Sense force-arm link is invalid."
+    },
+    "force_arm_request_failed": {
+      "message": "The X-Sense force-arm request failed."
+    },
     "station_unavailable": {
       "message": "X-Sense station is no longer available"
     },
@@ -768,6 +1019,18 @@
     }
   },
   "selector": {
+    "force_arm_mode": {
+      "options": {
+        "home": "Home",
+        "away": "Away"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "Playback only",
+        "retained": "Keep local recordings"
+      }
+    },
     "recording_notification_quality": {
       "options": {
         "hd": "HD",

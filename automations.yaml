@@ -323,11 +323,12 @@
   description: Toggles the network rack light via its Zigbee button (single press).
     Uses device trigger as this is a Z2M MQTT button with no state entity.
   triggers:
-  - domain: mqtt
-    device_id: 3b8b80a17913ddb5ed8063e241f17e18
-    type: action
-    subtype: single
-    platform: device
+  - trigger: event.received
+    target:
+      entity_id: event.rack_light_switch_button
+    options:
+      event_type:
+      - multi_press_1
   conditions: []
   actions:
   - data: {}

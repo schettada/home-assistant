@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "Dispozitivul este deja configurat",
       "reauth_successful": "Re-autentificarea a avut succes",
-      "reconfigure_successful": "Reconfigurarea a avut succes"
+      "reconfigure_successful": "Reconfigurarea a avut succes",
+      "unique_id_mismatch": "Autentifică-te cu același cont X-Sense folosit pentru această intrare."
     },
     "error": {
       "cannot_connect": "Nu s-a putut conecta",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "Sincronizarea media de înregistrare memorează în cache clipurile camerei în mediul Home Assistant, astfel încât bara laterală Înregistrări X-Sense, browserul media și notificările mobile pot deschide înregistrările rapid. Lăsați în cache înregistrările numai atunci când sunt deschise. Activați-l pentru a menține gata în fundal înregistrările recente.",
+        "description": "Doar redare este modul implicit și transmite înregistrările prin Home Assistant în timpul redării fără a păstra clipurile complete. Alegeți păstrarea înregistrărilor locale pentru a salva clipuri în mediile Home Assistant conform limitelor configurate de vechime și dimensiune. Sincronizarea în fundal rulează numai în modul de păstrare.",
         "data": {
           "recording_media_sync_enabled": "Sincronizare media de înregistrare",
           "recording_media_sync_hours": "Interval de sincronizare în fundal",
           "recording_media_storage_path": "Dosarul cache de înregistrare",
           "recording_notification_quality": "Calitatea înregistrării notificărilor",
           "recording_media_days_order": "Comanda zilei de înregistrare",
-          "recording_media_clips_order": "Ordinea clipurilor de înregistrare"
+          "recording_media_clips_order": "Ordinea clipurilor de înregistrare",
+          "recording_cache_retention_days": "Reținerea memoriei cache a înregistrărilor",
+          "recording_cache_max_size_mb": "Dimensiunea maximă a memoriei cache de înregistrare",
+          "recording_cache_mode": "Mod de stocare a înregistrărilor"
         },
         "data_description": {
           "recording_media_sync_enabled": "Memorați în cache înregistrările recente în mod automat. Aceasta utilizează spațiu de stocare și poate trezi camerele mai des.",
           "recording_media_sync_hours": "Cât de des ar trebui să ruleze sincronizarea normală de recuperare în fundal. Înregistrările recente sunt verificate la fiecare două minute când sincronizarea este activată.",
           "recording_media_storage_path": "Utilizați un folder sub /media. Noile videoclipuri și miniaturi stocate în cache sunt stocate aici.",
-          "recording_notification_quality": "Alegeți HD pentru a prefera adresele URL ale clipurilor directe/de înaltă rezoluție ale X-Sense pentru notificările mobile. Alegeți SD pentru a utiliza calea de captură de redare a camerei atunci când este disponibilă.",
+          "recording_notification_quality": "HD preferă URL-urile înregistrărilor cu rezoluție mai mare. SD preferă rezoluția standard atunci când X-Sense o oferă.",
           "recording_media_days_order": "Alegeți dacă zilele mai noi sau mai vechi apar mai întâi în vizualizatorul de înregistrări.",
-          "recording_media_clips_order": "Alegeți dacă clipurile mai noi sau mai vechi apar primele în fiecare zi."
+          "recording_media_clips_order": "Alegeți dacă clipurile mai noi sau mai vechi apar primele în fiecare zi.",
+          "recording_cache_retention_days": "Ștergeți înregistrările locale stocate în cache după atâtea zile. Înregistrările în cloud X-Sense și cardul SD nu sunt modificate.",
+          "recording_cache_max_size_mb": "Dimensiunea maximă a memoriei cache locală în MB. Când limita este atinsă, cele mai puțin recent înregistrări vizualizate sunt eliminate mai întâi.",
+          "recording_cache_mode": "Doar redare transmite conținutul HLS la cerere prin Home Assistant fără a păstra clipurile complete. Modul de păstrare menține copii locale conform limitelor de mai jos."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "Dosarul cache de înregistrare se va schimba din `{old_path}` în `{new_path}`. Videoclipurile și miniaturile existente în cache nu sunt mutate automat. Mutați mai întâi dosarele existente `videos` și `thumbs` dacă doriți ca înregistrările vechi din cache să rămână disponibile."
+        "description": "Dosarul cache de înregistrare se va schimba din `{old_path}` în `{new_path}`. Videoclipurile și miniaturile existente în cache nu sunt mutate automat. Mutați mai întâi dosarele existente `hls`, `videos` și `thumbs` dacă doriți ca înregistrările vechi din cache să rămână disponibile."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "Program cutie poștală activă"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "Alimentare CA deconectată"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "Sfârșitul duratei de viață a bateriei"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "Sfârșitul duratei de viață"
       },
       "armed": {
-        "name": "Armed"
+        "name": "Armat"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "Mișcare detectată"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "Încărcare prin USB"
       },
       "charging": {
-        "name": "Charging"
+        "name": "Încărcare"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "În repaus"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "Suport de montare îndepărtat"
       },
       "activated": {
-        "name": "Activated"
+        "name": "Activat"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "Exercițiu de alarmă activ"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "Alarmă activă"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "Alarmă inițiatoare"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "Test al dispozitivului activ"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "Dispozitiv a fost oprit"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "Sunetul alarmei"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "Notificări ale aplicației"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "Notificări ale programului"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "Alarmă de scurgere a apei"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "Alarmă de scurgere a apei dezactivată sonor"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "Alarmă de temperatură"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "Alarmă de temperatură dezactivată sonor"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "Fusul orar al dispozitivului activat"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "Fusul orar al dispozitivului valid"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "Mut"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "Trezire"
       }
     },
     "event": {
@@ -188,7 +195,7 @@
           "normal": "Normal",
           "low_battery": "Baterie descărcată",
           "malfunction": "Defecțiune",
-          "end_of_life": "Sfârșitul vieții"
+          "end_of_life": "Sfârșitul duratei de viață"
         }
       },
       "alarm_vol": {
@@ -254,139 +261,139 @@
         "name": "Timpul nivelului maxim de radon"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "Nivelul bateriei"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Puterea semnalului"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Puterea semnalului"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "Codul stării camerei"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "Versiunea firmware-ului"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "Starea firmware-ului camerei"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Numele rețelei Wi-Fi (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Canal Wi-Fi"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "Adresă MAC"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "Starea cardului SD"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "Capacitatea totală a cardului SD"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "Spațiu utilizat pe cardul SD"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "Ora activării camerei"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "Ora deconectării camerei"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "Ora miniaturii camerei"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "Ora trezirii camerei din repaus"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "Mesaj de repaus al camerei"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "Fusul orar al dispozitivului"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "Varianta detectorului de fum"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "Standardul alarmei de CO"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "Tipul verificării"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "Interval PIR"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "Sensibilitatea senzorului"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "Durata dezactivării sunetului"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "Durata dezactivării sunetului alarmei de temperatură"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "Durata dezactivării sunetului alarmei de scurgere a apei"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "Avertizare CO pe termen scurt"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "Nivelul avertizării CO pe termen scurt"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "Avertizare CO pe termen lung"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "Nivelul avertizării CO pe termen lung"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "Apariția alarmei"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "Sursa alarmei"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "Alarmă repetată"
       },
       "time": {
-        "name": "Report Time"
+        "name": "Ora raportării"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "Ora UTC"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "Timp de testare a dispozitivului"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "Fusul orar al dispozitivului"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "Locație anunțată vocal"
       },
       "location": {
-        "name": "Location"
+        "name": "Locație"
       },
       "color": {
-        "name": "Color"
+        "name": "Culoare"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "Eveniment de iluminare"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "Tipul dispozitivului"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "Tipul dispozitivului raportat"
       },
       "category": {
-        "name": "Category"
+        "name": "Categorie"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "Mod de securitate"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "Luminozitate standby"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "Volumul alarmei"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Volumul vocii"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "Volumul difuzorului"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "Durata alarmei"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "Sensibilitatea vederii nocturne"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "Sensibilitatea detectării plânsului"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Pauză între înregistrări"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "Durata soneriei mecanice"
       }
     },
     "select": {
@@ -519,251 +526,266 @@
         "name": "Aplicația la timp"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "Limbă"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "Rezoluția înregistrării"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "Sensibilitate de detectare",
+        "state": {
+          "high": "Ridicată",
+          "medium": "Medie",
+          "low": "Scăzută",
+          "auto": "Automată"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "Durata videoclipului"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "Frecvența pâlpâirii"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "Codec implicit"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "Urmărirea mișcării"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "Mod de vedere nocturnă"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "Pauză între înregistrări în cloud"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "Tonul soneriei"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "Nivelul bateriei pentru pornire automată"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "Indicator LED"
       },
       "light_power": {
-        "name": "Light"
+        "name": "Lumină"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "Alarmă activată"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "Alarmă continuă"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "Memento pentru corespondență"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "Semnal sonor activat"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "Memento activat"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "Tonul mementoului activat"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "Lumină de veghe activată"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR activat"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "Detectarea luminii ambientale activată"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "Sunetul tastelor activat"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "Avertizare activată"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "Detectarea mișcării"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "Detectarea persoanelor"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "Înregistrare video"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "Vedere nocturnă automată"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "LED de stare"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "Alarmă a camerei"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "Rotirea imaginii"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "Reducerea pâlpâirii"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "Detectarea plânsului"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Pauză între înregistrări"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "Apel de pe dispozitiv"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "Sonerie mecanică"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "Urmărirea mișcării"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Volumul vocii"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "Sunet în direct"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "Înregistrare audio"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "Pornire automată"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "Lumină albă"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "Alarmă la îndepărtare"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "Mod de repaus"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "Notificare IA: persoană"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "Notificare IA: animal de companie"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "Notificare IA: intrare vehicul"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "Notificare IA: ieșire vehicul"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "Notificare IA: vehicul parcat"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "Notificare IA: colet prezent"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "Notificare IA: livrare colet"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "Notificare IA: ridicare colet"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "Notificare IA: altele"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "Asistent IA: persoană"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "Asistent IA: animal de companie"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "Asistent IA: vehicul"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "Asistent IA: colet"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "Alarmă"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "Stația X-Sense nu mai este disponibilă"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "Entitatea X-Sense nu mai este disponibilă"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "X-Sense nu este conectat la MQTT"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "Nu s-a putut publica comanda modului de securitate X-Sense"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "Armarea forțată X-Sense nu este în așteptare pentru modul {mode}"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "Starea activării pauzei între înregistrări X-Sense este necunoscută"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option} nu este o opțiune acceptată de X-Sense"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "Selectorul X-Sense nu poate fi modificat"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "Pragul de radon X-Sense nu este valid"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "Setării de interval X-Sense îi lipsește valoarea pereche"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "Minimul X-Sense nu poate fi mai mare decât maximul"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service} necesită un comutator de alimentare a luminii"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service} necesită o stație SBS50"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "Lipsesc identificatorii X-Sense {service}"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "Ora programului X-Sense trebuie să fie în format HH:MM sau HHMM"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "Ora programului X-Sense este în afara intervalului"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "Programul X-Sense trebuie să includă cel puțin o zi a săptămânii"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "Zilele săptămânii din programul X-Sense trebuie să fie de la 1 la 7"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field} trebuie să includă cel puțin un identificator"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "Abonamentul nu poate fi eliminat de două ori"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "Subiectul trebuie să fie un șir de caractere"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "Eroare de comunicare cu MQTT: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "Nu s-au putut stoca în cache {failed} înregistrări. Au fost descărcate {downloaded} înregistrări."
+    },
+    "force_arm_invalid_link": {
+      "message": "Acest link de armare forțată X-Sense este nevalid."
+    },
+    "force_arm_request_failed": {
+      "message": "Cererea de armare forțată X-Sense a eșuat."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Crescător",
+        "descending": "Descrescător"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Crescător",
+        "descending": "Descrescător"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "Doar redare",
+        "retained": "Păstrează înregistrările locale"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "Acasă",
+        "away": "Plecat"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "fields": {
+        "mode": {
+          "name": "Mod de armare"
+        }
+      },
+      "name": "Armare forțată",
+      "description": "Confirmă o cerere de armare în așteptare în modul Acasă sau Plecat, blocată de senzori deschiși. Senzorii deschiși vor fi ocoliți."
+    },
+    "force_arm_now": {
+      "fields": {
+        "mode": {
+          "name": "Mod de armare"
+        }
+      },
+      "name": "Armare forțată acum",
+      "description": "Armează imediat în modul Acasă sau Plecat, ocolind senzorii deschiși fără a solicita confirmare."
+    },
+    "trigger_sos": {
+      "name": "Declanșează alarma SOS",
+      "description": "Declanșează imediat alarma SOS a dispozitivului SBS50."
+    },
+    "cancel_sos": {
+      "name": "Anulează alarma SOS",
+      "description": "Anulează o alarmă SOS activă a dispozitivului SBS50."
+    },
+    "cancel_alarm": {
+      "name": "Anulează alarma activă",
+      "description": "Anulează o alarmă activă declanșată de un senzor al dispozitivului SBS50."
+    },
+    "set_sos_sound": {
+      "fields": {
+        "audible": {
+          "name": "Alarmă SOS sonoră"
+        }
+      },
+      "name": "Setează sunetul SOS",
+      "description": "Alege dacă SOS folosește doar lumini intermitente sau activează și avertizorul sonor."
+    },
+    "refresh_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "ID-ul intrării de configurare",
+          "description": "Lasă necompletat pentru a aplica tuturor conturilor X-Sense."
+        }
+      },
+      "name": "Actualizează înregistrările",
+      "description": "Actualizează indexul înregistrărilor camerelor folosit de bara laterală și de navigatorul media."
+    },
+    "cache_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "ID-ul intrării de configurare",
+          "description": "Lasă necompletat pentru a aplica tuturor conturilor X-Sense."
+        }
+      },
+      "name": "Stochează înregistrările în cache",
+      "description": "Descarcă înregistrările camerelor pentru păstrare locală. Necesită modul Păstrează înregistrările locale."
+    },
+    "clear_recordings_cache": {
+      "fields": {
+        "entry_id": {
+          "name": "ID-ul intrării de configurare",
+          "description": "Lasă necompletat pentru a aplica tuturor conturilor X-Sense."
+        }
+      },
+      "name": "Golește memoria cache a înregistrărilor",
+      "description": "Șterge indexurile locale de înregistrări, videoclipurile și miniaturile. Înregistrările din cloud și de pe cardul SD rămân neschimbate."
+    },
+    "query_light_schedules": {
+      "name": "Interoghează programele de iluminat",
+      "description": "Interoghează programele de iluminat. Selectează ca țintă întrerupătorul de alimentare a iluminatului SBS50."
+    },
+    "create_light_schedule": {
+      "fields": {
+        "name": {
+          "name": "Nume afișat"
+        },
+        "start_time": {
+          "name": "Ora de început (HH:MM sau HHMM)"
+        },
+        "end_time": {
+          "name": "Ora de sfârșit (HH:MM sau HHMM)"
+        },
+        "week_days": {
+          "name": "Zilele săptămânii (1 = duminică, 7 = sâmbătă)"
+        },
+        "enabled": {
+          "name": "Stare de activare"
+        },
+        "time_zone": {
+          "name": "Fus orar"
+        }
+      },
+      "name": "Creează un program de iluminat",
+      "description": "Creează un program de iluminat. Selectează ca țintă întrerupătorul de alimentare a iluminatului SBS50."
+    },
+    "update_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Identificatorul programului"
+        },
+        "start_time": {
+          "name": "Ora de început (HH:MM sau HHMM)"
+        },
+        "end_time": {
+          "name": "Ora de sfârșit (HH:MM sau HHMM)"
+        },
+        "week_days": {
+          "name": "Zilele săptămânii (1 = duminică, 7 = sâmbătă)"
+        },
+        "enabled": {
+          "name": "Stare de activare"
+        },
+        "time_zone": {
+          "name": "Fus orar"
+        }
+      },
+      "name": "Actualizează programul de iluminat",
+      "description": "Actualizează un program de iluminat. Selectează ca țintă întrerupătorul de alimentare a iluminatului SBS50."
+    },
+    "rename_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Identificatorul programului"
+        },
+        "name": {
+          "name": "Nume afișat"
+        }
+      },
+      "name": "Redenumește programul de iluminat",
+      "description": "Redenumește un program de iluminat. Selectează ca țintă întrerupătorul de alimentare a iluminatului SBS50."
+    },
+    "delete_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Identificatorul programului"
+        }
+      },
+      "name": "Șterge programul de iluminat",
+      "description": "Șterge un program de iluminat. Selectează ca țintă întrerupătorul de alimentare a iluminatului SBS50."
+    },
+    "query_light_groups": {
+      "name": "Interoghează grupurile de iluminat",
+      "description": "Interoghează grupurile de iluminat. Selectează ca țintă întrerupătorul de alimentare a iluminatului SBS50."
+    },
+    "create_light_group": {
+      "fields": {
+        "name": {
+          "name": "Nume afișat"
+        }
+      },
+      "name": "Creează un grup de iluminat",
+      "description": "Creează un grup de iluminat. Selectează ca țintă întrerupătorul de alimentare a iluminatului SBS50."
+    },
+    "rename_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Identificatorul grupului"
+        },
+        "name": {
+          "name": "Nume afișat"
+        }
+      },
+      "name": "Redenumește grupul de iluminat",
+      "description": "Redenumește un grup de iluminat. Selectează ca țintă întrerupătorul de alimentare a iluminatului SBS50."
+    },
+    "update_light_group_timer": {
+      "fields": {
+        "group_id": {
+          "name": "Identificatorul grupului"
+        },
+        "timer": {
+          "name": "Tip de temporizator (pirTime sau appTime)"
+        },
+        "value": {
+          "name": "Valoarea temporizatorului"
+        }
+      },
+      "name": "Actualizează temporizatorul grupului de iluminat",
+      "description": "Actualizează temporizatorul unui grup de iluminat. Selectează ca țintă întrerupătorul de alimentare a iluminatului SBS50."
+    },
+    "bind_light_group": {
+      "fields": {
+        "name": {
+          "name": "Nume afișat"
+        },
+        "device_ids": {
+          "name": "Identificatorii dispozitivelor"
+        }
+      },
+      "name": "Asociază grupul de iluminat",
+      "description": "Asociază un grup de iluminat. Selectează ca țintă întrerupătorul de alimentare a iluminatului SBS50."
+    },
+    "delete_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Identificatorul grupului"
+        }
+      },
+      "name": "Șterge grupul de iluminat",
+      "description": "Șterge un grup de iluminat. Selectează ca țintă întrerupătorul de alimentare a iluminatului SBS50."
+    },
+    "remove_light_group_devices": {
+      "fields": {
+        "device_ids": {
+          "name": "Identificatorii dispozitivelor"
+        }
+      },
+      "name": "Elimină dispozitive din grupul de iluminat",
+      "description": "Elimină dispozitive dintr-un grup de iluminat. Selectează ca țintă întrerupătorul de alimentare a iluminatului SBS50."
+    },
+    "set_light_group_power": {
+      "fields": {
+        "group_id": {
+          "name": "Identificatorul grupului"
+        },
+        "device_ids": {
+          "name": "Numerele de serie ale dispozitivelor"
+        },
+        "enabled": {
+          "name": "Stare de activare"
+        }
+      },
+      "name": "Pornește sau oprește grupul de iluminat",
+      "description": "Pornește sau oprește un grup de iluminat. Selectează ca țintă întrerupătorul de alimentare a iluminatului SBS50."
+    }
+  },
+  "issues": {}
 }

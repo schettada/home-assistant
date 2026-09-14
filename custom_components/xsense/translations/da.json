@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "Enheden er allerede konfigureret",
       "reauth_successful": "Gengodkendelse lykkedes",
-      "reconfigure_successful": "Omkonfigurationen lykkedes"
+      "reconfigure_successful": "Omkonfigurationen lykkedes",
+      "unique_id_mismatch": "Log ind med den samme X-Sense-konto som denne post."
     },
     "error": {
       "cannot_connect": "Kunne ikke oprette forbindelse",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "Synkronisering af optagelsesmedier cacherer kameraklip under Home Assistant-mediet, så X-Sense-sidebjælken til optagelser, mediebrowseren og mobilmeddelelser kan åbne optagelser hurtigt. Lad det være slukket for kun at cache optagelser, når de er åbnet. Aktiver den for at holde de seneste optagelser klar i baggrunden.",
+        "description": "Kun afspilning er standard og videresender optagelser gennem Home Assistant under afspilning uden at gemme hele klip. Vælg lokale optagelser for at gemme klip under Home Assistant-medier med de indstillede alders- og størrelsesgrænser. Baggrundssynkronisering kører kun i lagringstilstand.",
         "data": {
           "recording_media_sync_enabled": "Synkronisering af optagemedier",
           "recording_media_sync_hours": "Baggrundssynkroniseringsinterval",
           "recording_media_storage_path": "Optagelses cache mappe",
           "recording_notification_quality": "Notifikationsoptagelseskvalitet",
           "recording_media_days_order": "Optagelsesdagsrækkefølge",
-          "recording_media_clips_order": "Optagelse af klip rækkefølge"
+          "recording_media_clips_order": "Optagelse af klip rækkefølge",
+          "recording_cache_retention_days": "Optagelsescache-opbevaring",
+          "recording_cache_max_size_mb": "Maksimal optagecachestørrelse",
+          "recording_cache_mode": "Lagringstilstand for optagelser"
         },
         "data_description": {
           "recording_media_sync_enabled": "Cache de seneste optagelser automatisk. Dette bruger lagerplads og kan vække kameraer oftere.",
           "recording_media_sync_hours": "Hvor ofte den normale baggrundssynkronisering skal køre. Nylige optagelser kontrolleres hvert par minutter, når synkronisering er aktiveret.",
           "recording_media_storage_path": "Brug en mappe under /media. Nye cachelagrede videoer og thumbnails gemmes her.",
-          "recording_notification_quality": "Vælg HD for at foretrække X-Senses direkte/højopløselige klip-URL'er til mobilmeddelelser. Vælg SD for at bruge kameraets afspilningsoptagelsessti, når den er tilgængelig.",
+          "recording_notification_quality": "HD foretrækker optagelses-URL'er med højere opløsning. SD foretrækker standardopløsning, når X-Sense stiller den til rådighed.",
           "recording_media_days_order": "Vælg, om nyere eller ældre dage vises først i optagelsesfremviseren.",
-          "recording_media_clips_order": "Vælg, om nyere eller ældre klip vises først inden for hver dag."
+          "recording_media_clips_order": "Vælg, om nyere eller ældre klip vises først inden for hver dag.",
+          "recording_cache_retention_days": "Slet lokale cachelagrede optagelser efter disse mange dage. X-Sense cloud- og SD-kortoptagelser ændres ikke.",
+          "recording_cache_max_size_mb": "Maksimal lokal cachestørrelse i MB. Når grænsen er nået, fjernes først de optagelser, der ikke er blevet set i længst tid.",
+          "recording_cache_mode": "Kun afspilning videresender HLS-medier gennem Home Assistant efter behov uden at gemme hele klip. Lagringstilstand beholder lokale kopier efter grænserne nedenfor."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "Optagelsescache-mappen ændres fra `{old_path}` til `{new_path}`. Eksisterende cachelagrede videoer og miniaturer flyttes ikke automatisk. Flyt de eksisterende mapper `videos` og `thumbs` først, hvis du ønsker, at gamle cachelagrede optagelser skal forblive tilgængelige."
+        "description": "Optagelsescache-mappen ændres fra `{old_path}` til `{new_path}`. Eksisterende cachelagrede videoer og miniaturer flyttes ikke automatisk. Flyt de eksisterende mapper `hls`, `videos` og `thumbs` først, hvis du ønsker, at gamle cachelagrede optagelser skal forblive tilgængelige."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "Postkasseplan er aktiv"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "Netstrøm afbrudt"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "Batteriets levetid er udløbet"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "Levetid udløbet"
       },
       "armed": {
-        "name": "Armed"
+        "name": "Tilkoblet"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "Bevægelse registreret"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "Opladning via USB"
       },
       "charging": {
-        "name": "Charging"
+        "name": "Oplader"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "I dvale"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "Monteringsbeslag fjernet"
       },
       "activated": {
-        "name": "Activated"
+        "name": "Aktiveret"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "Alarmøvelse aktiv"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "Alarm aktiv"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "Alarmudløsende enhed"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "Enhedstest aktiv"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "Enheden er lydløs"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "Alarmlyd"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "Appnotifikationer"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "Notifikationer om tidsplan"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "Vandlækagealarm"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "Vandlækagealarm dæmpet"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "Temperaturalarm"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "Temperaturalarm dæmpet"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "Enhedens tidszone aktiveret"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "Enhedens tidszone gyldig"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "Lydløs"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "Væk"
       }
     },
     "event": {
@@ -188,7 +195,7 @@
           "normal": "Normal",
           "low_battery": "Lavt batteri",
           "malfunction": "Fejlfunktion",
-          "end_of_life": "End-of-Life"
+          "end_of_life": "Levetid udløbet"
         }
       },
       "alarm_vol": {
@@ -251,142 +258,142 @@
         "name": "Højeste radonniveau"
       },
       "radon_peak_time": {
-        "name": "Peak Radon Level Time"
+        "name": "Tidspunkt for højeste radonniveau"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "Batteriniveau"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Signalstyrke"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Signalstyrke"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "Kameraets statuskode"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "Firmwareversion"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "Status for kameraets firmware"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Wi-Fi-navn (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Wi-Fi-kanal"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "MAC-adresse"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "SD-kortets status"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "SD-kortets samlede kapacitet"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "Brugt plads på SD-kort"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "Kameraets aktiveringstidspunkt"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "Tidspunkt for kameraets afbrydelse"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "Tidspunkt for kameraets miniaturebillede"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "Tidspunkt for vækning af kamera"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "Meddelelse om kameraets dvale"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "Enhedens tidszone"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "Røgdetektorvariant"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "Standard for CO-alarm"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "Kontroltype"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "PIR-interval"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "Sensorfølsomhed"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "Tid for dæmpning"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "Tid for dæmpning af temperaturalarm"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "Tid for dæmpning af vandlækagealarm"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "Kortvarig CO-advarsel"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "Niveau for kortvarig CO-advarsel"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "Langvarig CO-advarsel"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "Niveau for langvarig CO-advarsel"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "Alarmhændelse"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "Alarmkilde"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "Gentagen alarm"
       },
       "time": {
-        "name": "Report Time"
+        "name": "Rapporttidspunkt"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "UTC-tid"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "Enhedens testtid"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "Enhedens tidszone"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "Placering til stemmebesked"
       },
       "location": {
-        "name": "Location"
+        "name": "Placering"
       },
       "color": {
-        "name": "Color"
+        "name": "Farve"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "Lyshændelse"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "Enhedstype"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "Rapporteret enhedstype"
       },
       "category": {
-        "name": "Category"
+        "name": "Kategori"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "Sikkerhedstilstand"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "Standby lysstyrke"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "Alarmvolumen"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Stemmelydstyrke"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "Højttalerlydstyrke"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "Alarmvarighed"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "Følsomhed for nattesyn"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "Følsomhed for gråddetektion"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Pause mellem optagelser"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "Varighed af mekanisk dørklokke"
       }
     },
     "select": {
@@ -519,177 +526,183 @@
         "name": "App til tiden"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "Sprog"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "Optagelsesopløsning"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "Detektionsfølsomhed",
+        "state": {
+          "high": "Høj",
+          "medium": "Mellem",
+          "low": "Lav",
+          "auto": "Automatisk"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "Videovarighed"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "Flimmerfrekvens"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "Standardcodec"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "Bevægelsessporing"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "Nattesynstilstand"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "Pause mellem cloudoptagelser"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "Dørklokketone"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "Batteriniveau for automatisk tænding"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "LED-indikator"
       },
       "light_power": {
-        "name": "Light"
+        "name": "Lys"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "Alarm aktiveret"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "Fortsat alarm"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "Postpåmindelse"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "Kort signaltone aktiveret"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "Påmindelse aktiveret"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "Påmindelsestone aktiveret"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "Standbylys aktiveret"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR aktiveret"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "Registrering af omgivende lys aktiveret"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "Tastelyd aktiveret"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "Advarsel aktiveret"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "Bevægelsesregistrering"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "Personregistrering"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "Optag video"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "Automatisk nattesyn"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "Status-LED"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "Kameraalarm"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "Drej billede"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "Flimmerreduktion"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "Gråddetektion"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Pause mellem optagelser"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "Enhedsopkald"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "Mekanisk dørklokke"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "Bevægelsessporing"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Stemmelydstyrke"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "Livelyd"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "Optagelseslyd"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "Automatisk tænding"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "Hvidt lys"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "Alarm ved afmontering"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "Dvaletilstand"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "AI-notifikation: person"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "AI-notifikation: kæledyr"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "AI-notifikation: køretøj ankommer"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "AI-notifikation: køretøj forlader området"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "AI-notifikation: parkeret køretøj"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "AI-notifikation: pakke til stede"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "AI-notifikation: pakke afleveret"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "AI-notifikation: pakke afhentet"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "Andre AI-notifikationer"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "AI-assistent: personer"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "AI-assistent: kæledyr"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "AI-assistent: køretøjer"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "AI-assistent: pakker"
       }
     },
     "alarm_control_panel": {
@@ -700,70 +713,79 @@
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "X-Sense-stationen er ikke længere tilgængelig"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "X-Sense-entiteten er ikke længere tilgængelig"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "X-Sense MQTT er ikke tilsluttet"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "Kunne ikke sende kommando til X-Sense-sikkerhedstilstand"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "X-Sense afventer ikke tvungen tilkobling i tilstanden {mode}"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "Det er ukendt, om X-Sense-pausen mellem optagelser er aktiveret"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option} er ikke en understøttet X-Sense-indstilling"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "X-Sense-valget kan ikke ændres"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "X-Sense-radongrænsen er ugyldig"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "X-Sense-intervalindstillingen mangler sin tilhørende værdi"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "X-Sense-minimum må ikke være større end maksimum"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service} kræver en lyskontakt"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service} kræver en SBS50-station"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "ID'er til X-Sense {service} mangler"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "X-Sense-tidsplanens tid skal være HH:MM eller HHMM"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "X-Sense-tidsplanens tid er uden for intervallet"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "X-Sense-tidsplanen skal indeholde mindst én ugedag"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "X-Sense-tidsplanens ugedage skal være 1 til 7"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field} skal indeholde mindst ét ID"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "Abonnementet kan ikke fjernes to gange"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "Emnet skal være en tekststreng"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "Fejl ved kommunikation med MQTT: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "Kunne ikke gemme {failed} optagelse(r) i cache. {downloaded} optagelse(r) blev downloadet."
+    },
+    "force_arm_invalid_link": {
+      "message": "Dette X-Sense-link til tvungen tilkobling er ugyldigt."
+    },
+    "force_arm_request_failed": {
+      "message": "X-Sense-anmodningen om tvungen tilkobling mislykkedes."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Stigende",
+        "descending": "Faldende"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Stigende",
+        "descending": "Faldende"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "Kun afspilning",
+        "retained": "Behold lokale optagelser"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "Hjemme",
+        "away": "Ude"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "fields": {
+        "mode": {
+          "name": "Tilkoblingstilstand"
+        }
+      },
+      "name": "Gennemtving tilkobling",
+      "description": "Bekræft en afventende tilkobling i tilstanden Hjemme eller Ude, som er blokeret af åbne sensorer. Åbne sensorer omgås."
+    },
+    "force_arm_now": {
+      "fields": {
+        "mode": {
+          "name": "Tilkoblingstilstand"
+        }
+      },
+      "name": "Gennemtving tilkobling nu",
+      "description": "Tilkobl straks i tilstanden Hjemme eller Ude, og omgå åbne sensorer uden at bede om bekræftelse."
+    },
+    "trigger_sos": {
+      "name": "Udløs SOS-alarm",
+      "description": "Udløs SBS50 SOS-alarmen med det samme."
+    },
+    "cancel_sos": {
+      "name": "Annuller SOS-alarm",
+      "description": "Annuller en aktiv SBS50 SOS-alarm."
+    },
+    "cancel_alarm": {
+      "name": "Annuller aktiv alarm",
+      "description": "Annuller en aktiv SBS50-sensoralarm."
+    },
+    "set_sos_sound": {
+      "fields": {
+        "audible": {
+          "name": "Hørbar SOS-alarm"
+        }
+      },
+      "name": "Indstil SOS-lyd",
+      "description": "Vælg, om SOS kun skal bruge blinkende lys eller også aktivere summeren."
+    },
+    "refresh_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "ID for konfigurationspost",
+          "description": "Lad feltet være tomt for at anvende på alle X-Sense-konti."
+        }
+      },
+      "name": "Opdater optagelser",
+      "description": "Opdater indekset over kameraoptagelser, som bruges af sidepanelet og mediebrowseren."
+    },
+    "cache_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "ID for konfigurationspost",
+          "description": "Lad feltet være tomt for at anvende på alle X-Sense-konti."
+        }
+      },
+      "name": "Gem optagelser i cache",
+      "description": "Download kameraoptagelser til lokal opbevaring. Kræver tilstanden Behold lokale optagelser."
+    },
+    "clear_recordings_cache": {
+      "fields": {
+        "entry_id": {
+          "name": "ID for konfigurationspost",
+          "description": "Lad feltet være tomt for at anvende på alle X-Sense-konti."
+        }
+      },
+      "name": "Ryd optagelsescache",
+      "description": "Slet lokale optagelsesindekser, videoer og miniaturebilleder. Optagelser i skyen og på SD-kort ændres ikke."
+    },
+    "query_light_schedules": {
+      "name": "Hent lysplaner",
+      "description": "Hent lysplaner. Vælg SBS50-lysets strømkontakt som mål."
+    },
+    "create_light_schedule": {
+      "fields": {
+        "name": {
+          "name": "Vist navn"
+        },
+        "start_time": {
+          "name": "Starttidspunkt (HH:MM eller HHMM)"
+        },
+        "end_time": {
+          "name": "Sluttidspunkt (HH:MM eller HHMM)"
+        },
+        "week_days": {
+          "name": "Ugedage (1 = søndag, 7 = lørdag)"
+        },
+        "enabled": {
+          "name": "Aktiveringstilstand"
+        },
+        "time_zone": {
+          "name": "Tidszone"
+        }
+      },
+      "name": "Opret lysplan",
+      "description": "Opret lysplan. Vælg SBS50-lysets strømkontakt som mål."
+    },
+    "update_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Planidentifikator"
+        },
+        "start_time": {
+          "name": "Starttidspunkt (HH:MM eller HHMM)"
+        },
+        "end_time": {
+          "name": "Sluttidspunkt (HH:MM eller HHMM)"
+        },
+        "week_days": {
+          "name": "Ugedage (1 = søndag, 7 = lørdag)"
+        },
+        "enabled": {
+          "name": "Aktiveringstilstand"
+        },
+        "time_zone": {
+          "name": "Tidszone"
+        }
+      },
+      "name": "Opdater lysplan",
+      "description": "Opdater lysplan. Vælg SBS50-lysets strømkontakt som mål."
+    },
+    "rename_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Planidentifikator"
+        },
+        "name": {
+          "name": "Vist navn"
+        }
+      },
+      "name": "Omdøb lysplan",
+      "description": "Omdøb lysplan. Vælg SBS50-lysets strømkontakt som mål."
+    },
+    "delete_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Planidentifikator"
+        }
+      },
+      "name": "Slet lysplan",
+      "description": "Slet lysplan. Vælg SBS50-lysets strømkontakt som mål."
+    },
+    "query_light_groups": {
+      "name": "Hent lysgrupper",
+      "description": "Hent lysgrupper. Vælg SBS50-lysets strømkontakt som mål."
+    },
+    "create_light_group": {
+      "fields": {
+        "name": {
+          "name": "Vist navn"
+        }
+      },
+      "name": "Opret lysgruppe",
+      "description": "Opret lysgruppe. Vælg SBS50-lysets strømkontakt som mål."
+    },
+    "rename_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Gruppeidentifikator"
+        },
+        "name": {
+          "name": "Vist navn"
+        }
+      },
+      "name": "Omdøb lysgruppe",
+      "description": "Omdøb lysgruppe. Vælg SBS50-lysets strømkontakt som mål."
+    },
+    "update_light_group_timer": {
+      "fields": {
+        "group_id": {
+          "name": "Gruppeidentifikator"
+        },
+        "timer": {
+          "name": "Timertype (pirTime eller appTime)"
+        },
+        "value": {
+          "name": "Timerværdi"
+        }
+      },
+      "name": "Opdater lysgruppens timer",
+      "description": "Opdater lysgruppens timer. Vælg SBS50-lysets strømkontakt som mål."
+    },
+    "bind_light_group": {
+      "fields": {
+        "name": {
+          "name": "Vist navn"
+        },
+        "device_ids": {
+          "name": "Enhedsidentifikatorer"
+        }
+      },
+      "name": "Tilknyt lysgruppe",
+      "description": "Tilknyt lysgruppe. Vælg SBS50-lysets strømkontakt som mål."
+    },
+    "delete_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Gruppeidentifikator"
+        }
+      },
+      "name": "Slet lysgruppe",
+      "description": "Slet lysgruppe. Vælg SBS50-lysets strømkontakt som mål."
+    },
+    "remove_light_group_devices": {
+      "fields": {
+        "device_ids": {
+          "name": "Enhedsidentifikatorer"
+        }
+      },
+      "name": "Fjern enheder fra lysgruppe",
+      "description": "Fjern enheder fra lysgruppe. Vælg SBS50-lysets strømkontakt som mål."
+    },
+    "set_light_group_power": {
+      "fields": {
+        "group_id": {
+          "name": "Gruppeidentifikator"
+        },
+        "device_ids": {
+          "name": "Enhedernes serienumre"
+        },
+        "enabled": {
+          "name": "Aktiveringstilstand"
+        }
+      },
+      "name": "Indstil lysgruppens strømtilstand",
+      "description": "Indstil lysgruppens strømtilstand. Vælg SBS50-lysets strømkontakt som mål."
+    }
+  },
+  "issues": {}
 }

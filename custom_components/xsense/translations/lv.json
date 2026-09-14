@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "Ierīce jau ir konfigurēta",
       "reauth_successful": "Atkārtota autentifikācija bija veiksmīga",
-      "reconfigure_successful": "Pārkonfigurācija bija veiksmīga"
+      "reconfigure_successful": "Pārkonfigurācija bija veiksmīga",
+      "unique_id_mismatch": "Pierakstieties ar to pašu X-Sense kontu, kas saistīts ar šo ierakstu."
     },
     "error": {
       "cannot_connect": "Neizdevās izveidot savienojumu",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "Ierakstīšanas multivides sinhronizēšana kešatmiņā saglabā kameras klipus zem multivides Home Assistant, lai X-Sense ierakstu sānjosla, multivides pārlūkprogramma un mobilie paziņojumi varētu ātri atvērt ierakstus. Atstājiet to izslēgtu, lai saglabātu ierakstus tikai tad, kad tie ir atvērti. Iespējojiet to, lai jaunākie ieraksti būtu gatavi fonā.",
+        "description": "Noklusējums ir tikai atskaņošana: ieraksti atskaņošanas laikā tiek pārsūtīti caur Home Assistant, nesaglabājot pilnus klipus. Izvēlieties vietējo ierakstu saglabāšanu, lai glabātu klipus Home Assistant multividē atbilstoši iestatītajiem vecuma un izmēra ierobežojumiem. Fona sinhronizācija darbojas tikai saglabāšanas režīmā.",
         "data": {
           "recording_media_sync_enabled": "Ierakstīšanas multivides sinhronizācija",
           "recording_media_sync_hours": "Fona sinhronizācijas intervāls",
           "recording_media_storage_path": "Ierakstīšanas kešatmiņas mape",
           "recording_notification_quality": "Paziņojumu ierakstīšanas kvalitāte",
           "recording_media_days_order": "Ierakstīšanas dienas pasūtījums",
-          "recording_media_clips_order": "Ierakstīšanas klipa pasūtījums"
+          "recording_media_clips_order": "Ierakstīšanas klipa pasūtījums",
+          "recording_cache_retention_days": "Ieraksta kešatmiņas saglabāšana",
+          "recording_cache_max_size_mb": "Maksimālais ierakstīšanas kešatmiņas lielums",
+          "recording_cache_mode": "Ierakstu glabāšanas režīms"
         },
         "data_description": {
           "recording_media_sync_enabled": "Automātiski saglabājiet jaunākos ierakstus kešatmiņā. Tas izmanto krātuves vietu un var biežāk pamodināt kameras.",
           "recording_media_sync_hours": "Cik bieži vajadzētu darboties parastajai fona panākšanas sinhronizācijai. Kad sinhronizācija ir iespējota, pēdējie ieraksti tiek pārbaudīti ik pēc pāris minūtēm.",
           "recording_media_storage_path": "Izmantojiet mapi sadaļā /media. Šeit tiek glabāti jauni kešatmiņā saglabātie videoklipi un sīktēli.",
-          "recording_notification_quality": "Izvēlieties HD, lai mobilajiem paziņojumiem dotu priekšroku X-Sense tiešajiem/augstas izšķirtspējas klipu vietrāžiem URL. Izvēlieties SD, lai izmantotu kameras atskaņošanas uzņemšanas ceļu, kad tas ir pieejams.",
+          "recording_notification_quality": "HD dod priekšroku augstākas izšķirtspējas ierakstu URL. SD dod priekšroku standarta izšķirtspējai, ja X-Sense to nodrošina.",
           "recording_media_days_order": "Izvēlieties, vai ierakstu skatītājā vispirms tiek rādītas jaunākas vai vecākas dienas.",
-          "recording_media_clips_order": "Izvēlieties, vai katru dienu vispirms tiek rādīti jaunāki vai vecāki klipi."
+          "recording_media_clips_order": "Izvēlieties, vai katru dienu vispirms tiek rādīti jaunāki vai vecāki klipi.",
+          "recording_cache_retention_days": "Pēc daudzām dienām izdzēsiet lokālos kešatmiņā saglabātos ierakstus. X-Sense mākoņa un SD kartes ieraksti netiek mainīti.",
+          "recording_cache_max_size_mb": "Maksimālais vietējās kešatmiņas lielums MB. Kad limits ir sasniegts, vispirms tiek noņemti vismazāk skatītie ieraksti.",
+          "recording_cache_mode": "Tikai atskaņošana pēc pieprasījuma pārsūta HLS multividi caur Home Assistant, nesaglabājot pilnus klipus. Saglabāšanas režīms glabā vietējās kopijas atbilstoši zemāk norādītajiem ierobežojumiem."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "Ierakstu kešatmiņas mape tiks mainīta no `{old_path}` uz `{new_path}`. Esošie kešatmiņā saglabātie videoklipi un sīktēli netiek automātiski pārvietoti. Ja vēlaties, lai vecie kešatmiņā saglabātie ieraksti būtu pieejami, vispirms pārvietojiet esošās mapes `videos` un `thumbs`."
+        "description": "Ierakstu kešatmiņas mape tiks mainīta no `{old_path}` uz `{new_path}`. Esošie kešatmiņā saglabātie videoklipi un sīktēli netiek automātiski pārvietoti. Ja vēlaties, lai vecie kešatmiņā saglabātie ieraksti būtu pieejami, vispirms pārvietojiet esošās mapes `hls`, `videos` un `thumbs`."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "Pastkastes grafiks ir aktīvs"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "AC barošana atvienota"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "Baterijas darbmūža beigas"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "Ierīces darbmūža beigas"
       },
       "armed": {
-        "name": "Armed"
+        "name": "Apsardze ieslēgta"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "Konstatēta kustība"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "USB uzlāde"
       },
       "charging": {
-        "name": "Charging"
+        "name": "Notiek uzlāde"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "Miega režīmā"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "Montāžas kronšteins noņemts"
       },
       "activated": {
-        "name": "Activated"
+        "name": "Aktivizēts"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "Notiek trauksmes mācības"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "Trauksme aktīva"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "Ierīces ierosināta trauksme"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "Notiek ierīces pārbaude"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "Ierīce ir apklusināta"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "Trauksmes skaņa"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "Lietotnes paziņojumi"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "Grafika paziņojumi"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "Ūdens noplūdes trauksme"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "Ūdens noplūdes trauksme apklusināta"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "Temperatūras trauksme"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "Temperatūras trauksme apklusināta"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "Ierīces laika josla iespējota"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "Ierīces laika josla derīga"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "Izslēgt skaņu"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "Pamodināt"
       }
     },
     "event": {
@@ -188,14 +195,14 @@
           "normal": "Normāls",
           "low_battery": "Zems akumulators",
           "malfunction": "Nepareiza darbība",
-          "end_of_life": "Dzīves beigas"
+          "end_of_life": "Ierīces darbmūža beigas"
         }
       },
       "alarm_vol": {
         "name": "Signalizācijas skaļums"
       },
       "wifi_rssi": {
-        "name": "WIFIPLACE HOLDER Signāla stiprums"
+        "name": "Wi-Fi signāla stiprums"
       },
       "ip_address": {
         "name": "IP adrese"
@@ -254,139 +261,139 @@
         "name": "Maksimālā radona līmeņa laiks"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "Baterijas līmenis"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi signāla stiprums"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi signāla stiprums"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "Kameras statusa kods"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "Aparātprogrammatūras versija"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "Kameras aparātprogrammatūras statuss"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Wi-Fi nosaukums (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Wi-Fi kanāls"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "MAC adrese"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "SD kartes statuss"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "SD kartes kopējā ietilpība"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "SD kartes izmantotā vieta"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "Kameras aktivizēšanas laiks"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "Kameras atvienošanās laiks"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "Kameras sīktēla laiks"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "Kameras pamošanās laiks"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "Kameras miega režīma ziņojums"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "Ierīces laika josla"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "Dūmu detektora modeļa variants"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "CO signalizatora standarts"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "Pārbaudes veids"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "PIR intervāls"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "Sensora jutība"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "Apklusināšanas laiks"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "Temperatūras trauksmes apklusināšanas laiks"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "Ūdens noplūdes trauksmes apklusināšanas laiks"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "Īstermiņa CO brīdinājums"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "Īstermiņa CO brīdinājuma līmenis"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "Ilgtermiņa CO brīdinājums"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "Ilgtermiņa CO brīdinājuma līmenis"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "Trauksmes notikums"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "Trauksmes avots"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "Atkārtota trauksme"
       },
       "time": {
-        "name": "Report Time"
+        "name": "Ziņojuma laiks"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "UTC laiks"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "Ierīces pārbaudes laiks"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "Ierīces laika josla"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "Balsī paziņotā atrašanās vieta"
       },
       "location": {
-        "name": "Location"
+        "name": "Atrašanās vieta"
       },
       "color": {
-        "name": "Color"
+        "name": "Krāsa"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "Apgaismojuma notikums"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "Ierīces veids"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "Ziņotais ierīces veids"
       },
       "category": {
-        "name": "Category"
+        "name": "Kategorija"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "Drošības režīms"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "Gaidstāves spilgtums"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "Signalizācijas skaļums"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Balss skaļums"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "Skaļruņa skaļums"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "Trauksmes ilgums"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "Nakts redzamības jutība"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "Raudāšanas noteikšanas jutība"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Pauze starp ierakstiem"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "Mehāniskā zvana ilgums"
       }
     },
     "select": {
@@ -519,251 +526,266 @@
         "name": "Lietotne laicīgi"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "Valoda"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "Ieraksta izšķirtspēja"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "Atklāšanas jutība",
+        "state": {
+          "high": "Augsta",
+          "medium": "Vidēja",
+          "low": "Zema",
+          "auto": "Automātiska"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "Video ilgums"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "Mirgošanas frekvence"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "Noklusējuma kodeks"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "Kustības izsekošana"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "Nakts redzamības režīms"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "Pauze starp mākoņa ierakstiem"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "Durvju zvana melodija"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "Baterijas līmenis automātiskai ieslēgšanai"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "LED indikators"
       },
       "light_power": {
-        "name": "Light"
+        "name": "Apgaismojums"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "Trauksme iespējota"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "Nepārtraukta trauksme"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "E-pasta atgādinājums"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "Īss skaņas signāls iespējots"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "Atgādinājums iespējots"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "Atgādinājuma skaņa iespējota"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "Gaidstāves apgaismojums iespējots"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR iespējots"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "Apkārtējā apgaismojuma noteikšana iespējota"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "Taustiņu skaņa iespējota"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "Brīdinājums iespējots"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "Kustības noteikšana"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "Cilvēku noteikšana"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "Ierakstīt video"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "Automātiska nakts redzamība"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "Statusa LED"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "Kameras trauksme"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "Pagriezt attēlu"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "Mirgošanas novēršana"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "Raudāšanas noteikšana"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Pauze starp ierakstiem"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "Ierīces zvans"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "Mehāniskais zvans"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "Kustības izsekošana"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Balss skaļums"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "Tiešraides skaņa"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "Ieraksta skaņa"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "Automātiska ieslēgšana"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "Balta gaisma"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "Trauksme noņemot ierīci"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "Miega režīms"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "AI paziņojums: cilvēks"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "AI paziņojums: mājdzīvnieks"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "AI paziņojums: transportlīdzekļa iebraukšana"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "AI paziņojums: transportlīdzekļa izbraukšana"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "AI paziņojums: novietots transportlīdzeklis"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "AI paziņojums: sūtījums ir klāt"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "AI paziņojums: sūtījums piegādāts"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "AI paziņojums: sūtījums paņemts"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "AI paziņojums: cits"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "AI palīgs: cilvēks"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "AI palīgs: mājdzīvnieks"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "AI palīgs: transportlīdzeklis"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "AI palīgs: sūtījums"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "Trauksme"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "X-Sense stacija vairs nav pieejama"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "X-Sense entītija vairs nav pieejama"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "X-Sense MQTT nav savienots"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "Neizdevās publicēt X-Sense drošības režīma komandu"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "Režīmam {mode} nav gaidošas X-Sense piespiedu apsardzes ieslēgšanas"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "Nav zināms, vai X-Sense pauze starp ierakstiem ir iespējota"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option} nav atbalstīta X-Sense opcija"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "X-Sense atlases vērtību nevar ierakstīt"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "X-Sense radona slieksnis nav derīgs"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "X-Sense diapazona iestatījumam trūkst pāra vērtības"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "X-Sense minimālā vērtība nevar būt lielāka par maksimālo"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service} ir nepieciešams apgaismojuma barošanas slēdzis"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service} ir nepieciešama SBS50 stacija"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "Trūkst X-Sense {service} ID"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "X-Sense grafika laikam jābūt HH:MM vai HHMM formātā"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "X-Sense grafika laiks ir ārpus diapazona"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "X-Sense grafikā jāiekļauj vismaz viena nedēļas diena"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "X-Sense grafika nedēļas dienām jābūt no 1 līdz 7"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field} jāiekļauj vismaz viens ID"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "Abonementu nevar noņemt divreiz"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "Tēmai jābūt virknei"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "Kļūda saziņā ar MQTT: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "Neizdevās saglabāt kešatmiņā {failed} ierakstus. Lejupielādēti {downloaded} ieraksti."
+    },
+    "force_arm_invalid_link": {
+      "message": "Šī X-Sense piespiedu apsardzes ieslēgšanas saite nav derīga."
+    },
+    "force_arm_request_failed": {
+      "message": "X-Sense piespiedu apsardzes ieslēgšanas pieprasījums neizdevās."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Augošā secībā",
+        "descending": "Dilstošā secībā"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "Augošā secībā",
+        "descending": "Dilstošā secībā"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "Tikai atskaņošana",
+        "retained": "Saglabāt vietējos ierakstus"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "Mājās",
+        "away": "Prom"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "name": "Piespiedu apsardzes ieslēgšana",
+      "description": "Apstipriniet gaidošu apsardzes ieslēgšanas pieprasījumu režīmā Mājās vai Prom, ko bloķē atvērti sensori. Atvērtie sensori tiks apieti.",
+      "fields": {
+        "mode": {
+          "name": "Apsardzes ieslēgšanas režīms"
+        }
+      }
+    },
+    "force_arm_now": {
+      "name": "Tūlītēja piespiedu apsardzes ieslēgšana",
+      "description": "Nekavējoties ieslēdziet apsardzi režīmā Mājās vai Prom, apejot atvērtus sensorus bez apstiprinājuma pieprasījuma.",
+      "fields": {
+        "mode": {
+          "name": "Apsardzes ieslēgšanas režīms"
+        }
+      }
+    },
+    "trigger_sos": {
+      "name": "Aktivizēt SOS trauksmi",
+      "description": "Nekavējoties aktivizējiet SBS50 SOS trauksmi."
+    },
+    "cancel_sos": {
+      "name": "Atcelt SOS trauksmi",
+      "description": "Atceliet aktīvu SBS50 SOS trauksmi."
+    },
+    "cancel_alarm": {
+      "name": "Atcelt aktīvo trauksmi",
+      "description": "Atceliet aktīvu SBS50 sensora trauksmi."
+    },
+    "set_sos_sound": {
+      "name": "Iestatīt SOS skaņu",
+      "description": "Izvēlieties, vai SOS izmanto tikai mirgojošas gaismas vai arī skaņas signālu.",
+      "fields": {
+        "audible": {
+          "name": "SOS skaņas trauksme"
+        }
+      }
+    },
+    "refresh_recordings": {
+      "name": "Atsvaidzināt ierakstus",
+      "description": "Atsvaidziniet kameras ierakstu indeksu, ko izmanto sānjosla un multivides pārlūks.",
+      "fields": {
+        "entry_id": {
+          "name": "Konfigurācijas ieraksta ID",
+          "description": "Atstājiet tukšu, lai piemērotu visiem X-Sense kontiem."
+        }
+      }
+    },
+    "cache_recordings": {
+      "name": "Saglabāt ierakstus kešatmiņā",
+      "description": "Lejupielādējiet kameras ierakstus vietējai glabāšanai. Nepieciešams režīms Saglabāt vietējos ierakstus.",
+      "fields": {
+        "entry_id": {
+          "name": "Konfigurācijas ieraksta ID",
+          "description": "Atstājiet tukšu, lai piemērotu visiem X-Sense kontiem."
+        }
+      }
+    },
+    "clear_recordings_cache": {
+      "name": "Notīrīt ierakstu kešatmiņu",
+      "description": "Dzēsiet vietējos ierakstu indeksus, video un sīktēlus. Ieraksti mākonī un SD kartē netiek mainīti.",
+      "fields": {
+        "entry_id": {
+          "name": "Konfigurācijas ieraksta ID",
+          "description": "Atstājiet tukšu, lai piemērotu visiem X-Sense kontiem."
+        }
+      }
+    },
+    "query_light_schedules": {
+      "name": "Iegūt apgaismojuma grafikus",
+      "description": "Iegūstiet apgaismojuma grafikus. Kā mērķi izvēlieties SBS50 apgaismojuma barošanas slēdzi."
+    },
+    "create_light_schedule": {
+      "name": "Izveidot apgaismojuma grafiku",
+      "description": "Izveidojiet apgaismojuma grafiku. Kā mērķi izvēlieties SBS50 apgaismojuma barošanas slēdzi.",
+      "fields": {
+        "name": {
+          "name": "Parādāmais nosaukums"
+        },
+        "start_time": {
+          "name": "Sākuma laiks (HH:MM vai HHMM)"
+        },
+        "end_time": {
+          "name": "Beigu laiks (HH:MM vai HHMM)"
+        },
+        "week_days": {
+          "name": "Nedēļas dienas (1 = svētdiena, 7 = sestdiena)"
+        },
+        "enabled": {
+          "name": "Iespējošanas stāvoklis"
+        },
+        "time_zone": {
+          "name": "Laika josla"
+        }
+      }
+    },
+    "update_light_schedule": {
+      "name": "Atjaunināt apgaismojuma grafiku",
+      "description": "Atjauniniet apgaismojuma grafiku. Kā mērķi izvēlieties SBS50 apgaismojuma barošanas slēdzi.",
+      "fields": {
+        "schedule_id": {
+          "name": "Grafika identifikators"
+        },
+        "start_time": {
+          "name": "Sākuma laiks (HH:MM vai HHMM)"
+        },
+        "end_time": {
+          "name": "Beigu laiks (HH:MM vai HHMM)"
+        },
+        "week_days": {
+          "name": "Nedēļas dienas (1 = svētdiena, 7 = sestdiena)"
+        },
+        "enabled": {
+          "name": "Iespējošanas stāvoklis"
+        },
+        "time_zone": {
+          "name": "Laika josla"
+        }
+      }
+    },
+    "rename_light_schedule": {
+      "name": "Pārdēvēt apgaismojuma grafiku",
+      "description": "Pārdēvējiet apgaismojuma grafiku. Kā mērķi izvēlieties SBS50 apgaismojuma barošanas slēdzi.",
+      "fields": {
+        "schedule_id": {
+          "name": "Grafika identifikators"
+        },
+        "name": {
+          "name": "Parādāmais nosaukums"
+        }
+      }
+    },
+    "delete_light_schedule": {
+      "name": "Dzēst apgaismojuma grafiku",
+      "description": "Dzēsiet apgaismojuma grafiku. Kā mērķi izvēlieties SBS50 apgaismojuma barošanas slēdzi.",
+      "fields": {
+        "schedule_id": {
+          "name": "Grafika identifikators"
+        }
+      }
+    },
+    "query_light_groups": {
+      "name": "Iegūt apgaismojuma grupas",
+      "description": "Iegūstiet apgaismojuma grupas. Kā mērķi izvēlieties SBS50 apgaismojuma barošanas slēdzi."
+    },
+    "create_light_group": {
+      "name": "Izveidot apgaismojuma grupu",
+      "description": "Izveidojiet apgaismojuma grupu. Kā mērķi izvēlieties SBS50 apgaismojuma barošanas slēdzi.",
+      "fields": {
+        "name": {
+          "name": "Parādāmais nosaukums"
+        }
+      }
+    },
+    "rename_light_group": {
+      "name": "Pārdēvēt apgaismojuma grupu",
+      "description": "Pārdēvējiet apgaismojuma grupu. Kā mērķi izvēlieties SBS50 apgaismojuma barošanas slēdzi.",
+      "fields": {
+        "group_id": {
+          "name": "Grupas identifikators"
+        },
+        "name": {
+          "name": "Parādāmais nosaukums"
+        }
+      }
+    },
+    "update_light_group_timer": {
+      "name": "Atjaunināt apgaismojuma grupas taimeri",
+      "description": "Atjauniniet apgaismojuma grupas taimeri. Kā mērķi izvēlieties SBS50 apgaismojuma barošanas slēdzi.",
+      "fields": {
+        "group_id": {
+          "name": "Grupas identifikators"
+        },
+        "timer": {
+          "name": "Taimera veids (pirTime vai appTime)"
+        },
+        "value": {
+          "name": "Taimera vērtība"
+        }
+      }
+    },
+    "bind_light_group": {
+      "name": "Piesaistīt apgaismojuma grupu",
+      "description": "Piesaistiet apgaismojuma grupu. Kā mērķi izvēlieties SBS50 apgaismojuma barošanas slēdzi.",
+      "fields": {
+        "name": {
+          "name": "Parādāmais nosaukums"
+        },
+        "device_ids": {
+          "name": "Ierīču identifikatori"
+        }
+      }
+    },
+    "delete_light_group": {
+      "name": "Dzēst apgaismojuma grupu",
+      "description": "Dzēsiet apgaismojuma grupu. Kā mērķi izvēlieties SBS50 apgaismojuma barošanas slēdzi.",
+      "fields": {
+        "group_id": {
+          "name": "Grupas identifikators"
+        }
+      }
+    },
+    "remove_light_group_devices": {
+      "name": "Noņemt ierīces no apgaismojuma grupas",
+      "description": "Noņemiet ierīces no apgaismojuma grupas. Kā mērķi izvēlieties SBS50 apgaismojuma barošanas slēdzi.",
+      "fields": {
+        "device_ids": {
+          "name": "Ierīču identifikatori"
+        }
+      }
+    },
+    "set_light_group_power": {
+      "name": "Iestatīt apgaismojuma grupas barošanu",
+      "description": "Iestatiet apgaismojuma grupas barošanu. Kā mērķi izvēlieties SBS50 apgaismojuma barošanas slēdzi.",
+      "fields": {
+        "group_id": {
+          "name": "Grupas identifikators"
+        },
+        "device_ids": {
+          "name": "Ierīču sērijas numuri"
+        },
+        "enabled": {
+          "name": "Iespējošanas stāvoklis"
+        }
+      }
+    }
+  },
+  "issues": {}
 }

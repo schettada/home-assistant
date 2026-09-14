@@ -307,5 +307,10 @@ def map_type(k: str, value: typing.Any):
 
 def map_values(device_type: str, data: typing.Dict):
     mapping = property_mapper.get("*", {}) | property_mapper.get(device_type, {})
+    if device_type in {"STH51", "STH0A", "STH0B", "XC0M-iR"}:
+        mapping |= {
+            "alarmEnable": "alarmEnabled",
+            "continueAlarm": "continuedAlarm",
+        }
 
     return {mapping.get(k, k): map_type(mapping.get(k, k), v) for k, v in data.items()}

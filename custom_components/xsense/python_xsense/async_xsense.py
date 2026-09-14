@@ -1,19 +1,23 @@
 import asyncio
+import errno
 import json
 import logging
+import socket
+from contextlib import AsyncExitStack, asynccontextmanager
 from datetime import datetime, timezone
 from typing import Any, Dict
 
 import aiohttp
 
 from .aws_signer import AWSSigner
-from .base import XSenseBase, _apply_sbs50_force_arm_prompt, shadow_update_body
+from .base import XSenseBase, shadow_update_body
 from .entity import Entity
 from .entity_map import EntityType
-from .exceptions import SessionExpired, APIFailure, XSenseError
+from .exceptions import APIFailure, SessionExpired, XSenseError
 from .house import House
 from .mapping import bool_state
 from .station import Station
+from .webrtc_trace import trace_host, trace_id
 
 LOGGER = logging.getLogger(__name__)
 
@@ -204,8 +208,8 @@ def _camera_addx_serial(camera: Entity) -> str:
     return _camera_addx_serial_candidates(camera)[0]
 
 
-def _camera_addx_serial_candidates(camera: Entity) -> list[str]:
-    """Return APK camera identifiers in ADDX preference order."""
+def camera_primary_identifiers(camera: Entity) -> tuple[str, ...]:
+    """Return strong APK camera identifiers in ADDX preference order."""
     data = getattr(camera, "data", {}) or {}
     ticket = data.get("cameraWebrtcTicket")
     if not isinstance(ticket, dict):
@@ -218,14 +222,36 @@ def _camera_addx_serial_candidates(camera: Entity) -> list[str]:
         ticket.get("realCxSerialNumber"),
         data.get("addxSerialNumber"),
         getattr(camera, "entity_id", None),
-        getattr(camera, "sn", None),
     ):
         if value in (None, ""):
             continue
         serial = str(value)
         if serial not in result:
             result.append(serial)
-    return result or [""]
+    return tuple(result)
+
+
+def camera_identifiers(camera: Entity) -> tuple[str, ...]:
+    """Return all APK camera identifiers, including the secondary IPC label."""
+    result = list(camera_primary_identifiers(camera))
+    serial = getattr(camera, "sn", None)
+    if serial not in (None, "") and str(serial) not in result:
+        result.append(str(serial))
+    return tuple(result)
+
+
+def _camera_addx_serial_candidates(camera: Entity) -> list[str]:
+    """Return APK camera identifiers in ADDX preference order."""
+    return list(camera_identifiers(camera)) or [""]
+
+
+def _camera_history_serial_candidates(camera: Entity, key: str) -> list[str]:
+    """Prefer this history endpoint's identity without changing live access."""
+    serials = _camera_addx_serial_candidates(camera)
+    preferred = camera.data.get(key)
+    if preferred in serials:
+        return [preferred, *(serial for serial in serials if serial != preferred)]
+    return serials
 
 
 def camera_addx_serial(camera: Entity) -> str:
@@ -240,7 +266,92 @@ def camera_matches_identifier(camera: Entity, identifier: Any) -> bool:
         return False
     return any(
         _normalized_camera_serial(candidate) == normalized
-        for candidate in _camera_addx_serial_candidates(camera)
+        for candidate in camera_identifiers(camera)
+    )
+
+
+def cameras_share_identity(left: Entity, right: Entity) -> bool:
+    """Return whether two records share a strong APK camera identifier."""
+    left_identifiers = {
+        normalized
+        for value in camera_primary_identifiers(left)
+        if (normalized := _normalized_camera_serial(value)) is not None
+    }
+    right_identifiers = {
+        normalized
+        for value in camera_primary_identifiers(right)
+        if (normalized := _normalized_camera_serial(value)) is not None
+    }
+    return bool(left_identifiers & right_identifiers)
+
+
+def _camera_library_record_key(record: dict, serials: list[str]) -> str:
+    """Identify library rows independently of refreshed signed media URLs."""
+    serial = (
+        record.get("serialNumber") or record.get("deviceSn")
+        or record.get("sn") or serials
+    )
+    trace = record.get("traceId") or record.get("traceIds") or record.get("id")
+    if trace not in (None, "", []):
+        identity = {"serial": serial, "trace": trace}
+    else:
+        times = {
+            key: record[key]
+            for key in (
+                "timestamp", "date", "startTime", "endTime", "start_time",
+                "end_time", "start_time_s", "end_time_s", "start", "end",
+                "package_time_s",
+            )
+            if record.get(key) not in (None, "")
+        }
+        identity = {"serial": serial, "times": times} if times else record
+    return json.dumps(identity, sort_keys=True)
+
+
+def _camera_history_record_owner(
+    cameras: list[Entity], record: dict[str, Any]
+) -> Entity | None:
+    """Return the one camera proven to own an APK library record."""
+    identifier = (
+        record.get("serialNumber") or record.get("deviceSn") or record.get("sn")
+    )
+    return camera_for_identifier(cameras, identifier)
+
+
+def camera_for_identifier(
+    cameras: list[Entity], identifier: Any
+) -> Entity | None:
+    """Return the one camera proven to own an APK identifier."""
+    normalized = _normalized_camera_serial(identifier)
+    if normalized is None:
+        return None
+
+    primary_matches = [
+        camera
+        for camera in cameras
+        if any(
+            _normalized_camera_serial(candidate) == normalized
+            for candidate in camera_primary_identifiers(camera)
+        )
+    ]
+    if primary_matches:
+        owner = primary_matches[0]
+        return (
+            owner
+            if all(cameras_share_identity(owner, match) for match in primary_matches)
+            else None
+        )
+
+    secondary_matches = [
+        camera for camera in cameras if camera_matches_identifier(camera, identifier)
+    ]
+    if not secondary_matches:
+        return None
+    owner = secondary_matches[0]
+    return (
+        owner
+        if all(cameras_share_identity(owner, match) for match in secondary_matches)
+        else None
     )
 
 
@@ -399,6 +510,7 @@ class AsyncXSense(XSenseBase):
         super().__init__()
         self.session = session
         self._owns_session = session is None
+        self._ipv4_session: aiohttp.ClientSession | None = None
         self.language = _ipc_language(language)
         self._sbs50_child_info_loaded: set[tuple[str, str]] = set()
 
@@ -408,7 +520,45 @@ class AsyncXSense(XSenseBase):
             self._owns_session = True
         return self.session
 
+    async def _get_ipv4_session(self) -> aiohttp.ClientSession:
+        """Return a private IPv4 session for unreachable dual-stack routes."""
+        if self._ipv4_session is None or self._ipv4_session.closed:
+            self._ipv4_session = aiohttp.ClientSession(
+                connector=aiohttp.TCPConnector(family=socket.AF_INET)
+            )
+        return self._ipv4_session
+
+    @asynccontextmanager
+    async def _shadow_request(self, method: str, url: str, **kwargs):
+        """Open an AWS IoT shadow request with a narrow IPv4 fallback."""
+        async with AsyncExitStack() as stack:
+            session = await self._get_session()
+            try:
+                response = await stack.enter_async_context(
+                    getattr(session, method)(url, **kwargs)
+                )
+            except aiohttp.ClientConnectorError as ex:
+                os_error = getattr(ex, "os_error", None)
+                if getattr(os_error, "errno", None) not in {
+                    errno.ENETUNREACH,
+                    errno.EHOSTUNREACH,
+                }:
+                    raise
+                LOGGER.debug(
+                    "X-Sense AWS IoT shadow route unavailable; retrying over IPv4: %s",
+                    ex,
+                )
+                ipv4_session = await self._get_ipv4_session()
+                response = await stack.enter_async_context(
+                    getattr(ipv4_session, method)(url, **kwargs)
+                )
+
+            yield response
+
     async def close(self):
+        if self._ipv4_session is not None and not self._ipv4_session.closed:
+            await self._ipv4_session.close()
+        self._ipv4_session = None
         if self._owns_session and self.session and not self.session.closed:
             await self.session.close()
 
@@ -545,7 +695,7 @@ class AsyncXSense(XSenseBase):
         data = await self.ai_service_call("701008", **payload)
         return data if isinstance(data, dict) else {}
 
-    async def get_camera_event_history(
+    async def get_camera_library_history(
         self,
         serial_numbers: list[str],
         start_timestamp: int,
@@ -563,7 +713,7 @@ class AsyncXSense(XSenseBase):
             "/library/newselectlibrary",
             startTimestamp=start_timestamp,
             endTimestamp=end_timestamp,
-            to=limit,
+            to=start + limit,
             serialNumber=serials,
             tags=[],
             marked=0,
@@ -576,7 +726,7 @@ class AsyncXSense(XSenseBase):
         )
         return data if isinstance(data, dict) else {}
 
-    async def get_camera_event_history_for_cameras(
+    async def get_camera_library_history_for_cameras(
         self,
         cameras: list[Entity],
         start_timestamp: int,
@@ -585,32 +735,26 @@ class AsyncXSense(XSenseBase):
         start: int = 0,
         limit: int = 20,
     ) -> dict:
-        """Return camera records through each camera's APK ADDX Home context."""
-        requests: list[tuple[Entity, House | None, list[str]]] = []
-        seen_cameras: set[str] = set()
-        for camera in cameras:
-            serials = [
-                serial
-                for serial in _camera_addx_serial_candidates(camera)
-                if serial
-            ]
-            if not serials:
-                continue
-            camera_key = _normalized_camera_serial(serials[0]) or serials[0]
-            if camera_key in seen_cameras:
-                continue
-            seen_cameras.add(camera_key)
-            requests.append((camera, self._camera_addx_house(camera), serials))
-
+        """Return APK playback-library rows in each camera's ADDX Home context."""
         records: list[dict[str, Any]] = []
         first_error: APIFailure | None = None
         successful_requests = 0
-        for camera, house, serials in requests:
+        seen_cameras: list[Entity] = []
+        for camera in cameras:
+            serials = _camera_history_serial_candidates(
+                camera, "cameraLibrarySerialNumber"
+            )
+            if not serials:
+                continue
+            if any(cameras_share_identity(camera, seen) for seen in seen_cameras):
+                continue
+            seen_cameras.append(camera)
+            house = self._camera_addx_house(camera)
             camera_request_succeeded = False
             accepted_serial = None
             for serial_index, serial in enumerate(serials):
                 try:
-                    history = await self.get_camera_event_history(
+                    history = await self._get_camera_library_pages(
                         [serial],
                         start_timestamp,
                         end_timestamp,
@@ -622,7 +766,7 @@ class AsyncXSense(XSenseBase):
                     if first_error is None:
                         first_error = err
                     LOGGER.debug(
-                        "X-Sense camera record history unavailable: %s",
+                        "X-Sense camera playback-library history unavailable: %s",
                         {
                             "identity_index": serial_index,
                             "identity_count": len(serials),
@@ -630,7 +774,6 @@ class AsyncXSense(XSenseBase):
                         },
                     )
                     continue
-
                 camera_request_succeeded = True
                 data = (
                     history.get("data")
@@ -640,64 +783,150 @@ class AsyncXSense(XSenseBase):
                 group_records = data.get("list") if isinstance(data, dict) else None
                 if not isinstance(group_records, list) or not group_records:
                     continue
-
+                matching_records = [
+                    record
+                    for record in group_records
+                    if isinstance(record, dict)
+                    and _camera_history_record_owner(cameras, record) is camera
+                ]
+                if not matching_records:
+                    continue
                 accepted_serial = serial
-                records.extend(
-                    record for record in group_records if isinstance(record, dict)
-                )
+                records.extend(matching_records)
                 break
-
-            if accepted_serial is None:
-                for serial_index, serial in enumerate(serials):
-                    try:
-                        history = await self.get_camera_event_record_history(
-                            [serial],
-                            start_timestamp,
-                            end_timestamp,
-                            house=house,
-                            start=start,
-                            limit=limit,
-                        )
-                    except APIFailure as err:
-                        if first_error is None:
-                            first_error = err
-                        LOGGER.debug(
-                            "X-Sense camera event-library history unavailable: %s",
-                            {
-                                "identity_index": serial_index,
-                                "identity_count": len(serials),
-                                "error_type": type(err).__name__,
-                            },
-                        )
-                        continue
-
-                    camera_request_succeeded = True
-                    data = (
-                        history.get("data")
-                        if isinstance(history.get("data"), dict)
-                        else history
-                    )
-                    group_records = data.get("list") if isinstance(data, dict) else None
-                    if not isinstance(group_records, list) or not group_records:
-                        continue
-
-                    accepted_serial = serial
-                    records.extend(
-                        record for record in group_records if isinstance(record, dict)
-                    )
-                    break
-
             if accepted_serial is not None:
                 camera.set_data(
                     {
-                        "addxAccessSerialNumber": accepted_serial,
-                        "addxSerialNumber": accepted_serial,
+                        "cameraLibrarySerialNumber": accepted_serial,
                     }
                 )
-
             if camera_request_succeeded:
                 successful_requests += 1
+        if successful_requests == 0 and first_error is not None:
+            raise first_error
+        return {"list": records, "total": len(records)}
 
+    async def _get_camera_library_pages(
+        self, serials, start_timestamp, end_timestamp, *, house, start, limit
+    ) -> dict:
+        """Read every library page, stopping if the service repeats a page."""
+        if limit <= 0:
+            raise ValueError("Camera library page size must be positive")
+        records = []
+        seen = set()
+        offset = start
+        while True:
+            history = await self.get_camera_library_history(
+                serials, start_timestamp, end_timestamp,
+                house=house, start=offset, limit=limit,
+            )
+            data = history.get("data")
+            if not isinstance(data, dict):
+                data = history
+            page = data.get("list")
+            if not isinstance(page, list) or not page:
+                break
+            raw_total = data.get("total")
+            total = None
+            if isinstance(raw_total, int) and not isinstance(raw_total, bool) and raw_total >= 0:
+                total = raw_total
+            elif isinstance(raw_total, str) and raw_total.isdecimal():
+                total = int(raw_total)
+            added = 0
+            for record in page:
+                if not isinstance(record, dict):
+                    continue
+                key = _camera_library_record_key(record, serials)
+                if key not in seen:
+                    seen.add(key)
+                    records.append(record)
+                    added += 1
+            offset += len(page)
+            if not added:
+                break
+            if total is not None:
+                if offset >= total:
+                    break
+            elif len(page) < limit:
+                break
+        return {"list": records, "total": len(records)}
+
+    async def get_camera_event_record_history_for_cameras(
+        self,
+        cameras: list[Entity],
+        start_timestamp: int,
+        end_timestamp: int,
+        *,
+        start: int = 0,
+        limit: int = 20,
+    ) -> dict:
+        """Return APK event records in each camera's exact ADDX Home context."""
+        records: list[dict[str, Any]] = []
+        first_error: APIFailure | None = None
+        successful_requests = 0
+        seen_cameras: list[Entity] = []
+        for camera in cameras:
+            serials = _camera_history_serial_candidates(
+                camera, "cameraEventHistorySerialNumber"
+            )
+            if not serials:
+                continue
+            if any(cameras_share_identity(camera, seen) for seen in seen_cameras):
+                continue
+            seen_cameras.append(camera)
+            house = self._camera_addx_house(camera)
+            accepted_serial = None
+            camera_request_succeeded = False
+            for serial_index, serial in enumerate(serials):
+                try:
+                    history = await self.get_camera_event_record_history(
+                        [serial],
+                        start_timestamp,
+                        end_timestamp,
+                        house=house,
+                        start=start,
+                        limit=limit,
+                    )
+                except APIFailure as err:
+                    if first_error is None:
+                        first_error = err
+                    LOGGER.debug(
+                        "X-Sense camera event history unavailable: %s",
+                        {
+                            "identity_index": serial_index,
+                            "identity_count": len(serials),
+                            "error_type": type(err).__name__,
+                        },
+                    )
+                    continue
+                camera_request_succeeded = True
+                data = (
+                    history.get("data")
+                    if isinstance(history.get("data"), dict)
+                    else history
+                )
+                group_records = data.get("list") if isinstance(data, dict) else None
+                if not isinstance(group_records, list) or not group_records:
+                    continue
+                matching_records = [
+                    record
+                    for record in group_records
+                    if isinstance(record, dict)
+                    and _camera_history_record_owner(cameras, record) is camera
+                ]
+                if not matching_records:
+                    continue
+                accepted_serial = serial
+                records.extend(matching_records)
+                break
+            if accepted_serial is not None:
+                camera.set_data(
+                    {
+                        "cameraEventHistorySerialNumber": accepted_serial,
+                    }
+                )
+            if camera_request_succeeded:
+                successful_requests += 1
         if successful_requests == 0 and first_error is not None:
             raise first_error
         return {"list": records, "total": len(records)}
@@ -1065,6 +1294,17 @@ class AsyncXSense(XSenseBase):
         data = self._addx_body(addx_session, kwargs)
 
         session = await self._get_session()
+        if endpoint == "/device/getWebrtcTicket":
+            LOGGER.debug(
+                "X-Sense WebRTC ticket HTTP route trace: %s",
+                {
+                    "request_serial": trace_id(data.get("serialNumber")),
+                    "house": trace_id(getattr(_house, "house_id", None)),
+                    "node": node,
+                    "api_host": trace_host(base_url),
+                    "auth_retry": not _retry,
+                },
+            )
         async with session.post(
             f"{base_url}{endpoint}",
             json=data,
@@ -1197,8 +1437,7 @@ class AsyncXSense(XSenseBase):
 
         url, headers = self._house_request(house, page)
 
-        session = await self._get_session()
-        async with session.get(url, headers=headers) as response:
+        async with self._shadow_request("get", url, headers=headers) as response:
             self._lastres = response
             if response.status in (401, 403) and _retry:
                 self._apply_clock_skew_from_response(response)
@@ -1212,8 +1451,7 @@ class AsyncXSense(XSenseBase):
 
         url, headers = self._thing_request(station, page)
 
-        session = await self._get_session()
-        async with session.get(url, headers=headers) as response:
+        async with self._shadow_request("get", url, headers=headers) as response:
             self._lastres = response
             if response.status in (401, 403) and _retry:
                 self._apply_clock_skew_from_response(response)
@@ -1230,8 +1468,9 @@ class AsyncXSense(XSenseBase):
         body = shadow_update_body(data)
         url, headers = self._thing_request(station, page, body)
 
-        session = await self._get_session()
-        async with session.post(url, data=body, headers=headers) as response:
+        async with self._shadow_request(
+            "post", url, data=body, headers=headers
+        ) as response:
             self._lastres = response
             if (
                 response.status in (401, 403)
@@ -1464,17 +1703,66 @@ class AsyncXSense(XSenseBase):
         return list(devices_by_serial.values())
 
     async def get_camera_thumbnail(self, camera: Entity) -> bytes | None:
-        """Return the latest camera thumbnail bytes from the APK thumbnail URL."""
-        thumbnail_url = camera.data.get("thumbImgUrl")
-        if not thumbnail_url:
+        """Return the freshest preferred camera event image available."""
+        try:
+            await self._update_camera_push_image_metadata(camera)
+        except XSenseError as err:
+            LOGGER.debug(
+                "X-Sense camera push image metadata update failed: %s",
+                {
+                    "camera": _masked_identifier(getattr(camera, "sn", "")),
+                    "error_type": type(err).__name__,
+                },
+            )
+
+        thumbnail_urls = camera_thumbnail_urls(camera)
+        if not thumbnail_urls:
             return None
 
         session = await self._get_session()
-        async with session.get(thumbnail_url) as response:
-            self._lastres = response
-            if response.status >= 400:
-                return None
-            return await response.read()
+        for thumbnail_url in thumbnail_urls:
+            try:
+                async with session.get(thumbnail_url) as response:
+                    self._lastres = response
+                    if response.status >= 400:
+                        continue
+                    image = await response.read()
+            except (aiohttp.ClientError, asyncio.TimeoutError):
+                continue
+            if image:
+                return image
+        return None
+
+    async def _update_camera_push_image_metadata(self, camera: Entity) -> None:
+        """Read the APK's latest stored push-image metadata for one camera."""
+        data = await self._camera_addx_call(camera, "/device/devicePushImage")
+        cameras = [
+            station
+            for house in self.houses.values()
+            for station in house.stations.values()
+            if is_camera_entity(station)
+        ]
+        if not any(
+            known is camera or cameras_share_identity(known, camera)
+            for known in cameras
+        ):
+            cameras.append(camera)
+        for item in _camera_push_image_rows(data):
+            owner = camera_for_identifier(cameras, item.get("serialNumber"))
+            if owner is not camera and not (
+                owner is not None and cameras_share_identity(owner, camera)
+            ):
+                continue
+            values = {
+                "lastPushImageUrl": item.get("lastPushImageUrl"),
+                "lastPushTime": item.get("lastPushTime"),
+            }
+            set_data = getattr(camera, "set_data", None)
+            if callable(set_data):
+                set_data(values)
+            else:
+                camera.data.update(values)
+            return
 
     def _camera_from_addx_device(self, data: Dict) -> Station | None:
         """Return the X-Sense camera entity backed by an ADDX DeviceBean."""
@@ -1483,22 +1771,36 @@ class AsyncXSense(XSenseBase):
         if normalized_serial is None:
             return None
 
-        for house in self.houses.values():
-            for station in house.stations.values():
-                if (
-                    is_camera_entity(station)
-                    and normalized_serial
-                    in {
-                        _normalized_camera_serial(station.entity_id),
-                        _normalized_camera_serial(station.sn),
-                    }
-                ):
-                    camera_type = _camera_type(data)
-                    if camera_type:
-                        station.type = camera_type
-                    if data.get("deviceName"):
-                        station.name = data["deviceName"]
-                    return station
+        existing_cameras = [
+            station
+            for house in self.houses.values()
+            for station in house.stations.values()
+            if is_camera_entity(station)
+        ]
+        matches = [
+            camera
+            for camera in existing_cameras
+            if any(
+                _normalized_camera_serial(candidate) == normalized_serial
+                for candidate in camera_primary_identifiers(camera)
+            )
+        ]
+        if not matches:
+            matches = [
+                camera
+                for camera in existing_cameras
+                if camera_matches_identifier(camera, serial)
+            ]
+        if len(matches) > 1:
+            return None
+        if len(matches) == 1:
+            station = matches[0]
+            camera_type = _camera_type(data)
+            if camera_type:
+                station.type = camera_type
+            if data.get("deviceName"):
+                station.name = data["deviceName"]
+            return station
 
         device_house_id = data.get("houseId")
         if device_house_id in (None, ""):
@@ -1646,18 +1948,50 @@ class AsyncXSense(XSenseBase):
 
         data = None
         last_error: APIFailure | None = None
-        for serial in _camera_addx_serial_candidates(camera):
+        serials = _camera_addx_serial_candidates(camera)
+        # History APIs may prefer another alias; refresh tickets with their own
+        # previously accepted identity before trying the shared fallbacks.
+        ticket_serial = cached.get("serialNumber") if isinstance(cached, dict) else None
+        if ticket_serial not in (None, ""):
+            ticket_serial = str(ticket_serial)
+            serials = [ticket_serial, *(value for value in serials if value != ticket_serial)]
+        for serial in serials:
             try:
+                house = self._camera_addx_house(camera)
+                LOGGER.debug(
+                    "X-Sense WebRTC ticket request trace: %s",
+                    {
+                        "camera": trace_id(camera.sn),
+                        "request_serial": trace_id(serial),
+                        "house": trace_id(getattr(house, "house_id", None)),
+                        "node": _ipc_node_type(house.mqtt_region) if house else None,
+                        "attempt": serials.index(serial) + 1,
+                        "force_refresh": force_refresh,
+                    },
+                )
                 data = await self._camera_addx_call(
                     camera,
                     "/device/getWebrtcTicket",
                     serialNumber=serial,
                     verifyDormancyStatus=True,
                 )
+                if isinstance(data, dict):
+                    LOGGER.debug(
+                        "X-Sense WebRTC ticket response trace: %s",
+                        {
+                            "request_serial": trace_id(serial),
+                            "id": trace_id(data.get("id")),
+                            "groupId": trace_id(data.get("groupId")),
+                            "realCxSerialNumber": trace_id(data.get("realCxSerialNumber")),
+                            "response_serial": trace_id(data.get("serialNumber")),
+                            "role": data.get("role") if data.get("role") in ("viewer", "device", "camera") else "other",
+                            "signal_host": trace_host(data.get("signalServer")),
+                            "expirationTime": data.get("expirationTime") if isinstance(data.get("expirationTime"), (int, float)) else None,
+                        },
+                    )
                 camera.set_data(
                     {
                         "addxAccessSerialNumber": serial,
-                        "addxSerialNumber": serial,
                     }
                 )
                 break
@@ -1827,7 +2161,6 @@ class AsyncXSense(XSenseBase):
 
         if "reported" in res.get("state", {}):
             reported = res["state"]["reported"].copy()
-            _apply_sbs50_force_arm_prompt(station, reported)
             station.set_alarm_data(
                 {
                     key: value
@@ -2310,7 +2643,9 @@ class AsyncXSense(XSenseBase):
         """Write a volume value through the same settings shadow as the app."""
         return await self.update_shadow_setting(entity, data_key, value)
 
-    async def update_radon_unit(self, entity: Entity, radon_unit: str):
+    async def update_radon_unit(
+        self, entity: Entity, radon_unit: str, *, temp_unit: str | None = None
+    ):
         """Write the XR0A-iR display units through the APK REST operation."""
         station = getattr(entity, "station", entity)
         if not getattr(station, "entity_id", None) or not getattr(station, "sn", None):
@@ -2319,7 +2654,9 @@ class AsyncXSense(XSenseBase):
             "104115",
             stationId=station.entity_id,
             stationSn=station.sn,
-            tempUnit=str(entity.data.get("tempUnit", "1")),
+            tempUnit=str(
+                entity.data.get("tempUnit", "1") if temp_unit is None else temp_unit
+            ),
             radonUnit=str(radon_unit),
         )
 
@@ -2847,6 +3184,107 @@ def _camera_type(data: Dict) -> str | None:
     return None
 
 
+def camera_thumbnail_urls(camera: Entity) -> tuple[str, ...]:
+    """Return camera image URLs ordered by freshness and source quality."""
+    data = camera.data
+    candidates: list[tuple[Any, int | None, int]] = [
+        (
+            data.get("lastEventImageUrl"),
+            _camera_image_epoch_seconds(data.get("lastEventImageTime")),
+            4,
+        ),
+        (
+            data.get("lastEventPackageImageUrl"),
+            _camera_image_epoch_seconds(data.get("lastEventImageTime")),
+            2,
+        ),
+        (
+            data.get("lastPushImageUrl"),
+            _camera_image_epoch_seconds(data.get("lastPushTime")),
+            3,
+        ),
+        (
+            data.get("thumbImgUrl"),
+            _camera_image_epoch_seconds(data.get("thumbImgTime")),
+            1,
+        ),
+    ]
+    playback = data.get("playback")
+    if isinstance(playback, dict):
+        playback_time = _camera_image_epoch_seconds(
+            playback.get("timestamp_s")
+            or playback.get("timestamp")
+            or playback.get("start_time_s")
+            or playback.get("start_time")
+        )
+        candidates.extend(
+            (
+                (playback.get("image_url"), playback_time, 4),
+                (playback.get("package_image_url"), playback_time, 2),
+            )
+        )
+    direct_image_time = _camera_image_epoch_seconds(
+        data.get("image_time")
+        or data.get("imageTime")
+        or data.get("event_time")
+        or data.get("eventTime")
+    )
+    candidates.extend(
+        (
+            (data.get("image_url"), direct_image_time, 4),
+            (data.get("imageUrl"), direct_image_time, 4),
+            (data.get("package_image_url"), direct_image_time, 2),
+            (data.get("packageImageUrl"), direct_image_time, 2),
+        )
+    )
+    candidates.sort(
+        key=lambda candidate: (
+            candidate[1] is not None,
+            candidate[1] if candidate[1] is not None else 0,
+            candidate[2],
+        ),
+        reverse=True,
+    )
+
+    urls: list[str] = []
+    for value, _timestamp, _quality in candidates:
+        if not isinstance(value, str):
+            continue
+        url = value.strip()
+        if not url.startswith(("http://", "https://")) or url in urls:
+            continue
+        urls.append(url)
+    return tuple(urls)
+
+
+def _camera_push_image_rows(value: Any) -> list[dict[str, Any]]:
+    """Return devicePushImage rows from the APK response shapes."""
+    if isinstance(value, list):
+        return [item for item in value if isinstance(item, dict)]
+    if not isinstance(value, dict):
+        return []
+    for key in ("list", "data"):
+        nested = value.get(key)
+        if isinstance(nested, list):
+            return [item for item in nested if isinstance(item, dict)]
+    if "serialNumber" in value:
+        return [value]
+    return []
+
+
+def _camera_image_epoch_seconds(value: Any) -> int | None:
+    """Return comparable seconds for APK camera image timestamps."""
+    if value in (None, ""):
+        return None
+    try:
+        timestamp = int(value)
+    except (TypeError, ValueError):
+        return None
+    if timestamp > 10_000_000_000:
+        timestamp //= 1000
+    return timestamp
+
+
 def _camera_data(data: Dict) -> Dict:
     device_model = data.get("deviceModel") or {}
     device_support = data.get("deviceSupport") or {}
@@ -2885,7 +3323,6 @@ def _camera_data(data: Dict) -> Dict:
             else data.get("isAdmin")
         ),
         "isCharging": bool_state(data.get("isCharging")),
-        "isMoved": data.get("isMoved"),
         "liveAudioToggleOn": data.get("liveAudioToggleOn"),
         "modelNo": data.get("modelNo"),
         "networkName": data.get("networkName"),

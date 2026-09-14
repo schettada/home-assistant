@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "המכשיר כבר מוגדר",
       "reauth_successful": "האימות מחדש הצליח",
-      "reconfigure_successful": "ההגדרה מחדש הצליחה"
+      "reconfigure_successful": "ההגדרה מחדש הצליחה",
+      "unique_id_mismatch": "יש להתחבר באמצעות אותו חשבון X-Sense המשויך לרשומה זו."
     },
     "error": {
       "cannot_connect": "החיבור נכשל",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "סינכרון מדיה הקלטת מטמון קטעי מצלמה תחת המדיה של Home Assistant כך שסרגל הצד של הקלטות X-Sense, דפדפן המדיה והתראות לנייד יכולים לפתוח הקלטות במהירות. השאר את זה כדי לשמור הקלטות רק כשהן נפתחות. אפשר אותו כדי לשמור את ההקלטות האחרונות מוכנות ברקע.",
+        "description": "מצב הפעלה בלבד הוא ברירת המחדל ומעביר הקלטות דרך Home Assistant בזמן הניגון בלי לשמור קליפים מלאים. בחר שמירת הקלטות מקומית כדי לשמור קליפים במדיה של Home Assistant לפי מגבלות הגיל והגודל שהוגדרו. סנכרון ברקע פועל רק במצב שמירה.",
         "data": {
           "recording_media_sync_enabled": "סינכרון מדיה הקלטת",
           "recording_media_sync_hours": "מרווח סנכרון ברקע",
           "recording_media_storage_path": "תיקיית מטמון הקלטות",
           "recording_notification_quality": "איכות הקלטת הודעות",
           "recording_media_days_order": "סדר יום הקלטה",
-          "recording_media_clips_order": "סדר הקלטת קליפים"
+          "recording_media_clips_order": "סדר הקלטת קליפים",
+          "recording_cache_retention_days": "שמירת מטמון הקלטה",
+          "recording_cache_max_size_mb": "גודל מטמון הקלטה מקסימלי",
+          "recording_cache_mode": "מצב אחסון הקלטות"
         },
         "data_description": {
           "recording_media_sync_enabled": "שמור הקלטות אחרונות באופן אוטומטי. זה משתמש בשטח אחסון ועלול להעיר מצלמות לעתים קרובות יותר.",
           "recording_media_sync_hours": "באיזו תדירות צריך לרוץ סנכרון התדמית הרגיל ברקע. הקלטות אחרונות נבדקות כל כמה דקות כאשר הסנכרון מופעל.",
           "recording_media_storage_path": "השתמש בתיקייה תחת /media. סרטונים ותמונות ממוזערות חדשות בקובץ שמור מאוחסנים כאן.",
-          "recording_notification_quality": "בחר HD כדי להעדיף את כתובות ה-URL של קליפים ישירות/ברזולוציה גבוהה של X-Sense להתראות לנייד. בחר SD כדי להשתמש בנתיב לכידת השמעת המצלמה כאשר זמין.",
+          "recording_notification_quality": "HD מעדיף כתובות הקלטה ברזולוציה גבוהה יותר. SD מעדיף רזולוציה רגילה כאשר X-Sense מספק אותה.",
           "recording_media_days_order": "בחר אם ימים חדשים יותר או ישנים יותר יופיעו תחילה במציג ההקלטות.",
-          "recording_media_clips_order": "בחר אם קליפים חדשים יותר או ישנים יותר יופיעו ראשונים בכל יום."
+          "recording_media_clips_order": "בחר אם קליפים חדשים יותר או ישנים יותר יופיעו ראשונים בכל יום.",
+          "recording_cache_retention_days": "מחק הקלטות מקומיות במטמון לאחר ימים רבים כל כך. הקלטות בענן X-Sense וכרטיס SD אינן משתנות.",
+          "recording_cache_max_size_mb": "גודל מטמון מקומי מקסימלי ב-MB. כשמגיעים למגבלה, ההקלטות הפחות נצפו לאחרונה יוסרו תחילה.",
+          "recording_cache_mode": "מצב הפעלה בלבד מעביר מדיית HLS דרך Home Assistant לפי דרישה בלי לשמור קליפים מלאים. מצב שמירה מחזיק עותקים מקומיים לפי המגבלות שלהלן."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "תיקיית מטמון ההקלטה תשתנה מ-`{old_path}` ל-`{new_path}`. סרטונים ותמונות ממוזערות קיימים במטמון אינם מוזזים אוטומטית. העבר תחילה את התיקיות `videos` ו-`thumbs` הקיימות אם ברצונך שהקלטות ישנות המאוחסנות במטמון יישארו זמינות."
+        "description": "תיקיית מטמון ההקלטה תשתנה מ-`{old_path}` ל-`{new_path}`. סרטונים ותמונות ממוזערות קיימים במטמון אינם מוזזים אוטומטית. העבר תחילה את התיקיות `hls`, `videos` ו-`thumbs` הקיימות אם ברצונך שהקלטות ישנות המאוחסנות במטמון יישארו זמינות."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "לוח הזמנים של תיבת הדואר פעיל"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "אספקת החשמל נותקה"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "סוף חיי הסוללה"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "סוף חיי השירות"
       },
       "armed": {
-        "name": "Armed"
+        "name": "דרוך"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "זוהתה תנועה"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "טעינה דרך USB"
       },
       "charging": {
-        "name": "Charging"
+        "name": "בטעינה"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "במצב שינה"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "תושבת ההתקנה הוסרה"
       },
       "activated": {
-        "name": "Activated"
+        "name": "הופעל"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "תרגול אזעקה פעיל"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "אזעקה פעילה"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "ההתקן שהפעיל את האזעקה"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "בדיקת ההתקן פעילה"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "המכשיר מושתק"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "צליל אזעקה"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "התראות היישומון"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "התראות תזמון"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "אזעקת נזילת מים"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "אזעקת נזילת מים הושתקה"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "אזעקת טמפרטורה"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "אזעקת טמפרטורה הושתקה"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "אזור הזמן של ההתקן מופעל"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "אזור הזמן של ההתקן תקין"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "השתק"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "הפעלה ממצב שינה"
       }
     },
     "event": {
@@ -188,7 +195,7 @@
           "normal": "רגיל",
           "low_battery": "סוללה נמוכה",
           "malfunction": "תקלה",
-          "end_of_life": "סוף החיים"
+          "end_of_life": "סוף חיי השירות"
         }
       },
       "alarm_vol": {
@@ -254,139 +261,139 @@
         "name": "זמן שיא רמת ראדון"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "רמת סוללה"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "עוצמת אות Wi-Fi"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "עוצמת אות Wi-Fi"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "קוד מצב המצלמה"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "גרסת קושחה"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "מצב קושחת המצלמה"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "שם רשת Wi-Fi (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "ערוץ Wi-Fi"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "כתובת MAC"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "מצב כרטיס SD"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "קיבולת כוללת של כרטיס SD"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "שטח בשימוש בכרטיס SD"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "מועד הפעלת המצלמה"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "מועד ניתוק המצלמה"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "מועד התמונה הממוזערת של המצלמה"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "מועד התעוררות המצלמה ממצב שינה"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "הודעת מצב שינה של המצלמה"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "אזור הזמן של ההתקן"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "גרסת גלאי העשן"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "תקן אזעקת CO"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "סוג הבדיקה"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "מרווח PIR"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "רגישות חיישן"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "זמן השתקה"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "זמן השתקת אזעקת טמפרטורה"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "זמן השתקת אזעקת נזילת מים"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "אזהרת CO לטווח קצר"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "רמת אזהרת CO לטווח קצר"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "אזהרת CO לטווח ארוך"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "רמת אזהרת CO לטווח ארוך"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "אירוע אזעקה"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "מקור האזעקה"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "אזעקה חוזרת"
       },
       "time": {
-        "name": "Report Time"
+        "name": "מועד הדיווח"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "זמן UTC"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "זמן בדיקת מכשיר"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "אזור הזמן של ההתקן"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "מיקום להכרזה קולית"
       },
       "location": {
-        "name": "Location"
+        "name": "מיקום"
       },
       "color": {
-        "name": "Color"
+        "name": "צבע"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "אירוע תאורה"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "סוג ההתקן"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "סוג ההתקן שדווח"
       },
       "category": {
-        "name": "Category"
+        "name": "קטגוריה"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "מצב אבטחה"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "בהירות במצב המתנה"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "עוצמת קול אזעקה"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "עוצמת קול"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "עוצמת הרמקול"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "משך האזעקה"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "רגישות ראיית הלילה"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "רגישות זיהוי בכי"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "השהיה בין הקלטות"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "משך הצלצול המכני"
       }
     },
     "select": {
@@ -519,251 +526,266 @@
         "name": "אפליקציה בזמן"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "שפה"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "רזולוציית ההקלטה"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "רגישות זיהוי",
+        "state": {
+          "high": "גבוהה",
+          "medium": "בינונית",
+          "low": "נמוכה",
+          "auto": "אוטומטית"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "משך הסרטון"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "תדר הבהוב"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "מקודד ברירת המחדל"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "מעקב תנועה"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "מצב ראיית לילה"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "השהיה בין הקלטות בענן"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "צליל פעמון הדלת"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "רמת סוללה להפעלה אוטומטית"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "מחוון LED"
       },
       "light_power": {
-        "name": "Light"
+        "name": "תאורה"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "אזעקה מופעלת"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "אזעקה מתמשכת"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "תזכורת דואר"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "צליל קצר מופעל"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "תזכורת מופעלת"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "צליל תזכורת מופעל"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "תאורת המתנה מופעלת"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR מופעל"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "זיהוי אור סביבתי מופעל"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "צלילי מקשים מופעלים"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "אזהרה מופעלת"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "זיהוי תנועה"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "זיהוי אדם"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "הקלטת וידאו"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "ראיית לילה אוטומטית"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "נורית מצב LED"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "אזעקת המצלמה"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "סיבוב תמונה"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "מניעת הבהוב"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "זיהוי בכי"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "השהיה בין הקלטות"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "שיחות ההתקן"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "פעמון מכני"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "מעקב תנועה"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "עוצמת הקול"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "שמע חי"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "שמע בהקלטה"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "הפעלה אוטומטית"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "אור לבן"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "אזעקה בעת הסרה"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "מצב שינה"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "התראת בינה מלאכותית: אדם"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "התראת בינה מלאכותית: חיית מחמד"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "התראת בינה מלאכותית: כניסת רכב"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "התראת בינה מלאכותית: יציאת רכב"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "התראת בינה מלאכותית: רכב חונה"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "התראת בינה מלאכותית: חבילה נמצאת"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "התראת בינה מלאכותית: מסירת חבילה"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "התראת בינה מלאכותית: איסוף חבילה"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "התראות בינה מלאכותית אחרות"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "עוזר בינה מלאכותית: אנשים"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "עוזר בינה מלאכותית: חיות מחמד"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "עוזר בינה מלאכותית: כלי רכב"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "עוזר בינה מלאכותית: חבילות"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "אזעקה"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "תחנת X-Sense אינה זמינה עוד"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "ישות X-Sense אינה זמינה עוד"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "MQTT של X-Sense אינו מחובר"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "לא ניתן לפרסם את פקודת מצב האבטחה של X-Sense"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "אין דריכה כפויה ממתינה ב-X-Sense למצב {mode}"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "לא ידוע אם ההשהיה בין הקלטות ב-X-Sense מופעלת"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option} אינה אפשרות נתמכת של X-Sense"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "לא ניתן לשנות את הבחירה ב-X-Sense"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "סף הראדון של X-Sense אינו תקין"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "בהגדרת הטווח של X-Sense חסר הערך המשלים"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "הערך המזערי של X-Sense לא יכול להיות גדול מהמרבי"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service} דורש מתג הפעלה לתאורה"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service} דורש תחנת SBS50"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "חסרים מזהים עבור X-Sense {service}"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "שעת התזמון של X-Sense חייבת להיות בתבנית HH:MM או HHMM"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "שעת התזמון של X-Sense מחוץ לטווח"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "תזמון X-Sense חייב לכלול לפחות יום אחד בשבוע"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "ימי השבוע בתזמון X-Sense חייבים להיות בין 1 ל-7"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field} חייב לכלול לפחות מזהה אחד"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "לא ניתן להסיר מינוי פעמיים"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "הנושא חייב להיות מחרוזת טקסט"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "שגיאה בתקשורת עם MQTT: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "לא ניתן היה לשמור {failed} הקלטות במטמון. {downloaded} הקלטות הורדו."
+    },
+    "force_arm_invalid_link": {
+      "message": "קישור זה לדריכה כפויה של X-Sense אינו תקין."
+    },
+    "force_arm_request_failed": {
+      "message": "הבקשה לדריכה כפויה של X-Sense נכשלה."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "סדר עולה",
+        "descending": "סדר יורד"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "סדר עולה",
+        "descending": "סדר יורד"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "הפעלה בלבד",
+        "retained": "שמירת הקלטות מקומית"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "בבית",
+        "away": "מחוץ לבית"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "fields": {
+        "mode": {
+          "name": "מצב דריכה"
+        }
+      },
+      "name": "דריכה כפויה",
+      "description": "אישור בקשת דריכה ממתינה במצב בבית או מחוץ לבית שנחסמה עקב חיישנים פתוחים. החיישנים הפתוחים ייעקפו."
+    },
+    "force_arm_now": {
+      "fields": {
+        "mode": {
+          "name": "מצב דריכה"
+        }
+      },
+      "name": "דריכה כפויה עכשיו",
+      "description": "דריכה מיידית במצב בבית או מחוץ לבית, תוך עקיפת חיישנים פתוחים וללא בקשת אישור."
+    },
+    "trigger_sos": {
+      "name": "הפעלת אזעקת SOS",
+      "description": "הפעלה מיידית של אזעקת SOS ב-SBS50."
+    },
+    "cancel_sos": {
+      "name": "ביטול אזעקת SOS",
+      "description": "ביטול אזעקת SOS פעילה ב-SBS50."
+    },
+    "cancel_alarm": {
+      "name": "ביטול אזעקה פעילה",
+      "description": "ביטול אזעקת חיישן פעילה ב-SBS50."
+    },
+    "set_sos_sound": {
+      "fields": {
+        "audible": {
+          "name": "אזעקת SOS קולית"
+        }
+      },
+      "name": "הגדרת צליל SOS",
+      "description": "בחירה אם SOS ישתמש רק באורות מהבהבים או יפעיל גם את הזמזם."
+    },
+    "refresh_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "מזהה רשומת תצורה",
+          "description": "יש להשאיר ריק כדי להחיל על כל חשבונות X-Sense."
+        }
+      },
+      "name": "רענון הקלטות",
+      "description": "רענון אינדקס הקלטות המצלמה המשמש את סרגל הצד ואת דפדפן המדיה."
+    },
+    "cache_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "מזהה רשומת תצורה",
+          "description": "יש להשאיר ריק כדי להחיל על כל חשבונות X-Sense."
+        }
+      },
+      "name": "שמירת הקלטות במטמון",
+      "description": "הורדת הקלטות מצלמה לשמירה מקומית. נדרש מצב שמירת הקלטות מקומית."
+    },
+    "clear_recordings_cache": {
+      "fields": {
+        "entry_id": {
+          "name": "מזהה רשומת תצורה",
+          "description": "יש להשאיר ריק כדי להחיל על כל חשבונות X-Sense."
+        }
+      },
+      "name": "ניקוי מטמון ההקלטות",
+      "description": "מחיקת אינדקסים מקומיים של הקלטות, סרטונים ותמונות ממוזערות. ההקלטות בענן ובכרטיס SD לא ישתנו."
+    },
+    "query_light_schedules": {
+      "name": "שליפת לוחות זמנים לתאורה",
+      "description": "שליפת לוחות זמנים לתאורה. יש לבחור במתג החשמל של תאורת SBS50 כיעד."
+    },
+    "create_light_schedule": {
+      "fields": {
+        "name": {
+          "name": "שם תצוגה"
+        },
+        "start_time": {
+          "name": "שעת התחלה (HH:MM או HHMM)"
+        },
+        "end_time": {
+          "name": "שעת סיום (HH:MM או HHMM)"
+        },
+        "week_days": {
+          "name": "ימי השבוע (1 = יום ראשון, 7 = שבת)"
+        },
+        "enabled": {
+          "name": "מצב הפעלה"
+        },
+        "time_zone": {
+          "name": "אזור זמן"
+        }
+      },
+      "name": "יצירת לוח זמנים לתאורה",
+      "description": "יצירת לוח זמנים לתאורה. יש לבחור במתג החשמל של תאורת SBS50 כיעד."
+    },
+    "update_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "מזהה לוח זמנים"
+        },
+        "start_time": {
+          "name": "שעת התחלה (HH:MM או HHMM)"
+        },
+        "end_time": {
+          "name": "שעת סיום (HH:MM או HHMM)"
+        },
+        "week_days": {
+          "name": "ימי השבוע (1 = יום ראשון, 7 = שבת)"
+        },
+        "enabled": {
+          "name": "מצב הפעלה"
+        },
+        "time_zone": {
+          "name": "אזור זמן"
+        }
+      },
+      "name": "עדכון לוח זמנים לתאורה",
+      "description": "עדכון לוח זמנים לתאורה. יש לבחור במתג החשמל של תאורת SBS50 כיעד."
+    },
+    "rename_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "מזהה לוח זמנים"
+        },
+        "name": {
+          "name": "שם תצוגה"
+        }
+      },
+      "name": "שינוי שם לוח זמנים לתאורה",
+      "description": "שינוי שם לוח זמנים לתאורה. יש לבחור במתג החשמל של תאורת SBS50 כיעד."
+    },
+    "delete_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "מזהה לוח זמנים"
+        }
+      },
+      "name": "מחיקת לוח זמנים לתאורה",
+      "description": "מחיקת לוח זמנים לתאורה. יש לבחור במתג החשמל של תאורת SBS50 כיעד."
+    },
+    "query_light_groups": {
+      "name": "שליפת קבוצות תאורה",
+      "description": "שליפת קבוצות תאורה. יש לבחור במתג החשמל של תאורת SBS50 כיעד."
+    },
+    "create_light_group": {
+      "fields": {
+        "name": {
+          "name": "שם תצוגה"
+        }
+      },
+      "name": "יצירת קבוצת תאורה",
+      "description": "יצירת קבוצת תאורה. יש לבחור במתג החשמל של תאורת SBS50 כיעד."
+    },
+    "rename_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "מזהה קבוצה"
+        },
+        "name": {
+          "name": "שם תצוגה"
+        }
+      },
+      "name": "שינוי שם קבוצת תאורה",
+      "description": "שינוי שם קבוצת תאורה. יש לבחור במתג החשמל של תאורת SBS50 כיעד."
+    },
+    "update_light_group_timer": {
+      "fields": {
+        "group_id": {
+          "name": "מזהה קבוצה"
+        },
+        "timer": {
+          "name": "סוג טיימר (pirTime או appTime)"
+        },
+        "value": {
+          "name": "ערך טיימר"
+        }
+      },
+      "name": "עדכון טיימר קבוצת תאורה",
+      "description": "עדכון טיימר קבוצת תאורה. יש לבחור במתג החשמל של תאורת SBS50 כיעד."
+    },
+    "bind_light_group": {
+      "fields": {
+        "name": {
+          "name": "שם תצוגה"
+        },
+        "device_ids": {
+          "name": "מזהי התקנים"
+        }
+      },
+      "name": "קישור קבוצת תאורה",
+      "description": "קישור קבוצת תאורה. יש לבחור במתג החשמל של תאורת SBS50 כיעד."
+    },
+    "delete_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "מזהה קבוצה"
+        }
+      },
+      "name": "מחיקת קבוצת תאורה",
+      "description": "מחיקת קבוצת תאורה. יש לבחור במתג החשמל של תאורת SBS50 כיעד."
+    },
+    "remove_light_group_devices": {
+      "fields": {
+        "device_ids": {
+          "name": "מזהי התקנים"
+        }
+      },
+      "name": "הסרת התקנים מקבוצת תאורה",
+      "description": "הסרת התקנים מקבוצת תאורה. יש לבחור במתג החשמל של תאורת SBS50 כיעד."
+    },
+    "set_light_group_power": {
+      "fields": {
+        "group_id": {
+          "name": "מזהה קבוצה"
+        },
+        "device_ids": {
+          "name": "מספרים סידוריים של התקנים"
+        },
+        "enabled": {
+          "name": "מצב הפעלה"
+        }
+      },
+      "name": "הגדרת מצב הפעלה של קבוצת תאורה",
+      "description": "הגדרת מצב הפעלה של קבוצת תאורה. יש לבחור במתג החשמל של תאורת SBS50 כיעד."
+    }
+  },
+  "issues": {}
 }

@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "Пристрій уже налаштовано",
       "reauth_successful": "Повторна автентифікація пройшла успішно",
-      "reconfigure_successful": "Реконфігурація пройшла успішно"
+      "reconfigure_successful": "Реконфігурація пройшла успішно",
+      "unique_id_mismatch": "Увійдіть із тим самим обліковим записом X-Sense, що й для цього запису конфігурації."
     },
     "error": {
       "cannot_connect": "Не вдалося підключитися",
@@ -37,26 +38,32 @@
   "options": {
     "step": {
       "init": {
-        "description": "Синхронізація медіафайлів запису кешує відеокліпи камери під носіями Home Assistant, щоб на бічній панелі записів X-Sense, медіа-браузері та мобільних сповіщеннях можна було швидко відкривати записи. Залиште його вимкненим, щоб кешувати записи лише тоді, коли вони відкриті. Увімкніть його, щоб останні записи залишалися готовими у фоновому режимі.",
+        "description": "Типовий режим лише відтворення передає записи через Home Assistant під час перегляду без збереження повних кліпів. Виберіть збереження локальних записів, щоб тримати кліпи в медіа Home Assistant за налаштованими обмеженнями віку та розміру. Фонова синхронізація працює лише в режимі збереження.",
         "data": {
           "recording_media_sync_enabled": "Синхронізація носіїв запису",
           "recording_media_sync_hours": "Інтервал фонової синхронізації",
           "recording_media_storage_path": "Папка кеша запису",
           "recording_notification_quality": "Якість запису сповіщень",
           "recording_media_days_order": "Порядок дня запису",
-          "recording_media_clips_order": "Порядок запису кліпу"
+          "recording_media_clips_order": "Порядок запису кліпу",
+          "recording_cache_retention_days": "Зберігання кешу запису",
+          "recording_cache_max_size_mb": "Максимальний розмір кешу запису",
+          "recording_cache_mode": "Режим зберігання записів"
         },
         "data_description": {
           "recording_media_sync_enabled": "Кешувати останні записи автоматично. Це займає простір у пам’яті та може частіше виводити камери з режиму сну.",
           "recording_media_sync_hours": "Як часто має виконуватися звичайна фонова наздоганяюча синхронізація. Останні записи перевіряються кожні кілька хвилин, коли ввімкнено синхронізацію.",
           "recording_media_storage_path": "Використовуйте папку під /media. Тут зберігаються нові кешовані відео та мініатюри.",
-          "recording_notification_quality": "Виберіть HD, щоб віддати перевагу прямим/високороздільним URL-адресам кліпу X-Sense для мобільних сповіщень. Виберіть SD, щоб використовувати шлях захоплення відтворення камери, якщо він доступний.",
+          "recording_notification_quality": "HD надає перевагу URL записів із вищою роздільною здатністю. SD надає перевагу стандартній роздільній здатності, якщо X-Sense її надає.",
           "recording_media_days_order": "Виберіть, чи з’являтимуться новіші чи старіші дні в засобі перегляду записів.",
-          "recording_media_clips_order": "Виберіть, чи з’являтимуться нові або старі кліпи першими протягом кожного дня."
+          "recording_media_clips_order": "Виберіть, чи з’являтимуться нові або старі кліпи першими протягом кожного дня.",
+          "recording_cache_retention_days": "Видаліть локальні кешовані записи через стільки днів. Записи хмари X-Sense і SD-карти не змінюються.",
+          "recording_cache_max_size_mb": "Максимальний розмір локального кешу в МБ. Коли ліміт буде досягнуто, спочатку видаляються записи, які нещодавно переглядалися.",
+          "recording_cache_mode": "Режим лише відтворення передає HLS-медіа через Home Assistant на вимогу без збереження повних кліпів. Режим збереження тримає локальні копії за наведеними нижче обмеженнями."
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "Папка кешу записів зміниться з `{old_path}` на `{new_path}`. Існуючі кешовані відео та мініатюри не переміщуються автоматично. Спочатку перемістіть існуючі папки `videos` і `thumbs`, якщо ви хочете, щоб старі кешовані записи залишалися доступними."
+        "description": "Папка кешу записів зміниться з `{old_path}` на `{new_path}`. Існуючі кешовані відео та мініатюри не переміщуються автоматично. Спочатку перемістіть існуючі папки `hls`, `videos` і `thumbs`, якщо ви хочете, щоб старі кешовані записи залишалися доступними."
       }
     },
     "error": {
@@ -87,76 +94,76 @@
         "name": "Розклад поштової скриньки активний"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "Мережеве живлення відключено"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "Термін служби батареї вичерпано"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "Кінець терміну служби"
       },
       "armed": {
-        "name": "Armed"
+        "name": "Під охороною"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "Виявлено рух"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "Заряджання через USB"
       },
       "charging": {
-        "name": "Charging"
+        "name": "Заряджання"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "У режимі сну"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "Монтажний кронштейн знято"
       },
       "activated": {
-        "name": "Activated"
+        "name": "активовано"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "Навчальна тривога активна"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "Тривога активна"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "Ініціювальна тривога"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "Перевірка пристрою активна"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "Пристрій вимкнено"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "Звук тривоги"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "Сповіщення застосунку"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "Сповіщення розкладу"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "Тривога про витік води"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "Звук тривоги про витік води вимкнено"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "Температурна тривога"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "Звук температурної тривоги вимкнено"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "Часовий пояс пристрою ввімкнено"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "Часовий пояс пристрою коректний"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "Вимкнути звук"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "Пробудити"
       }
     },
     "event": {
@@ -188,7 +195,7 @@
           "normal": "нормальний",
           "low_battery": "Низький заряд батареї",
           "malfunction": "Несправність",
-          "end_of_life": "Кінець життя"
+          "end_of_life": "Кінець терміну служби"
         }
       },
       "alarm_vol": {
@@ -254,139 +261,139 @@
         "name": "Час пікового рівня радону"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "Рівень заряду батареї"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Потужність сигналу"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "Wi-Fi Потужність сигналу"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "Код стану камери"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "Версія прошивки"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "Стан прошивки камери"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Назва мережі Wi-Fi (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Канал Wi-Fi"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "MAC-адреса"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "Стан SD-картки"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "Загальна місткість SD-картки"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "Зайнято на SD-картці"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "Час активації камери"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "Час відключення камери від мережі"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "Час мініатюри камери"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "Час пробудження камери зі сну"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "Повідомлення режиму сну камери"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "Часовий пояс пристрою"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "Варіант датчика диму"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "Стандарт тривоги CO"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "Тип перевірки"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "Інтервал PIR"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "Чутливість датчика"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "Час вимкнення звуку"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "Час вимкнення звуку температурної тривоги"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "Час вимкнення звуку тривоги про витік води"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "Короткострокове попередження про CO"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "Рівень короткострокового попередження про CO"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "Довгострокове попередження про CO"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "Рівень довгострокового попередження про CO"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "Виникнення тривоги"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "Джерело тривоги"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "Повторна тривога"
       },
       "time": {
-        "name": "Report Time"
+        "name": "Час звіту"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "Час UTC"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "Час перевірки пристрою"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "Часовий пояс пристрою"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "Місце для голосового сповіщення"
       },
       "location": {
-        "name": "Location"
+        "name": "Розташування"
       },
       "color": {
-        "name": "Color"
+        "name": "Колір"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "Подія освітлення"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "Тип пристрою"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "Заявлений тип пристрою"
       },
       "category": {
-        "name": "Category"
+        "name": "Категорія"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "Режим охорони"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "Яскравість у режимі очікування"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "Гучність будильника"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Гучність голосу"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "Гучність динаміка"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "Тривалість тривоги"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "Чутливість нічного бачення"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "Чутливість виявлення плачу"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Пауза між відеозаписами"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "Тривалість механічного дзвінка"
       }
     },
     "select": {
@@ -519,251 +526,266 @@
         "name": "Додаток вчасно"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "Мова"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "Роздільна здатність запису"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "Чутливість виявлення",
+        "state": {
+          "high": "Висока",
+          "medium": "Середня",
+          "low": "Низька",
+          "auto": "Автоматична"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "Тривалість відео"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "Частота мерехтіння"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "Типовий кодек"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "Відстеження руху"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "Режим нічного бачення"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "Пауза між хмарними відеозаписами"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "Мелодія дверного дзвінка"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "Рівень заряду для автоматичного ввімкнення"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "Світлодіодний індикатор"
       },
       "light_power": {
-        "name": "Light"
+        "name": "Світло"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "Тривогу ввімкнено"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "Безперервна тривога"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "Нагадування про пошту"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "Звуковий сигнал увімкнено"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "Нагадування ввімкнено"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "Звук нагадування ввімкнено"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "Світло режиму очікування ввімкнено"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR увімкнено"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "Виявлення навколишнього освітлення ввімкнено"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "Звук клавіш увімкнено"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "Попередження ввімкнено"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "Виявлення руху"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "Виявлення людей"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "Запис відео"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "Автоматичне нічне бачення"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "Індикатор стану"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "Тривога камери"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "Поворот зображення"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "Усунення мерехтіння"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "Виявлення плачу"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "Пауза між відеозаписами"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "Виклик пристрою"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "Механічний дзвінок"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "Відстеження руху"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "Гучність голосу"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "Звук наживо"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "Запис звуку"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "Автоматичне ввімкнення"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "Біле світло"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "Тривога при знятті"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "Режим сну"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "Сповіщення ШІ: людина"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "Сповіщення ШІ: домашня тварина"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "Сповіщення ШІ: в'їзд автомобіля"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "Сповіщення ШІ: виїзд автомобіля"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "Сповіщення ШІ: припаркований автомобіль"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "Сповіщення ШІ: посилка на місці"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "Сповіщення ШІ: доставка посилки"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "Сповіщення ШІ: отримання посилки"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "Сповіщення ШІ: інше"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "Помічник ШІ: людина"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "Помічник ШІ: домашня тварина"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "Помічник ШІ: автомобіль"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "Помічник ШІ: посилка"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "Тривога"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "Станція X-Sense більше недоступна"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "Сутність X-Sense більше недоступна"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "X-Sense не підключено до MQTT"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "Не вдалося опублікувати команду режиму охорони X-Sense"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "Примусове взяття X-Sense під охорону не очікується для режиму {mode}"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "Стан увімкнення паузи між відеозаписами X-Sense невідомий"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option} не є підтримуваною опцією X-Sense"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "Не вдалося записати значення вибору X-Sense"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "Поріг радону X-Sense недійсний"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "У налаштуванні діапазону X-Sense відсутнє парне значення"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "Мінімум X-Sense не може перевищувати максимум"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service} потребує вимикача живлення світла"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service} потребує станції SBS50"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "Відсутні ідентифікатори X-Sense {service}"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "Час розкладу X-Sense має бути у форматі HH:MM або HHMM"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "Час розкладу X-Sense поза допустимим діапазоном"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "Розклад X-Sense має містити принаймні один день тижня"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "Дні тижня в розкладі X-Sense мають бути від 1 до 7"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field} має містити принаймні один ідентифікатор"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "Не можна видалити підписку двічі"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "Тема має бути рядком"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "Помилка зв'язку з MQTT: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "Не вдалося кешувати записи: {failed}. Завантажено записів: {downloaded}."
+    },
+    "force_arm_invalid_link": {
+      "message": "Це посилання для примусового взяття X-Sense під охорону недійсне."
+    },
+    "force_arm_request_failed": {
+      "message": "Не вдалося виконати запит на примусове взяття X-Sense під охорону."
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "За зростанням",
+        "descending": "За спаданням"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "За зростанням",
+        "descending": "За спаданням"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "Лише відтворення",
+        "retained": "Зберігати локальні записи"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "Вдома",
+        "away": "Поза домом"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "fields": {
+        "mode": {
+          "name": "Режим охорони"
+        }
+      },
+      "name": "Примусове взяття під охорону",
+      "description": "Підтвердьте запит на взяття під охорону в режимі «Вдома» або «Поза домом», заблокований відкритими датчиками. Відкриті датчики буде обійдено."
+    },
+    "force_arm_now": {
+      "fields": {
+        "mode": {
+          "name": "Режим охорони"
+        }
+      },
+      "name": "Негайне примусове взяття під охорону",
+      "description": "Негайно ввімкніть охорону в режимі «Вдома» або «Поза домом», обійшовши відкриті датчики без запиту підтвердження."
+    },
+    "trigger_sos": {
+      "name": "Увімкнути тривогу SOS",
+      "description": "Негайно ввімкніть тривогу SOS на SBS50."
+    },
+    "cancel_sos": {
+      "name": "Скасувати тривогу SOS",
+      "description": "Скасуйте активну тривогу SOS на SBS50."
+    },
+    "cancel_alarm": {
+      "name": "Скасувати активну тривогу",
+      "description": "Скасуйте активну тривогу датчика на SBS50."
+    },
+    "set_sos_sound": {
+      "fields": {
+        "audible": {
+          "name": "Звукова тривога SOS"
+        }
+      },
+      "name": "Налаштувати звук SOS",
+      "description": "Виберіть, чи SOS використовуватиме лише миготіння світла, чи також звуковий сигнал."
+    },
+    "refresh_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "Ідентифікатор запису конфігурації",
+          "description": "Залиште порожнім, щоб застосувати до всіх облікових записів X-Sense."
+        }
+      },
+      "name": "Оновити записи",
+      "description": "Оновіть індекс записів камери, який використовується на бічній панелі та в медіабраузері."
+    },
+    "cache_recordings": {
+      "fields": {
+        "entry_id": {
+          "name": "Ідентифікатор запису конфігурації",
+          "description": "Залиште порожнім, щоб застосувати до всіх облікових записів X-Sense."
+        }
+      },
+      "name": "Кешувати записи",
+      "description": "Завантажте записи камери для локального зберігання. Потрібен режим «Зберігати локальні записи»."
+    },
+    "clear_recordings_cache": {
+      "fields": {
+        "entry_id": {
+          "name": "Ідентифікатор запису конфігурації",
+          "description": "Залиште порожнім, щоб застосувати до всіх облікових записів X-Sense."
+        }
+      },
+      "name": "Очистити кеш записів",
+      "description": "Видаліть локальні індекси записів, відео та мініатюри. Записи в хмарі й на SD-карті залишаться без змін."
+    },
+    "query_light_schedules": {
+      "name": "Отримати розклади освітлення",
+      "description": "Отримайте розклади освітлення. Виберіть ціллю вимикач живлення освітлення SBS50."
+    },
+    "create_light_schedule": {
+      "fields": {
+        "name": {
+          "name": "Відображувана назва"
+        },
+        "start_time": {
+          "name": "Час початку (HH:MM або HHMM)"
+        },
+        "end_time": {
+          "name": "Час завершення (HH:MM або HHMM)"
+        },
+        "week_days": {
+          "name": "Дні тижня (1 = неділя, 7 = субота)"
+        },
+        "enabled": {
+          "name": "Стан увімкнення"
+        },
+        "time_zone": {
+          "name": "Часовий пояс"
+        }
+      },
+      "name": "Створити розклад освітлення",
+      "description": "Створіть розклад освітлення. Виберіть ціллю вимикач живлення освітлення SBS50."
+    },
+    "update_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Ідентифікатор розкладу"
+        },
+        "start_time": {
+          "name": "Час початку (HH:MM або HHMM)"
+        },
+        "end_time": {
+          "name": "Час завершення (HH:MM або HHMM)"
+        },
+        "week_days": {
+          "name": "Дні тижня (1 = неділя, 7 = субота)"
+        },
+        "enabled": {
+          "name": "Стан увімкнення"
+        },
+        "time_zone": {
+          "name": "Часовий пояс"
+        }
+      },
+      "name": "Оновити розклад освітлення",
+      "description": "Оновіть розклад освітлення. Виберіть ціллю вимикач живлення освітлення SBS50."
+    },
+    "rename_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Ідентифікатор розкладу"
+        },
+        "name": {
+          "name": "Відображувана назва"
+        }
+      },
+      "name": "Перейменувати розклад освітлення",
+      "description": "Перейменуйте розклад освітлення. Виберіть ціллю вимикач живлення освітлення SBS50."
+    },
+    "delete_light_schedule": {
+      "fields": {
+        "schedule_id": {
+          "name": "Ідентифікатор розкладу"
+        }
+      },
+      "name": "Видалити розклад освітлення",
+      "description": "Видаліть розклад освітлення. Виберіть ціллю вимикач живлення освітлення SBS50."
+    },
+    "query_light_groups": {
+      "name": "Отримати групи освітлення",
+      "description": "Отримайте групи освітлення. Виберіть ціллю вимикач живлення освітлення SBS50."
+    },
+    "create_light_group": {
+      "fields": {
+        "name": {
+          "name": "Відображувана назва"
+        }
+      },
+      "name": "Створити групу освітлення",
+      "description": "Створіть групу освітлення. Виберіть ціллю вимикач живлення освітлення SBS50."
+    },
+    "rename_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Ідентифікатор групи"
+        },
+        "name": {
+          "name": "Відображувана назва"
+        }
+      },
+      "name": "Перейменувати групу освітлення",
+      "description": "Перейменуйте групу освітлення. Виберіть ціллю вимикач живлення освітлення SBS50."
+    },
+    "update_light_group_timer": {
+      "fields": {
+        "group_id": {
+          "name": "Ідентифікатор групи"
+        },
+        "timer": {
+          "name": "Тип таймера (pirTime або appTime)"
+        },
+        "value": {
+          "name": "Значення таймера"
+        }
+      },
+      "name": "Оновити таймер групи освітлення",
+      "description": "Оновіть таймер групи освітлення. Виберіть ціллю вимикач живлення освітлення SBS50."
+    },
+    "bind_light_group": {
+      "fields": {
+        "name": {
+          "name": "Відображувана назва"
+        },
+        "device_ids": {
+          "name": "Ідентифікатори пристроїв"
+        }
+      },
+      "name": "Прив'язати групу освітлення",
+      "description": "Прив'яжіть групу освітлення. Виберіть ціллю вимикач живлення освітлення SBS50."
+    },
+    "delete_light_group": {
+      "fields": {
+        "group_id": {
+          "name": "Ідентифікатор групи"
+        }
+      },
+      "name": "Видалити групу освітлення",
+      "description": "Видаліть групу освітлення. Виберіть ціллю вимикач живлення освітлення SBS50."
+    },
+    "remove_light_group_devices": {
+      "fields": {
+        "device_ids": {
+          "name": "Ідентифікатори пристроїв"
+        }
+      },
+      "name": "Вилучити пристрої з групи освітлення",
+      "description": "Вилучіть пристрої з групи освітлення. Виберіть ціллю вимикач живлення освітлення SBS50."
+    },
+    "set_light_group_power": {
+      "fields": {
+        "group_id": {
+          "name": "Ідентифікатор групи"
+        },
+        "device_ids": {
+          "name": "Серійні номери пристроїв"
+        },
+        "enabled": {
+          "name": "Стан увімкнення"
+        }
+      },
+      "name": "Налаштувати живлення групи освітлення",
+      "description": "Налаштуйте живлення групи освітлення. Виберіть ціллю вимикач живлення освітлення SBS50."
+    }
+  },
+  "issues": {}
 }

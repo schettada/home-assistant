@@ -22,6 +22,7 @@ from .entity import (
     coordinator_devices,
     coordinator_stations,
     device_station_id,
+    setup_dynamic_entities,
 )
 from .errors import xsense_error
 
@@ -517,30 +518,31 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up X-Sense number entities."""
-    devices: list[Device] = []
     coordinator: XSenseDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-    seen_entity_ids: set[str] = set()
 
-    for station in coordinator_stations(coordinator).values():
-        seen_entity_ids.add(station.entity_id)
-        devices.extend(
-            XSenseNumberEntity(coordinator, station, description)
-            for description in NUMBERS
-            if description.exists_fn(station)
-        )
-
-    for dev in coordinator_devices(coordinator).values():
-        if dev.entity_id in seen_entity_ids:
-            continue
-        devices.extend(
-            XSenseNumberEntity(
-                coordinator, dev, description, station_id=device_station_id(dev)
+    def _entities() -> list[Device]:
+        devices: list[Device] = []
+        seen_entity_ids: set[str] = set()
+        for station in coordinator_stations(coordinator).values():
+            seen_entity_ids.add(station.entity_id)
+            devices.extend(
+                XSenseNumberEntity(coordinator, station, description)
+                for description in NUMBERS
+                if description.exists_fn(station)
             )
-            for description in NUMBERS
-            if description.exists_fn(dev)
-        )
+        for dev in coordinator_devices(coordinator).values():
+            if dev.entity_id in seen_entity_ids:
+                continue
+            devices.extend(
+                XSenseNumberEntity(
+                    coordinator, dev, description, station_id=device_station_id(dev)
+                )
+                for description in NUMBERS
+                if description.exists_fn(dev)
+            )
+        return devices
 
-    async_add_entities(devices)
+    setup_dynamic_entities(entry, coordinator, async_add_entities, _entities)
 
 
 class XSenseNumberEntity(XSenseEntity, NumberEntity):
@@ -633,6 +635,8 @@ class XSenseNumberEntity(XSenseEntity, NumberEntity):
             )
             entity.data[self.entity_description.data_key] = int_value
         elif self.entity_description.shadow_setting:
+            if self.entity_description.data_key in {"detcSens", "sensitivity"}:
+                value = round(value)
             await self.coordinator.xsense.update_shadow_setting(
                 entity, self.entity_description.data_key, value
             )

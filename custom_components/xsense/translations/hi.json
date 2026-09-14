@@ -3,7 +3,8 @@
     "abort": {
       "already_configured": "डिवाइस पहले से ही कॉन्फ़िगर किया गया है",
       "reauth_successful": "पुन:प्रमाणीकरण सफल रहा",
-      "reconfigure_successful": "पुनर्विन्यास सफल रहा"
+      "reconfigure_successful": "पुनर्विन्यास सफल रहा",
+      "unique_id_mismatch": "इस प्रविष्टि वाले X-Sense खाते से ही साइन इन करें।"
     },
     "error": {
       "cannot_connect": "कनेक्ट करने में विफल",
@@ -37,30 +38,36 @@
   "options": {
     "step": {
       "init": {
-        "description": "रिकॉर्डिंग मीडिया सिंक Home Assistant मीडिया के अंतर्गत कैमरा क्लिप को कैश करता है ताकि X-Sense रिकॉर्डिंग साइडबार, मीडिया ब्राउज़र और मोबाइल नोटिफिकेशन रिकॉर्डिंग को जल्दी से खोल सकें। रिकॉर्डिंग खुलने पर ही उसे कैश करने के लिए छोड़ दें। हाल की रिकॉर्डिंग को पृष्ठभूमि में तैयार रखने के लिए इसे सक्षम करें।",
+        "description": "केवल प्लेबैक डिफ़ॉल्ट है और पूरे क्लिप सहेजे बिना चलाते समय रिकॉर्डिंग को Home Assistant के माध्यम से प्रॉक्सी करता है। तय आयु और आकार सीमाओं के साथ Home Assistant मीडिया में क्लिप रखने के लिए स्थानीय रिकॉर्डिंग रखें चुनें। बैकग्राउंड सिंक केवल रखे गए रिकॉर्डिंग मोड में चलता है।",
         "data": {
           "recording_media_sync_enabled": "रिकॉर्डिंग मीडिया सिंक",
           "recording_media_sync_hours": "पृष्ठभूमि समन्वयन अंतराल",
           "recording_media_storage_path": "कैश फ़ोल्डर रिकॉर्डिंग",
           "recording_notification_quality": "अधिसूचना रिकॉर्डिंग गुणवत्ता",
           "recording_media_days_order": "दिन का क्रम रिकार्ड करना",
-          "recording_media_clips_order": "रिकॉर्डिंग क्लिप ऑर्डर"
+          "recording_media_clips_order": "रिकॉर्डिंग क्लिप ऑर्डर",
+          "recording_cache_retention_days": "कैश प्रतिधारण रिकॉर्डिंग",
+          "recording_cache_max_size_mb": "अधिकतम रिकॉर्डिंग कैश आकार",
+          "recording_cache_mode": "रिकॉर्डिंग स्टोरेज मोड"
         },
         "data_description": {
           "recording_media_sync_enabled": "हाल की रिकॉर्डिंग को स्वचालित रूप से कैश करें। यह भंडारण स्थान का उपयोग करता है और कैमरे को अधिक बार सक्रिय कर सकता है।",
           "recording_media_sync_hours": "सामान्य पृष्ठभूमि कैच-अप सिंक कितनी बार चलना चाहिए। सिंक सक्षम होने पर हर दो मिनट में हाल की रिकॉर्डिंग की जाँच की जाती है।",
-          "recording_media_storage_path": "मीडियापाथप्लेसहोल्डर के अंतर्गत एक फ़ोल्डर का उपयोग करें। नए कैश्ड वीडियो और थंबनेल यहां संग्रहीत हैं।",
-          "recording_notification_quality": "मोबाइल सूचनाओं के लिए X-Sense के प्रत्यक्ष/उच्च-रिज़ॉल्यूशन क्लिप यूआरएल को प्राथमिकता देने के लिए HD चुनें। उपलब्ध होने पर कैमरा प्लेबैक कैप्चर पथ का उपयोग करने के लिए SD चुनें।",
+          "recording_media_storage_path": "/media के अंतर्गत एक फ़ोल्डर का उपयोग करें। नए कैश किए गए वीडियो और थंबनेल यहाँ संग्रहीत होते हैं।",
+          "recording_notification_quality": "HD अधिक रिज़ॉल्यूशन वाली रिकॉर्डिंग के URL को प्राथमिकता देता है। SD उपलब्ध होने पर X-Sense के मानक रिज़ॉल्यूशन वाले URL को प्राथमिकता देता है।",
           "recording_media_days_order": "चुनें कि रिकॉर्डिंग व्यूअर में नए या पुराने दिन पहले दिखें या नहीं।",
-          "recording_media_clips_order": "चुनें कि क्या नई या पुरानी क्लिप प्रत्येक दिन सबसे पहले दिखाई देंगी।"
+          "recording_media_clips_order": "चुनें कि क्या नई या पुरानी क्लिप प्रत्येक दिन सबसे पहले दिखाई देंगी।",
+          "recording_cache_retention_days": "इतने दिनों के बाद स्थानीय कैश्ड रिकॉर्डिंग हटा दें। एक्स-सेंस क्लाउड और एसडी कार्ड रिकॉर्डिंग नहीं बदली गई हैं।",
+          "recording_cache_max_size_mb": "एमबी में अधिकतम स्थानीय कैश आकार। जब सीमा पूरी हो जाती है, तो सबसे पहले सबसे कम देखी गई रिकॉर्डिंग हटा दी जाती है।",
+          "recording_cache_mode": "केवल प्लेबैक पूरे क्लिप सहेजे बिना मांग पर HLS मीडिया को Home Assistant के माध्यम से प्रॉक्सी करता है। रिकॉर्डिंग रखने वाला मोड नीचे की सीमाओं के अनुसार स्थानीय प्रतियां रखता है।"
         }
       },
       "confirm_recording_media_storage_path": {
-        "description": "रिकॉर्डिंग कैश फ़ोल्डर `{old_path}` से `{new_path}` में बदल जाएगा। मौजूदा कैश्ड वीडियो और थंबनेल स्वचालित रूप से स्थानांतरित नहीं होते हैं। यदि आप चाहते हैं कि पुरानी कैश्ड रिकॉर्डिंग उपलब्ध रहे तो पहले मौजूदा वीडियोप्लेसहोल्डर और थंबप्लेसहोल्डर फ़ोल्डर्स को स्थानांतरित करें।"
+        "description": "रिकॉर्डिंग कैश फ़ोल्डर `{old_path}` से `{new_path}` में बदल जाएगा। मौजूदा कैश्ड वीडियो और थंबनेल स्वचालित रूप से स्थानांतरित नहीं होते हैं। यदि आप चाहते हैं कि पुरानी कैश्ड रिकॉर्डिंग उपलब्ध रहे तो पहले मौजूदा `hls`, `videos` और `thumbs` फ़ोल्डर्स को स्थानांतरित करें।"
       }
     },
     "error": {
-      "invalid_recording_media_path": "मीडियापाथप्लेसहोल्डर के अंतर्गत एक फ़ोल्डर का उपयोग करें।"
+      "invalid_recording_media_path": "/media के अंतर्गत एक फ़ोल्डर का उपयोग करें।"
     },
     "abort": {
       "no_options": "इस X-Sense खाते के लिए कोई कॉन्फ़िगर करने योग्य विकल्प नहीं हैं।"
@@ -87,76 +94,76 @@
         "name": "मेलबॉक्स शेड्यूल सक्रिय"
       },
       "ac_break": {
-        "name": "AC Power Disconnected"
+        "name": "AC बिजली कटी हुई"
       },
       "battery_end_of_use": {
-        "name": "Battery End-of-Life"
+        "name": "बैटरी का उपयोगकाल समाप्त"
       },
       "is_life_end": {
-        "name": "End-of-Life"
+        "name": "उपकरण का उपयोगकाल समाप्त"
       },
       "armed": {
-        "name": "Armed"
+        "name": "सुरक्षा सक्रिय"
       },
       "moved": {
-        "name": "Motion Detected"
+        "name": "हलचल का पता चला"
       },
       "usb_charge": {
-        "name": "USB Charging"
+        "name": "USB से चार्ज हो रहा है"
       },
       "charging": {
-        "name": "Charging"
+        "name": "चार्ज हो रहा है"
       },
       "camera_sleeping": {
-        "name": "Sleeping"
+        "name": "सुप्त अवस्था में"
       },
       "base_removed": {
-        "name": "Mounting Bracket Removed"
+        "name": "माउंटिंग ब्रैकेट हटाया गया"
       },
       "activated": {
-        "name": "Activated"
+        "name": "सक्रिय"
       },
       "fire_drill_active": {
-        "name": "Alarm Drill Active"
+        "name": "अलार्म अभ्यास सक्रिय"
       },
       "alarm_active": {
-        "name": "Alarm Active"
+        "name": "अलार्म सक्रिय"
       },
       "initiative_alarm": {
-        "name": "Initiative Alarm"
+        "name": "डिवाइस से शुरू हुआ अलार्म"
       },
       "test_active": {
-        "name": "Device Test Active"
+        "name": "डिवाइस परीक्षण सक्रिय"
       },
       "mute": {
-        "name": "Device Silenced"
+        "name": "डिवाइस खामोश"
       },
       "alarm_sound_enabled": {
-        "name": "Alarm Sound"
+        "name": "अलार्म की ध्वनि"
       },
       "app_tip_enabled": {
-        "name": "App Notifications"
+        "name": "ऐप सूचनाएँ"
       },
       "schedule_tip_enabled": {
-        "name": "Schedule Notifications"
+        "name": "समय-सारणी की सूचनाएँ"
       },
       "water_alarm_status": {
-        "name": "Water Leak Alarm"
+        "name": "पानी के रिसाव का अलार्म"
       },
       "water_mute_status": {
-        "name": "Water Leak Alarm Silenced"
+        "name": "पानी के रिसाव का अलार्म मौन"
       },
       "temperature_alarm_status": {
-        "name": "Temperature Alarm"
+        "name": "तापमान अलार्म"
       },
       "temperature_mute_status": {
-        "name": "Temperature Alarm Silenced"
+        "name": "तापमान अलार्म मौन"
       },
       "timezone_enabled": {
-        "name": "Device Time Zone Enabled"
+        "name": "डिवाइस का समय क्षेत्र सक्षम"
       },
       "timezone_valid": {
-        "name": "Device Time Zone Valid"
+        "name": "डिवाइस का समय क्षेत्र मान्य"
       }
     },
     "button": {
@@ -170,7 +177,7 @@
         "name": "मूक"
       },
       "camera_wake": {
-        "name": "Wake Up"
+        "name": "जगाएँ"
       }
     },
     "event": {
@@ -188,7 +195,7 @@
           "normal": "सामान्य",
           "low_battery": "कम बैटरी",
           "malfunction": "खराबी",
-          "end_of_life": "जीवन का अंत"
+          "end_of_life": "उपकरण का उपयोगकाल समाप्त"
         }
       },
       "alarm_vol": {
@@ -254,139 +261,139 @@
         "name": "पीक रेडॉन स्तर का समय"
       },
       "camera_battery": {
-        "name": "Battery Level"
+        "name": "बैटरी का स्तर"
       },
       "wifi_rssi_level": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "वाईफ़ाईप्लेसहोल्डर सिग्नल शक्ति"
       },
       "camera_signal_strength": {
-        "name": "Wi-Fi Signal Strength"
+        "name": "वाईफ़ाईप्लेसहोल्डर सिग्नल शक्ति"
       },
       "camera_status_code": {
-        "name": "Camera Status Code"
+        "name": "कैमरे की स्थिति का कोड"
       },
       "camera_firmware_version": {
-        "name": "Firmware Version"
+        "name": "फ़र्मवेयर संस्करण"
       },
       "camera_firmware_status": {
-        "name": "Camera Firmware Status"
+        "name": "कैमरे के फ़र्मवेयर की स्थिति"
       },
       "camera_network_name": {
-        "name": "Wi-Fi Name (SSID)"
+        "name": "Wi-Fi नाम (SSID)"
       },
       "camera_wifi_channel": {
-        "name": "Wi-Fi Channel"
+        "name": "Wi-Fi चैनल"
       },
       "camera_wired_mac_address": {
-        "name": "MAC Address"
+        "name": "MAC पता"
       },
       "camera_sd_card_status": {
-        "name": "SD Card Status"
+        "name": "SD कार्ड की स्थिति"
       },
       "camera_sd_card_total": {
-        "name": "SD Card Total"
+        "name": "SD कार्ड की कुल क्षमता"
       },
       "camera_sd_card_used": {
-        "name": "SD Card Used"
+        "name": "SD कार्ड का उपयोग हुआ स्थान"
       },
       "camera_activated_time": {
-        "name": "Camera Activated Time"
+        "name": "कैमरा सक्रिय होने का समय"
       },
       "camera_offline_time": {
-        "name": "Camera Offline Time"
+        "name": "कैमरा ऑफ़लाइन होने का समय"
       },
       "camera_thumbnail_time": {
-        "name": "Camera Thumbnail Time"
+        "name": "कैमरे के लघुचित्र का समय"
       },
       "camera_dormancy_wake_time": {
-        "name": "Camera Dormancy Wake Time"
+        "name": "कैमरे के सुप्तावस्था से जागने का समय"
       },
       "camera_dormancy_message": {
-        "name": "Camera Dormancy Message"
+        "name": "कैमरे की सुप्तावस्था का संदेश"
       },
       "camera_time_zone_area": {
-        "name": "Device Time Zone"
+        "name": "डिवाइस का समय क्षेत्र"
       },
       "smoke_edition": {
-        "name": "Smoke Edition"
+        "name": "धुएँ के संसूचक का मॉडल प्रकार"
       },
       "standard": {
-        "name": "CO Alarm Standard"
+        "name": "CO अलार्म मानक"
       },
       "check_type": {
-        "name": "Check Type"
+        "name": "जाँच का प्रकार"
       },
       "pir_interval": {
-        "name": "PIR Interval"
+        "name": "PIR अंतराल"
       },
       "pir_sensitivity": {
-        "name": "Sensor Sensitivity"
+        "name": "सेंसर संवेदनशीलता"
       },
       "silence_time": {
-        "name": "Silence Time"
+        "name": "अलार्म मौन करने का समय"
       },
       "temperature_mute_time": {
-        "name": "Temperature Alarm Silence Time"
+        "name": "तापमान अलार्म मौन करने का समय"
       },
       "water_mute_time": {
-        "name": "Water Leak Alarm Silence Time"
+        "name": "पानी के रिसाव का अलार्म मौन करने का समय"
       },
       "short_warning": {
-        "name": "Short-Term CO Warning"
+        "name": "अल्पकालिक CO चेतावनी"
       },
       "short_warning_co": {
-        "name": "Short-Term CO Warning Level"
+        "name": "अल्पकालिक CO चेतावनी स्तर"
       },
       "long_warning": {
-        "name": "Long-Term CO Warning"
+        "name": "दीर्घकालिक CO चेतावनी"
       },
       "long_warning_co": {
-        "name": "Long-Term CO Warning Level"
+        "name": "दीर्घकालिक CO चेतावनी स्तर"
       },
       "alarm_occur": {
-        "name": "Alarm Occurrence"
+        "name": "अलार्म की घटना"
       },
       "alarm_source": {
-        "name": "Alarm Source"
+        "name": "अलार्म का स्रोत"
       },
       "re_alarm": {
-        "name": "Repeated Alarm"
+        "name": "बार-बार अलार्म"
       },
       "time": {
-        "name": "Report Time"
+        "name": "रिपोर्ट का समय"
       },
       "utc_time": {
-        "name": "UTC Time"
+        "name": "UTC समय"
       },
       "test_time": {
-        "name": "Device Test Time"
+        "name": "डिवाइस परीक्षण का समय"
       },
       "timezone": {
-        "name": "Device Time Zone"
+        "name": "डिवाइस का समय क्षेत्र"
       },
       "zone_name": {
-        "name": "Voice Location"
+        "name": "बोली जाने वाली जगह का नाम"
       },
       "location": {
-        "name": "Location"
+        "name": "स्थान"
       },
       "color": {
-        "name": "Color"
+        "name": "रंग"
       },
       "light_event": {
-        "name": "Light Event"
+        "name": "प्रकाश की घटना"
       },
       "device_type": {
-        "name": "Device Type"
+        "name": "डिवाइस का प्रकार"
       },
       "reported_device_type": {
-        "name": "Reported Device Type"
+        "name": "रिपोर्ट किया गया डिवाइस प्रकार"
       },
       "category": {
-        "name": "Category"
+        "name": "श्रेणी"
       },
       "safe_mode": {
-        "name": "Security Mode"
+        "name": "सुरक्षा मोड"
       }
     },
     "number": {
@@ -454,28 +461,28 @@
         "name": "स्टैंडबाय चमक"
       },
       "camera_alarm_volume": {
-        "name": "Alarm Volume"
+        "name": "अलार्म वॉल्यूम"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "आवाज की मात्रा"
       },
       "camera_live_speaker_volume": {
-        "name": "Speaker Volume"
+        "name": "स्पीकर की ध्वनि का स्तर"
       },
       "camera_alarm_seconds": {
-        "name": "Alarm Duration"
+        "name": "अलार्म की अवधि"
       },
       "camera_night_threshold": {
-        "name": "Night Vision Sensitivity"
+        "name": "रात्रि दृष्टि की संवेदनशीलता"
       },
       "camera_cry_detection_level": {
-        "name": "Cry Detection Sensitivity"
+        "name": "रोने की पहचान की संवेदनशीलता"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "प्रतीक्षा अंतराल"
       },
       "camera_mechanical_ding_dong_duration": {
-        "name": "Mechanical Chime Duration"
+        "name": "यांत्रिक घंटी की अवधि"
       }
     },
     "select": {
@@ -519,251 +526,266 @@
         "name": "ऐप समय पर"
       },
       "camera_language": {
-        "name": "Language"
+        "name": "भाषा"
       },
       "camera_recording_resolution": {
-        "name": "Recording Resolution"
+        "name": "रिकॉर्डिंग का रिज़ॉल्यूशन"
       },
       "camera_motion_sensitivity": {
-        "name": "Detection Sensitivity"
+        "name": "जांच संवेदनशीलता",
+        "state": {
+          "high": "उच्च",
+          "medium": "मध्यम",
+          "low": "निम्न",
+          "auto": "स्वचालित"
+        }
       },
       "camera_video_seconds": {
-        "name": "Video Duration"
+        "name": "वीडियो की अवधि"
       },
       "camera_antiflicker_rate": {
-        "name": "Flicker Frequency"
+        "name": "झिलमिलाहट की आवृत्ति"
       },
       "camera_default_codec": {
-        "name": "Default Codec"
+        "name": "डिफ़ॉल्ट कोडेक"
       },
       "camera_motion_tracking_mode": {
-        "name": "Motion Tracking"
+        "name": "हलचल का अनुसरण"
       },
       "camera_night_vision_mode": {
-        "name": "Night Vision Mode"
+        "name": "रात्रि दृष्टि मोड"
       },
       "camera_cooldown": {
-        "name": "Cloud Cool Down Time"
+        "name": "क्लाउड रिकॉर्डिंग का प्रतीक्षा अंतराल"
       },
       "camera_doorbell_ring_key": {
-        "name": "Doorbell Tone"
+        "name": "दरवाज़े की घंटी की ध्वनि"
       },
       "camera_auto_power_on_capacity": {
-        "name": "Auto Power-On Capacity"
+        "name": "अपने आप चालू होने का बैटरी स्तर"
       }
     },
     "switch": {
       "led_light": {
-        "name": "LED Indicator"
+        "name": "LED संकेतक"
       },
       "light_power": {
-        "name": "Light"
+        "name": "प्रकाश"
       },
       "alarm_enabled": {
-        "name": "Alarm Enabled"
+        "name": "अलार्म सक्षम"
       },
       "continued_alarm": {
-        "name": "Continued Alarm"
+        "name": "लगातार अलार्म"
       },
       "mail_notice": {
-        "name": "Mail Reminder"
+        "name": "ईमेल अनुस्मारक"
       },
       "chirp_tone_enabled": {
-        "name": "Chirp Tone Enabled"
+        "name": "चहकने वाली ध्वनि सक्षम"
       },
       "reminder_enabled": {
-        "name": "Reminder Enabled"
+        "name": "अनुस्मारक सक्षम"
       },
       "reminder_tone_enabled": {
-        "name": "Reminder Tone Enabled"
+        "name": "अनुस्मारक की ध्वनि सक्षम"
       },
       "await_enabled": {
-        "name": "Await Enabled"
+        "name": "स्टैंडबाय प्रकाश सक्षम"
       },
       "pir_enabled": {
-        "name": "PIR Enabled"
+        "name": "PIR सक्षम"
       },
       "sunshine_enabled": {
-        "name": "Sunshine Enabled"
+        "name": "परिवेश प्रकाश पहचान सक्षम"
       },
       "key_sound_enabled": {
-        "name": "Key Sound Enabled"
+        "name": "बटन की ध्वनि सक्षम"
       },
       "warning_enabled": {
-        "name": "Warning Enabled"
+        "name": "चेतावनी सक्षम"
       },
       "camera_motion_detection": {
-        "name": "Motion Detection"
+        "name": "हलचल की पहचान"
       },
       "camera_person_detection": {
-        "name": "Person Detection"
+        "name": "व्यक्ति की पहचान"
       },
       "camera_video_recording": {
-        "name": "Record Video"
+        "name": "वीडियो रिकॉर्ड करें"
       },
       "camera_night_vision": {
-        "name": "Auto Night Vision"
+        "name": "स्वचालित रात्रि दृष्टि"
       },
       "camera_recording_light": {
-        "name": "Status LED"
+        "name": "स्थिति बताने वाली LED"
       },
       "camera_alarm": {
-        "name": "Camera Alarm"
+        "name": "कैमरा अलार्म"
       },
       "camera_mirror_flip": {
-        "name": "Rotate Image"
+        "name": "चित्र घुमाएँ"
       },
       "camera_antiflicker": {
-        "name": "Anti-Flicker"
+        "name": "झिलमिलाहट रोकथाम"
       },
       "camera_cry_detection": {
-        "name": "Cry Detection"
+        "name": "रोने की पहचान"
       },
       "camera_cooldown": {
-        "name": "Cooldown"
+        "name": "प्रतीक्षा अंतराल"
       },
       "camera_device_call": {
-        "name": "Device Call"
+        "name": "डिवाइस कॉल"
       },
       "camera_ding_dong": {
-        "name": "Mechanical Chime"
+        "name": "यांत्रिक घंटी"
       },
       "camera_motion_tracking": {
-        "name": "Motion Tracking"
+        "name": "हलचल का अनुसरण"
       },
       "camera_voice_volume": {
-        "name": "Voice Volume"
+        "name": "आवाज़ का स्तर"
       },
       "camera_live_audio": {
-        "name": "Live Audio"
+        "name": "लाइव ऑडियो"
       },
       "camera_recording_audio": {
-        "name": "Recording Audio"
+        "name": "रिकॉर्डिंग की ध्वनि"
       },
       "camera_auto_power_on": {
-        "name": "Auto Power-On"
+        "name": "अपने आप चालू करें"
       },
       "camera_white_light": {
-        "name": "White Light"
+        "name": "सफ़ेद प्रकाश"
       },
       "camera_alarm_when_removed": {
-        "name": "Alarm When Removed"
+        "name": "हटाने पर अलार्म"
       },
       "camera_sleep": {
-        "name": "Sleep Mode"
+        "name": "सुप्त मोड"
       },
       "camera_ai_notification_person": {
-        "name": "AI Notification Person"
+        "name": "AI सूचना: व्यक्ति"
       },
       "camera_ai_notification_pet": {
-        "name": "AI Notification Pet"
+        "name": "AI सूचना: पालतू जानवर"
       },
       "camera_ai_notification_vehicle_enter": {
-        "name": "AI Notification Vehicle Enter"
+        "name": "AI सूचना: वाहन का आगमन"
       },
       "camera_ai_notification_vehicle_out": {
-        "name": "AI Notification Vehicle Out"
+        "name": "AI सूचना: वाहन का प्रस्थान"
       },
       "camera_ai_notification_vehicle_held_up": {
-        "name": "AI Notification Vehicle Held Up"
+        "name": "AI सूचना: खड़ा वाहन"
       },
       "camera_ai_notification_package_exist": {
-        "name": "AI Notification Package Present"
+        "name": "AI सूचना: पैकेट मौजूद"
       },
       "camera_ai_notification_package_drop_off": {
-        "name": "AI Notification Package Drop-Off"
+        "name": "AI सूचना: पैकेट पहुँचाया गया"
       },
       "camera_ai_notification_package_pick_up": {
-        "name": "AI Notification Package Pick-Up"
+        "name": "AI सूचना: पैकेट उठाया गया"
       },
       "camera_ai_notification_other": {
-        "name": "AI Notification Other"
+        "name": "AI सूचना: अन्य"
       },
       "camera_ai_assistant_person": {
-        "name": "AI Assistant Person"
+        "name": "AI सहायक: व्यक्ति"
       },
       "camera_ai_assistant_pet": {
-        "name": "AI Assistant Pet"
+        "name": "AI सहायक: पालतू जानवर"
       },
       "camera_ai_assistant_vehicle": {
-        "name": "AI Assistant Vehicle"
+        "name": "AI सहायक: वाहन"
       },
       "camera_ai_assistant_package": {
-        "name": "AI Assistant Package"
+        "name": "AI सहायक: पैकेट"
       }
     },
     "alarm_control_panel": {
       "alarm": {
-        "name": "Alarm"
+        "name": "अलार्म"
       }
     }
   },
   "exceptions": {
     "station_unavailable": {
-      "message": "X-Sense station is no longer available"
+      "message": "X-Sense स्टेशन अब उपलब्ध नहीं है"
     },
     "entity_unavailable": {
-      "message": "X-Sense entity is no longer available"
+      "message": "X-Sense इकाई अब उपलब्ध नहीं है"
     },
     "mqtt_not_connected": {
-      "message": "X-Sense MQTT is not connected"
+      "message": "X-Sense MQTT से कनेक्शन नहीं है"
     },
     "safe_mode_publish_failed": {
-      "message": "Could not publish X-Sense security mode command"
+      "message": "X-Sense सुरक्षा मोड का आदेश प्रकाशित नहीं हो सका"
     },
     "force_arm_not_pending": {
-      "message": "X-Sense force arm is not pending for {mode} mode"
+      "message": "{mode} मोड के लिए X-Sense का बलपूर्वक सुरक्षा सक्रियण लंबित नहीं है"
     },
     "cooldown_state_unknown": {
-      "message": "X-Sense cooldown enabled state is unknown"
+      "message": "X-Sense प्रतीक्षा अंतराल सक्षम है या नहीं, यह अज्ञात है"
     },
     "unsupported_option": {
-      "message": "{option} is not a supported X-Sense option"
+      "message": "{option} समर्थित X-Sense विकल्प नहीं है"
     },
     "select_not_writable": {
-      "message": "X-Sense select cannot be written"
+      "message": "X-Sense चयन का मान बदला नहीं जा सकता"
     },
     "invalid_radon_threshold": {
-      "message": "X-Sense radon threshold is not valid"
+      "message": "X-Sense रेडॉन सीमा मान्य नहीं है"
     },
     "range_pair_missing": {
-      "message": "X-Sense range setting is missing its paired value"
+      "message": "X-Sense सीमा सेटिंग में जोड़ी वाला मान नहीं है"
     },
     "minimum_greater_than_maximum": {
-      "message": "X-Sense minimum cannot be greater than maximum"
+      "message": "X-Sense का न्यूनतम मान अधिकतम से बड़ा नहीं हो सकता"
     },
     "light_power_switch_required": {
-      "message": "X-Sense {service} requires a light power switch"
+      "message": "X-Sense {service} के लिए प्रकाश का पावर स्विच आवश्यक है"
     },
     "sbs50_station_required": {
-      "message": "X-Sense {service} requires an SBS50 station"
+      "message": "X-Sense {service} के लिए SBS50 स्टेशन आवश्यक है"
     },
     "ids_missing": {
-      "message": "X-Sense {service} IDs are missing"
+      "message": "X-Sense {service} के ID नहीं हैं"
     },
     "invalid_schedule_time_format": {
-      "message": "X-Sense schedule time must be HH:MM or HHMM"
+      "message": "X-Sense समय-सारणी का समय HH:MM या HHMM में होना चाहिए"
     },
     "schedule_time_out_of_range": {
-      "message": "X-Sense schedule time is out of range"
+      "message": "X-Sense समय-सारणी का समय सीमा से बाहर है"
     },
     "schedule_weekday_required": {
-      "message": "X-Sense schedule must include at least one weekday"
+      "message": "X-Sense समय-सारणी में सप्ताह का कम से कम एक दिन होना चाहिए"
     },
     "schedule_weekday_range": {
-      "message": "X-Sense schedule weekdays must be 1 through 7"
+      "message": "X-Sense समय-सारणी के सप्ताह के दिन 1 से 7 तक होने चाहिए"
     },
     "ids_required": {
-      "message": "X-Sense {field} must include at least one ID"
+      "message": "X-Sense {field} में कम से कम एक ID होना चाहिए"
     },
     "subscription_remove_twice": {
-      "message": "Can't remove subscription twice"
+      "message": "सदस्यता दो बार हटाई नहीं जा सकती"
     },
     "mqtt_topic_not_string": {
-      "message": "Topic needs to be a string"
+      "message": "टॉपिक एक स्ट्रिंग होना चाहिए"
     },
     "mqtt_error": {
-      "message": "Error talking to MQTT: {error}"
+      "message": "MQTT से संचार में त्रुटि: {error}"
+    },
+    "recording_cache_failed": {
+      "message": "{failed} रिकॉर्डिंग कैश नहीं हो सकीं। {downloaded} रिकॉर्डिंग डाउनलोड हुईं।"
+    },
+    "force_arm_invalid_link": {
+      "message": "X-Sense का यह बलपूर्वक सुरक्षा सक्रियण लिंक अमान्य है।"
+    },
+    "force_arm_request_failed": {
+      "message": "X-Sense का बलपूर्वक सुरक्षा सक्रियण अनुरोध विफल हुआ।"
     }
   },
   "selector": {
@@ -775,15 +797,257 @@
     },
     "recording_media_days_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "आरोही",
+        "descending": "अवरोही"
       }
     },
     "recording_media_clips_order": {
       "options": {
-        "ascending": "Ascending",
-        "descending": "Descending"
+        "ascending": "आरोही",
+        "descending": "अवरोही"
+      }
+    },
+    "recording_cache_mode": {
+      "options": {
+        "playback_only": "केवल प्लेबैक",
+        "retained": "स्थानीय रिकॉर्डिंग रखें"
+      }
+    },
+    "force_arm_mode": {
+      "options": {
+        "home": "घर पर",
+        "away": "बाहर"
       }
     }
-  }
+  },
+  "services": {
+    "force_arm": {
+      "name": "बलपूर्वक सुरक्षा सक्रिय करें",
+      "description": "खुले सेंसर के कारण रुके हुए घर पर या बाहर मोड के लंबित सुरक्षा सक्रियण अनुरोध की पुष्टि करें। खुले सेंसर को बायपास किया जाएगा।",
+      "fields": {
+        "mode": {
+          "name": "सुरक्षा सक्रियण मोड"
+        }
+      }
+    },
+    "force_arm_now": {
+      "name": "अभी बलपूर्वक सुरक्षा सक्रिय करें",
+      "description": "पुष्टि माँगे बिना खुले सेंसर को बायपास करके घर पर या बाहर मोड में तुरंत सुरक्षा सक्रिय करें।",
+      "fields": {
+        "mode": {
+          "name": "सुरक्षा सक्रियण मोड"
+        }
+      }
+    },
+    "trigger_sos": {
+      "name": "SOS अलार्म चालू करें",
+      "description": "SBS50 का SOS अलार्म तुरंत चालू करें।"
+    },
+    "cancel_sos": {
+      "name": "SOS अलार्म बंद करें",
+      "description": "SBS50 का सक्रिय SOS अलार्म बंद करें।"
+    },
+    "cancel_alarm": {
+      "name": "सक्रिय अलार्म बंद करें",
+      "description": "SBS50 का सक्रिय सेंसर अलार्म बंद करें।"
+    },
+    "set_sos_sound": {
+      "name": "SOS ध्वनि सेट करें",
+      "description": "चुनें कि SOS में केवल लाइटें चमकें या बज़र भी बजे।",
+      "fields": {
+        "audible": {
+          "name": "ध्वनि वाला SOS अलार्म"
+        }
+      }
+    },
+    "refresh_recordings": {
+      "name": "रिकॉर्डिंग सूची ताज़ा करें",
+      "description": "साइडबार और मीडिया ब्राउज़र में उपयोग की जाने वाली कैमरा रिकॉर्डिंग सूची ताज़ा करें।",
+      "fields": {
+        "entry_id": {
+          "name": "कॉन्फ़िगरेशन प्रविष्टि ID",
+          "description": "सभी X-Sense खातों पर लागू करने के लिए खाली छोड़ें।"
+        }
+      }
+    },
+    "cache_recordings": {
+      "name": "रिकॉर्डिंग कैश करें",
+      "description": "स्थानीय रूप से रखने के लिए कैमरा रिकॉर्डिंग डाउनलोड करें। इसके लिए स्थानीय रिकॉर्डिंग रखें मोड आवश्यक है।",
+      "fields": {
+        "entry_id": {
+          "name": "कॉन्फ़िगरेशन प्रविष्टि ID",
+          "description": "सभी X-Sense खातों पर लागू करने के लिए खाली छोड़ें।"
+        }
+      }
+    },
+    "clear_recordings_cache": {
+      "name": "रिकॉर्डिंग कैश साफ़ करें",
+      "description": "स्थानीय रिकॉर्डिंग सूचियाँ, वीडियो और थंबनेल हटाएँ। क्लाउड और SD रिकॉर्डिंग नहीं बदलेंगी।",
+      "fields": {
+        "entry_id": {
+          "name": "कॉन्फ़िगरेशन प्रविष्टि ID",
+          "description": "सभी X-Sense खातों पर लागू करने के लिए खाली छोड़ें।"
+        }
+      }
+    },
+    "query_light_schedules": {
+      "name": "लाइट समय-सारिणियाँ प्राप्त करें",
+      "description": "लाइट समय-सारिणियाँ प्राप्त करें। लक्ष्य के रूप में SBS50 का लाइट पावर स्विच चुनें।"
+    },
+    "create_light_schedule": {
+      "name": "लाइट समय-सारिणी बनाएँ",
+      "description": "लाइट समय-सारिणी बनाएँ। लक्ष्य के रूप में SBS50 का लाइट पावर स्विच चुनें।",
+      "fields": {
+        "name": {
+          "name": "प्रदर्शित नाम"
+        },
+        "start_time": {
+          "name": "आरंभ समय (HH:MM या HHMM)"
+        },
+        "end_time": {
+          "name": "समाप्ति समय (HH:MM या HHMM)"
+        },
+        "week_days": {
+          "name": "सप्ताह के दिन (1 = रविवार, 7 = शनिवार)"
+        },
+        "enabled": {
+          "name": "सक्षम स्थिति"
+        },
+        "time_zone": {
+          "name": "समय क्षेत्र"
+        }
+      }
+    },
+    "update_light_schedule": {
+      "name": "लाइट समय-सारिणी अपडेट करें",
+      "description": "लाइट समय-सारिणी अपडेट करें। लक्ष्य के रूप में SBS50 का लाइट पावर स्विच चुनें।",
+      "fields": {
+        "schedule_id": {
+          "name": "समय-सारिणी पहचानकर्ता"
+        },
+        "start_time": {
+          "name": "आरंभ समय (HH:MM या HHMM)"
+        },
+        "end_time": {
+          "name": "समाप्ति समय (HH:MM या HHMM)"
+        },
+        "week_days": {
+          "name": "सप्ताह के दिन (1 = रविवार, 7 = शनिवार)"
+        },
+        "enabled": {
+          "name": "सक्षम स्थिति"
+        },
+        "time_zone": {
+          "name": "समय क्षेत्र"
+        }
+      }
+    },
+    "rename_light_schedule": {
+      "name": "लाइट समय-सारिणी का नाम बदलें",
+      "description": "लाइट समय-सारिणी का नाम बदलें। लक्ष्य के रूप में SBS50 का लाइट पावर स्विच चुनें।",
+      "fields": {
+        "schedule_id": {
+          "name": "समय-सारिणी पहचानकर्ता"
+        },
+        "name": {
+          "name": "प्रदर्शित नाम"
+        }
+      }
+    },
+    "delete_light_schedule": {
+      "name": "लाइट समय-सारिणी हटाएँ",
+      "description": "लाइट समय-सारिणी हटाएँ। लक्ष्य के रूप में SBS50 का लाइट पावर स्विच चुनें।",
+      "fields": {
+        "schedule_id": {
+          "name": "समय-सारिणी पहचानकर्ता"
+        }
+      }
+    },
+    "query_light_groups": {
+      "name": "लाइट समूह प्राप्त करें",
+      "description": "लाइट समूह प्राप्त करें। लक्ष्य के रूप में SBS50 का लाइट पावर स्विच चुनें।"
+    },
+    "create_light_group": {
+      "name": "लाइट समूह बनाएँ",
+      "description": "लाइट समूह बनाएँ। लक्ष्य के रूप में SBS50 का लाइट पावर स्विच चुनें।",
+      "fields": {
+        "name": {
+          "name": "प्रदर्शित नाम"
+        }
+      }
+    },
+    "rename_light_group": {
+      "name": "लाइट समूह का नाम बदलें",
+      "description": "लाइट समूह का नाम बदलें। लक्ष्य के रूप में SBS50 का लाइट पावर स्विच चुनें।",
+      "fields": {
+        "group_id": {
+          "name": "समूह पहचानकर्ता"
+        },
+        "name": {
+          "name": "प्रदर्शित नाम"
+        }
+      }
+    },
+    "update_light_group_timer": {
+      "name": "लाइट समूह का टाइमर अपडेट करें",
+      "description": "लाइट समूह का टाइमर अपडेट करें। लक्ष्य के रूप में SBS50 का लाइट पावर स्विच चुनें।",
+      "fields": {
+        "group_id": {
+          "name": "समूह पहचानकर्ता"
+        },
+        "timer": {
+          "name": "टाइमर प्रकार (pirTime या appTime)"
+        },
+        "value": {
+          "name": "टाइमर मान"
+        }
+      }
+    },
+    "bind_light_group": {
+      "name": "लाइट समूह जोड़ें",
+      "description": "लाइट समूह जोड़ें। लक्ष्य के रूप में SBS50 का लाइट पावर स्विच चुनें।",
+      "fields": {
+        "name": {
+          "name": "प्रदर्शित नाम"
+        },
+        "device_ids": {
+          "name": "डिवाइस पहचानकर्ता"
+        }
+      }
+    },
+    "delete_light_group": {
+      "name": "लाइट समूह हटाएँ",
+      "description": "लाइट समूह हटाएँ। लक्ष्य के रूप में SBS50 का लाइट पावर स्विच चुनें।",
+      "fields": {
+        "group_id": {
+          "name": "समूह पहचानकर्ता"
+        }
+      }
+    },
+    "remove_light_group_devices": {
+      "name": "लाइट समूह से डिवाइस हटाएँ",
+      "description": "लाइट समूह से डिवाइस हटाएँ। लक्ष्य के रूप में SBS50 का लाइट पावर स्विच चुनें।",
+      "fields": {
+        "device_ids": {
+          "name": "डिवाइस पहचानकर्ता"
+        }
+      }
+    },
+    "set_light_group_power": {
+      "name": "लाइट समूह की पावर सेट करें",
+      "description": "लाइट समूह की पावर सेट करें। लक्ष्य के रूप में SBS50 का लाइट पावर स्विच चुनें।",
+      "fields": {
+        "group_id": {
+          "name": "समूह पहचानकर्ता"
+        },
+        "device_ids": {
+          "name": "डिवाइस सीरियल नंबर"
+        },
+        "enabled": {
+          "name": "सक्षम स्थिति"
+        }
+      }
+    }
+  },
+  "issues": {}
 }

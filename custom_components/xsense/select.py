@@ -22,8 +22,17 @@ from .entity import (
     coordinator_devices,
     coordinator_stations,
     device_station_id,
+    setup_dynamic_entities,
 )
 from .errors import xsense_error
+
+
+CAMERA_MOTION_SENSITIVITY_VALUES: dict[str, int] = {
+    "high": 1,
+    "medium": 2,
+    "low": 3,
+    "auto": 4,
+}
 
 
 def has_data(*keys: str) -> Callable[[Entity], bool]:
@@ -300,7 +309,7 @@ SELECTS: tuple[XSenseSelectEntityDescription, ...] = (
         data_key="motionSensitivity",
         addx_key="motionSensitivity",
         options_key="motionSensitivityOptionList",
-        fixed_options=(0, 1, 2, 3),
+        fixed_options=("high", "medium", "low"),
         translation_key="camera_motion_sensitivity",
         icon="mdi:motion-sensor",
         exists_fn=has_camera_motion_sensitivity,
@@ -408,30 +417,31 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up X-Sense select entities."""
-    devices: list[Device] = []
     coordinator: XSenseDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-    seen_entity_ids: set[str] = set()
 
-    for station in coordinator_stations(coordinator).values():
-        seen_entity_ids.add(station.entity_id)
-        devices.extend(
-            XSenseSelectEntity(coordinator, station, description)
-            for description in SELECTS
-            if description.exists_fn(station)
-        )
-
-    for dev in coordinator_devices(coordinator).values():
-        if dev.entity_id in seen_entity_ids:
-            continue
-        devices.extend(
-            XSenseSelectEntity(
-                coordinator, dev, description, station_id=device_station_id(dev)
+    def _entities() -> list[Device]:
+        devices: list[Device] = []
+        seen_entity_ids: set[str] = set()
+        for station in coordinator_stations(coordinator).values():
+            seen_entity_ids.add(station.entity_id)
+            devices.extend(
+                XSenseSelectEntity(coordinator, station, description)
+                for description in SELECTS
+                if description.exists_fn(station)
             )
-            for description in SELECTS
-            if description.exists_fn(dev)
-        )
+        for dev in coordinator_devices(coordinator).values():
+            if dev.entity_id in seen_entity_ids:
+                continue
+            devices.extend(
+                XSenseSelectEntity(
+                    coordinator, dev, description, station_id=device_station_id(dev)
+                )
+                for description in SELECTS
+                if description.exists_fn(dev)
+            )
+        return devices
 
-    async_add_entities(devices)
+    setup_dynamic_entities(entry, coordinator, async_add_entities, _entities)
 
 
 class XSenseSelectEntity(XSenseEntity, SelectEntity):
@@ -465,7 +475,7 @@ class XSenseSelectEntity(XSenseEntity, SelectEntity):
         if self.entity_description.key == "camera_motion_sensitivity":
             options = entity.data.get("motionSensitivityOptionList")
             if isinstance(options, list) and len(options) == 4:
-                return option_strings(options)
+                return list(CAMERA_MOTION_SENSITIVITY_VALUES)
         if not is_camera_entity(entity):
             return shadow_select_options(entity, self.entity_description)
         if self.entity_description.fixed_options is not None:
@@ -479,6 +489,21 @@ class XSenseSelectEntity(XSenseEntity, SelectEntity):
         if entity is None:
             return None
         value = entity.data.get(self.entity_description.data_key)
+        if self.entity_description.key == "camera_motion_sensitivity":
+            try:
+                sensitivity = int(value)
+            except (TypeError, ValueError):
+                return None
+            if sensitivity == 0:
+                sensitivity = 1
+            return next(
+                (
+                    option
+                    for option, api_value in CAMERA_MOTION_SENSITIVITY_VALUES.items()
+                    if api_value == sensitivity and option in self.options
+                ),
+                None,
+            )
         return None if value is None else str(value)
 
     async def async_select_option(self, option: str) -> None:
@@ -489,6 +514,14 @@ class XSenseSelectEntity(XSenseEntity, SelectEntity):
         if option not in self.options:
             raise xsense_error("unsupported_option", option=option)
 
+        if self.entity_description.key == "camera_motion_sensitivity":
+            api_value = CAMERA_MOTION_SENSITIVITY_VALUES[option]
+            await self.coordinator.xsense.update_camera_config(
+                entity, motionSensitivity=api_value
+            )
+            entity.data[self.entity_description.data_key] = api_value
+            self.coordinator.async_update_listeners()
+            return
         if self.entity_description.data_key == "recResolution":
             await self.coordinator.xsense.update_camera_recording_resolution(
                 entity, option
@@ -501,8 +534,9 @@ class XSenseSelectEntity(XSenseEntity, SelectEntity):
                 user_enable=_required_bool_state(entity.data.get("cooldownEnabled")),
                 value=int(_typed_option(option)),
             )
-        elif self.entity_description.addx_key and self.entity_description.addx_key.startswith(
-            "audio."
+        elif (
+            self.entity_description.addx_key
+            and self.entity_description.addx_key.startswith("audio.")
         ):
             await self.coordinator.xsense.update_camera_audio(
                 entity,
@@ -517,7 +551,14 @@ class XSenseSelectEntity(XSenseEntity, SelectEntity):
                 entity, **{self.entity_description.addx_key: _typed_option(option)}
             )
         elif not is_camera_entity(entity):
-            if self.entity_description.data_key == "radonUnit":
+            if entity.type == "XR0A-iR" and self.entity_description.data_key == "tempUnit":
+                radon_unit = entity.data.get("radonUnit")
+                if str(radon_unit) not in {"1", "2"}:
+                    raise xsense_error("entity_unavailable")
+                await self.coordinator.xsense.update_radon_unit(
+                    entity, str(radon_unit), temp_unit=option
+                )
+            elif self.entity_description.data_key == "radonUnit":
                 await self.coordinator.xsense.update_radon_unit(entity, option)
             elif self.entity_description.data_key == "comfortType":
                 await self._async_select_comfort_type(entity, option)
