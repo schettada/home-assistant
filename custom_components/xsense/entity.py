@@ -90,40 +90,47 @@ def _software_version(value: object) -> str | None:
 
 def _parent_device_info(
     coordinator: XSenseDataUpdateCoordinator,
-    station: Entity | None,
     station_id: str,
 ) -> tuple[str, object] | None:
-    """Return the HA-version-specific parent-device field and value."""
-    identifier = (DOMAIN, station_id)
-    get_device_id = getattr(dr, "async_get_device_id_by_identifier", None)
-    if get_device_id is None:
-        return "via_device", identifier
+    """Return a parent-device link supported by the running HA version."""
     if not hasattr(coordinator, "entry") or not hasattr(coordinator, "hass"):
         return None
 
+    identifier = (DOMAIN, station_id)
     entry_id = coordinator.entry.entry_id
-    registry = dr.async_get(coordinator.hass)
-    try:
-        device_id = get_device_id(
-            coordinator.hass,
-            identifier,
-            config_entry_id=entry_id,
-        )
-    except ValueError:
-        parent_info: dict[str, Any] = {
-            "config_entry_id": entry_id,
-            "identifiers": {identifier},
-            "manufacturer": MANUFACTURER,
-        }
-        if station is not None:
-            parent_info.update(
-                model=_device_info_str(station.type),
-                name=_device_info_str(station.name),
+
+    # DeviceInfo gained via_device_id in HA 2026.8. Older supported releases
+    # require the identifier-based field and reject the newer key entirely.
+    if "via_device_id" not in getattr(DeviceInfo, "__annotations__", {}):
+        return "via_device", identifier
+
+    get_device_id = getattr(dr, "async_get_device_id_by_identifier", None)
+    if get_device_id is not None:
+        try:
+            device_id = get_device_id(
+                coordinator.hass,
+                identifier,
+                config_entry_id=entry_id,
             )
-            if sw_version := _software_version(station.data.get("sw")):
-                parent_info["sw_version"] = sw_version
-        device_id = registry.async_get_or_create(**parent_info).id
-    return "via_device_id", device_id
+        except ValueError:
+            return None
+        if device_id is not None:
+            return "via_device_id", device_id
+        return None
+
+    try:
+        registry = dr.async_get(coordinator.hass)
+    except RuntimeError:
+        return None
+
+    get_device = getattr(registry, "async_get_device_by_identifier", None)
+    if get_device is None:
+        return None
+
+    device = get_device(identifier, config_entry_id=entry_id)
+    if device is None:
+        return None
+    return "via_device_id", device.id
 
 
 def _apk_entity_is_available(entity: Entity) -> bool:
@@ -171,6 +178,11 @@ class XSenseEntity(CoordinatorEntity):
         )
         self._parent_identity = _serial_identity(station)
         stable_id = _stable_device_id(coordinator, entity, self._physical_identity)
+        self._parent_device_stable_id = (
+            _stable_device_id(coordinator, station, self._parent_identity)
+            if station_id and station is not None
+            else station_id or None
+        )
 
         self._attr_unique_id = f"{stable_id}-{self.entity_description.key}".replace(
             "_", "-"
@@ -184,20 +196,20 @@ class XSenseEntity(CoordinatorEntity):
         )
         if sw_version := _software_version(entity.data.get("sw")):
             self._attr_device_info["sw_version"] = sw_version
-        if station_id:
-            parent_id = (
-                _stable_device_id(coordinator, station, self._parent_identity)
-                if station is not None
-                else station_id
-            )
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return device metadata with a late-bound registered parent link."""
+        info = self._attr_device_info.copy()
+        if self._parent_device_stable_id:
             parent_info = _parent_device_info(
-                coordinator,
-                station,
-                parent_id,
+                self.coordinator,
+                self._parent_device_stable_id,
             )
             if parent_info is not None:
                 parent_field, parent_value = parent_info
-                self._attr_device_info[parent_field] = parent_value
+                info[parent_field] = parent_value
+        return info
 
     def _current_entity(self) -> Entity | None:
         """Return the current coordinator entity for this Home Assistant entity."""

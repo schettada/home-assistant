@@ -254,6 +254,14 @@ OBSOLETE_BINARY_SENSOR_KEYS_BY_DEVICE_TYPE = {
     ),
     "XR0A-iR": ("mute_status",),
 }
+_BINARY_SENSOR_PAYLOAD_KEYS = {
+    "alarm_status": ("alarmStatus",),
+    "mute_status": ("muteStatus", "mute"),
+    "temperature_alarm_status": ("tempAlarmStatus",),
+    "temperature_mute_status": ("tempMuteStatus",),
+    "water_alarm_status": ("waterAlarmStatus",),
+    "water_mute_status": ("waterMuteStatus",),
+}
 BLUEPRINT_MAINTENANCE_CHECK_INTERVAL = timedelta(minutes=5)
 STARTUP_MAINTENANCE_DELAY = 30
 
@@ -370,6 +378,18 @@ def _obsolete_sensor_unique_ids(data) -> set[str]:
                 getattr(entity, "type", None), ()
             )
         )
+        entity_data = getattr(entity, "data", {}) or {}
+        entity_type = getattr(entity, "type", None)
+        if entity_type is not None and entity_type != "SBS50":
+            unique_ids.update(
+                _sensor_unique_id(entity.entity_id, key)
+                for key in ("safe_mode", "zone_name")
+            )
+        if "lastSelfTest" not in entity_data and "lastSelfTestTime" not in entity_data:
+            unique_ids.update(
+                _sensor_unique_id(entity.entity_id, key)
+                for key in ("last_self_test", "last_self_test_time")
+            )
     return unique_ids
 
 
@@ -384,10 +404,15 @@ def _obsolete_binary_sensor_unique_ids(data) -> set[str]:
             _sensor_unique_id(entity.entity_id, key)
             for key in OBSOLETE_BINARY_SENSOR_KEYS
         )
+        entity_data = getattr(entity, "data", {}) or {}
         unique_ids.update(
             _sensor_unique_id(entity.entity_id, key)
             for key in OBSOLETE_BINARY_SENSOR_KEYS_BY_DEVICE_TYPE.get(
                 getattr(entity, "type", None), ()
+            )
+            if not any(
+                payload_key in entity_data
+                for payload_key in _BINARY_SENSOR_PAYLOAD_KEYS.get(key, ())
             )
         )
     return unique_ids
@@ -775,10 +800,10 @@ def _clear_visible_device_metadata(device_registry, device) -> None:
 def _device_by_identifier(device_registry, identifier, entry_id):
     """Return one registry device by its config-entry-scoped identifier."""
     get_device = getattr(device_registry, "async_get_device_by_identifier", None)
-    if get_device is not None:
-        return get_device(identifier, config_entry_id=entry_id)
+    if get_device is None:
+        return None
 
-    return device_registry.async_get_device(identifiers={identifier})
+    return get_device(identifier, config_entry_id=entry_id)
 
 
 def _remove_obsolete_device_metadata(
