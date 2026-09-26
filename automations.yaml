@@ -705,21 +705,19 @@
     on Alexa regardless of quiet mode, guest mode, or any other suppression. Never
     disable this automation.
   triggers:
-  - platform: state
-    entity_id:
+  - entity_id:
     - binary_sensor.garage_smoke_detector_smoke
     - binary_sensor.network_rack_smoke_detector_smoke
-    - binary_sensor.home_smoke_detected
-    to: 'on'
+    - binary_sensor.crashpad_smoke_detected
+    - binary_sensor.crashpad_carbon_monoxide_detected
+    to:
+    - 'on'
     id: smoke
-  - platform: numeric_state
-    entity_id: sensor.garage_smoke_detector_carbon_monoxide
+    trigger: state
+  - entity_id: sensor.garage_smoke_detector_carbon_monoxide
     above: 0
     id: co
-  - platform: state
-    entity_id: binary_sensor.home_carbon_monoxide_detected
-    to: 'on'
-    id: co_binary
+    trigger: numeric_state
   actions:
   - choose:
     - conditions:
