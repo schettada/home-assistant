@@ -254,6 +254,24 @@
       "last_self_test_time": {
         "name": "Timp de testare a dispozitivului"
       },
+      "radon": {
+        "name": "Nivel de radon"
+      },
+      "radon_long_term_day": {
+        "name": "Zile de radon pe termen lung"
+      },
+      "radon_1_day": {
+        "name": "Nivel de radon pe 1 zi"
+      },
+      "radon_7_day": {
+        "name": "Nivel de radon pe 7 zile"
+      },
+      "radon_30_day": {
+        "name": "Nivel de radon pe 30 de zile"
+      },
+      "radon_90_day": {
+        "name": "Nivel de radon pe 90 de zile"
+      },
       "radon_peak": {
         "name": "Nivelul maxim de radon"
       },

@@ -254,6 +254,24 @@
       "last_self_test_time": {
         "name": "Czas testu urządzenia"
       },
+      "radon": {
+        "name": "Poziom radonu"
+      },
+      "radon_long_term_day": {
+        "name": "Dni długoterminowego radonu"
+      },
+      "radon_1_day": {
+        "name": "1-dniowy poziom radonu"
+      },
+      "radon_7_day": {
+        "name": "7-dniowy poziom radonu"
+      },
+      "radon_30_day": {
+        "name": "30-dniowy poziom radonu"
+      },
+      "radon_90_day": {
+        "name": "90-dniowy poziom radonu"
+      },
       "radon_peak": {
         "name": "Szczytowy poziom radonu"
       },

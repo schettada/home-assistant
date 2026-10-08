@@ -254,6 +254,24 @@
       "last_self_test_time": {
         "name": "設備測試時間"
       },
+      "radon": {
+        "name": "氡氣"
+      },
+      "radon_long_term_day": {
+        "name": "長期氡氣天數"
+      },
+      "radon_1_day": {
+        "name": "1天氡氣水平"
+      },
+      "radon_7_day": {
+        "name": "7天氡氣水平"
+      },
+      "radon_30_day": {
+        "name": "30天氡氣水平"
+      },
+      "radon_90_day": {
+        "name": "90天氡氣水平"
+      },
       "radon_peak": {
         "name": "氡氣峰值水平"
       },

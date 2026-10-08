@@ -254,6 +254,24 @@
       "last_self_test_time": {
         "name": "زمان تست دستگاه"
       },
+      "radon": {
+        "name": "رادون"
+      },
+      "radon_long_term_day": {
+        "name": "روزهای بلندمدت رادون"
+      },
+      "radon_1_day": {
+        "name": "سطح رادون ۱ روزه"
+      },
+      "radon_7_day": {
+        "name": "سطح رادون ۷ روزه"
+      },
+      "radon_30_day": {
+        "name": "سطح رادون ۳۰ روزه"
+      },
+      "radon_90_day": {
+        "name": "سطح رادون ۹۰ روزه"
+      },
       "radon_peak": {
         "name": "اوج سطح رادون"
       },

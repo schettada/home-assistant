@@ -254,6 +254,24 @@
       "last_self_test_time": {
         "name": "デバイスのテスト時間"
       },
+      "radon": {
+        "name": "ラドン"
+      },
+      "radon_long_term_day": {
+        "name": "長期ラドン日数"
+      },
+      "radon_1_day": {
+        "name": "1日ラドンレベル"
+      },
+      "radon_7_day": {
+        "name": "7日ラドンレベル"
+      },
+      "radon_30_day": {
+        "name": "30日ラドンレベル"
+      },
+      "radon_90_day": {
+        "name": "90日ラドンレベル"
+      },
       "radon_peak": {
         "name": "ピークラドンレベル"
       },

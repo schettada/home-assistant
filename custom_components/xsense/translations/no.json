@@ -254,6 +254,24 @@
       "last_self_test_time": {
         "name": "Enhetstesttid"
       },
+      "radon": {
+        "name": "Radonnivå"
+      },
+      "radon_long_term_day": {
+        "name": "Langsiktige radondager"
+      },
+      "radon_1_day": {
+        "name": "1-dagers radonnivå"
+      },
+      "radon_7_day": {
+        "name": "7-dagers radonnivå"
+      },
+      "radon_30_day": {
+        "name": "30-dagers radonnivå"
+      },
+      "radon_90_day": {
+        "name": "90-dagers radonnivå"
+      },
       "radon_peak": {
         "name": "Topp radonnivå"
       },

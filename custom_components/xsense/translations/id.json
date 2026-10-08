@@ -254,6 +254,24 @@
       "last_self_test_time": {
         "name": "Waktu Uji Perangkat"
       },
+      "radon": {
+        "name": "Tingkat radon"
+      },
+      "radon_long_term_day": {
+        "name": "Hari radon jangka panjang"
+      },
+      "radon_1_day": {
+        "name": "Tingkat radon 1 hari"
+      },
+      "radon_7_day": {
+        "name": "Tingkat radon 7 hari"
+      },
+      "radon_30_day": {
+        "name": "Tingkat radon 30 hari"
+      },
+      "radon_90_day": {
+        "name": "Tingkat radon 90 hari"
+      },
       "radon_peak": {
         "name": "Tingkat Puncak Radon"
       },

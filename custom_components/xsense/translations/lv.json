@@ -254,6 +254,24 @@
       "last_self_test_time": {
         "name": "Ierīces pārbaudes laiks"
       },
+      "radon": {
+        "name": "Radons"
+      },
+      "radon_long_term_day": {
+        "name": "Ilgtermiņa radona dienas"
+      },
+      "radon_1_day": {
+        "name": "1 dienas radona līmenis"
+      },
+      "radon_7_day": {
+        "name": "7 dienu radona līmenis"
+      },
+      "radon_30_day": {
+        "name": "30 dienu radona līmenis"
+      },
+      "radon_90_day": {
+        "name": "90 dienu radona līmenis"
+      },
       "radon_peak": {
         "name": "Maksimālais radona līmenis"
       },

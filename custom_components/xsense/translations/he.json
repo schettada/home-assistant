@@ -254,6 +254,24 @@
       "last_self_test_time": {
         "name": "זמן בדיקת מכשיר"
       },
+      "radon": {
+        "name": "ראדון"
+      },
+      "radon_long_term_day": {
+        "name": "ימי ראדון לטווח ארוך"
+      },
+      "radon_1_day": {
+        "name": "רמת ראדון ליום אחד"
+      },
+      "radon_7_day": {
+        "name": "רמת ראדון ל-7 ימים"
+      },
+      "radon_30_day": {
+        "name": "רמת ראדון ל-30 ימים"
+      },
+      "radon_90_day": {
+        "name": "רמת ראדון ל-90 ימים"
+      },
       "radon_peak": {
         "name": "שיא רמת ראדון"
       },

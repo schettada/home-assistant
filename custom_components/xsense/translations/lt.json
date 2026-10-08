@@ -254,6 +254,24 @@
       "last_self_test_time": {
         "name": "Įrenginio bandymo laikas"
       },
+      "radon": {
+        "name": "Radonas"
+      },
+      "radon_long_term_day": {
+        "name": "Ilgalaikės radono dienos"
+      },
+      "radon_1_day": {
+        "name": "1 dienos radono lygis"
+      },
+      "radon_7_day": {
+        "name": "7 dienų radono lygis"
+      },
+      "radon_30_day": {
+        "name": "30 dienų radono lygis"
+      },
+      "radon_90_day": {
+        "name": "90 dienų radono lygis"
+      },
       "radon_peak": {
         "name": "Didžiausias radono lygis"
       },

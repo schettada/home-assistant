@@ -483,6 +483,24 @@
       "last_self_test_time": {
         "name": "Gerätetestzeit"
       },
+      "radon": {
+        "name": "Radonwert"
+      },
+      "radon_long_term_day": {
+        "name": "Langfristige Radontage"
+      },
+      "radon_1_day": {
+        "name": "1-Tage-Radonwert"
+      },
+      "radon_7_day": {
+        "name": "7-Tage-Radonwert"
+      },
+      "radon_30_day": {
+        "name": "30-Tage-Radonwert"
+      },
+      "radon_90_day": {
+        "name": "90-Tage-Radonwert"
+      },
       "radon_peak": {
         "name": "Höchster Radonwert"
       },

@@ -254,6 +254,24 @@
       "last_self_test_time": {
         "name": "Seadme testimise aeg"
       },
+      "radon": {
+        "name": "Radoon"
+      },
+      "radon_long_term_day": {
+        "name": "Pikaajalised radoonipäevad"
+      },
+      "radon_1_day": {
+        "name": "1 päeva radoonitase"
+      },
+      "radon_7_day": {
+        "name": "7 päeva radoonitase"
+      },
+      "radon_30_day": {
+        "name": "30 päeva radoonitase"
+      },
+      "radon_90_day": {
+        "name": "90 päeva radoonitase"
+      },
       "radon_peak": {
         "name": "Radooni tipptase"
       },

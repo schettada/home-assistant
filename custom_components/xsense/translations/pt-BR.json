@@ -254,6 +254,24 @@
       "last_self_test_time": {
         "name": "Tempo de teste do dispositivo"
       },
+      "radon": {
+        "name": "Radônio"
+      },
+      "radon_long_term_day": {
+        "name": "Dias de radônio a longo prazo"
+      },
+      "radon_1_day": {
+        "name": "Nível de radônio de 1 dia"
+      },
+      "radon_7_day": {
+        "name": "Nível de radônio de 7 dias"
+      },
+      "radon_30_day": {
+        "name": "Nível de radônio de 30 dias"
+      },
+      "radon_90_day": {
+        "name": "Nível de radônio de 90 dias"
+      },
       "radon_peak": {
         "name": "Nível máximo de radônio"
       },

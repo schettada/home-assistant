@@ -254,6 +254,24 @@
       "last_self_test_time": {
         "name": "Doba testu zařízení"
       },
+      "radon": {
+        "name": "Hladina radonu"
+      },
+      "radon_long_term_day": {
+        "name": "Dny dlouhodobého radonu"
+      },
+      "radon_1_day": {
+        "name": "1denní hladina radonu"
+      },
+      "radon_7_day": {
+        "name": "7denní hladina radonu"
+      },
+      "radon_30_day": {
+        "name": "30denní hladina radonu"
+      },
+      "radon_90_day": {
+        "name": "90denní hladina radonu"
+      },
       "radon_peak": {
         "name": "Nejvyšší hladina radonu"
       },
