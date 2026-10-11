@@ -80,6 +80,10 @@ class DreoDeviceDetails:
     """Valid rgblevel values for the ambient light ring. None = not set (use default).
     Examples: (0, 2) = off/full only, (0, 1, 2) = off/low/full."""
 
+    filter_life_percent: bool
+    """True if the "lifetime" state key is the remaining filter life in percent. Opt-in per
+    model: other models report it in other units (e.g. hours on the DR-HAP002S/HAP003S)."""
+
     def __init__(
         self,
         device_type: DreoDeviceType = None,
@@ -92,6 +96,7 @@ class DreoDeviceDetails:
         cooking_range: dict = None,
         override_fn: Callable | None = None,
         ambient_light_levels: tuple | None = None,
+        filter_life_percent: bool = False,
     ):
         if device_type is None:
             raise ValueError("device_type is required")
@@ -108,6 +113,7 @@ class DreoDeviceDetails:
         self.cooking_range = cooking_range
         self.override_fn = override_fn
         self.ambient_light_levels = ambient_light_levels
+        self.filter_life_percent = filter_life_percent
 
 
 @dataclass
@@ -218,7 +224,7 @@ def _hap003s_mcu_override(device) -> None:
 
 
 def _hap009s_override(device) -> None:
-    """Remap the "auto" mode command to "auto-regular" for DR-HAP009S air purifiers.
+    """Remap the "auto" mode command to "auto-regular" for DR-HAP007S, DR-HAP008S, DR-HAP009S and DR-HAP010S air purifiers.
 
     The DR-HAP009S rejects the plain "auto" mode command ("instruction validate failed",
     error 500003) and requires "auto-regular" instead (issue #860).  The device reports
@@ -486,18 +492,33 @@ SUPPORTED_DEVICES = {
     ),
     # DR-HAP008S diagnostics report an empty controlsConf object. Hardcode its known fan
     # capabilities so Home Assistant can create the primary fan entity.
+    # DR-HAP008S (338S) also rejects plain "auto" with error 500003 and needs "auto-regular" (issue #932).
     "DR-HAP008S": DreoDeviceDetails(
         device_type=DreoDeviceType.AIR_PURIFIER,
         preset_modes=[("auto", "auto"), ("manual", "manual"), ("sleep", "sleep"), ("turbo", "turbo")],
         device_ranges={SPEED_RANGE: (1, 4)},
+        override_fn=_hap009s_override,
     ),
     # DR-HAP010S (Air Purifier 530S) diagnostics report an empty controlsConf object, so the
     # speed range and preset modes cannot be auto-detected. Hardcode the fan capabilities
     # shared by the other empty-controlsConf purifiers so the fan entity is created (issue #906).
+    # It also needs "auto-regular" in place of plain "auto" (reported on issue #932).
     "DR-HAP010S": DreoDeviceDetails(
         device_type=DreoDeviceType.AIR_PURIFIER,
         preset_modes=[("auto", "auto"), ("manual", "manual"), ("sleep", "sleep"), ("turbo", "turbo")],
         device_ranges={SPEED_RANGE: (1, 4)},
+        override_fn=_hap009s_override,
+    ),
+    # DR-HAP007S (Air Purifier 337S/337AS) diagnostics report an empty controlsConf object, so the
+    # speed range and preset modes cannot be auto-detected; it reports mode "turbo" with windlevel 4.
+    # Like the DR-HAP009S it rejects the plain "auto" mode command ("instruction validate failed")
+    # and accepts "auto-regular". Its "lifetime" key is the filter life in percent (matches the app).
+    "DR-HAP007S": DreoDeviceDetails(
+        device_type=DreoDeviceType.AIR_PURIFIER,
+        preset_modes=[("auto", "auto"), ("manual", "manual"), ("sleep", "sleep"), ("turbo", "turbo")],
+        device_ranges={SPEED_RANGE: (1, 4)},
+        override_fn=_hap009s_override,
+        filter_life_percent=True,
     ),
     # Heaters
     "DR-HSH017BS": DreoHeaterDeviceDetails(
@@ -542,6 +563,9 @@ SUPPORTED_DEVICES = {
     "DR-HSH010S": DreoHeaterDeviceDetails(),
     "DR-HSH011": DreoHeaterDeviceDetails(),
     "DR-HSH011S": DreoHeaterDeviceDetails(),
+    # DR-HSH041S (Convection Heater 711S) reports an empty controlsConf; its state keys match the
+    # HSH011S (heat levels, ECO target in °F, PTC, window-open detection), so the defaults apply (issue #928).
+    "DR-HSH041S": DreoHeaterDeviceDetails(),
     # Are these even used?  They don't show up as model numbers.  Should they be a DR prefix?
     "WH714S": DreoHeaterDeviceDetails(
         swing_modes=[
@@ -625,6 +649,8 @@ SUPPORTED_DEVICES = {
     "DR-HDH002S": DreoDeviceDetails(device_type=DreoDeviceType.DEHUMIDIFIER, device_ranges={HUMIDITY_RANGE: (30, 85), SPEED_RANGE: (1, 3)}),
     "DR-HDH003S": DreoDeviceDetails(device_type=DreoDeviceType.DEHUMIDIFIER, device_ranges={HUMIDITY_RANGE: (30, 85), SPEED_RANGE: (1, 3)}),
     "DR-HDH005S": DreoDeviceDetails(device_type=DreoDeviceType.DEHUMIDIFIER, device_ranges={HUMIDITY_RANGE: (30, 85), SPEED_RANGE: (1, 3)}),
+    # DR-HDH004S (733S/764S) reports the same state keys as HDH002S/HDH005S, plus RGB and energy keys (issue #936).
+    "DR-HDH004S": DreoDeviceDetails(device_type=DreoDeviceType.DEHUMIDIFIER, device_ranges={HUMIDITY_RANGE: (30, 85), SPEED_RANGE: (1, 3)}),
     # Evaporative Coolers
     "DR-HEC": DreoDeviceDetails(
         device_type=DreoDeviceType.EVAPORATIVE_COOLER,
