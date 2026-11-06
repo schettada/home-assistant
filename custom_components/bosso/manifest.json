@@ -1,0 +1,13 @@
+
+{
+  "domain": "bosso",
+  "name": "Bosso Lights",
+  "codeowners": ["@Bosso-Family"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/Bosso-Family/hass-bosso",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/Bosso-Family/hass-bosso/issues",
+  "requirements": [],
+  "version": "2.1.0"
+}

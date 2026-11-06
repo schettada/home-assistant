@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from contextlib import suppress
-from datetime import datetime, timezone
 import json
+from contextlib import suppress
+from datetime import UTC, datetime
 from typing import Any
-
 
 APK_AI_DETECTION_OBJECTS = {
     "person",
@@ -41,6 +40,23 @@ APK_AI_DETECTION_DATA_KEYS = {
     "package_exist": "packageExist",
     "other": "other",
 }
+
+APK_MAILBOX_DEVICE_TYPES = {"SMA0A", "SMA51"}
+APK_SMARTDROP_DEVICE_TYPES = {"SSD01"}
+
+# EventSafeAlarmResult.EventData.EventItem fields copied by the Android app's
+# AbstractC2124d.c() before it dispatches any model-specific alarm handler.
+APK_EVENT_SAFE_ITEM_KEYS = (
+    "coPpm",
+    "coLevel",
+    "alarmStatus",
+    "alarmSource",
+    "continueAlarm",
+    "mailNotice",
+    "reAlarm",
+    "initiativeAlarm",
+    "smokeEdition",
+)
 
 MQTT_IDENTIFIER_KEYS = {
     "camerasn",
@@ -86,25 +102,33 @@ __all__ = [
     "APK_AI_DETECTION_DATA_KEYS",
     "APK_AI_DETECTION_GROUPS",
     "APK_AI_DETECTION_OBJECTS",
+    "APK_EVENT_SAFE_ITEM_KEYS",
+    "APK_MAILBOX_DEVICE_TYPES",
+    "APK_SMARTDROP_DEVICE_TYPES",
     "MQTT_IDENTIFIER_KEYS",
+    "SELF_TEST_RESULT_KEYS",
+    "SELF_TEST_TIME_KEYS",
     "apk_ai_detection_name_times",
     "apk_ai_detection_names",
     "apk_ai_detection_object_times",
     "apply_apk_ai_detection_aliases",
     "apply_apk_dispatch_aliases",
     "apply_apk_event_aliases",
+    "apply_apk_event_safe_alarm_aliases",
+    "apply_apk_mailbox_alarm_aliases",
+    "apply_apk_smartdrop_notice_aliases",
     "camera_ai_history_event_key",
+    "camera_event_history_playback_data",
+    "camera_event_history_playback_source",
+    "camera_event_history_time",
     "camera_event_record_event_key",
     "camera_event_record_station_data",
     "camera_event_records",
-    "camera_event_history_playback_data",
-    "camera_event_history_playback_source",
     "camera_library_records",
-    "camera_event_history_time",
     "camera_playback_epoch_seconds",
-    "latest_apk_detection_time",
-    "is_self_test_topic",
     "is_presence_topic",
+    "is_self_test_topic",
+    "latest_apk_detection_time",
     "mqtt_identifier_candidates",
     "mqtt_identifier_key_name",
     "mqtt_reported_data",
@@ -112,16 +136,21 @@ __all__ = [
     "normalize_self_test_report",
     "normalize_self_test_result",
     "self_test_report_payload",
-    "SELF_TEST_RESULT_KEYS",
-    "SELF_TEST_TIME_KEYS",
 ]
 
 
 def mqtt_reported_data(data: dict[str, Any]) -> dict[str, Any] | list[Any]:
     """Return device data from either shadow reports or X-Sense event payloads."""
-    reported = data.get("state", {}).get("reported")
+    if not isinstance(data, dict):
+        return {}
+    state = data.get("state", {})
+    if not isinstance(state, dict):
+        return {}
+    reported = state.get("reported")
     if isinstance(reported, dict):
-        return reported.copy()
+        result = reported.copy()
+        apply_apk_smartdrop_notice_aliases(result)
+        return result
     if isinstance(reported, list):
         return list(reported)
 
@@ -453,7 +482,7 @@ def camera_event_history_time(value: Any) -> str | None:
         return str(value)
     if timestamp > 10_000_000_000:
         timestamp //= 1000
-    return datetime.fromtimestamp(timestamp, timezone.utc).strftime("%Y%m%d%H%M%S")
+    return datetime.fromtimestamp(timestamp, UTC).strftime("%Y%m%d%H%M%S")
 
 
 def apply_apk_dispatch_aliases(data: dict[str, Any]) -> None:
@@ -507,7 +536,83 @@ def _first_alias(data: dict[str, Any], keys: tuple[str, ...]) -> Any:
 
 def apply_apk_event_aliases(data: dict[str, Any]) -> None:
     """Apply APK event aliases that are not reported as shadow keys."""
+    apply_apk_event_safe_alarm_aliases(data)
+    apply_apk_mailbox_alarm_aliases(data)
     apply_apk_ai_detection_aliases(data)
+
+
+def apply_apk_smartdrop_notice_aliases(data: dict[str, Any]) -> None:
+    """Route the APK's nested SSD01 door-state notices to their child device."""
+    notices = data.get("notices")
+    if not isinstance(notices, list):
+        return
+
+    children = data.get("devs")
+    if not isinstance(children, dict):
+        children = {}
+        data["devs"] = children
+
+    station_sn = _first_alias(
+        data, ("stationSN", "stationSn", "_stationSN", "_stationSn")
+    )
+    for notice in notices:
+        if not isinstance(notice, dict):
+            continue
+        if str(notice.get("type") or "").upper() not in APK_SMARTDROP_DEVICE_TYPES:
+            continue
+        device_sn = _first_alias(notice, ("deviceSN", "deviceSn", "_deviceSN"))
+        event_param = notice.get("eventParam")
+        if (
+            device_sn in (None, "")
+            or not isinstance(event_param, dict)
+            or "isOpen" not in event_param
+        ):
+            continue
+
+        child = dict(children.get(str(device_sn), {}))
+        child.update(
+            {
+                "deviceSN": device_sn,
+                "type": notice.get("type"),
+                "isOpen": event_param["isOpen"],
+            }
+        )
+        if station_sn not in (None, ""):
+            child["stationSN"] = station_sn
+        if notice.get("eventTime") not in (None, ""):
+            child["eventTime"] = notice["eventTime"]
+        children[str(device_sn)] = child
+
+
+def apply_apk_event_safe_alarm_aliases(data: dict[str, Any]) -> None:
+    """Flatten the APK EventSafeAlarmResult eventData/eventItem envelope."""
+    event_item = data.get("eventItem")
+    if isinstance(event_item, dict):
+        for key in APK_EVENT_SAFE_ITEM_KEYS:
+            value = event_item.get(key)
+            if value not in (None, ""):
+                data.setdefault(key, value)
+
+    if data.get("stationSN") in (None, ""):
+        data["stationSN"] = data.get("stationSn")
+    if data.get("deviceSN") in (None, ""):
+        data["deviceSN"] = data.get("deviceSn")
+    if data.get("type") in (None, ""):
+        data["type"] = data.get("deviceType")
+
+
+def apply_apk_mailbox_alarm_aliases(data: dict[str, Any]) -> None:
+    """Normalize the SBS50 mailbox alarm event consumed by the Android app."""
+    if str(data.get("type") or "").upper() not in APK_MAILBOX_DEVICE_TYPES:
+        return
+    if str(data.get("isAlarm") or "").strip().lower() not in {"1", "true"}:
+        return
+
+    alarm_time = _first_alias(data, ("alarmTime", "time", "eventTime"))
+    if alarm_time in (None, ""):
+        return
+    data["mailboxAlarmActive"] = True
+    data["mailboxAlarmTime"] = alarm_time
 
 
 def apply_apk_ai_detection_aliases(data: dict[str, Any]) -> None:

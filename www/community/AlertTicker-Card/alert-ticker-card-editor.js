@@ -1,5 +1,5 @@
 /**
- * AlertTicker Card Editor v1.3.13
+ * AlertTicker Card Editor v1.3.19
  * Visual editor for the AlertTicker Card custom Lovelace component.
  */
 
@@ -10,7 +10,7 @@ const html = LitElement.prototype.html;
 const css = LitElement.prototype.css;
 
 // Must match the version in alert-ticker-card.js
-const CARD_VERSION = "1.3.13";
+const CARD_VERSION = "1.3.19";
 
 // ---------------------------------------------------------------------------
 // Theme metadata — mirrors alert-ticker-card.js
@@ -1360,6 +1360,10 @@ const ET = {
     badge_label: "Testo badge personalizzato",
     badge_label_help: "Lascia vuoto per usare il testo di default del tema",
     delete: "Elimina",
+    duplicate_alert: "Duplica avviso",
+    disable_alert: "Disattiva avviso",
+    enable_alert: "Attiva avviso",
+    alert_disabled: "OFF",
     priority_1: "1 — Critico (rosso)",
     priority_2: "2 — Attenzione (arancione)",
     priority_3: "3 — Info (blu)",
@@ -1666,7 +1670,7 @@ const ET = {
     section_push_notify: "📱 Push Notifications",
     push_notify_master_toggle: "Enable mobile push notifications",
     push_notify_master_toggle_help: "Master switch. When off, no alert sends a push notification, even if enabled per alert.",
-    client_side_warning: "⚠️ Funktioniert nur, wenn ein HA-Dashboard in einem Browser geöffnet ist (Desktop, Wandtablet oder Companion-App im Vordergrund). Für kritische 24/7-Alarme eine serverseitige HA-Automatisierung verwenden.",
+    client_side_warning: "⚠️ Works only while an HA dashboard is open in a browser (desktop, wall tablet, or Companion app in the foreground). For 24/7 critical alerts, use a server-side HA automation.",
     alert_push_notify: "Send mobile push notification",
     alert_push_notify_help: "When this alert activates, sends a push notification via the selected notify service.",
     alert_push_notify_title: "Notification title (Jinja2)",
@@ -1735,6 +1739,10 @@ const ET = {
     badge_label: "Custom badge label",
     badge_label_help: "Leave empty to use the theme default label",
     delete: "Delete",
+    duplicate_alert: "Duplicate alert",
+    disable_alert: "Disable alert",
+    enable_alert: "Enable alert",
+    alert_disabled: "OFF",
     priority_1: "1 — Critical (red)",
     priority_2: "2 — Warning (orange)",
     priority_3: "3 — Info (blue)",
@@ -2108,6 +2116,10 @@ const ET = {
     badge_label: "Texte du badge personnalisé",
     badge_label_help: "Laisser vide pour utiliser le texte par défaut du thème",
     delete: "Supprimer",
+    duplicate_alert: "Dupliquer l'alerte",
+    disable_alert: "Désactiver l'alerte",
+    enable_alert: "Activer l'alerte",
+    alert_disabled: "OFF",
     priority_1: "1 — Critique (rouge)",
     priority_2: "2 — Attention (orange)",
     priority_3: "3 — Info (bleu)",
@@ -2412,7 +2424,7 @@ const ET = {
     section_push_notify: "📱 Push-Benachrichtigungen",
     push_notify_master_toggle: "Mobile Push-Benachrichtigungen aktivieren",
     push_notify_master_toggle_help: "Hauptschalter. Wenn deaktiviert, sendet keine Warnung eine Push-Benachrichtigung, auch wenn für einzelne Warnungen aktiviert.",
-    client_side_warning: "⚠️ Werkt alleen als een HA-dashboard open is in een browser (desktop, vaste tablet, of Companion-app op de voorgrond). Voor kritieke 24/7 meldingen gebruik een server-side HA-automatisering.",
+    client_side_warning: "⚠️ Funktioniert nur, wenn ein HA-Dashboard in einem Browser geöffnet ist (Desktop, Wandtablet oder Companion-App im Vordergrund). Für kritische 24/7-Alarme eine serverseitige HA-Automatisierung verwenden.",
     alert_push_notify: "Mobile Push-Benachrichtigung senden",
     alert_push_notify_help: "Wenn diese Warnung aktiv wird, sendet eine Push-Benachrichtigung über den ausgewählten Notify-Dienst.",
     alert_push_notify_title: "Benachrichtigungstitel (Jinja2)",
@@ -2481,6 +2493,10 @@ const ET = {
     badge_label: "Benutzerdefinierter Badge-Text",
     badge_label_help: "Leer lassen für den Standard-Text des Themas",
     delete: "Löschen",
+    duplicate_alert: "Alarm duplizieren",
+    disable_alert: "Alarm deaktivieren",
+    enable_alert: "Alarm aktivieren",
+    alert_disabled: "AUS",
     priority_1: "1 — Kritisch (rot)",
     priority_2: "2 — Warnung (orange)",
     priority_3: "3 — Info (blau)",
@@ -2854,6 +2870,10 @@ const ET = {
     badge_label: "Aangepaste badge-tekst",
     badge_label_help: "Leeg laten voor de standaardtekst van het thema",
     delete: "Verwijderen",
+    duplicate_alert: "Melding dupliceren",
+    disable_alert: "Melding uitschakelen",
+    enable_alert: "Melding inschakelen",
+    alert_disabled: "UIT",
     priority_1: "1 — Kritiek (rood)",
     priority_2: "2 — Waarschuwing (oranje)",
     priority_3: "3 — Info (blauw)",
@@ -3227,6 +3247,10 @@ const ET = {
     badge_label: "Nhãn badge tùy chỉnh",
     badge_label_help: "Để trống để dùng nhãn mặc định của giao diện",
     delete: "Xóa",
+    duplicate_alert: "Nhân bản cảnh báo",
+    disable_alert: "Tắt cảnh báo",
+    enable_alert: "Bật cảnh báo",
+    alert_disabled: "TẮT",
     priority_1: "1 — Nghiêm trọng (đỏ)",
     priority_2: "2 — Cảnh báo (cam)",
     priority_3: "3 — Thông tin (xanh)",
@@ -3600,6 +3624,10 @@ const ET = {
     badge_label: "Пользовательская метка бейджа",
     badge_label_help: "Оставьте пустым для метки по умолчанию для данной темы",
     delete: "Удалить",
+    duplicate_alert: "Дублировать оповещение",
+    disable_alert: "Отключить оповещение",
+    enable_alert: "Включить оповещение",
+    alert_disabled: "ВЫКЛ",
     priority_1: "1 — Критично (красный)",
     priority_2: "2 — Внимание (оранжевый)",
     priority_3: "3 — Информация (синий)",
@@ -3969,6 +3997,10 @@ const ET = {
     badge_label: "Brugerdefineret badge‑tekst",
     badge_label_help: "Lad stå tom for at bruge tema‑standard‑tekst",
     delete: "Slet",
+    duplicate_alert: "Dupliker advarsel",
+    disable_alert: "Deaktiver advarsel",
+    enable_alert: "Aktiver advarsel",
+    alert_disabled: "FRA",
     priority_1: "1 — Kritisk (rød)",
     priority_2: "2 — Advarsel (orange)",
     priority_3: "3 — Info (blå)",
@@ -4346,6 +4378,10 @@ const ET = {
     badge_label: "Vlastní text nadpisu",
     badge_label_help: "Ponechte prázdné a použije se nadpis podle výchozího vzhledu",
     delete: "Smazat",
+    duplicate_alert: "Duplikovat upozornění",
+    disable_alert: "Vypnout upozornění",
+    enable_alert: "Zapnout upozornění",
+    alert_disabled: "VYP",
     priority_1: "1 — Kritická (červená)",
     priority_2: "2 — Varování (oranžová)",
     priority_3: "3 — Info (modrá)",
@@ -4723,6 +4759,10 @@ const ET = {
     badge_label: "Rótulo do badge personalizado",
     badge_label_help: "Deixe vazio para usar o rótulo padrão do tema",
     delete: "Excluir",
+    duplicate_alert: "Duplicar alerta",
+    disable_alert: "Desativar alerta",
+    enable_alert: "Ativar alerta",
+    alert_disabled: "DESL",
     priority_1: "1 — Crítico (vermelho)",
     priority_2: "2 — Aviso (laranja)",
     priority_3: "3 — Info (azul)",
@@ -5027,7 +5067,7 @@ const ET = {
     section_push_notify: "📱 Notificaciones push",
     push_notify_master_toggle: "Activar notificaciones push móviles",
     push_notify_master_toggle_help: "Interruptor principal. Cuando está desactivado, ninguna alerta envía una notificación push, incluso si está activado en alertas individuales.",
-    client_side_warning: "⚠️ Yalnızca bir HA panosu tarayıcıda açıkken çalışır. 7/24 kritik uyarılar için sunucu tarafında HA otomasyonu kullanın.",
+    client_side_warning: "⚠️ Funciona solo mientras un panel de HA esté abierto en un navegador (escritorio, tablet de pared o app Companion en primer plano). Para alertas críticas 24/7, usa una automatización HA del lado del servidor.",
     alert_push_notify: "Enviar notificación push móvil",
     alert_push_notify_help: "Cuando esta alerta se activa, envía una notificación push a través del servicio notify seleccionado.",
     alert_push_notify_title: "Título de la notificación (Jinja2)",
@@ -5096,6 +5136,10 @@ const ET = {
     badge_label: "Texto del badge personalizado",
     badge_label_help: "Deja vacío para usar el texto predeterminado del tema",
     delete: "Eliminar",
+    duplicate_alert: "Duplicar alerta",
+    disable_alert: "Desactivar alerta",
+    enable_alert: "Activar alerta",
+    alert_disabled: "APAG",
     priority_1: "1 — Crítico (rojo)",
     priority_2: "2 — Atención (naranja)",
     priority_3: "3 — Info (azul)",
@@ -5400,7 +5444,7 @@ const ET = {
     section_push_notify: "📱 Anlık Bildirimler",
     push_notify_master_toggle: "Mobil anlık bildirimleri etkinleştir",
     push_notify_master_toggle_help: "Ana anahtar. Kapalıyken, uyarı başına etkin olsa bile hiçbir uyarı anlık bildirim göndermez.",
-    client_side_warning: "⚠️ Works only while an HA dashboard is open in a browser (desktop, wall tablet, or Companion app in the foreground). For 24/7 critical alerts, use a server-side HA automation.",
+    client_side_warning: "⚠️ Yalnızca bir HA panosu tarayıcıda açıkken çalışır (masaüstü, duvar tableti veya ön planda Companion uygulaması). 7/24 kritik uyarılar için sunucu tarafında HA otomasyonu kullanın.",
     alert_push_notify: "Mobil anlık bildirim gönder",
     alert_push_notify_help: "Bu uyarı etkinleştiğinde, seçilen notify servisi aracılığıyla anlık bildirim gönderir.",
     alert_push_notify_title: "Bildirim başlığı (Jinja2)",
@@ -5469,6 +5513,10 @@ const ET = {
     badge_label: "Özel rozet etiketi",
     badge_label_help: "Tema varsayılan etiketini kullanmak için boş bırak",
     delete: "Sil",
+    duplicate_alert: "Uyarıyı çoğalt",
+    disable_alert: "Uyarıyı devre dışı bırak",
+    enable_alert: "Uyarıyı etkinleştir",
+    alert_disabled: "KAPALI",
     priority_1: "1 — Kritik (kırmızı)",
     priority_2: "2 — Uyarı (turuncu)",
     priority_3: "3 — Bilgi (mavi)",
@@ -6964,8 +7012,9 @@ class AlertTickerCardEditor extends LitElement {
       : "";
 
     const total = (this._config.alerts || []).length;
+    const disabled = alert.enabled === false;
     return html`
-      <div class="${`alert-item${isEditing ? " is-editing" : ""}`}"
+      <div class="${`alert-item${isEditing ? " is-editing" : ""}${disabled ? " alert-item--disabled" : ""}`}"
            @click="${() => this._editAlert(index)}">
         <div class="alert-move-col">
           <button
@@ -6987,9 +7036,20 @@ class AlertTickerCardEditor extends LitElement {
           ${!alert.name && msgSnippet ? html`<div class="alert-msg-label">${msgSnippet}</div>` : ""}
           ${alert.name ? html`<div class="alert-msg-label">${entityLabel}</div>` : ""}
         </div>
+        ${disabled ? html`<span class="alert-off-badge">${this._t("alert_disabled")}</span>` : ""}
         <span class="alert-prio-badge prio-${prio}">P${prio}</span>
         <div class="alert-actions">
           <span class="alert-expand-indicator"></span>
+          <button
+            class="btn-icon"
+            title="${disabled ? this._t("enable_alert") : this._t("disable_alert")}"
+            @click="${(e) => { e.stopPropagation(); this._toggleAlertEnabled(index); }}"
+          >${disabled ? "🚫" : "👁"}</button>
+          <button
+            class="btn-icon"
+            title="${this._t("duplicate_alert")}"
+            @click="${(e) => { e.stopPropagation(); this._duplicateAlert(index); }}"
+          >⧉</button>
           <button
             class="btn-icon btn-delete"
             title="${this._t("delete")}"
@@ -7310,20 +7370,20 @@ class AlertTickerCardEditor extends LitElement {
                 ${(alert.entity_filter || alert.device_class) ? html`
                   <ha-formfield .label="${this._t("show_filter_name")}">
                     <ha-switch
-                      ?checked="${alert.show_filter_name !== false}"
+                      .checked="${alert.show_filter_name !== false}"
                       @change="${(e) => this._updateAlert(index, { show_filter_name: e.target.checked ? undefined : false })}"
                     ></ha-switch>
                   </ha-formfield>
                   <ha-formfield .label="${this._t("show_filter_state")}">
                     <ha-switch
-                      ?checked="${!!alert.show_filter_state}"
+                      .checked="${!!alert.show_filter_state}"
                       @change="${(e) => this._updateAlert(index, { show_filter_state: e.target.checked ? true : undefined })}"
                     ></ha-switch>
                   </ha-formfield>
                   ${alert.theme === "battery" ? html`
                     <ha-formfield .label="${this._t("battery_trim_name")}">
                       <ha-switch
-                        ?checked="${!!alert.battery_trim_name}"
+                        .checked="${!!alert.battery_trim_name}"
                         @change="${(e) => this._updateAlert(index, { battery_trim_name: e.target.checked ? true : undefined })}"
                       ></ha-switch>
                     </ha-formfield>
@@ -7337,7 +7397,7 @@ class AlertTickerCardEditor extends LitElement {
                   <div>
                     <ha-formfield .label="${this._t("music_player_controls")}">
                       <ha-switch
-                        ?checked="${!!alert.show_player_controls}"
+                        .checked="${!!alert.show_player_controls}"
                         @change="${(e) => this._updateAlert(index, { show_player_controls: e.target.checked || undefined })}"
                       ></ha-switch>
                     </ha-formfield>
@@ -7373,14 +7433,14 @@ class AlertTickerCardEditor extends LitElement {
                   <div>
                     <ha-formfield .label="${this._t("music_compact_layout")}">
                       <ha-switch
-                        ?checked="${!!alert.music_compact_layout}"
+                        .checked="${!!alert.music_compact_layout}"
                         @change="${(e) => this._updateAlert(index, { music_compact_layout: e.target.checked || undefined })}"
                       ></ha-switch>
                     </ha-formfield>
                     ${alert.music_compact_layout ? html`
                     <ha-formfield .label="${this._t("music_compact_show_badge")}">
                       <ha-switch
-                        ?checked="${alert.music_compact_show_badge !== false}"
+                        .checked="${alert.music_compact_show_badge !== false}"
                         @change="${(e) => this._updateAlert(index, { music_compact_show_badge: e.target.checked ? undefined : false })}"
                       ></ha-switch>
                     </ha-formfield>` : ""}
@@ -7389,7 +7449,7 @@ class AlertTickerCardEditor extends LitElement {
                   <div>
                     <ha-formfield .label="${this._t("music_show_art")}">
                       <ha-switch
-                        ?checked="${alert.music_show_art !== false}"
+                        .checked="${alert.music_show_art !== false}"
                         @change="${(e) => this._updateAlert(index, { music_show_art: e.target.checked ? undefined : false })}"
                       ></ha-switch>
                     </ha-formfield>
@@ -7397,7 +7457,7 @@ class AlertTickerCardEditor extends LitElement {
                   <div>
                     <ha-formfield .label="${this._t("music_show_title")}">
                       <ha-switch
-                        ?checked="${alert.music_show_title !== false}"
+                        .checked="${alert.music_show_title !== false}"
                         @change="${(e) => this._updateAlert(index, { music_show_title: e.target.checked ? undefined : false })}"
                       ></ha-switch>
                     </ha-formfield>
@@ -7405,7 +7465,7 @@ class AlertTickerCardEditor extends LitElement {
                   <div>
                     <ha-formfield .label="${this._t("music_show_artist")}">
                       <ha-switch
-                        ?checked="${alert.music_show_artist !== false}"
+                        .checked="${alert.music_show_artist !== false}"
                         @change="${(e) => this._updateAlert(index, { music_show_artist: e.target.checked ? undefined : false })}"
                       ></ha-switch>
                     </ha-formfield>
@@ -7413,7 +7473,7 @@ class AlertTickerCardEditor extends LitElement {
                   <div>
                     <ha-formfield .label="${this._t("music_show_controls")}">
                       <ha-switch
-                        ?checked="${alert.music_show_controls !== false}"
+                        .checked="${alert.music_show_controls !== false}"
                         @change="${(e) => this._updateAlert(index, { music_show_controls: e.target.checked ? undefined : false })}"
                       ></ha-switch>
                     </ha-formfield>
@@ -7421,7 +7481,7 @@ class AlertTickerCardEditor extends LitElement {
                   <div>
                     <ha-formfield .label="${this._t("music_show_power")}">
                       <ha-switch
-                        ?checked="${!!alert.music_show_power}"
+                        .checked="${!!alert.music_show_power}"
                         @change="${(e) => this._updateAlert(index, { music_show_power: e.target.checked || undefined })}"
                       ></ha-switch>
                     </ha-formfield>
@@ -7429,7 +7489,7 @@ class AlertTickerCardEditor extends LitElement {
                   <div>
                     <ha-formfield .label="${this._t("music_show_player_picker")}">
                       <ha-switch
-                        ?checked="${!!alert.music_show_player_picker}"
+                        .checked="${!!alert.music_show_player_picker}"
                         @change="${(e) => this._updateAlert(index, { music_show_player_picker: e.target.checked || undefined })}"
                       ></ha-switch>
                     </ha-formfield>
@@ -7500,7 +7560,7 @@ class AlertTickerCardEditor extends LitElement {
                 <div>
                   <ha-formfield .label="${this._t("on_change")}">
                     <ha-switch
-                      ?checked="${!!alert.on_change}"
+                      .checked="${!!alert.on_change}"
                       @change="${(e) => this._updateAlert(index, { on_change: e.target.checked || undefined })}"
                     ></ha-switch>
                   </ha-formfield>
@@ -7669,13 +7729,13 @@ class AlertTickerCardEditor extends LitElement {
                 <div>
                   <ha-formfield .label="${this._t("use_ha_icon")}">
                     <ha-switch
-                      ?checked="${!!alert.use_ha_icon}"
+                      .checked="${!!alert.use_ha_icon}"
                       @change="${(e) => this._alertHaIconToggled(e.target.checked, index)}"
                     ></ha-switch>
                   </ha-formfield>
                   <ha-formfield .label="${this._t("use_entity_picture")}">
                     <ha-switch
-                      ?checked="${!!alert.use_entity_picture}"
+                      .checked="${!!alert.use_entity_picture}"
                       @change="${(e) => this._updateAlert(index, { use_entity_picture: e.target.checked || undefined })}"
                     ></ha-switch>
                   </ha-formfield>
@@ -7769,7 +7829,7 @@ class AlertTickerCardEditor extends LitElement {
                 <div>
                   <ha-formfield .label="${this._t("show_badge")}">
                     <ha-switch
-                      ?checked="${alert.show_badge !== false}"
+                      .checked="${alert.show_badge !== false}"
                       @change="${(e) => this._updateAlert(index, { show_badge: e.target.checked ? undefined : false })}"
                     ></ha-switch>
                   </ha-formfield>
@@ -7806,7 +7866,7 @@ class AlertTickerCardEditor extends LitElement {
                   ></ha-input>
                   <ha-formfield .label="${this._t("show_secondary_name")}">
                     <ha-switch
-                      ?checked="${!!alert.show_secondary_name}"
+                      .checked="${!!alert.show_secondary_name}"
                       @change="${(e) => this._updateAlert(index, { show_secondary_name: e.target.checked ? true : undefined })}"
                     ></ha-switch>
                   </ha-formfield>
@@ -8394,6 +8454,27 @@ class AlertTickerCardEditor extends LitElement {
     const next = new Set(this._filterPreviewOpen);
     next.delete(index);
     this._filterPreviewOpen = next;
+    this._fireConfig({ ...this._config, alerts });
+  }
+
+  // #233 — insert a copy right below the original and open it for editing
+  _duplicateAlert(index) {
+    const alerts = [...(this._config.alerts || [])];
+    if (!alerts[index]) return;
+    const copy = JSON.parse(JSON.stringify(alerts[index]));
+    if (copy.name) copy.name = `${copy.name} (2)`;
+    alerts.splice(index + 1, 0, copy);
+    this._filterPreviewOpen = new Set();
+    this._editingIndex = index + 1;
+    this._fireConfig({ ...this._config, alerts });
+  }
+
+  // #232 — enabled: false keeps the alert in the config but switches it off
+  _toggleAlertEnabled(index) {
+    const alerts = [...(this._config.alerts || [])];
+    if (!alerts[index]) return;
+    const { enabled, ...rest } = alerts[index];
+    alerts[index] = enabled === false ? rest : { ...rest, enabled: false };
     this._fireConfig({ ...this._config, alerts });
   }
 
@@ -9438,6 +9519,20 @@ class AlertTickerCardEditor extends LitElement {
       }
       .alert-item:hover {
         background: var(--secondary-background-color, #f5f5f5);
+      }
+      .alert-item--disabled .alert-icon-badge,
+      .alert-item--disabled .alert-summary-text {
+        opacity: 0.45;
+      }
+      .alert-off-badge {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        padding: 2px 6px;
+        border-radius: 6px;
+        color: var(--secondary-text-color, #888);
+        border: 1px solid var(--divider-color, #e0e0e0);
+        white-space: nowrap;
       }
       .alert-item.is-editing {
         border-color: var(--primary-color, #03a9f4);

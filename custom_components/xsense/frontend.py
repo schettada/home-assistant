@@ -5,8 +5,7 @@ from __future__ import annotations
 import asyncio
 from pathlib import Path
 
-from homeassistant.components import frontend
-from homeassistant.components import panel_custom
+from homeassistant.components import frontend, panel_custom
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.core import HomeAssistant
 
@@ -18,7 +17,7 @@ STATIC_URL_PATH = f"/{DOMAIN}_recordings_static"
 PANEL_ELEMENT_NAME = "xsense-recordings-panel"
 FORCE_ARM_PANEL_ELEMENT_NAME = "xsense-force-arm-panel"
 PANEL_TITLE = "X-Sense Recordings"
-PANEL_ASSET_VERSION = "1.5.0"
+PANEL_ASSET_VERSION = "1.6.3"
 
 
 def _recordings_panel_module_url() -> str:

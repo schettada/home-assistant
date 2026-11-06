@@ -5,12 +5,6 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 
-from .python_xsense.async_xsense import is_camera_entity
-from .python_xsense.device import Device
-from .python_xsense.entity import Entity
-from .python_xsense.entity_map import EntityType, entities
-from .python_xsense.station import Station
-
 from homeassistant import config_entries
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
@@ -30,6 +24,11 @@ from .entity import (
     device_station_id,
     setup_dynamic_entities,
 )
+from .python_xsense.async_xsense import is_camera_entity
+from .python_xsense.device import Device
+from .python_xsense.entity import Entity
+from .python_xsense.entity_map import EntityType, entities
+from .python_xsense.station import Station
 
 
 @dataclass(kw_only=True, frozen=True)
@@ -54,6 +53,7 @@ ALARM_DEVICE_CLASS_BY_TYPE = {
 
 LIFE_END_STATUS_DEVICE_TYPES = frozenset(
     {
+        "CB0T-3B", "CB0T-4B", "LP/R-SCA(VL)-0G", "W/R-SCA(VL)-0G",
         # CO, combo, and smoke detector models from the APK device map.
         "CB0Z-3S",
         "LP/N-SA-0B",
@@ -103,6 +103,7 @@ LIFE_END_STATUS_DEVICE_TYPES = frozenset(
 
 ALARM_STATUS_DEVICE_TYPES = frozenset(
     {
+        "CB0T-3B", "CB0T-4B", "LP/R-SCA(VL)-0G", "W/R-SCA(VL)-0G",
         "CB0Z-3S",
         "LP/N-SA-0B",
         "LP/N-SCA-0A",
@@ -166,6 +167,7 @@ ALARM_STATUS_DEVICE_TYPES = frozenset(
 
 MUTE_STATUS_DEVICE_TYPES = frozenset(
     {
+        "CB0T-3B", "CB0T-4B", "LP/R-SCA(VL)-0G", "W/R-SCA(VL)-0G",
         "CB0Z-3S",
         "LP/N-SA-0B",
         "LP/N-SCA-0A",
@@ -220,6 +222,7 @@ MUTE_STATUS_DEVICE_TYPES = frozenset(
 # silenced alarms and 4+ for alarms that are still sounding.
 CODED_MUTE_STATUS_DEVICE_TYPES = frozenset(
     {
+        "CB0T-3B", "CB0T-4B", "LP/R-SCA(VL)-0G", "W/R-SCA(VL)-0G",
         "CB0Z-3S",
         "LP/N-SCA-0A",
         "SC01-MN",

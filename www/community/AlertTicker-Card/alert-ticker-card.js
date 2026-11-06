@@ -1,5 +1,5 @@
 /**
- * AlertTicker Card v1.3.13
+ * AlertTicker Card v1.3.19
  * A Home Assistant custom Lovelace card to display alerts based on entity states.
  * Supports 50 visual themes with per-alert theme assignment, priority ordering,
  * fold animation cycling, snooze, numeric conditions, attribute triggers,
@@ -41,7 +41,7 @@ const css = LitElement.prototype.css ?? ((strings, ...values) => {
 // ---------------------------------------------------------------------------
 // Card version — declared early so getConfigElement() can reference it
 // ---------------------------------------------------------------------------
-const CARD_VERSION = "1.3.13";
+const CARD_VERSION = "1.3.19";
 
 // ---------------------------------------------------------------------------
 // Google Cast compatibility (#171)
@@ -828,6 +828,28 @@ function _parseTimestamp(v) {
   return isNaN(d) ? null : d;
 }
 
+// #224: timestamp operators (older / newer) depend on the current hass.states
+// being fresh. When the browser tab was backgrounded, hass has stale cached
+// state until the WebSocket reconnects and HA sends state_changed events —
+// usually within 1-3 seconds. During that window, a timestamp sensor still
+// reads its last-known-stale value, which naively evaluates as "older than N
+// seconds" and causes a brief false-positive alert flash on tab wake.
+//
+// Fix: track the moment the tab becomes visible and suppress older/newer
+// evaluations for the next 10 seconds, letting HA re-sync first. Initialized
+// to Date.now() so the same guard protects the very first page load.
+let _tsWakeAt = Date.now();
+if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+  try {
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') _tsWakeAt = Date.now();
+    }, { passive: true });
+  } catch (_) {}
+}
+function _inTimestampGrace() {
+  return _tsWakeAt > 0 && (Date.now() - _tsWakeAt) < 10000;
+}
+
 const _ATC_OVERLAY = (() => {
   // ── DOM helpers ────────────────────────────────────────────────────────────
   let _root  = null;
@@ -973,18 +995,44 @@ const _ATC_OVERLAY = (() => {
     if (themeBg)    toast.style.background    = themeBg;
     if (themeColor) toast.style.borderLeftColor = themeColor;
     const showBar = dismissible && duration > 0;
-    toast.innerHTML =
-      `<span class="atc-ov-icon">${icon}</span>` +
-      `<div class="atc-ov-body">` +
-        (badge ? `<div class="atc-ov-badge">${badge}</div>` : "") +
-        `<div class="atc-ov-msg">${msg}</div>` +
-        (secondary ? `<div class="atc-ov-secondary">${secondary}</div>` : "") +
-      `</div>` +
-      (counterText ? `<span class="atc-ov-counter">${counterText}</span>` : "") +
-      (dismissible ? `<button class="atc-ov-close" title="Dismiss">✕</button>` : "") +
-      (showBar ? `<div class="atc-ov-bar" style="animation-duration:${duration}s${themeColor ? ";background:" + themeColor : ""}"></div>` : "");
-    const closeBtn = toast.querySelector(".atc-ov-close");
-    if (closeBtn) closeBtn.addEventListener("click", e => { e.stopPropagation(); _hide(); });
+    // Built from DOM nodes + textContent, never innerHTML: msg / secondary / badge
+    // carry entity state and friendly names, which third parties can write (e.g.
+    // the companion app's last-notification sensor), so they must not be parsed
+    // as HTML.
+    const el = (tag, cls, text) => {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text != null) n.textContent = String(text);
+      return n;
+    };
+    const iconEl = el("span", "atc-ov-icon");
+    if (icon && typeof icon === "object" && icon.mdi) {
+      const ha = document.createElement("ha-icon");
+      ha.icon = icon.mdi;
+      if (icon.color) ha.style.color = icon.color;
+      iconEl.appendChild(ha);
+    } else {
+      iconEl.textContent = icon != null ? String(icon) : "";
+    }
+    toast.appendChild(iconEl);
+    const body = el("div", "atc-ov-body");
+    if (badge) body.appendChild(el("div", "atc-ov-badge", badge));
+    body.appendChild(el("div", "atc-ov-msg", msg ?? ""));
+    if (secondary) body.appendChild(el("div", "atc-ov-secondary", secondary));
+    toast.appendChild(body);
+    if (counterText) toast.appendChild(el("span", "atc-ov-counter", counterText));
+    if (dismissible) {
+      const closeBtn = el("button", "atc-ov-close", "✕");
+      closeBtn.title = "Dismiss";
+      closeBtn.addEventListener("click", e => { e.stopPropagation(); _hide(); });
+      toast.appendChild(closeBtn);
+    }
+    if (showBar) {
+      const bar = el("div", "atc-ov-bar");
+      bar.style.animationDuration = `${duration}s`;
+      if (themeColor) bar.style.background = themeColor;
+      toast.appendChild(bar);
+    }
     // Camera snapshot or live stream — restructure toast to column layout (image added after scale)
     if (cameraUrl || (cameraLive && camHass && camState)) {
       toast.style.flexDirection = "column";
@@ -1185,12 +1233,14 @@ const _ATC_OVERLAY = (() => {
       case "not_contains":  return !actual.toLowerCase().includes(trigger.toLowerCase());
       case "older": {
         // actual = timestamp (iso / epoch), trigger = seconds threshold
+        if (_inTimestampGrace()) return false; // #224 — suppress on tab wake
         const ms = _parseTimestamp(actual);
         const thr = parseFloat(trigger);
         if (ms == null || isNaN(thr)) return false;
         return (Date.now() - ms) / 1000 > thr;
       }
       case "newer": {
+        if (_inTimestampGrace()) return false; // #224 — suppress on tab wake
         const ms = _parseTimestamp(actual);
         const thr = parseFloat(trigger);
         if (ms == null || isNaN(thr)) return false;
@@ -1270,6 +1320,7 @@ const _ATC_OVERLAY = (() => {
   }
 
   function _evalAlert(hass, a, prevMap) {
+    if (a.enabled === false) return false; // #232
     if (!_evalVisibleTo(hass, a)) return false;
     if (!_evalTimeRange(a)) return false;
     if ((a.entity_filter || a.device_class || a.label_filter || a.area_filter) && !a.entity) return _evalFilterAlert(hass, a);
@@ -1289,7 +1340,9 @@ const _ATC_OVERLAY = (() => {
         const eid = (c.entity === "{entity}" || c.entity === "this.entity_id") ? a.entity : c.entity;
         return _matchOp(_getVal(hass, eid, c.attribute), c.operator || "=", c.state ?? "on");
       });
-      if (logic === "or" ? !(primaryOk && res.some(Boolean)) : !(primaryOk && res.every(Boolean))) return false;
+      const hasOwnState = a.state != null && a.state !== "";
+      const orOk = hasOwnState ? (primaryOk || res.some(Boolean)) : res.some(Boolean);
+      if (logic === "or" ? !orOk : !(primaryOk && res.every(Boolean))) return false;
     } else if (!primaryOk) return false;
     return true;
   }
@@ -1462,7 +1515,14 @@ const _ATC_OVERLAY = (() => {
 
         // Bug #135 fix 2: if the overlay is showing an alert from THIS registration
         // and that alert is now inactive, dismiss the banner immediately.
-        if (_currentWatcherAlert && _currentWatcherAlert.id === id && !curActive.has(_currentWatcherAlert.alertIdx)) {
+        // #229 skip: when rotation is active for this card the alertIdx is the
+        // sentinel -1 (not a real index) — the rotation branch below handles
+        // its own lifecycle (_hide when curActive becomes empty), so we must
+        // not call _hide here or every tick would kill the rotation timer and
+        // restart it from index 0, producing the "only first alert, flashing"
+        // symptom reported in #229 by @ThomDyson.
+        const isRotatingThisCard = _rotation && _rotation.cardId === id;
+        if (!isRotatingThisCard && _currentWatcherAlert && _currentWatcherAlert.id === id && !curActive.has(_currentWatcherAlert.alertIdx)) {
           _hide();
         }
 
@@ -1547,7 +1607,7 @@ const _ATC_OVERLAY = (() => {
             const cat     = (THEME_META[a.theme] || {}).category || "info";
             const rawIcon = a.icon || (THEME_META[a.theme] || {}).icon || "🔔";
             const icon    = (rawIcon && /^[\w-]+:/.test(rawIcon))
-              ? `<ha-icon icon="${rawIcon}"${a.icon_color ? ` style="color:${a.icon_color}"` : ""}></ha-icon>`
+              ? { mdi: rawIcon, color: a.icon_color || null }
               : rawIcon;
             const badge   = a.show_badge === false ? "" : (a.badge_label || ({ critical: tLang.critical, warning: tLang.warning_label, ok: tLang.success_label }[cat] ?? tLang.info_label));
             const msg     = _resolveMsg(hass, a);
@@ -1614,7 +1674,7 @@ const _ATC_OVERLAY = (() => {
               const cat     = (THEME_META[a.theme] || {}).category || "info";
               const rawIcon = a.icon || (THEME_META[a.theme] || {}).icon || "🔔";
               const icon    = (rawIcon && /^[\w-]+:/.test(rawIcon))
-                ? `<ha-icon icon="${rawIcon}"${a.icon_color ? ` style="color:${a.icon_color}"` : ""}></ha-icon>` : rawIcon;
+                ? { mdi: rawIcon, color: a.icon_color || null } : rawIcon;
               const tLang  = T[reg.lang] || T.en;
               const badge  = a.show_badge === false ? "" : (a.badge_label || ({ critical: tLang.critical, warning: tLang.warning_label, ok: tLang.success_label }[cat] ?? tLang.info_label));
               const cameraLive = !!a.camera_live;
@@ -1643,7 +1703,7 @@ const _ATC_OVERLAY = (() => {
           const cat     = (THEME_META[a.theme] || {}).category || "info";
           const rawIcon = a.icon || (THEME_META[a.theme] || {}).icon || "🔔";
           const icon    = (rawIcon && /^[\w-]+:/.test(rawIcon))
-            ? `<ha-icon icon="${rawIcon}"${a.icon_color ? ` style="color:${a.icon_color}"` : ""}></ha-icon>`
+            ? { mdi: rawIcon, color: a.icon_color || null }
             : rawIcon;
           const tLang  = T[reg.lang] || T.en;
           const badge  = a.show_badge === false ? "" : (a.badge_label || ({ critical: tLang.critical, warning: tLang.warning_label, ok: tLang.success_label }[cat] ?? tLang.info_label));
@@ -2124,6 +2184,8 @@ class AlertTickerCard extends LitElement {
     const expandedAlerts = [];
     for (let idx = 0; idx < this._config.alerts.length; idx++) {
       const alert = this._config.alerts[idx];
+      // enabled: false switches the alert off without deleting it (#232); test mode still shows it
+      if (alert.enabled === false && !this._config.test_mode) continue;
       if ((alert.entity_filter || alert.device_class || alert.label_filter || alert.area_filter) && !alert.entity) {
         const matchFn = alert.entity_filter ? this._buildFilterMatcher(alert.entity_filter) : null;
         const excluded = new Set(alert.entity_filter_exclude || alert.device_class_exclude || []);
@@ -2233,8 +2295,11 @@ class AlertTickerCard extends LitElement {
                 : es.state;
               return this._matchesState(val, cond);
             });
+            // OR = own condition OR any extra condition (#231). When the alert has no
+            // own state, only the extra conditions decide (primaryOk is always true then).
+            const hasOwnState = alert.state != null && alert.state !== "";
             const passes = logic === "or"
-              ? primaryOk && results.some(Boolean)
+              ? (hasOwnState ? primaryOk || results.some(Boolean) : results.some(Boolean))
               : primaryOk && results.every(Boolean);
             if (!passes) {
               // persistent: keep showing even though condition cleared
@@ -2300,15 +2365,33 @@ class AlertTickerCard extends LitElement {
               if (!this._triggerDelayActive.has(key)) return false;
             }
           }
-          // auto_dismiss_after for normal condition alerts
+          // auto_dismiss_after for normal condition alerts. Counts from when the
+          // condition became true (latest last_changed, plus trigger_delay), not from
+          // when this card instance first saw it — a page reload or view change used
+          // to restart the countdown so long durations never fired (#234).
           if (alert.auto_dismiss_after) {
             if (this._autoDismissedKeys.has(key)) return false;
             if (!this._autoDismissTimers[key]) {
+              let latestLc = entityState?.last_changed
+                ? new Date(entityState.last_changed).getTime() : 0;
+              for (const cond of _normConds(alert.conditions)) {
+                const ces = cond.entity ? this._hass.states[cond.entity] : null;
+                if (ces?.last_changed) {
+                  const t = new Date(ces.last_changed).getTime();
+                  if (t > latestLc) latestLc = t;
+                }
+              }
+              const shownAt = latestLc ? latestLc + (alert.trigger_delay || 0) * 1000 : Date.now();
+              const remaining = shownAt + alert.auto_dismiss_after * 1000 - Date.now();
+              if (remaining <= 0) {
+                this._autoDismissedKeys.add(key);
+                return false;
+              }
               this._autoDismissTimers[key] = setTimeout(() => {
                 this._autoDismissedKeys.add(key);
                 delete this._autoDismissTimers[key];
                 this._computeActiveAlerts();
-              }, alert.auto_dismiss_after * 1000);
+              }, remaining);
             }
           }
         }
@@ -3553,6 +3636,10 @@ class AlertTickerCard extends LitElement {
     // as an ISO date or unix epoch and compare its age against the trigger
     // threshold expressed in seconds.
     if (operator === "older" || operator === "newer") {
+      // #224: suppress during the first 10 seconds after tab wake, when
+      // hass.states is still stale and would briefly report any timestamp as
+      // "very old" causing a false-positive alert flash.
+      if (_inTimestampGrace()) return false;
       const ms = _parseTimestamp(entityStateValue);
       const thr = parseFloat(triggerStr);
       if (ms == null || isNaN(thr)) return false;
@@ -7846,6 +7933,30 @@ class AlertTickerCard extends LitElement {
       }
 
       /* ── DISABLE-ANIMATION override ── */
+      /* #225 / v1.3.15: universal catch-all — kills ambient CSS animations on
+         EVERY theme (door, window, water, battery, code_push, etc.) when the
+         user sets disable_animation. Previously we had a hand-maintained list
+         of about 15 classes which drifted out of sync as themes were added.
+         The specific rules below still live (they add compensation declarations
+         like opacity:1 that keep a few animations from freezing at an
+         invisible frame) but this catch-all guarantees any theme currently
+         shipped or added later is covered without further CSS work.
+         v1.3.16 follow-up (#225 reopened by @shashankmittal): the update theme
+         still animated after v1.3.15 because its spinning inner ring lives in
+         a .up-ring::after pseudo-element, and the * universal selector does
+         not match pseudo-elements by CSS spec. Added the two pseudo-element
+         rules below to cover .up-ring::after, .bt-drain::after,
+         .atc-fw-day--today::before and any future animated pseudo-element.
+         NOTE: never use backticks anywhere in this CSS block — they close
+         the outer css tagged template literal and leak CSS tokens into JS
+         space, which crashes browsers with "Unexpected token" (regression
+         history: v1.3.9.9.7 shipped broken with backticks around zoom,
+         v1.3.16 shipped broken with backticks around pseudo-element names,
+         so even this warning comment uses plain quotes). */
+      .at-fold-wrapper.atc-no-anim *                        { animation: none !important; }
+      .at-fold-wrapper.atc-no-anim .up-ring::after,
+      .at-fold-wrapper.atc-no-anim .bt-drain::after,
+      .at-fold-wrapper.atc-no-anim .atc-fw-day--today::before { animation: none !important; }
       .at-fold-wrapper.atc-no-anim .at-emergency            { animation: none !important; }
       .at-fold-wrapper.atc-no-anim .em-icon                 { animation: none !important; opacity: 1 !important; }
       .at-fold-wrapper.atc-no-anim .wn-dot                  { animation: none !important; opacity: 1 !important; transform: scale(1) !important; }

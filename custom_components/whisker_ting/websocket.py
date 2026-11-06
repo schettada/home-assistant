@@ -6,8 +6,8 @@ Transport lifecycle lives here; all wire encoding/decoding lives in
 Two server behaviours dominate the design of this module, both learned
 the hard way (see ``protocol.py`` for the wire-level details):
 
-1. ``InitializeStreaming`` is answered with a *void* Completion — a
-   success acknowledgement — and the voltage stream follows afterwards as
+1. ``InitializeStreaming`` is answered with a Completion carrying a
+   ``null`` result (ResultKind 3), a success acknowledgement — and the voltage stream follows afterwards as
    separate server-to-client invocations on the SAME socket. The
    connection must therefore stay open after the acknowledgement; closing
    it there makes data delivery impossible.

@@ -65,6 +65,7 @@ from .utils import (
     ModelDetection,
     build_modify_material_payload,
     derive_activity_state,
+    camera_type_to_keep,
     detect_camera_type,
 )
 
@@ -244,18 +245,21 @@ def _async_follow_host(hass: HomeAssistant, entry: ConfigEntry, host: str) -> No
 def _derive_led_pin(data: dict[str, Any]) -> bool:
     """Fill in whether the light dims from the cached model, if not cached yet.
 
-    For an entry cached before LED dimming existed (#102), set up while the
-    printer is offline: the model alone says whether the light can dim, so it
-    need not wait for the printer to come online. True if `data` changed.
+    For an entry cached before LED dimming existed (#102), or before its model
+    was known to dim (#136), set up while the printer is offline: the model
+    alone says whether the light can dim, so it need not wait for the printer
+    to come online. True if `data` changed.
     """
-    if not data.get("_cached_model") or (
-        "_cached_has_brightness_control" in data and "_cached_led_pin" in data
-    ):
+    if not data.get("_cached_model"):
         return False
     cached_model = ModelDetection({
         "model": data.get("_cached_model"),
         "modelVersion": data.get("_cached_model_version"),
     })
+    if "_cached_has_brightness_control" in data and "_cached_led_pin" in data and (
+        data["_cached_led_pin"] or not cached_model.led_pin
+    ):
+        return False
     data["_cached_has_brightness_control"] = cached_model.has_brightness_control
     data["_cached_led_pin"] = cached_model.led_pin
     return True
@@ -466,8 +470,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 
                 # Re-detected from the evidence every time, not kept once set:
                 # a firmware update can move a K1C from MJPEG to WebRTC (#46).
+                # A direct-WebRTC verdict from before 0.9.10 is retried once (#134).
                 new_data["_cached_camera_type"] = detect_camera_type(
-                    d, entry.data.get("_cached_camera_type")
+                    d, camera_type_to_keep(entry.data.get("_cached_camera_type"), cached_version)
                 )
                 
                 hass.config_entries.async_update_entry(entry, data=new_data)
@@ -492,8 +497,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             )
             new_data = dict(entry.data)
             new_data["_device_info_cached"] = True
-            new_data["_cached_version"] = current_version
-            
+            # A direct-WebRTC verdict due its retry (#134) keeps the old
+            # version, so the first start the printer answers at re-detects it.
+            cached_camera = new_data.get("_cached_camera_type")
+            if camera_type_to_keep(cached_camera, cached_version) == cached_camera:
+                new_data["_cached_version"] = current_version
+
             # Only set defaults if this is first-time setup (no cached model exists)
             if not new_data.get("_cached_model"):
                 new_data["_cached_model"] = PLACEHOLDER_MODEL

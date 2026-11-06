@@ -1,0 +1,29 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Bosso",
+        "description": "Sign in with your Bosso account credentials.",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate Bosso",
+        "description": "Your Bosso session has expired. Please re-enter the password for {email}.",
+        "data": {
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid email or password",
+      "cannot_connect": "Could not reach Bosso servers",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "This Bosso account is already configured"
+    }
+  }
+}

@@ -2,17 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
 import logging
+from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
-
-from .python_xsense.entity import Entity
-from .python_xsense.entity_map import EntityType
-from .python_xsense.async_xsense import (
-    camera_addx_serial,
-    camera_for_identifier,
-    is_camera_entity,
-)
 
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
@@ -24,6 +16,13 @@ from .identity_store import (
     IdentityStoreClosedError,
     validate_current_identities,
 )
+from .python_xsense.async_xsense import (
+    camera_addx_serial,
+    camera_for_identifier,
+    is_camera_entity,
+)
+from .python_xsense.entity import Entity
+from .python_xsense.entity_map import EntityType
 
 LOGGER = logging.getLogger(__name__)
 
@@ -31,7 +30,7 @@ if TYPE_CHECKING:
     from .coordinator import XSenseDataUpdateCoordinator
 
 
-OFFLINE_STATES = {False, 0, "0", "false", "False", "offline", "Offline"}
+OFFLINE_STATES = {False, "0", "false", "False", "offline", "Offline"}
 _APK_CAMERA_NON_OFFLINE_STATUSES = {11, 12}
 DEVICE_ENTITY_WITHOUT_STATION = ""
 
@@ -135,12 +134,11 @@ def _parent_device_info(
 
 def _apk_entity_is_available(entity: Entity) -> bool:
     """Return whether the APK treats this entity as not offline."""
-    if getattr(entity, "entity_type", None) == EntityType.CAMERA:
-        if (
-            entity.online is False
-            and entity.data.get("deviceStatus") in _APK_CAMERA_NON_OFFLINE_STATUSES
-        ):
-            return True
+    if getattr(entity, "entity_type", None) == EntityType.CAMERA and (
+        entity.online is False
+        and entity.data.get("deviceStatus") in _APK_CAMERA_NON_OFFLINE_STATUSES
+    ):
+        return True
     return entity.online is True
 
 
@@ -200,7 +198,10 @@ class XSenseEntity(CoordinatorEntity):
     @property
     def device_info(self) -> DeviceInfo:
         """Return device metadata with a late-bound registered parent link."""
-        info = self._attr_device_info.copy()
+        # DeviceInfo stopped exposing dict.copy() in newer Home Assistant
+        # releases. Reconstruct a mutable mapping so this remains compatible
+        # with both its old TypedDict and newer runtime representation.
+        info = dict(self._attr_device_info)
         if self._parent_device_stable_id:
             parent_info = _parent_device_info(
                 self.coordinator,
@@ -282,9 +283,8 @@ def _entity_by_id_or_serial(
     identity: tuple | None = None,
 ) -> Entity | None:
     """Return an entity by stable ID, falling back to its physical serial."""
-    if entity_id is not None and (entity := entities.get(entity_id)):
-        if identity is None or _serial_identity(entity) == identity:
-            return entity
+    if entity_id is not None and (entity := entities.get(entity_id)) and (identity is None or _serial_identity(entity) == identity):
+        return entity
     if serial is None:
         return None
     matches = [

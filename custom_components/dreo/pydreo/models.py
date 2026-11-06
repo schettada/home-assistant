@@ -8,6 +8,9 @@ from .constant import (
     SPEED_RANGE,
     HEAT_RANGE,
     ECOLEVEL_RANGE,
+    TEMPERATURE_OFFSET_RANGE,
+    COOL_RANGE,
+    HEATER_HOSC_SWING_ANGLES,
     TEMP_RANGE,
     TARGET_TEMP_RANGE,
     TARGET_TEMP_RANGE_ECO,
@@ -84,6 +87,9 @@ class DreoDeviceDetails:
     """True if the "lifetime" state key is the remaining filter life in percent. Opt-in per
     model: other models report it in other units (e.g. hours on the DR-HAP002S/HAP003S)."""
 
+    supports_rgbic_effect_api: bool
+    """Whether this model supports the RGBIC effect REST API."""
+
     def __init__(
         self,
         device_type: DreoDeviceType = None,
@@ -97,6 +103,7 @@ class DreoDeviceDetails:
         override_fn: Callable | None = None,
         ambient_light_levels: tuple | None = None,
         filter_life_percent: bool = False,
+        supports_rgbic_effect_api: bool = False,
     ):
         if device_type is None:
             raise ValueError("device_type is required")
@@ -114,6 +121,7 @@ class DreoDeviceDetails:
         self.override_fn = override_fn
         self.ambient_light_levels = ambient_light_levels
         self.filter_life_percent = filter_life_percent
+        self.supports_rgbic_effect_api = supports_rgbic_effect_api
 
 
 @dataclass
@@ -140,7 +148,16 @@ class DreoACDeviceDetails(DreoDeviceDetails):
 class DreoHeaterDeviceDetails(DreoDeviceDetails):
     """Represents a Dreo Heater device model and capabilities"""
 
-    def __init__(self, device_ranges: dict = None, modes: list[DreoHeaterMode] = None, swing_modes: list[str] = None):
+    def __init__(
+        self,
+        device_ranges: dict = None,
+        modes: list[DreoHeaterMode] = None,
+        swing_modes: list[str] = None,
+        ptc_read_only: bool = False,
+        has_display_light: bool = False,
+        temperature_includes_offset: bool = False,
+        ambient_light_levels: tuple | None = None,
+    ):
         # Set default ranges if not provided
         if device_ranges is None:
             device_ranges = {HEAT_RANGE: (1, 3), ECOLEVEL_RANGE: (41, 95)}
@@ -153,8 +170,18 @@ class DreoHeaterDeviceDetails(DreoDeviceDetails):
             device_type=DreoDeviceType.HEATER,
             device_ranges=device_ranges,
             swing_modes=swing_modes,
+            # When set, "rgbon" turns the ambient light on and off and "rgbbri" is its brightness level.
+            ambient_light_levels=ambient_light_levels,
         )
         self.modes = modes
+        # When True, "ptcon" only reports whether the heating element is drawing power and
+        # cannot be set, so it is exposed as a read-only "heating" state instead of a switch.
+        self.ptc_read_only = ptc_read_only
+        # When True, expose "lighton" as a "display light" switch (lighton=True means the display is on).
+        self.has_display_light = has_display_light
+        # When True, the reported "temperature" already has "tempoffset" applied, so it must not be
+        # added again.
+        self.temperature_includes_offset = temperature_includes_offset
         if self.modes is None:
             self.modes = [
                 DreoHeaterMode.COOLAIR,
@@ -172,6 +199,7 @@ SUPPORTED_MODEL_PREFIXES = {"DR-HTF", "DR-HAF", "DR-HAP", "DR-HPF", "DR-HCF", "W
 _MCU_HAF004S_OLD_REV = "SC95F8613B"
 _MCU_HTF007S_OLD_REV = ("CMS89F7518", "CMS89F7518/EUR", "CMS89F7518/USA")
 _MCU_HAP003S_AUTO_SILENT_REV = ("midea", "001")
+_MCU_HAP003S_AUTO_REGULAR_REV = "SC95F8616B-2/US"
 _MCU_HPF015S_NEG_TILT_REVS = ("SC95F8613B/GL",)
 
 
@@ -208,10 +236,12 @@ def _htf007s_mcu_override(device) -> None:
 
 
 def _hap003s_mcu_override(device) -> None:
-    """Enable auto-silent command remapping for DR-HAP003S units with the "midea" or "001" MCU.
+    """Remap the "auto" mode command for DR-HAP003S revisions that reject it.
 
     Newer hardware and firmware revisions (mcu_hardware_model is "midea" or "001") reject the
     plain "auto" mode command string.  These units require "auto-silent" to be sent instead.
+    Units with the "SC95F8616B-2/US" MCU also reject it (error 500003) and require "auto-regular",
+    which they report back as their auto state (issue #957).
     Units with a different MCU (e.g. "meidi") accept "auto" directly and are left untouched.
     """
     if device.raw_state is None:
@@ -221,6 +251,8 @@ def _hap003s_mcu_override(device) -> None:
     mcu_model = mcu_obj.get("state", "") if isinstance(mcu_obj, dict) else ""
     if mcu_model in _MCU_HAP003S_AUTO_SILENT_REV:
         device._auto_mode_uses_auto_silent = True  # pylint: disable=protected-access
+    elif mcu_model == _MCU_HAP003S_AUTO_REGULAR_REV:
+        device._auto_mode_command_value = "auto-regular"  # pylint: disable=protected-access
 
 
 def _hap009s_override(device) -> None:
@@ -438,7 +470,11 @@ SUPPORTED_DEVICES = {
         preset_modes=[("normal", 1), ("natural", 2), ("sleep", 3), ("reverse", 4)],
         device_ranges={SPEED_RANGE: (1, 12)},
     ),
-    "DR-HCF002S": DreoDeviceDetails(device_type=DreoDeviceType.CEILING_FAN, device_ranges={SPEED_RANGE: (1, 12)}),
+    "DR-HCF002S": DreoDeviceDetails(
+        device_type=DreoDeviceType.CEILING_FAN,
+        device_ranges={SPEED_RANGE: (1, 12)},
+        supports_rgbic_effect_api=True,
+    ),
     "DR-HCF007S": DreoDeviceDetails(
         device_type=DreoDeviceType.CEILING_FAN,
         preset_modes=[("normal", 1), ("natural", 2), ("sleep", 3), ("reverse", 4)],
@@ -454,6 +490,9 @@ SUPPORTED_DEVICES = {
         device_type=DreoDeviceType.CEILING_FAN,
         preset_modes=[("normal", 1), ("natural", 2), ("sleep", 3), ("reverse", 4)],
         device_ranges={SPEED_RANGE: (1, 12), "atm_brightness_range": (1, 100), "supports_direct_rgb_color": True},
+        # Units that report no atmcolor (728S, issue #969) ignore atmcolor writes; like the CF712S they take
+        # colours and effects through the RGBIC effect API. Units that report atmcolor keep the direct path.
+        supports_rgbic_effect_api=True,
     ),
     "DR-HCF010S": DreoDeviceDetails(
         device_type=DreoDeviceType.CEILING_FAN,
@@ -468,6 +507,7 @@ SUPPORTED_DEVICES = {
         # Newer hardware and firmware revisions ("midea" or "001" MCU, seriesName "Macro Max S/AS") reject the plain
         # "auto" mode command and requires "auto-silent" instead.  The override sets a flag on
         # the device instance so PyDreoAirPurifier._send_command can remap the command value.
+        # Units with the "SC95F8616B-2/US" MCU need "auto-regular" instead (issue #957).
         # The original revision ("meidi" MCU, seriesName "Macro Max S") is left untouched.
         override_fn=_hap003s_mcu_override,
     ),
@@ -530,8 +570,12 @@ SUPPORTED_DEVICES = {
     "DR-HSH004S": DreoHeaterDeviceDetails(
         swing_modes=[SWING_OFF, SWING_ON],
     ),
+    # Temperature offset measured by the owner (issue #952): the app sets -2 to +2 °C, stored as "tempoffset"
+    # in °F (2 per °C), and the reported temperature already includes it.
     "DR-HSH006S": DreoHeaterDeviceDetails(
         swing_modes=[SWING_OFF, SWING_ON],
+        device_ranges={TEMPERATURE_OFFSET_RANGE: (-4, 4)},
+        temperature_includes_offset=True,
     ),
     "DR-HSH009S": DreoHeaterDeviceDetails(
         swing_modes=[
@@ -560,9 +604,35 @@ SUPPORTED_DEVICES = {
             HeaterOscillationAngles.ONE_TWENTY,
         ],
     ),
+    # DR-HSH040S (720S Whole-Room Heater) reports an empty controlsConf. Per the user manual it has
+    # three heat levels (H1-H3), an ECO target of 5-35°C (41-95°F, reported in °F) and fan only,
+    # which match the heater defaults. It has no oscillation; the top panel switches between
+    # 360° airflow and direct heat instead (airflowmode). Its "ptcon" turns on and off by itself as
+    # the heating element engages, so it is read-only. The display button turns the LED display
+    # and the ambient temperature indicator on and off together. "tempoffset" is a temperature
+    # calibration in °F, already applied to the reported temperature. The app sets -5 to +5°C as
+    # 2°F per °C, or the °F value directly (checked on a real unit: +3°C -> 6, +2°F -> 2).
+    "DR-HSH040S": DreoHeaterDeviceDetails(
+        device_ranges={TEMPERATURE_OFFSET_RANGE: (-10, 10)},
+        ptc_read_only=True,
+        has_display_light=True,
+        temperature_includes_offset=True,
+        ambient_light_levels=(0, 1, 2, 3),
+    ),
     "DR-HSH010S": DreoHeaterDeviceDetails(),
     "DR-HSH011": DreoHeaterDeviceDetails(),
     "DR-HSH011S": DreoHeaterDeviceDetails(),
+    # Tower Fan & Heater 706S: heat (H1-H5 / eco) plus a 12-speed fan function with
+    # normal/natural/sleep/auto modes and 30-120 degree horizontal oscillation. Reports an
+    # integer "mode" (1 heat, 2 fan) with "htamode"/"coolmode" sub-modes; see PyDreoHeater.
+    # A "ptcon" command is accepted by the cloud but has no effect on the device, so PTC is read-only.
+    # Temperature offset measured by the owner (issue #952): the app sets -5 to +5 °C, stored as "tempoffset"
+    # in °F (2 per °C); the reported temperature is raw, so the offset is added to it.
+    "DR-HSH016S": DreoHeaterDeviceDetails(
+        device_ranges={HEAT_RANGE: (1, 5), COOL_RANGE: (1, 12), TEMPERATURE_OFFSET_RANGE: (-10, 10)},
+        ptc_read_only=True,
+        swing_modes=[SWING_OFF, *HEATER_HOSC_SWING_ANGLES.keys()],
+    ),
     # DR-HSH041S (Convection Heater 711S) reports an empty controlsConf; its state keys match the
     # HSH011S (heat levels, ECO target in °F, PTC, window-open detection), so the defaults apply (issue #928).
     "DR-HSH041S": DreoHeaterDeviceDetails(),

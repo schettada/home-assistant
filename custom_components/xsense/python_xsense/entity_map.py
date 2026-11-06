@@ -1,5 +1,5 @@
+from collections.abc import Callable
 from enum import Enum
-from typing import Callable, Dict, Optional, Union
 
 
 class EntityType(Enum):
@@ -25,10 +25,10 @@ class EntityType(Enum):
 
 
 def MuteAction(
-    shadow: Union[str, Callable] = "appMute",
-    topic: Union[str, Callable, None] = "2nd_appmute",
-    extra: Optional[Dict] = None,
-    mute_type: Optional[str] = None,
+    shadow: str | Callable = "appMute",
+    topic: str | Callable | None = "2nd_appmute",
+    extra: dict | None = None,
+    mute_type: str | None = None,
     target=None,
 ):
     data = {
@@ -46,7 +46,7 @@ def MuteAction(
     return data
 
 
-def TestAction(shadow="appSelfTest", extra: Optional[Dict] = None, target=None):
+def TestAction(shadow="appSelfTest", extra: dict | None = None, target=None):
     data = {
         "action": "test",
         "topic": lambda x: f"2nd_selftest_{x.sn}",
@@ -59,6 +59,15 @@ def TestAction(shadow="appSelfTest", extra: Optional[Dict] = None, target=None):
         data["target"] = target
     return data
 
+
+
+def SATestAction(shadow="appSelfTest"):
+    """Return the legacy standalone-device self-test descriptor."""
+    return {
+        "action": "test",
+        "topic": lambda entity: f"appselftest_{entity.sn}",
+        "shadow": shadow,
+    }
 
 def SBS50SecondGenTestAction():
     return TestAction("app2ndSelfTest", extra={"userParam": "source=1"})
@@ -97,7 +106,7 @@ def _smoke_rf_test_time_format(entity) -> str | None:
     return None
 
 
-def _smoke_rf_test_extra(entity) -> Dict:
+def _smoke_rf_test_extra(entity) -> dict:
     station = getattr(entity, "station", entity)
     if _is_smoke_v9(entity) or getattr(station, "type", None) == "SBS50":
         return {"userParam": "source=1"}
@@ -286,13 +295,18 @@ def SmokeRFAppMuteAction():
     return MuteAction("appMute", "appmute", target=_station_serial_target, mute_type="0")
 
 
-def SBS50SecondGenAlarmMuteAction(shadow: str = "app2ndMute"):
+def SBS50SecondGenAlarmMuteAction(shadow: str | Callable = "app2ndMute"):
     return MuteAction(
         shadow,
         "2nd_appmute",
         mute_type=_co_sensitive_alarm_mute_type,
         extra={"userParam": "source=1"},
     )
+
+
+def _xp0a_mute_shadow(entity) -> str:
+    """Mirror the APK direct-device mute caller, including its V9 route."""
+    return "app2ndMute" if _is_smoke_v9(entity) else "appXp0amrMute"
 
 
 def _co_sensitive_alarm_mute_type(entity) -> str:
@@ -346,7 +360,7 @@ entities = {
         "type": EntityType.COMBI,
         "actions": [
             SBS50SecondGenTestAction(),
-            SBS50SecondGenAlarmMuteAction("appSc07mrMute"),
+            SBS50SecondGenAlarmMuteAction(),
             FireDrillAction(),
         ],
     },
@@ -591,7 +605,24 @@ entities = {
         "type": EntityType.COMBI,
         "actions": [
             SBS50SecondGenTestAction(),
-            SBS50SecondGenAlarmMuteAction("appXp0amrMute"),
+            SBS50SecondGenAlarmMuteAction(_xp0a_mute_shadow),
+            FireDrillAction(),
+        ],
+    },
+    # APK isDeviceXP0AMR regional aliases.
+    "CB0T-3B": {
+        "type": EntityType.COMBI,
+        "actions": [
+            SBS50SecondGenTestAction(),
+            SBS50SecondGenAlarmMuteAction(_xp0a_mute_shadow),
+            FireDrillAction(),
+        ],
+    },
+    "LP/R-SCA(VL)-0G": {
+        "type": EntityType.COMBI,
+        "actions": [
+            SBS50SecondGenTestAction(),
+            SBS50SecondGenAlarmMuteAction(_xp0a_mute_shadow),
             FireDrillAction(),
         ],
     },
@@ -658,11 +689,20 @@ entities = {
         "type": EntityType.COMBI,
         "actions": [WifiAlarmMuteAction()],
     },
+    # APK isDeviceWifiXp0aIrSeries regional aliases.
+    "CB0T-4B": {
+        "type": EntityType.COMBI,
+        "actions": [WifiAlarmMuteAction()],
+    },
+    "W/R-SCA(VL)-0G": {
+        "type": EntityType.COMBI,
+        "actions": [WifiAlarmMuteAction()],
+    },
     "XP0H-MR": {
         "type": EntityType.COMBI,
         "actions": [
             SBS50SecondGenTestAction(),
-            SBS50SecondGenAlarmMuteAction("appSc07mrMute"),
+            SBS50SecondGenAlarmMuteAction(),
             FireDrillAction(),
         ],
     },
@@ -714,7 +754,7 @@ entities = {
         "type": EntityType.COMBI,
         "actions": [
             SBS50SecondGenTestAction(),
-            SBS50SecondGenAlarmMuteAction("appSc07mrMute"),
+            SBS50SecondGenAlarmMuteAction(),
             FireDrillAction(),
         ],
     },

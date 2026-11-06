@@ -6,7 +6,7 @@ import asyncio
 import mimetypes
 import re
 import secrets
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from time import monotonic
 from typing import Any
@@ -16,6 +16,7 @@ from aiohttp import ClientResponseError, web
 from homeassistant.components import http
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+
 from .const import (
     CONF_RECORDING_MEDIA_CLIPS_ORDER,
     CONF_RECORDING_MEDIA_DAYS_ORDER,
@@ -25,44 +26,45 @@ from .const import (
     LOGGER,
     RECORDING_PLAYBACK_SESSION_TTL_SECONDS,
 )
+from .recordings_gate import has_any_camera_entities
 from .recordings_media import (
     HLS_MIME_TYPE,
     XSenseRecordingsMediaSource,
     _cache_group_key_for_clip,
+    _clip_cache_path,
+    _clip_media_playable,
+    _clip_start_for_sort,
+    _clip_thumbnail_cache_path,
+    _hls_attribute_uri,
+    _hls_cache_playback_ready,
+    _hls_playback_fields_for_clip,
+    _hls_playlist_cache_path,
+    _is_hls_playlist_uri,
+    _local_media_url,
+    _mp4_ready,
+    _path_ready,
+    _prepare_hls_proxy_leading_segment,
+    _recording_cache_retained,
+    _recording_cache_suppressed,
+    _recording_maintenance_lock,
+    _recording_media_root,
+    _recording_media_root_from_value,
+    _recording_media_sync_enabled,
+    _sort_descending,
     async_allow_recording_cache,
     async_clear_recording_caches,
     async_delete_camera_recording_cache,
     async_delete_recording_cache,
     async_recording_cache_suppressed,
     async_release_recording_playback,
-    async_touch_recording_cache,
     async_schedule_temporary_recording_cleanup,
-    _clip_cache_path,
-    _clip_media_playable,
-    _clip_start_for_sort,
-    _clip_thumbnail_cache_path,
-    _hls_playlist_cache_path,
-    _hls_playback_fields_for_clip,
-    _hls_cache_playback_ready,
-    _hls_attribute_uri,
-    _local_media_url,
-    _is_hls_playlist_uri,
-    _mp4_ready,
-    _path_ready,
-    _recording_media_root,
-    _recording_media_root_from_value,
-    _recording_maintenance_lock,
-    _recording_cache_suppressed,
-    _recording_media_sync_enabled,
-    _recording_cache_retained,
-    _prepare_hls_proxy_leading_segment,
-    _sort_descending,
+    async_touch_recording_cache,
 )
 
-from .recordings_gate import has_any_camera_entities
-
-
 HLS_SEGMENT_TOKEN_TTL = RECORDING_PLAYBACK_SESSION_TTL_SECONDS
+PROXY_RESOURCE_MAX_BYTES = 64 * 1024 * 1024
+PROXY_RESOURCE_TIMEOUT_SECONDS = 60
+PROXY_RESOURCE_CONCURRENCY = 4
 
 
 async def async_register_recordings_http_views(hass: HomeAssistant) -> None:
@@ -481,7 +483,7 @@ class XSenseRecordingsPanelDebugView(http.HomeAssistantView):
             raise web.HTTPNotFound()
         try:
             payload = await request.json()
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             raise web.HTTPBadRequest(reason="Invalid X-Sense panel debug payload") from exc
         if not isinstance(payload, dict):
             raise web.HTTPBadRequest(reason="Invalid X-Sense panel debug payload")
@@ -521,7 +523,7 @@ class XSenseRecordingsPanelPlaybackView(http.HomeAssistantView):
                 token, playlist, profile = await _async_create_hls_proxy_session(
                     self.hass, clip
                 )
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 LOGGER.debug(
                     "X-Sense recordings HLS proxy setup failed: %s",
                     {
@@ -584,7 +586,7 @@ class XSenseRecordingsPanelPlaybackView(http.HomeAssistantView):
             await async_allow_recording_cache(self.hass, clip)
         try:
             url = await source._async_cached_playback_url(clip)
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             LOGGER.debug(
                 "X-Sense recordings panel playback cache failed: %s",
                 {
@@ -609,7 +611,7 @@ class XSenseRecordingsPanelPlaybackView(http.HomeAssistantView):
                 # the root lock because downloads can trigger their own prune.
                 try:
                     url = await source._async_cached_playback_url(clip)
-                except Exception as exc:  # noqa: BLE001
+                except Exception as exc:
                     raise web.HTTPNotFound(reason="X-Sense recording is not ready") from exc
         if await source._async_mp4_ready(output_path):
             await async_touch_recording_cache(self.hass, clip)
@@ -810,7 +812,7 @@ class XSenseRecordingsPanelThumbnailView(http.HomeAssistantView):
                 payload, content_type, final_url = await _async_fetch_proxy_resource(
                     self.hass, thumbnail_url
                 )
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 raise web.HTTPNotFound(
                     reason="X-Sense recording thumbnail is not ready"
                 ) from exc
@@ -824,8 +826,12 @@ class XSenseRecordingsPanelThumbnailView(http.HomeAssistantView):
         if not await source._async_path_ready(output_path):
             try:
                 await source._async_cache_thumbnail(clip)
-            except Exception:  # noqa: BLE001
-                pass
+            except Exception:  # noqa: BLE001 - thumbnail caching is best effort.
+                LOGGER.debug(
+                    "X-Sense recordings panel thumbnail cache warmup failed: %s",
+                    _clip_debug_context(entry_id, serial, start, end),
+                    exc_info=True,
+                )
         if await source._async_path_ready(output_path):
             LOGGER.debug(
                 "X-Sense recordings panel thumbnail served cached file: %s",
@@ -1262,7 +1268,7 @@ async def _async_hls_proxy_resource_response(
             payload, content_type, final_url = await _async_fetch_proxy_resource(
                 hass, final_url
             )
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             raise web.HTTPNotFound(
                 reason="X-Sense HLS resource is not ready"
             ) from exc
@@ -1300,10 +1306,25 @@ async def _async_fetch_proxy_resource(
 ) -> tuple[bytes, str, str]:
     """Fetch one signed X-Sense media resource without exposing its URL."""
     session = async_get_clientsession(hass)
-    async with session.get(url) as response:
+    domain_data = hass.data.setdefault(DOMAIN, {})
+    limiter = domain_data.setdefault(
+        "_recording_proxy_limiter", asyncio.Semaphore(PROXY_RESOURCE_CONCURRENCY)
+    )
+    async with (
+        asyncio.timeout(PROXY_RESOURCE_TIMEOUT_SECONDS),
+        limiter,
+        session.get(url) as response,
+    ):
         response.raise_for_status()
+        if (response.content_length or 0) > PROXY_RESOURCE_MAX_BYTES:
+            raise RuntimeError("X-Sense media resource exceeds proxy size limit")
+        payload = bytearray()
+        async for chunk in response.content.iter_chunked(64 * 1024):
+            if len(payload) + len(chunk) > PROXY_RESOURCE_MAX_BYTES:
+                raise RuntimeError("X-Sense media resource exceeds proxy size limit")
+            payload.extend(chunk)
         return (
-            await response.read(),
+            bytes(payload),
             response.headers.get("content-type", ""),
             str(response.url),
         )
@@ -1459,4 +1480,7 @@ def _url_kind(value: Any) -> str:
 
 
 def _clip_title(start: int, end: int) -> str:
-    return f"{datetime.fromtimestamp(start):%H:%M:%S} - {datetime.fromtimestamp(end):%H:%M:%S}"
+    return (
+        f"{datetime.fromtimestamp(start, tz=UTC):%H:%M:%S}"
+        f" - {datetime.fromtimestamp(end, tz=UTC):%H:%M:%S}"
+    )

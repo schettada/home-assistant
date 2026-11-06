@@ -2,30 +2,20 @@
 
 from __future__ import annotations
 
+import asyncio
 from collections.abc import Callable
 from dataclasses import dataclass
 
-from .python_xsense.device import Device
-from .python_xsense.entity import Entity
-from .python_xsense.entity_map import EntityType
-from .python_xsense.async_xsense import (
-    CAMERA_AI_ASSISTANT_TYPES,
-    CAMERA_AI_NOTIFICATION_TYPES,
-    _camera_config_write_value,
-    is_camera_entity,
-)
-
+import homeassistant.helpers.config_validation as cv
+import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
-from homeassistant.const import EntityCategory
+from homeassistant.const import EVENT_HOMEASSISTANT_STOP, EntityCategory
 from homeassistant.core import HomeAssistant
-import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers import entity_platform
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-import voluptuous as vol
-
-from .const import DOMAIN
+from .const import DOMAIN, LOGGER
 from .coordinator import XSenseDataUpdateCoordinator
 from .entity import (
     XSenseEntity,
@@ -35,7 +25,17 @@ from .entity import (
     setup_dynamic_entities,
 )
 from .errors import xsense_error
-
+from .python_xsense.async_xsense import (
+    CAMERA_AI_ASSISTANT_TYPES,
+    CAMERA_AI_NOTIFICATION_TYPES,
+    PAIRED_ALARM_VOLUME_DEVICE_TYPES,
+    _camera_config_write_value,
+    is_camera_entity,
+    supports_low_temperature_alarm,
+)
+from .python_xsense.device import Device
+from .python_xsense.entity import Entity
+from .python_xsense.entity_map import EntityType
 
 ATTR_ENABLED = "enabled"
 ATTR_END_TIME = "end_time"
@@ -283,6 +283,30 @@ class XSenseSwitchEntityDescription(SwitchEntityDescription):
 
 
 SWITCHES: tuple[XSenseSwitchEntityDescription, ...] = (
+    XSenseSwitchEntityDescription(
+        key="motion_walk_test",
+        data_key="motionWalkTest",
+        translation_key="motion_walk_test",
+        icon="mdi:walk",
+        exists_fn=lambda entity: entity.type == "SMS01",
+        value_fn=lambda entity: None,
+    ),
+    XSenseSwitchEntityDescription(
+        key="low_temperature_alarm_enabled",
+        data_key="lowTempAlarmEnabled",
+        translation_key="low_temperature_alarm_enabled",
+        icon="mdi:thermometer-alert",
+        exists_fn=lambda entity: supports_low_temperature_alarm(entity) and "lowTempAlarmEnabled" in entity.data,
+        value_fn=optional_data_bool("lowTempAlarmEnabled"),
+    ),
+    XSenseSwitchEntityDescription(
+        key="radon_alarm_enabled",
+        data_key="radonAlarmEnabled",
+        translation_key="radon_alarm_enabled",
+        icon="mdi:radioactive",
+        exists_fn=lambda entity: entity.type == "XR0A-iR" and "radonAlarmEnabled" in entity.data,
+        value_fn=optional_data_bool("radonAlarmEnabled"),
+    ),
     XSenseSwitchEntityDescription(
         key="led_light",
         data_key="ledLight",
@@ -674,6 +698,31 @@ async def async_setup_entry(
             "async_delete_light_schedule",
         )
         platform.async_register_entity_service(
+            "query_mailbox_schedules",
+            {},
+            "async_query_mailbox_schedules",
+        )
+        platform.async_register_entity_service(
+            "create_mailbox_schedule",
+            LIGHT_SCHEDULE_CREATE_SCHEMA,
+            "async_create_mailbox_schedule",
+        )
+        platform.async_register_entity_service(
+            "update_mailbox_schedule",
+            LIGHT_SCHEDULE_UPDATE_SCHEMA,
+            "async_update_mailbox_schedule",
+        )
+        platform.async_register_entity_service(
+            "rename_mailbox_schedule",
+            LIGHT_SCHEDULE_RENAME_SCHEMA,
+            "async_rename_mailbox_schedule",
+        )
+        platform.async_register_entity_service(
+            "delete_mailbox_schedule",
+            LIGHT_SCHEDULE_DELETE_SCHEMA,
+            "async_delete_mailbox_schedule",
+        )
+        platform.async_register_entity_service(
             "query_light_groups",
             {},
             "async_query_light_groups",
@@ -755,6 +804,9 @@ class XSenseSwitchEntity(XSenseEntity, SwitchEntity):
         self._station_id = station_id
         self.entity_description = entity_description
         self._attr_available = False
+        self._motion_test_task: asyncio.Task | None = None
+        self._motion_test_entity: Entity | None = None
+        self._motion_test_lock = asyncio.Lock()
 
         super().__init__(coordinator, entity, station_id)
 
@@ -771,6 +823,8 @@ class XSenseSwitchEntity(XSenseEntity, SwitchEntity):
     @property
     def is_on(self) -> bool | None:
         """Return the state of the switch."""
+        if self.entity_description.data_key == "motionWalkTest":
+            return self._motion_test_entity is not None
         entity = self._current_entity()
         if entity is None:
             return None
@@ -781,16 +835,23 @@ class XSenseSwitchEntity(XSenseEntity, SwitchEntity):
     def extra_state_attributes(self) -> dict | None:
         """Return cached light schedule data for schedule-capable switches."""
         entity = self._current_entity()
-        if (
-            entity is None
-            or self.entity_description.data_key != "on"
-        ):
+        if entity is None:
             return None
         attrs = {}
-        if "lightSchedules" in entity.data:
+        if self.entity_description.data_key == "lowTempAlarmEnabled":
+            attrs["update_state"] = entity.data.get("lowTempAlarmUpdateState")
+            attrs["pending_enabled"] = boolean_state(entity.data.get("lowTempAlarmPending"))
+        elif self.entity_description.data_key == "radonAlarmEnabled":
+            attrs["update_state"] = entity.data.get("radonAlarmUpdateState")
+        if self.entity_description.data_key == "on" and "lightSchedules" in entity.data:
             attrs["light_schedules"] = entity.data["lightSchedules"]
-        if "lightGroups" in entity.data:
+        if self.entity_description.data_key == "on" and "lightGroups" in entity.data:
             attrs["light_groups"] = entity.data["lightGroups"]
+        if (
+            self.entity_description.data_key == "mailNotice"
+            and "mailboxSchedules" in entity.data
+        ):
+            attrs["mailbox_schedules"] = entity.data["mailboxSchedules"]
         return attrs or None
 
     async def async_turn_on(self, **kwargs) -> None:
@@ -800,6 +861,51 @@ class XSenseSwitchEntity(XSenseEntity, SwitchEntity):
     async def async_turn_off(self, **kwargs) -> None:
         """Turn off the X-Sense setting."""
         await self._async_set_state(False)
+
+    async def _async_motion_test(self, entity: Entity, enabled: bool) -> None:
+        """Bound the APK walk-test mode to ten minutes and this entity lifetime."""
+        async with self._motion_test_lock:
+            await self.coordinator.xsense.set_motion_test(entity, enabled)
+            self._motion_test_entity = entity if enabled else None
+            if self._motion_test_task and self._motion_test_task is not asyncio.current_task():
+                self._motion_test_task.cancel()
+            self._motion_test_task = None
+            if enabled:
+                self._motion_test_task = self.hass.async_create_background_task(
+                    self._async_expire_motion_test(), "X-Sense motion walk-test timeout"
+                )
+            self.async_write_ha_state()
+
+    async def _async_expire_motion_test(self) -> None:
+        await asyncio.sleep(600)
+        # A temporary cloud failure must not silently abandon a running test.
+        while self._motion_test_entity is not None:
+            try:
+                await self._async_motion_test(self._motion_test_entity, False)
+            except Exception:  # noqa: BLE001
+                LOGGER.warning("Could not stop X-Sense motion walk test; retrying")
+                await asyncio.sleep(30)
+
+    async def async_will_remove_from_hass(self) -> None:
+        await self._async_stop_motion_test()
+        await super().async_will_remove_from_hass()
+
+    async def _async_stop_motion_test(self, event=None) -> None:
+        """Stop temporary device mode on removal or normal HA shutdown."""
+        if self._motion_test_task:
+            self._motion_test_task.cancel()
+        if self._motion_test_entity is not None:
+            try:
+                await self._async_motion_test(self._motion_test_entity, False)
+            except Exception:  # noqa: BLE001
+                LOGGER.warning("Could not stop X-Sense motion walk test during unload")
+
+    async def async_added_to_hass(self) -> None:
+        await super().async_added_to_hass()
+        if self.entity_description.data_key == "motionWalkTest":
+            self.async_on_remove(
+                self.hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, self._async_stop_motion_test)
+            )
 
     async def async_query_light_schedules(self) -> None:
         """Query and cache SBS50 light schedules from the APK schedule API."""
@@ -864,6 +970,75 @@ class XSenseSwitchEntity(XSenseEntity, SwitchEntity):
         """Delete an SBS50 light schedule using the APK schedule API."""
         entity = self._light_schedule_entity()
         await self.coordinator.xsense.delete_light_schedule(
+            entity, schedule_id=schedule_id
+        )
+        self.coordinator.async_update_listeners()
+
+    async def async_query_mailbox_schedules(self) -> None:
+        """Query and cache SMA0A mailbox schedules from the APK schedule API."""
+        entity = self._mailbox_schedule_entity()
+        schedules = await self.coordinator.xsense.query_mailbox_schedules(entity)
+        entity.data["mailboxSchedules"] = _light_schedule_list(schedules)
+        self.coordinator.async_update_listeners()
+
+    async def async_create_mailbox_schedule(
+        self,
+        name: str,
+        start_time: str,
+        end_time: str,
+        week_days: list[str],
+        enabled: bool = True,
+        time_zone: str | None = None,
+    ) -> None:
+        """Create an SMA0A mailbox schedule using the APK schedule API."""
+        entity = self._mailbox_schedule_entity()
+        await self.coordinator.xsense.create_mailbox_schedule(
+            entity,
+            name=name,
+            start_time=_schedule_time(start_time),
+            end_time=_schedule_time(end_time),
+            week_days=_schedule_week_days(week_days),
+            enabled=enabled,
+            time_zone=self._schedule_time_zone(time_zone),
+        )
+        self.coordinator.async_update_listeners()
+
+    async def async_update_mailbox_schedule(
+        self,
+        schedule_id: str,
+        start_time: str,
+        end_time: str,
+        week_days: list[str],
+        enabled: bool = True,
+        time_zone: str | None = None,
+    ) -> None:
+        """Update an SMA0A mailbox schedule using the APK schedule API."""
+        entity = self._mailbox_schedule_entity()
+        await self.coordinator.xsense.update_mailbox_schedule(
+            entity,
+            schedule_id=schedule_id,
+            start_time=_schedule_time(start_time),
+            end_time=_schedule_time(end_time),
+            week_days=_schedule_week_days(week_days),
+            enabled=enabled,
+            time_zone=self._schedule_time_zone(time_zone),
+        )
+        self.coordinator.async_update_listeners()
+
+    async def async_rename_mailbox_schedule(
+        self, schedule_id: str, name: str
+    ) -> None:
+        """Rename an SMA0A mailbox schedule using the APK schedule API."""
+        entity = self._mailbox_schedule_entity()
+        await self.coordinator.xsense.rename_mailbox_schedule(
+            entity, schedule_id=schedule_id, name=name
+        )
+        self.coordinator.async_update_listeners()
+
+    async def async_delete_mailbox_schedule(self, schedule_id: str) -> None:
+        """Delete an SMA0A mailbox schedule using the APK schedule API."""
+        entity = self._mailbox_schedule_entity()
+        await self.coordinator.xsense.delete_mailbox_schedule(
             entity, schedule_id=schedule_id
         )
         self.coordinator.async_update_listeners()
@@ -941,6 +1116,23 @@ class XSenseSwitchEntity(XSenseEntity, SwitchEntity):
         """Return the current light entity or raise for unsupported switches."""
         return self._sbs50_light_power_entity("light schedule services")
 
+    def _mailbox_schedule_entity(self) -> Entity:
+        """Return an SMA0A mail-notice switch for the APK schedule API."""
+        entity = self._current_entity()
+        if entity is None:
+            raise xsense_error("entity_unavailable")
+        if (
+            self.entity_description.data_key != "mailNotice"
+            or getattr(entity, "type", None) != "SMA0A"
+        ):
+            raise xsense_error("entity_unavailable")
+        station = getattr(entity, "station", None)
+        if not station or not getattr(entity, "entity_id", None) or not getattr(
+            station, "entity_id", None
+        ):
+            raise xsense_error("ids_missing", service="mailbox schedule services")
+        return entity
+
     def _light_group_entity(self) -> Entity:
         """Return the current SBS50 light/group entity for group services."""
         return self._sbs50_light_power_entity("light group services")
@@ -973,6 +1165,16 @@ class XSenseSwitchEntity(XSenseEntity, SwitchEntity):
         entity = self._current_entity()
         if entity is None or not self.entity_description.exists_fn(entity):
             raise xsense_error("entity_unavailable")
+
+        if self.entity_description.data_key == "motionWalkTest":
+            await self._async_motion_test(entity, enabled)
+            return
+
+        if self.entity_description.data_key in {"lowTempAlarmEnabled", "radonAlarmEnabled"}:
+            await xsense.update_alarm_settings(entity, isEnable=on_off_value(enabled))
+            await xsense.refresh_alarm_settings(entity)
+            self.coordinator.async_update_listeners()
+            return
 
         if self.entity_description.data_key == "on":
             await xsense.update_light_power(entity, enabled)
@@ -1072,6 +1274,8 @@ class XSenseSwitchEntity(XSenseEntity, SwitchEntity):
             self.entity_description.write_value_fn(enabled),
         )
         if self.entity_description.read_key:
+            if entity.type in PAIRED_ALARM_VOLUME_DEVICE_TYPES and self.entity_description.data_key == "alarmEnable":
+                entity.data["alarmVol"] = 50 if enabled else 0
             entity.data.pop(self.entity_description.data_key, None)
             entity.data[self.entity_description.read_key] = enabled
         else:

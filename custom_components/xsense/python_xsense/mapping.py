@@ -1,5 +1,7 @@
-from collections.abc import Callable
+import json
+import math
 import typing
+from collections.abc import Callable
 
 property_mapper = {
     "*": {"wifiRssi": "wifiRSSI"},
@@ -124,14 +126,21 @@ def safe_float(value: typing.Any) -> float | None:
     if value in (None, ""):
         return None
     try:
-        return float(value)
-    except (TypeError, ValueError):
+        parsed = float(value)
+        return parsed if math.isfinite(parsed) else None
+    except (TypeError, ValueError, OverflowError):
         return None
 
 
 def safe_float_list(value: typing.Any) -> list[float] | None:
     if isinstance(value, str):
-        value = [item.strip() for item in value.split(",")]
+        if value.strip().startswith("["):
+            try:
+                value = json.loads(value)
+            except ValueError:
+                return None
+        else:
+            value = [item.strip() for item in value.split(",")]
     if not isinstance(value, (list, tuple)):
         return None
     result = []
@@ -148,7 +157,7 @@ def safe_int(value: typing.Any) -> int | None:
         return None
     try:
         return int(value)
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         return None
 
 
@@ -311,7 +320,7 @@ def map_type(k: str, value: typing.Any):
     return type_mapping[k](value) if k in type_mapping else value
 
 
-def map_values(device_type: str, data: typing.Dict):
+def map_values(device_type: str, data: dict):
     mapping = property_mapper.get("*", {}) | property_mapper.get(device_type, {})
     if device_type in {"STH51", "STH0A", "STH0B", "XC0M-iR"}:
         mapping |= {

@@ -4,14 +4,8 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING
-
-from .python_xsense.async_xsense import is_camera_entity
-from .python_xsense.device import Device
-from .python_xsense.entity import Entity
-from .python_xsense.entity_map import EntityType, entities
-from .python_xsense.mapping import bool_state
 
 from homeassistant import config_entries
 from homeassistant import const as ha_const
@@ -39,6 +33,11 @@ from .entity import (
     device_station_id,
     setup_dynamic_entities,
 )
+from .python_xsense.async_xsense import is_camera_entity
+from .python_xsense.device import Device
+from .python_xsense.entity import Entity
+from .python_xsense.entity_map import EntityType, entities
+from .python_xsense.mapping import bool_state
 
 UNIT_PARTS_PER_MILLION = getattr(
     getattr(ha_const, "UnitOfRatio", None), "PARTS_PER_MILLION", "ppm"
@@ -47,6 +46,10 @@ UNIT_PARTS_PER_MILLION = getattr(
 
 if TYPE_CHECKING:
     from .coordinator import XSenseDataUpdateCoordinator
+
+
+# These models report physical self-tests but have no remote self-test command.
+SELF_TEST_REPORT_ONLY_MODELS = {"SC06-WX", "XS01-WX", "XS0B-iR"}
 
 
 @dataclass(kw_only=True, frozen=True)
@@ -161,26 +164,26 @@ def timestamp_value(value) -> datetime | None:
         try:
             if len(text) == 14:
                 return datetime.strptime(text, "%Y%m%d%H%M%S").replace(
-                    tzinfo=timezone.utc
+                    tzinfo=UTC
                 )
             if len(text) == 13:
-                return datetime.fromtimestamp(int(text) / 1000, tz=timezone.utc)
+                return datetime.fromtimestamp(int(text) / 1000, tz=UTC)
             if len(text) == 10:
-                return datetime.fromtimestamp(int(text), tz=timezone.utc)
+                return datetime.fromtimestamp(int(text), tz=UTC)
         except (OSError, ValueError):
             return None
     if isinstance(value, (int, float)):
         try:
-            return datetime.fromtimestamp(value, tz=timezone.utc)
+            return datetime.fromtimestamp(value, tz=UTC)
         except (OSError, ValueError):
             return None
 
     try:
-        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+        parsed = datetime.fromisoformat(text)
     except ValueError:
         return None
     if parsed.tzinfo is None:
-        return parsed.replace(tzinfo=timezone.utc)
+        return parsed.replace(tzinfo=UTC)
     return parsed
 
 
@@ -220,8 +223,16 @@ def has_report_time(entity: Entity) -> bool:
 
 
 def has_self_test_report(entity: Entity) -> bool:
-    """Return whether an actual self-test result report is present."""
-    return "lastSelfTest" in entity.data or "lastSelfTestTime" in entity.data
+    """Return whether the entity can report an app-style self-test result."""
+    entity_def = entities.get(entity.type, {})
+    return (
+        entity.type in SELF_TEST_REPORT_ONLY_MODELS
+        or "lastSelfTest" in entity.data
+        or any(
+            action.get("action") == "test"
+            for action in entity_def.get("actions", [])
+        )
+    )
 
 
 _ALL_SENSORS: tuple[XSenseSensorEntityDescription, ...] = (
@@ -230,7 +241,7 @@ _ALL_SENSORS: tuple[XSenseSensorEntityDescription, ...] = (
         translation_key="device_status",
         device_class=SensorDeviceClass.ENUM,
         options=("normal", "low_battery", "malfunction", "end_of_life"),
-        icon="mdi:shield-check-outline",
+        icon="mdi:shield-outline",
         exists_fn=has_device_status,
         value_fn=apk_device_status,
     ),
@@ -436,7 +447,7 @@ _ALL_SENSORS: tuple[XSenseSensorEntityDescription, ...] = (
         translation_key="wifi_rssi_level",
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
-        icon="mdi:wifi-strength-2",
+        icon="mdi:wifi",
         value_fn=data_value("wifiRssiLevel"),
         exists_fn=has_data("wifiRssiLevel"),
     ),
@@ -741,7 +752,7 @@ _ALL_SENSORS: tuple[XSenseSensorEntityDescription, ...] = (
         key="zone_name",
         translation_key="zone_name",
         entity_category=EntityCategory.DIAGNOSTIC,
-        icon="mdi:map-marker-outline",
+        icon="mdi:map-clock-outline",
         value_fn=optional_data_value("zoneName"),
         exists_fn=has_sbs50_management_data,
     ),

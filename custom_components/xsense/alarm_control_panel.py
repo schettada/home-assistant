@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from urllib.parse import urlencode
 
+import voluptuous as vol
 from homeassistant.components import persistent_notification
 from homeassistant.components.alarm_control_panel import (
     AlarmControlPanelEntity,
@@ -13,13 +15,12 @@ from homeassistant.components.alarm_control_panel import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import config_validation as cv, entity_platform
+from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import entity_platform
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.event import async_call_later
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.helpers.translation import async_get_translations
-
-import voluptuous as vol
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN, MANUFACTURER
 from .coordinator import XSenseDataUpdateCoordinator
@@ -62,61 +63,78 @@ async def async_setup_entry(
     """Set up XSense alarm control panel entities from a config entry."""
     coordinator: XSenseDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
 
-    entities = []
-    xsense = getattr(coordinator, "xsense", None)
-    houses = getattr(xsense, "houses", {}) or {}
-    for house in houses.values():
-        for station in house.stations.values():
-            if station_supports_alarm_panel(station):
-                LOGGER.debug(
-                    "Creating alarm control panel for station %s (%s)",
-                    station.sn,
-                    station.type,
-                )
-                entities.append(XSenseAlarmControlPanel(coordinator, station))
+    platform = entity_platform.current_platform.get()
+    added: set[str] = set()
+    closed = False
+    services_registered = False
+    frontend_registered = False
+    discovery_task: asyncio.Task | None = None
 
-    if entities:
-        platform = entity_platform.current_platform.get()
-        if platform is not None:
-            platform.async_register_entity_service(
-                FORCE_ARM_SERVICE,
-                FORCE_ARM_SCHEMA,
-                "async_force_arm",
-            )
-            platform.async_register_entity_service(
-                FORCE_ARM_NOW_SERVICE,
-                FORCE_ARM_SCHEMA,
-                "async_force_arm_now",
-            )
-            platform.async_register_entity_service(
-                TRIGGER_SOS_SERVICE,
-                {},
-                "async_trigger_sos",
-            )
-            platform.async_register_entity_service(
-                CANCEL_SOS_SERVICE,
-                {},
-                "async_cancel_sos",
-            )
-            platform.async_register_entity_service(
-                CANCEL_ALARM_SERVICE,
-                {},
-                "async_cancel_alarm",
-            )
-            platform.async_register_entity_service(
-                SET_SOS_SOUND_SERVICE,
-                SET_SOS_SOUND_SCHEMA,
-                "async_set_sos_sound",
-            )
-        await async_register_force_arm_panel(hass, entry.entry_id)
-        entry.async_on_unload(
-            lambda: async_unregister_force_arm_panel(hass, entry.entry_id)
-        )
-        async_add_entities(entities)
-    else:
-        LOGGER.debug(
-            "No SBS50 security alarm base station found; alarm control panel skipped"
-        )
+    def _new_panels():
+        xsense = getattr(coordinator, "xsense", None)
+        houses = getattr(xsense, "houses", {}) or {}
+        return [
+            XSenseAlarmControlPanel(coordinator, station)
+            for house in houses.values()
+            for station in house.stations.values()
+            if station_supports_alarm_panel(station)
+            and f"{station.sn}_alarm" not in added
+        ]
+
+    async def _async_discover() -> None:
+        nonlocal services_registered, frontend_registered
+        if closed or getattr(coordinator, "_shutting_down", False) or not _new_panels():
+            return
+        if not services_registered and platform is not None:
+            for service, schema, method in (
+                (FORCE_ARM_SERVICE, FORCE_ARM_SCHEMA, "async_force_arm"),
+                (FORCE_ARM_NOW_SERVICE, FORCE_ARM_SCHEMA, "async_force_arm_now"),
+                (TRIGGER_SOS_SERVICE, {}, "async_trigger_sos"),
+                (CANCEL_SOS_SERVICE, {}, "async_cancel_sos"),
+                (CANCEL_ALARM_SERVICE, {}, "async_cancel_alarm"),
+                (SET_SOS_SOUND_SERVICE, SET_SOS_SOUND_SCHEMA, "async_set_sos_sound"),
+            ):
+                platform.async_register_entity_service(service, schema, method)
+            services_registered = True
+        if not frontend_registered:
+            frontend_registered = True
+            try:
+                await async_register_force_arm_panel(hass, entry.entry_id)
+            except BaseException:
+                if frontend_registered:
+                    frontend_registered = False
+                    async_unregister_force_arm_panel(hass, entry.entry_id)
+                raise
+        if closed or getattr(coordinator, "_shutting_down", False):
+            return
+        # Discovery can change while the frontend registration is awaited.
+        panels = _new_panels()
+        if panels:
+            async_add_entities(panels)
+            added.update(panel.unique_id for panel in panels)
+
+    @callback
+    def _async_updated() -> None:
+        nonlocal discovery_task
+        if closed or (discovery_task is not None and not discovery_task.done()):
+            return
+        discovery_task = hass.async_create_task(_async_discover())
+
+    @callback
+    def _async_cleanup() -> None:
+        nonlocal closed, frontend_registered
+        closed = True
+        if discovery_task is not None and not discovery_task.done():
+            discovery_task.cancel()
+        if frontend_registered:
+            frontend_registered = False
+            async_unregister_force_arm_panel(hass, entry.entry_id)
+
+    await _async_discover()
+    if hasattr(entry, "async_on_unload"):
+        entry.async_on_unload(_async_cleanup)
+        if hasattr(coordinator, "async_add_listener"):
+            entry.async_on_unload(coordinator.async_add_listener(_async_updated))
 
 
 ALARM_PANEL_SECURITY_DEVICE_TYPES = {"SDS0A", "SMS0A", "SKP0A"}
@@ -384,7 +402,7 @@ class XSenseAlarmControlPanel(
                         self.hass, self.hass.config.language, category, {DOMAIN}
                     )
                 )
-            except Exception:  # Translation loading must not block alarm entities.
+            except Exception:  # noqa: BLE001 - translation loading must not block alarm entities.
                 LOGGER.warning("Could not load X-Sense %s translations", category)
         await super().async_added_to_hass()
         self._handle_coordinator_update()
@@ -565,14 +583,13 @@ class XSenseAlarmControlPanel(
                 force_arm,
             )
 
-        except Exception as ex:  # noqa: BLE001
+        except Exception as ex:
             if force_arm == "0":
                 self._async_clear_arm_request(station)
             LOGGER.exception(
-                "Could not set safeMode %s forceArm=%s for station %s: %s",
+                "Could not set safeMode %s forceArm=%s for station %s",
                 safe_mode,
                 force_arm,
                 station.sn,
-                ex,
             )
             raise xsense_error("safe_mode_publish_failed") from ex

@@ -733,7 +733,7 @@
       - condition: trigger
         id:
         - co
-        - co_binary
+        - smoke
       sequence:
       - action: script.notify_critical_v1
         data:
@@ -749,20 +749,20 @@
     lights. 10:30pm: turns off first floor and basement. 11:30pm: turns off porch
     light. Sunrise: turns off all remaining outdoor lights.'
   triggers:
-  - platform: sun
-    event: sunset
+  - event: sunset
     offset: -00:10:00
     id: sunset
-  - platform: time
-    at: '22:30:00'
+    trigger: sun
+  - at: '22:30:00'
     id: night
-  - platform: time
-    at: '23:30:00'
+    trigger: time
+  - at: '23:30:00'
     id: latenight
-  - platform: sun
-    event: sunrise
+    trigger: time
+  - event: sunrise
     offset: 00:00:00
     id: sunrise
+    trigger: sun
   actions:
   - choose:
     - conditions:
@@ -775,6 +775,13 @@
           - light.kitchen_light
           - light.driveway_light
           - light.porch_light
+          - light.staircase_light
+        data: {}
+        enabled: false
+      - action: light.turn_on
+        target:
+          entity_id:
+          - light.kitchen_light
           - light.staircase_light
         data: {}
     - conditions:
@@ -1242,7 +1249,7 @@
       - action: homeassistant.reload_config_entry
         alias: Reload Govee Light Local
         data:
-          entry_id: 01JPE38ND69BT0DTPQ78WM1XW7
+          entry_id: 01M18K3JBGTMKMCVG08CP4NTTA
       - action: homeassistant.reload_config_entry
         alias: Reload UniFi
         data:
