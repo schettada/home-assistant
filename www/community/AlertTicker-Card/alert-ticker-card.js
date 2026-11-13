@@ -1,5 +1,5 @@
 /**
- * AlertTicker Card v1.3.22
+ * AlertTicker Card v1.3.23
  * A Home Assistant custom Lovelace card to display alerts based on entity states.
  * Supports 50 visual themes with per-alert theme assignment, priority ordering,
  * fold animation cycling, snooze, numeric conditions, attribute triggers,
@@ -41,7 +41,7 @@ const css = LitElement.prototype.css ?? ((strings, ...values) => {
 // ---------------------------------------------------------------------------
 // Card version — declared early so getConfigElement() can reference it
 // ---------------------------------------------------------------------------
-const CARD_VERSION = "1.3.22";
+const CARD_VERSION = "1.3.23";
 
 // ---------------------------------------------------------------------------
 // Google Cast compatibility (#171)
@@ -252,6 +252,22 @@ const TTS_PREFIXES = {
     ok:       (name) => `${name}: normale döndü`,
     timer:    (name) => `Zamanlayıcı: ${name}`,
     _default: (name) => `Uyarı: ${name}`,
+  },
+  sr: {
+    critical: (name) => `Критични аларм: ${name}`,
+    warning: (name) => `Упозорење: ${name}`,
+    info: (name) => `Обавештење: ${name}`,
+    ok: (name) => `${name}: враћено у нормалу`,
+    timer: (name) => `Тајмер: ${name}`,
+    _default: (name) => `Упозорење: ${name}`,
+  },
+  "sr-Latn": {
+    critical: (name) => `Kritični alarm: ${name}`,
+    warning: (name) => `Upozorenje: ${name}`,
+    info: (name) => `Obaveštenje: ${name}`,
+    ok: (name) => `${name}: vraćeno u normalu`,
+    timer: (name) => `Tajmer: ${name}`,
+    _default: (name) => `Upozorenje: ${name}`,
   },
 };
 
@@ -727,11 +743,116 @@ const T = {
     clear_weather_entity_label: "Hava durumu varlığını seç",
     today: "Bugün",
   },
+  sr: {
+    alerts: "Упозорења",
+    critical: "Критично",
+    warning_label: "Пажња",
+    info_label: "Информација",
+    success_label: "Решено",
+    no_alerts: "Нема активних упозорења",
+    all_clear: "Све је у реду",
+    priority_short: "П",
+    alert_system: "СИСТЕМ УПОЗОРЕЊА",
+    cmd_prefix: "root@ha:~$",
+    cmd_read: "alert --procitaj",
+    snooze: "Одложи",
+    snoozed: "Одложено",
+    snooze_1h: "1 сат",
+    snooze_4h: "4 сата",
+    snooze_8h: "8 сати",
+    snooze_24h: "24 сата",
+    snooze_1w: "1 недеља",
+    snooze_1m: "1 месец",
+    snooze_reset: "Поново активирај све",
+    dismiss: "Уклони",
+    alerts_snoozed: "одложених упозорења",
+    alerts_dismissed: "игнорисаних упозорења",
+    dismiss_reset: "Врати све",
+    history: "Историја",
+    history_clear: "Испразни",
+    history_empty: "Нема забележених догађаја",
+    timer_active: "У току",
+    timer_done: "Истекло",
+    test_mode_active: "ТЕСТ РЕЖИМ ЈЕ АКТИВАН — искључите га пре чувања",
+    "weather.sunny": "Сунчано",
+    "weather.clear-night": "Ведра ноћ",
+    "weather.partlycloudy": "Делимично облачно",
+    "weather.cloudy": "Облачно",
+    "weather.fog": "Магла",
+    "weather.windy": "Ветровито",
+    "weather.windy-variant": "Јак ветар",
+    "weather.rainy": "Киша",
+    "weather.snowy-rainy": "Суснежица",
+    "weather.pouring": "Јака киша",
+    "weather.snowy": "Снег",
+    "weather.hail": "Град",
+    "weather.lightning": "Грмљавина",
+    "weather.lightning-rainy": "Олуја са кишом",
+    "weather.exceptional": "Изузетно",
+    clear_weather_entity_label: "Изаберите метео ентитет",
+    today: "Данас",
+  },
+  "sr-Latn": {
+    alerts: "Upozorenja",
+    critical: "Kritično",
+    warning_label: "Pažnja",
+    info_label: "Informacija",
+    success_label: "Rešeno",
+    no_alerts: "Nema aktivnih upozorenja",
+    all_clear: "Sve je u redu",
+    priority_short: "P",
+    alert_system: "SISTEM UPOZORENJA",
+    cmd_prefix: "root@ha:~$",
+    cmd_read: "alert --procitaj",
+    snooze: "Odloži",
+    snoozed: "Odloženo",
+    snooze_1h: "1 sat",
+    snooze_4h: "4 sata",
+    snooze_8h: "8 sati",
+    snooze_24h: "24 sata",
+    snooze_1w: "1 nedelja",
+    snooze_1m: "1 mesec",
+    snooze_reset: "Ponovo aktiviraj sve",
+    dismiss: "Ukloni",
+    alerts_snoozed: "odloženih upozorenja",
+    alerts_dismissed: "ignorisanih upozorenja",
+    dismiss_reset: "Vrati sve",
+    history: "Istorija",
+    history_clear: "Isprazni",
+    history_empty: "Nema zabeleženih događaja",
+    timer_active: "U toku",
+    timer_done: "Isteklo",
+    test_mode_active: "TEST REŽIM JE AKTIVAN — isključite ga pre čuvanja",
+    "weather.sunny": "Sunčano",
+    "weather.clear-night": "Vedra noć",
+    "weather.partlycloudy": "Delimično oblačno",
+    "weather.cloudy": "Oblačno",
+    "weather.fog": "Magla",
+    "weather.windy": "Vetrovito",
+    "weather.windy-variant": "Jak vetar",
+    "weather.rainy": "Kiša",
+    "weather.snowy-rainy": "Susnežica",
+    "weather.pouring": "Jaka kiša",
+    "weather.snowy": "Sneg",
+    "weather.hail": "Grad",
+    "weather.lightning": "Grmljavina",
+    "weather.lightning-rainy": "Oluja sa kišom",
+    "weather.exceptional": "Izuzetno",
+    clear_weather_entity_label: "Izaberite meteo entitet",
+    today: "Danas",
+  },
 };
 
 // ---------------------------------------------------------------------------
 // Shared overlay helpers — used by both the card class and the watcher IIFE.
 // ---------------------------------------------------------------------------
+// HA language code → translation key. Serbian Latin ("sr-Latn") has its own tables;
+// every other language uses its base code ("pt-BR" → "pt").
+function _atcLangKey(language) {
+  const raw = String(language || "en").toLowerCase();
+  return raw.startsWith("sr-latn") ? "sr-Latn" : raw.split("-")[0];
+}
+
 function _ovFmtState(hass, es, attribute) {
   if (!es) return "";
   if (attribute) {
@@ -1664,9 +1785,16 @@ const _ATC_OVERLAY = (() => {
               if (firedFilter) break; // one overlay per tick; remaining entities fire on next ticks
               const fname  = fes.attributes?.friendly_name || eid;
               const fstate = _ovFmtState(hass, fes, a.attribute || null);
+              // {device} / {area} of the matched entity, same lookup as _resolveMsg (#241)
+              const fentry = hass.entities?.[eid];
+              const fdev   = fentry?.device_id ? hass.devices?.[fentry.device_id] : null;
+              const fdevName  = fdev ? (fdev.name_by_user || fdev.name || "") : "";
+              const fareaId   = fentry?.area_id || fdev?.area_id || null;
+              const fareaName = fareaId ? (hass.areas?.[fareaId]?.name || "") : "";
               const rawFilter = (a.message || "")
                 .replace(/\{state\}/g, fstate).replace(/\{name\}/g, fname)
-                .replace(/\{entity\}/g, eid).replace(/\{device\}/g, "").replace(/\{timer\}/g, "");
+                .replace(/\{entity\}/g, eid).replace(/\{device\}/g, fdevName)
+                .replace(/\{area\}/g, fareaName).replace(/\{timer\}/g, "");
               const needsWS = rawFilter.includes("{{") || rawFilter.includes("{%");
               const quickFilter = needsWS ? _evalTemplate(hass, rawFilter) : null;
               const filterMsgPromise = needsWS
@@ -2123,8 +2251,8 @@ class AlertTickerCard extends LitElement {
   set hass(hass) {
     const prevHass = this._hass;
     this._hass = hass;
-    // Detect language (default to "en" if HA language is not IT)
-    const raw = (hass.language || "en").toLowerCase().split("-")[0];
+    // Detect language (default to "en" when there are no translations for it)
+    const raw = _atcLangKey(hass.language);
     const lang = T[raw] ? raw : "en";
     if (lang !== this._lang) {
       this._lang = lang;
@@ -4019,7 +4147,7 @@ class AlertTickerCard extends LitElement {
 
   /** Play an audio notification when an alert newly becomes active */
   _buildTtsFallback(alert) {
-    const lang = (this._hass?.language || "en").split("-")[0].toLowerCase();
+    const lang = _atcLangKey(this._hass?.language);
     const dict = TTS_PREFIXES[lang] || TTS_PREFIXES.en;
     const category = (THEME_META[alert.theme] || {}).category || "warning";
     const fn = dict[category] || dict._default;
